@@ -1,4 +1,4 @@
-from vd.wip.crude import crudify_based_on_names, prepare_for_crude_dispatch
+from vd.crude import crudify_based_on_names, prepare_for_crude_dispatch
 import pytest
 from functools import partial
 

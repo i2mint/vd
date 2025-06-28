@@ -9,13 +9,15 @@ from typing import (
     Sequence,
     NewType,
     Iterable,
+    Literal,
 )
 from functools import partial
 from collections.abc import MutableMapping
 
 from dol import Pipe
+import imbed.imbed_project as imbed_project
 
-from vd.wip.dog import DOG, ADOG
+from vd.dog import DOG, ADOG
 from au.base import ComputationStatus
 import time
 
@@ -98,21 +100,64 @@ operation_implementations = {
 }
 
 
+# --- Helper Function to Get Test Stores and Operations ---
+def get_test_stores_and_ops(stores_type: Literal['ram', 'local'] = 'ram'):
+    if stores_type == 'ram':
+        import copy
+
+        data_stores = copy.deepcopy(data_stores_orig)
+        op_impls = operation_implementations
+    else:
+        mall = imbed_project.get_mall('dog_tests', get_project_mall='local')
+        data_stores = {
+            'segments': {'type': Segments, 'store': mall['segments']},
+            'embeddings': {'type': Embeddings, 'store': mall['embeddings']},
+            'planar_vectors': {
+                'type': PlanarVectors,
+                'store': mall['planar_embeddings'],
+            },
+            'cluster_indices': {'type': ClusterIndices, 'store': mall['clusters']},
+        }
+        op_impls = operation_implementations
+        # Print rootdir for each store
+        print("\n[INFO] Local store root directories:")
+        for name, store in data_stores.items():
+            s = store['store']
+            rootdir = getattr(s, 'rootdir', None)
+            print(f"  {name}: {rootdir}")
+        # Optionally clear the stores for a clean test
+        for store in data_stores.values():
+            keys = list(store['store'].keys())
+            for k in keys:
+                try:
+                    del store['store'][k]
+                except Exception:
+                    pass
+        # Add initial data for segments
+        data_stores['segments']['store'].update(
+            {
+                'segments_1': ['segment1', 'segment2', 'segment3'],
+                'segments_2': ['segment4', 'segment5'],
+            }
+        )
+    return data_stores, op_impls
+
+
+# Save the original data_stores for RAM mode
+import copy
+
+data_stores_orig = copy.deepcopy(data_stores)
+
+
 # --- The User Story Test ---
 # This test function defines the expected behavior of the DOG.
 # It must run successfully against the implemented DOG class.
-def test_dog_operations():
-    # 1. Initialize the DOG
-    # We begin by initializing our Data Operation Graph (DOG) instance.
-    # It takes abstract operation signatures, configurations for data stores,
-    # and concrete function implementations as its foundational inputs.
-    import copy
-
-    dog_data_stores = copy.deepcopy(data_stores)
+def test_dog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
+    data_stores, op_impls = get_test_stores_and_ops(stores_type)
     dog = DOG(
         operation_signatures=operation_signatures,
-        data_stores=dog_data_stores,
-        operation_implementations=operation_implementations,
+        data_stores=data_stores,
+        operation_implementations=op_impls,
     )
 
     # 2. Inspect Data Stores
@@ -250,18 +295,16 @@ def test_dog_operations():
 
 
 # Test ADOG operations
-def test_adog_operations():
+def test_adog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
     """
     Test the ADOG async operation graph. This mirrors the DOG test but checks async result storage.
     """
     # Use a fresh data_stores dict for each test
-    import copy
-
-    adog_data_stores = copy.deepcopy(data_stores)
+    data_stores, op_impls = get_test_stores_and_ops(stores_type)
     adog = ADOG(
         operation_signatures=operation_signatures,
-        data_stores=adog_data_stores,
-        operation_implementations=operation_implementations,
+        data_stores=data_stores,
+        operation_implementations=op_impls,
     )
 
     # CRUD: Add and update segments
@@ -344,6 +387,46 @@ def test_adog_operations():
     print("\n--- All ADOG async operations tested successfully! ---")
 
 
-# Execute the test function to validate the DOG's expected behavior.
-test_dog_operations()
-test_adog_operations()
+def test_dog_sourced_operation(stores_type: Literal['ram', 'local'] = 'ram'):
+    """
+    Test DOG with sourced_argnames: when an argument name is in sourced_argnames,
+    and the value passed is a key, the value is fetched from the corresponding store.
+    """
+    data_stores, op_impls = get_test_stores_and_ops(stores_type)
+    sourced_argnames = {'segments': 'segments', 'embeddings': 'embeddings'}
+    dog = DOG(
+        operation_signatures=operation_signatures,
+        data_stores=data_stores,
+        operation_implementations=op_impls,
+        sourced_argnames=sourced_argnames,
+    )
+    # Store a new segments list under a key
+    dog.data_stores['segments']['my_segments'] = ['a', 'b', 'c']
+    # Call embedder with a key, not the value
+    output_store, output_key = dog.call(
+        dog.operation_implementations['embedder']['constant'], segments='my_segments'
+    )
+    result = dog.data_stores[output_store][output_key]
+    assert result == [[1, 2, 3], [1, 2, 3], [1, 2, 3]]
+    # Now test chaining: planarizer with embeddings key
+    dog.data_stores['embeddings']['my_embeds'] = [[1, 2, 3], [4, 5, 6]]
+    output_store2, output_key2 = dog.call(
+        dog.operation_implementations['planarizer']['constant'], embeddings='my_embeds'
+    )
+    result2 = dog.data_stores[output_store2][output_key2]
+    assert list(map(list, result2)) == [[1, 2], [4, 5]]
+    print("test_dog_sourced_operation passed.")
+
+
+def run_tests(stores_type='ram'):
+    """
+    Run all tests defined in this module.
+    This is useful for running tests in a script or interactive environment.
+    """
+    if stores_type is not None:
+        test_dog_operations(stores_type)
+        test_adog_operations(stores_type)
+        test_dog_sourced_operation(stores_type)
+
+
+run_tests('local')  # 'ram' or 'local' based on your test environment

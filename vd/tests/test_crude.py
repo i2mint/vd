@@ -2,7 +2,7 @@
 Test prepare_for_crude_dispatch
 """
 
-from vd.wip.crude import prepare_for_crude_dispatch
+from vd.crude import prepare_for_crude_dispatch
 from functools import partial
 
 

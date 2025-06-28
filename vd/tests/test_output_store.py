@@ -1,5 +1,5 @@
 import pytest
-from vd.wip.crude import prepare_for_crude_dispatch
+from vd.crude import prepare_for_crude_dispatch
 
 
 # A simple function to add two numbers.

@@ -17,6 +17,7 @@ class _DOG:
         operation_signatures: Dict[str, Any],
         data_stores: Dict[str, Any],
         operation_implementations: Dict[str, Any],
+        sourced_argnames: Any = None,  # can be None, True, or Dict[str, str]
     ):
         """
         Initializes the Data Operation Graph (DOG) with abstract operation definitions,
@@ -33,29 +34,64 @@ class _DOG:
             operation_implementations: A dictionary mapping operation type names (str)
                                        to dictionaries of concrete function implementations.
                                        Example: {'embedder': {'constant': lambda s: ..., ...}}
+            sourced_argnames: A dictionary mapping argument names to data store names.
+                              This is used to automatically source argument values from
+                              the appropriate data stores based on the operation signatures.
+                              Example: {'arg1': 'store1', 'arg2': 'store2'}
         """
         self.operation_signatures = operation_signatures
-
-        # Expose the dictionary of concrete operation implementations.
-        # This allows users to look up and select specific function variants.
         self.operation_implementations = operation_implementations
-
-        # Build an internal map from a data type class (e.g., Embeddings) to its
-        # corresponding data store name (e.g., 'embeddings'). This is crucial
-        # for `call` to automatically determine where to store outputs.
         self._return_type_to_store_name_map = {}
         for store_name, store_config in data_stores.items():
             data_type_class = store_config['type']
             self._return_type_to_store_name_map[data_type_class] = store_name
-
-        # Expose the actual MutableMapping instances for data stores.
-        # This allows direct CRUD operations on the data.
         self.data_stores = {
             name: config['store'] for name, config in data_stores.items()
         }
 
-        # Initialize a counter for generating unique keys for stored outputs.
+        if sourced_argnames is True:
+            # All argnames matching data_stores keys are sourced from stores of same name
+            sourced_argnames = {k: k for k in self.data_stores.keys()}
+        elif not sourced_argnames:
+            sourced_argnames = {}
+        else:
+            sourced_argnames = dict(sourced_argnames)
+
+        self.sourced_argnames = self._validate_sourced_argnames(sourced_argnames)
         self._output_counter = 0
+
+    def _validate_sourced_argnames(self, sourced_argnames):
+        """
+        Normalize and validate sourced_argnames.
+        If True, use all data_store keys as argnames.
+        If dict, validate all stores exist.
+        If None or empty, return {}.
+        """
+        for arg, store in sourced_argnames.items():
+            if store not in self.data_stores:
+                raise ValueError(
+                    f"sourced_argnames: store '{store}' for argument '{arg}' is not a valid data store name"
+                )
+        return sourced_argnames
+
+    # Note: This is a local crudifier (input sourcer)
+    # TODO: Consider using crude.py or other general tool
+    def _source_args(self, func_impl, args, kwargs):
+        """Replace sourced arguments in kwargs with values from the appropriate data stores."""
+        if not self.sourced_argnames:
+            return args, kwargs
+        import inspect
+
+        sig = inspect.signature(func_impl)
+        bound = sig.bind_partial(*args, **kwargs)
+        bound.apply_defaults()
+        for argname, storename in self.sourced_argnames.items():
+            if argname in bound.arguments:
+                val = bound.arguments[argname]
+                store = self.data_stores[storename]
+                if isinstance(val, str) and val in store:
+                    bound.arguments[argname] = store[val]
+        return bound.args, bound.kwargs
 
     def _get_output_store_name_and_type(self, func_impl: Callable):
         output_store_name = None
@@ -110,6 +146,7 @@ class DOG(_DOG):
         Raises:
             ValueError: If the output store cannot be determined or is invalid.
         """
+        args, kwargs = self._source_args(func_impl, args, kwargs)
         output_store_name, _ = self._get_output_store_name_and_type(func_impl)
         # Step 4: Validate that a target data store was successfully identified and exists.
         if not output_store_name or output_store_name not in self.data_stores:
@@ -141,8 +178,14 @@ class ADOG(_DOG):
         ttl_seconds: int = 3600,
         serialization: SerializationFormat = SerializationFormat.JSON,
         middleware: List[Any] = None,
+        sourced_argnames: Dict[str, str] = None,
     ):
-        super().__init__(operation_signatures, data_stores, operation_implementations)
+        super().__init__(
+            operation_signatures,
+            data_stores,
+            operation_implementations,
+            sourced_argnames=sourced_argnames,
+        )
         if base_path is None:
             base_path = tempfile.mkdtemp(prefix="adog_store_")
         self._adog_base_path = base_path
@@ -177,6 +220,7 @@ class ADOG(_DOG):
                 )
 
     def call(self, func_impl: Callable, *args, **kwargs) -> Tuple[str, str]:
+        args, kwargs = self._source_args(func_impl, args, kwargs)
         output_store_name, _ = self._get_output_store_name_and_type(func_impl)
         if not output_store_name or output_store_name not in self.data_stores:
             raise ValueError(
@@ -185,7 +229,6 @@ class ADOG(_DOG):
                 f"Available data stores: {list(self.data_stores.keys())}"
             )
         output_store = self.data_stores[output_store_name]
-        # Wrap the function with async_compute if not already done
         if func_impl not in self._async_wrappers:
             async_func = async_compute(
                 store=output_store,
@@ -196,7 +239,5 @@ class ADOG(_DOG):
             self._async_wrappers[func_impl] = async_func
         else:
             async_func = self._async_wrappers[func_impl]
-        # Launch the async computation - async_compute will generate its own key
         handle = async_func(*args, **kwargs)
-        # The result will be stored in output_store[handle.key] when ready
         return output_store_name, handle.key
