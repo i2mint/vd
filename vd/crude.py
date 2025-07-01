@@ -142,14 +142,14 @@ def _store_on_output_sync(*args, _store_on_ouput_args, **kwargs):
         auto_namer,
         output_trans,
     ) = _store_on_ouput_args
-    arguments = sig.kwargs_from_args_and_kwargs(args, kwargs, apply_defaults=True)
+    arguments = sig.map_arguments(args, kwargs, apply_defaults=True)
     save_name = arguments.pop(save_name_param, None)
     if not save_name and empty_name_callback:
         assert callable(
             empty_name_callback
         ), f'empty_name_callback must be callable: {empty_name_callback}'
         empty_name_callback()
-    args, kwargs = sig.args_and_kwargs_from_kwargs(arguments)
+    args, kwargs = sig.mk_args_and_kwargs(arguments)
     output = func(*args, **kwargs)
     if store_multi_values:
         if not isinstance(output, Iterable) or save_name or not auto_namer:
@@ -186,11 +186,11 @@ async def _store_on_output_async(*args, _store_on_ouput_args, **kwargs):
         auto_namer,
         output_trans,
     ) = _store_on_ouput_args
-    arguments = sig.kwargs_from_args_and_kwargs(args, kwargs, apply_defaults=True)
+    arguments = sig.map_arguments(args, kwargs, apply_defaults=True)
     save_name = arguments.pop(save_name_param, None)
     if not save_name and empty_name_callback:
         empty_name_callback()
-    args, kwargs = sig.args_and_kwargs_from_kwargs(arguments)
+    args, kwargs = sig.mk_args_and_kwargs(arguments)
     output = await func(*args, **kwargs)
     if store_multi_values:
         if not isinstance(output, Iterable) or save_name or not auto_namer:
