@@ -96,17 +96,17 @@ def source_variables(__var_store_suffix="s", **config):
                 if callable(var_config):  # Simple resolver function
                     resolver = var_config
                     store_key = var_name + __var_store_suffix
-                    mode = 'hybrid'
+                    mode = "hybrid"
                     condition = lambda x: True
                     ingress = lambda obj, v: obj
                 else:  # Detailed config
-                    resolver = var_config.get('resolver', resolve_data)
+                    resolver = var_config.get("resolver", resolve_data)
                     store_key = var_config.get(
-                        'store_key', var_name + __var_store_suffix
+                        "store_key", var_name + __var_store_suffix
                     )
-                    mode = var_config.get('mode', 'hybrid')
-                    condition = var_config.get('condition', lambda x: True)
-                    ingress = var_config.get('ingress', lambda obj, v: obj)
+                    mode = var_config.get("mode", "hybrid")
+                    condition = var_config.get("condition", lambda x: True)
+                    ingress = var_config.get("ingress", lambda obj, v: obj)
 
                 # Apply resolution if condition is met
                 value = kwargs[var_name]

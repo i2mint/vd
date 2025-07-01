@@ -350,8 +350,8 @@ async def test_integration_with_fastapi():
 
     # Define the core function with our decorator
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
-        embedder={'resolver': _get_function_from_store, 'store_key': 'embedders'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
+        embedder={"resolver": _get_function_from_store, "store_key": "embedders"},
         egress=lambda x: {"embeddings": x, "status": "success"},
     )
     async def embed_with_api_format(segments, embedder):
