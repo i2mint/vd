@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.wip.input_sourcing &mdash; vd 0.0.7 documentation</title>
+  <title>vd.wip.input_sourcing &mdash; vd 0.0.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../../_static/documentation_options.js?v=53b53b71"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -53,7 +53,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../crude.html">vd.crude</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../dog.html">vd.dog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../wip.html">vd.wip</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">vd.wip.input_sourcing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">vd.wip.input_sourcing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vd.wip.input_sourcing.resolve_data"><code class="docutils literal notranslate"><span class="pre">resolve_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.wip.input_sourcing.source_variables"><code class="docutils literal notranslate"><span class="pre">source_variables()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="input_wire.html">vd.wip.input_wire</a></li>
 </ul>
 
@@ -81,8 +85,34 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="vd-wip-input-sourcing">
-<h1>vd.wip.input_sourcing<a class="headerlink" href="#vd-wip-input-sourcing" title="Link to this heading"></a></h1>
+  <section id="module-vd.wip.input_sourcing">
+<span id="vd-wip-input-sourcing"></span><h1>vd.wip.input_sourcing<a class="headerlink" href="#module-vd.wip.input_sourcing" title="Link to this heading"></a></h1>
+<p>Input sourcing functionality for the source_variables decorator pattern.</p>
+<p>This module provides flexible variable resolution for API endpoints through
+the source_variables decorator, which allows functions to resolve their
+inputs from various stores and data sources.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.wip.input_sourcing.resolve_data">
+<span class="sig-prename descclassname"><span class="pre">vd.wip.input_sourcing.</span></span><span class="sig-name descname"><span class="pre">resolve_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mall</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/vd/wip/input_sourcing.html#resolve_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.wip.input_sourcing.resolve_data" title="Link to this definition"></a></dt>
+<dd><p>Resolve data from a store if it’s a string key, otherwise return as is.</p>
+<p>This is a hybrid resolver that works with both direct values and store keys.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.wip.input_sourcing.source_variables">
+<span class="sig-prename descclassname"><span class="pre">vd.wip.input_sourcing.</span></span><span class="sig-name descname"><span class="pre">source_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">__var_store_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'s'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/vd/wip/input_sourcing.html#source_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.wip.input_sourcing.source_variables" title="Link to this definition"></a></dt>
+<dd><p>Decorator to handle variable sourcing and transformation.</p>
+<p>Config options per variable:
+- resolver: Function to resolve the variable
+- store_key: Store to use for resolution
+- mode: ‘hybrid’ (default) or ‘store_only’
+- condition: Function to determine if resolution should be applied
+- ingress: Function to transform store-retrieved value</p>
+<p>Special config keys:
+- mall: Function or value to use as the mall
+- egress: Function to transform the final result</p>
+</dd></dl>
+
 </section>
 
 

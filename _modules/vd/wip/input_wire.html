@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.wip.input_wire &mdash; vd 0.0.7 documentation</title>
+  <title>vd.wip.input_wire &mdash; vd 0.0.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../../_static/documentation_options.js?v=53b53b71"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -161,20 +161,20 @@
         <span class="n">store3</span> <span class="o">=</span> <span class="n">providers</span><span class="o">.</span><span class="n">Singleton</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
 
     <span class="n">container</span> <span class="o">=</span> <span class="n">StorageContainer</span><span class="p">()</span>
-    <span class="n">container</span><span class="o">.</span><span class="n">store1</span><span class="p">()[</span><span class="s1">&#39;one&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">container</span><span class="o">.</span><span class="n">store2</span><span class="p">()[</span><span class="s1">&#39;two&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">container</span><span class="o">.</span><span class="n">store1</span><span class="p">()[</span><span class="s2">&quot;one&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">container</span><span class="o">.</span><span class="n">store2</span><span class="p">()[</span><span class="s2">&quot;two&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">my_function</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">c</span>
 
     <span class="n">wrapped</span> <span class="o">=</span> <span class="n">input_wiring</span><span class="p">(</span>
         <span class="n">my_function</span><span class="p">,</span>
-        <span class="n">global_param_to_store</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;store1&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="s1">&#39;store2&#39;</span><span class="p">},</span>
-        <span class="n">output_store</span><span class="o">=</span><span class="s1">&#39;store3&#39;</span><span class="p">,</span>
+        <span class="n">global_param_to_store</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="s2">&quot;store1&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="s2">&quot;store2&quot;</span><span class="p">},</span>
+        <span class="n">output_store</span><span class="o">=</span><span class="s2">&quot;store3&quot;</span><span class="p">,</span>
         <span class="n">container</span><span class="o">=</span><span class="n">container</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="n">wrapped</span><span class="p">(</span><span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;two&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">wrapped</span><span class="p">(</span><span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>  <span class="c1"># 7</span>
 </pre></div>
 

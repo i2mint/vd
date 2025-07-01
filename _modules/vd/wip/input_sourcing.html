@@ -1,0 +1,304 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vd.wip.input_sourcing &mdash; vd 0.0.8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=53b53b71"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            vd
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd.html">vd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/crude.html">vd.crude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/dog.html">vd.dog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/wip.html">vd.wip</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/wip/input_sourcing.html">vd.wip.input_sourcing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/wip/input_wire.html">vd.wip.input_wire</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">vd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">vd.wip.input_sourcing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vd.wip.input_sourcing</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Input sourcing functionality for the source_variables decorator pattern.</span>
+
+<span class="sd">This module provides flexible variable resolution for API endpoints through</span>
+<span class="sd">the source_variables decorator, which allows functions to resolve their</span>
+<span class="sd">inputs from various stores and data sources.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span><span class="p">,</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
+
+
+<span class="c1"># Mock implementation of resolve_data</span>
+<div class="viewcode-block" id="resolve_data">
+<a class="viewcode-back" href="../../../module_docs/vd/wip/input_sourcing.html#vd.wip.input_sourcing.resolve_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">store_key</span><span class="p">,</span> <span class="n">mall</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve data from a store if it&#39;s a string key, otherwise return as is.</span>
+
+<span class="sd">    This is a hybrid resolver that works with both direct values and store keys.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">store_key</span> <span class="ow">in</span> <span class="n">mall</span> <span class="ow">and</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">mall</span><span class="p">[</span><span class="n">store_key</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">mall</span><span class="p">[</span><span class="n">store_key</span><span class="p">][</span><span class="n">data</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<span class="c1"># Mock implementation of _get_function_from_store</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_get_function_from_store</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">store_key</span><span class="p">,</span> <span class="n">mall</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a processing function from the mall.</span>
+
+<span class="sd">    Handles both string keys and {key: params} dictionaries for parameterization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">store_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mall</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Store &#39;</span><span class="si">{</span><span class="n">store_key</span><span class="si">}</span><span class="s2">&#39; not found in mall&quot;</span><span class="p">)</span>
+
+    <span class="n">store</span> <span class="o">=</span> <span class="n">mall</span><span class="p">[</span><span class="n">store_key</span><span class="p">]</span>
+
+    <span class="c1"># Handle dict case for parameterized functions</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dict key must contain exactly one item, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">func_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+        <span class="n">func_kwargs</span> <span class="o">=</span> <span class="n">key</span><span class="p">[</span><span class="n">func_key</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">func_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Key &#39;</span><span class="si">{</span><span class="n">func_key</span><span class="si">}</span><span class="s2">&#39; not found in store &#39;</span><span class="si">{</span><span class="n">store_key</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get base function and create partial with kwargs</span>
+        <span class="n">base_func</span> <span class="o">=</span> <span class="n">store</span><span class="p">[</span><span class="n">func_key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">base_func</span><span class="p">,</span> <span class="o">**</span><span class="n">func_kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Handle string key case</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">store</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; not found in store &#39;</span><span class="si">{</span><span class="n">store_key</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+
+<span class="c1"># Implementation of source_variables decorator</span>
+<div class="viewcode-block" id="source_variables">
+<a class="viewcode-back" href="../../../module_docs/vd/wip/input_sourcing.html#vd.wip.input_sourcing.source_variables">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">source_variables</span><span class="p">(</span><span class="n">__var_store_suffix</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator to handle variable sourcing and transformation.</span>
+
+<span class="sd">    Config options per variable:</span>
+<span class="sd">    - resolver: Function to resolve the variable</span>
+<span class="sd">    - store_key: Store to use for resolution</span>
+<span class="sd">    - mode: &#39;hybrid&#39; (default) or &#39;store_only&#39;</span>
+<span class="sd">    - condition: Function to determine if resolution should be applied</span>
+<span class="sd">    - ingress: Function to transform store-retrieved value</span>
+
+<span class="sd">    Special config keys:</span>
+<span class="sd">    - mall: Function or value to use as the mall</span>
+<span class="sd">    - egress: Function to transform the final result</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="c1"># Handle special configs</span>
+            <span class="n">mall_provider</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mall&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">mock_mall</span><span class="p">)</span>
+            <span class="n">egress_func</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;egress&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Get mall</span>
+            <span class="n">mall</span> <span class="o">=</span> <span class="n">mall_provider</span><span class="p">()</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">mall_provider</span><span class="p">)</span> <span class="k">else</span> <span class="n">mall_provider</span>
+
+            <span class="c1"># Process each configured variable</span>
+            <span class="k">for</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">var_config</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;mall&quot;</span><span class="p">,</span> <span class="s2">&quot;egress&quot;</span><span class="p">):</span>  <span class="c1"># Skip special configs</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">var_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>  <span class="c1"># Skip if variable not in kwargs</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Extract config or use defaults</span>
+                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">var_config</span><span class="p">):</span>  <span class="c1"># Simple resolver function</span>
+                    <span class="n">resolver</span> <span class="o">=</span> <span class="n">var_config</span>
+                    <span class="n">store_key</span> <span class="o">=</span> <span class="n">var_name</span> <span class="o">+</span> <span class="n">__var_store_suffix</span>
+                    <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;hybrid&#39;</span>
+                    <span class="n">condition</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">True</span>
+                    <span class="n">ingress</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">obj</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">obj</span>
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># Detailed config</span>
+                    <span class="n">resolver</span> <span class="o">=</span> <span class="n">var_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;resolver&#39;</span><span class="p">,</span> <span class="n">resolve_data</span><span class="p">)</span>
+                    <span class="n">store_key</span> <span class="o">=</span> <span class="n">var_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="s1">&#39;store_key&#39;</span><span class="p">,</span> <span class="n">var_name</span> <span class="o">+</span> <span class="n">__var_store_suffix</span>
+                    <span class="p">)</span>
+                    <span class="n">mode</span> <span class="o">=</span> <span class="n">var_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mode&#39;</span><span class="p">,</span> <span class="s1">&#39;hybrid&#39;</span><span class="p">)</span>
+                    <span class="n">condition</span> <span class="o">=</span> <span class="n">var_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">True</span><span class="p">)</span>
+                    <span class="n">ingress</span> <span class="o">=</span> <span class="n">var_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ingress&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">obj</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">obj</span><span class="p">)</span>
+
+                <span class="c1"># Apply resolution if condition is met</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">condition</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">iscoroutinefunction</span><span class="p">(</span><span class="n">resolver</span><span class="p">):</span>
+                        <span class="n">resolved_value</span> <span class="o">=</span> <span class="k">await</span> <span class="n">resolver</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">store_key</span><span class="p">,</span> <span class="n">mall</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">resolved_value</span> <span class="o">=</span> <span class="n">resolver</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">store_key</span><span class="p">,</span> <span class="n">mall</span><span class="p">)</span>
+
+                    <span class="c1"># New check: for store_only mode, raise error if resolution did not change the value.</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;store_only&quot;</span>
+                        <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                        <span class="ow">and</span> <span class="n">resolved_value</span> <span class="o">==</span> <span class="n">value</span>
+                    <span class="p">):</span>
+                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Key &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; not found in store &#39;</span><span class="si">{</span><span class="n">store_key</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                        <span class="p">)</span>
+
+                    <span class="c1"># Apply ingress transformation for dict-based inputs</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">obj_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+                        <span class="n">obj_value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="n">obj_key</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="p">(</span>
+                            <span class="nb">isinstance</span><span class="p">(</span><span class="n">resolved_value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+                            <span class="ow">and</span> <span class="n">obj_key</span> <span class="ow">in</span> <span class="n">resolved_value</span>
+                        <span class="p">):</span>
+                            <span class="n">base_obj</span> <span class="o">=</span> <span class="n">resolved_value</span><span class="p">[</span><span class="n">obj_key</span><span class="p">]</span>
+                            <span class="n">kwargs</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ingress</span><span class="p">(</span><span class="n">base_obj</span><span class="p">,</span> <span class="n">obj_value</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">kwargs</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ingress</span><span class="p">(</span><span class="n">resolved_value</span><span class="p">,</span> <span class="n">obj_value</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">kwargs</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">resolved_value</span>
+
+            <span class="c1"># Call the original function</span>
+            <span class="k">if</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">iscoroutinefunction</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="c1"># Apply egress transformation if configured</span>
+            <span class="k">if</span> <span class="n">egress_func</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">egress_func</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+    <span class="k">return</span> <span class="n">decorator</span></div>
+
+
+
+<span class="c1"># Mock mall and stores for testing (used by tests in test_input_sourcing.py)</span>
+<span class="n">mock_mall</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;embedders&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">text</span><span class="p">:</span> <span class="p">(</span>
+            <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">text</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;advanced&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">text</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span> <span class="p">(</span>
+            <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="n">multiplier</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="k">else</span> <span class="p">[</span><span class="n">v</span> <span class="o">*</span> <span class="n">multiplier</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">text</span><span class="p">]</span>
+        <span class="p">),</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;segments&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;greeting&quot;</span><span class="p">:</span> <span class="s2">&quot;hello&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;farewell&quot;</span><span class="p">:</span> <span class="s2">&quot;goodbye&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;clusterers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># Ensure clusterer always receives a list of embeddings (list of lists)</span>
+        <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">embeddings</span><span class="p">:</span> <span class="p">[</span>
+            <span class="nb">sum</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">%</span> <span class="mi">3</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="p">(</span><span class="n">embeddings</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">embeddings</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">embeddings</span><span class="p">])</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;binary&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">embeddings</span><span class="p">:</span> <span class="p">[</span>
+            <span class="mi">1</span> <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">500</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="p">(</span><span class="n">embeddings</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">embeddings</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">embeddings</span><span class="p">])</span>
+        <span class="p">],</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
