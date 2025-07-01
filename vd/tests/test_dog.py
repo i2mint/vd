@@ -108,7 +108,7 @@ def get_test_stores_and_ops(stores_type: Literal['ram', 'local'] = 'ram'):
         data_stores = copy.deepcopy(data_stores_orig)
         op_impls = operation_implementations
     else:
-        mall = imbed_project.get_mall('dog_tests', get_project_mall='local')
+        mall = imbed_project.get_mall('dog_tests', get_project_mall=stores_type)
         data_stores = {
             'segments': {'type': Segments, 'store': mall['segments']},
             'embeddings': {'type': Embeddings, 'store': mall['embeddings']},

@@ -1,3 +1,54 @@
+"""
+Class _DOG:
+    This class is the core of the Data Operation Graph (DOG) framework. It manages abstract
+    operation signatures, concrete operation implementations, and data store configurations,
+    while also handling the sourcing of inputs and the storage of outputs.
+    __init__(operation_signatures, data_stores, operation_implementations, sourced_argnames=None):
+        Initializes the DOG with the provided abstract operation definitions, data store settings,
+        and concrete implementations. It maps return types to target data stores and configures
+        argument sourcing based on the supplied 'sourced_argnames' parameter.
+    _validate_sourced_argnames(sourced_argnames):
+        Normalizes and validates the mapping between function argument names and the corresponding
+        data store names. Ensures that each specified data store exists.
+    _source_args(func_impl, args, kwargs):
+        Inspects the function signature and replaces any provided argument values with data
+        sourced from the corresponding data stores. This method enables automatic dependency
+        injection based on the argument naming.
+    _get_output_store_name_and_type(func_impl):
+        Determines the target data store for the function output by matching the concrete function
+        with its abstract operation signature. It infers the expected return type and maps it to
+        the appropriate data store.
+    _get_next_output_key(output_store_name):
+        Generates a unique key for output data intended for a specific data store, supporting
+        uniqueness and, when necessary, file-based storage requirements.
+Class DOG(_DOG):
+    Implements the synchronous execution of a concrete operation within the DOG framework.
+    call(func_impl, *args, **kwargs):
+        Executes a given function implementation with the provided arguments. It uses the argument
+        sourcing mechanism to automatically inject data from predefined stores, executes the function,
+        and then stores the result in the appropriate output data store. Returns a tuple consisting of
+        the output store name and the unique key under which the result is saved.
+Class ADOG(_DOG):
+    Extends _DOG to provide asynchronous execution capabilities using async wrappers and
+    file system-based storage for outputs. This class integrates additional parameters such as a base
+    path, TTL settings, serialization format, and middleware for enhanced operation handling.
+    __init__(operation_signatures, data_stores, operation_implementations, *,
+             base_path=None, ttl_seconds=3600,
+             serialization=SerializationFormat.JSON,
+             middleware=None,
+             sourced_argnames=None):
+        Initializes the asynchronous DOG, setting up a file system backend for storing outputs.
+        It configures asynchronous wrappers for function implementations using the provided TTL,
+        serialization format, and any middleware functions. The base path for storage is either supplied
+        or auto-generated.
+    call(func_impl, *args, **kwargs):
+        Asynchronously executes the provided function implementation using an async wrapper that
+        is set up via the async_compute utility. It ensures that the output is stored in a file system
+        based store and returns a tuple with the output data store name and the output key from the
+        asynchronous handle.
+
+"""
+
 import pytest
 from typing import Callable, Any, Dict, List, Tuple, get_args
 from functools import partial
