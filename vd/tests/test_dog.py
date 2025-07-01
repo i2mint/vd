@@ -15,7 +15,6 @@ from functools import partial
 from collections.abc import MutableMapping
 
 from dol import Pipe
-import imbed.imbed_project as imbed_project
 
 from vd.dog import DOG, ADOG
 from au.base import ComputationStatus
@@ -108,7 +107,8 @@ def get_test_stores_and_ops(stores_type: Literal['ram', 'local'] = 'ram'):
         data_stores = copy.deepcopy(data_stores_orig)
         op_impls = operation_implementations
     else:
-        mall = imbed_project.get_mall('dog_tests', get_project_mall=stores_type)
+        from imbed.imbed_project import get_mall  # pip install imbed
+        mall = get_mall('dog_tests', get_project_mall=stores_type)
         data_stores = {
             'segments': {'type': Segments, 'store': mall['segments']},
             'embeddings': {'type': Embeddings, 'store': mall['embeddings']},
@@ -429,4 +429,16 @@ def run_tests(stores_type='ram'):
         test_dog_sourced_operation(stores_type)
 
 
-run_tests('local')  # 'ram' or 'local' based on your test environment
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run DOG tests.")
+    parser.add_argument(
+        "--store_type",
+        type=str,
+        choices=["ram", "local"],
+        default="ram",
+        help="Specify the store type to use ('ram' or 'local')."
+    )
+    args = parser.parse_args()
+    run_tests(args.store_type)
