@@ -77,18 +77,18 @@ def example_with_dependency_injector():
         store3 = providers.Singleton(dict)
 
     container = StorageContainer()
-    container.store1()['one'] = 1
-    container.store2()['two'] = 2
+    container.store1()["one"] = 1
+    container.store2()["two"] = 2
 
     def my_function(a, b, c):
         return a + b * c
 
     wrapped = input_wiring(
         my_function,
-        global_param_to_store={'a': 'store1', 'b': 'store2'},
-        output_store='store3',
+        global_param_to_store={"a": "store1", "b": "store2"},
+        output_store="store3",
         container=container,
     )
 
-    result = wrapped('one', 'two', 3)
+    result = wrapped("one", "two", 3)
     print(result)  # 7

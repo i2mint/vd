@@ -94,10 +94,10 @@ class _DOG:
         self.operation_implementations = operation_implementations
         self._return_type_to_store_name_map = {}
         for store_name, store_config in data_stores.items():
-            data_type_class = store_config['type']
+            data_type_class = store_config["type"]
             self._return_type_to_store_name_map[data_type_class] = store_name
         self.data_stores = {
-            name: config['store'] for name, config in data_stores.items()
+            name: config["store"] for name, config in data_stores.items()
         }
 
         if sourced_argnames is True:

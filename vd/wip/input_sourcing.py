@@ -58,7 +58,7 @@ async def _get_function_from_store(key, store_key, mall):
 
 
 # Implementation of source_variables decorator
-def source_variables(__var_store_suffix='s', **config):
+def source_variables(__var_store_suffix="s", **config):
     """
     Decorator to handle variable sourcing and transformation.
 
@@ -78,15 +78,15 @@ def source_variables(__var_store_suffix='s', **config):
         @wraps(func)
         async def wrapper(*args, **kwargs):
             # Handle special configs
-            mall_provider = config.get('mall', lambda: mock_mall)
-            egress_func = config.get('egress')
+            mall_provider = config.get("mall", lambda: mock_mall)
+            egress_func = config.get("egress")
 
             # Get mall
             mall = mall_provider() if callable(mall_provider) else mall_provider
 
             # Process each configured variable
             for var_name, var_config in config.items():
-                if var_name in ('mall', 'egress'):  # Skip special configs
+                if var_name in ("mall", "egress"):  # Skip special configs
                     continue
 
                 if var_name not in kwargs:  # Skip if variable not in kwargs
@@ -118,7 +118,7 @@ def source_variables(__var_store_suffix='s', **config):
 
                     # New check: for store_only mode, raise error if resolution did not change the value.
                     if (
-                        mode == 'store_only'
+                        mode == "store_only"
                         and isinstance(value, str)
                         and resolved_value == value
                     ):

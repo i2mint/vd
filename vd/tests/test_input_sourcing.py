@@ -29,52 +29,52 @@ async def async_call(func, *args, **kwargs):
 @pytest.mark.asyncio
 async def test_resolve_data():
     """Test the resolve_data function with different input types."""
-    mall = {'segments': {'greeting': 'hello', 'farewell': 'goodbye'}}
+    mall = {"segments": {"greeting": "hello", "farewell": "goodbye"}}
 
     # Test resolving a string key that exists in the store
-    result = resolve_data('greeting', 'segments', mall)
-    assert result == 'hello'
+    result = resolve_data("greeting", "segments", mall)
+    assert result == "hello"
 
     # Test resolving a string key that doesn't exist in the store
-    result = resolve_data('nonexistent', 'segments', mall)
-    assert result == 'nonexistent'  # Should return the original value
+    result = resolve_data("nonexistent", "segments", mall)
+    assert result == "nonexistent"  # Should return the original value
 
     # Test resolving a non-string value
-    result = resolve_data(42, 'segments', mall)
+    result = resolve_data(42, "segments", mall)
     assert result == 42  # Should return the original value
 
     # Test with store that doesn't exist
-    result = resolve_data('greeting', 'nonexistent_store', mall)
-    assert result == 'greeting'  # Should return the original value
+    result = resolve_data("greeting", "nonexistent_store", mall)
+    assert result == "greeting"  # Should return the original value
 
 
 @pytest.mark.asyncio
 async def test_get_function_from_store():
     """Test the _get_function_from_store function."""
     mall = {
-        'functions': {
-            'simple': lambda x: x * 2,
-            'complex': lambda x, multiplier=1: x * multiplier,
+        "functions": {
+            "simple": lambda x: x * 2,
+            "complex": lambda x, multiplier=1: x * multiplier,
         }
     }
 
     # Test getting a simple function
-    func = await _get_function_from_store('simple', 'functions', mall)
+    func = await _get_function_from_store("simple", "functions", mall)
     assert func(5) == 10
 
     # Test getting a parameterized function
     func = await _get_function_from_store(
-        {'complex': {'multiplier': 3}}, 'functions', mall
+        {"complex": {"multiplier": 3}}, "functions", mall
     )
     assert func(4) == 12
 
     # Test with non-existent function
     with pytest.raises(KeyError):
-        await _get_function_from_store('nonexistent', 'functions', mall)
+        await _get_function_from_store("nonexistent", "functions", mall)
 
     # Test with non-existent store
     with pytest.raises(KeyError):
-        await _get_function_from_store('simple', 'nonexistent_store', mall)
+        await _get_function_from_store("simple", "nonexistent_store", mall)
 
 
 @pytest.mark.asyncio
@@ -82,7 +82,7 @@ async def test_basic_resolution():
     """Test basic variable resolution with the source_variables decorator."""
 
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
     )
     async def embed_text(segments, embedder):
         return embedder(segments)
@@ -103,8 +103,8 @@ async def test_function_resolution():
     """Test resolving a function from a store."""
 
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
-        embedder={'resolver': _get_function_from_store, 'store_key': 'embedders'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
+        embedder={"resolver": _get_function_from_store, "store_key": "embedders"},
     )
     async def embed_with_named_embedder(segments, embedder):
         return embedder(segments)
@@ -129,10 +129,10 @@ async def test_parameterized_function():
     """Test parameterizing a function retrieved from a store."""
 
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
         embedder={
-            'resolver': _get_function_from_store,
-            'store_key': 'embedders',
+            "resolver": _get_function_from_store,
+            "store_key": "embedders",
         },
     )
     async def embed_with_params(segments, embedder):
@@ -154,9 +154,9 @@ async def test_conditional_resolution():
 
     @source_variables(
         segments={
-            'resolver': resolve_data,
-            'store_key': 'segments',
-            'condition': is_likely_key,  # Only resolve short strings
+            "resolver": resolve_data,
+            "store_key": "segments",
+            "condition": is_likely_key,  # Only resolve short strings
         },
     )
     async def conditional_embed(segments, embedder):
@@ -183,8 +183,8 @@ async def test_output_transformation():
     """Test transforming the output with an egress function."""
 
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
-        embedder={'resolver': _get_function_from_store, 'store_key': 'embedders'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
+        embedder={"resolver": _get_function_from_store, "store_key": "embedders"},
         egress=lambda x: {"embeddings": x},  # Wrap result in an object
     )
     async def embed_with_formatted_output(segments, embedder):
@@ -203,9 +203,9 @@ async def test_full_pipeline():
     """Test a complete processing pipeline with multiple resolution steps."""
 
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
-        embedder={'resolver': _get_function_from_store, 'store_key': 'embedders'},
-        clusterer={'resolver': _get_function_from_store, 'store_key': 'clusterers'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
+        embedder={"resolver": _get_function_from_store, "store_key": "embedders"},
+        clusterer={"resolver": _get_function_from_store, "store_key": "clusterers"},
         egress=lambda x: {"clusters": x},
     )
     async def embed_and_cluster(segments, embedder, clusterer):
@@ -242,11 +242,11 @@ async def test_error_handling():
 
     @source_variables(
         segments={
-            'resolver': resolve_data,
-            'store_key': 'segments',
-            'mode': 'store_only',
+            "resolver": resolve_data,
+            "store_key": "segments",
+            "mode": "store_only",
         },
-        embedder={'resolver': _get_function_from_store, 'store_key': 'embedders'},
+        embedder={"resolver": _get_function_from_store, "store_key": "embedders"},
     )
     async def embed_with_error_handling(segments, embedder):
         return embedder(segments)
@@ -279,8 +279,8 @@ async def test_custom_mall_provider():
         return mock_mall
 
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
-        embedder={'resolver': _get_function_from_store, 'store_key': 'embedders'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
+        embedder={"resolver": _get_function_from_store, "store_key": "embedders"},
         mall=lambda: get_user_mall("user1"),  # Get user1's mall
     )
     async def embed_with_user_mall(segments, embedder):
@@ -298,7 +298,7 @@ async def test_sync_function_with_source_variables():
     """Test that the decorator works with synchronous functions too."""
 
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
     )
     def sync_embed_text(segments, embedder):
         return embedder(segments)
@@ -314,15 +314,15 @@ async def test_sync_function_with_source_variables():
 
 def test_sync_resolve_data():
     """Test resolve_data with synchronous usage."""
-    mall = {'test_store': {'key1': 'value1', 'key2': 42}}
+    mall = {"test_store": {"key1": "value1", "key2": 42}}
 
     # Test successful resolution
-    assert resolve_data('key1', 'test_store', mall) == 'value1'
-    assert resolve_data('key2', 'test_store', mall) == 42
+    assert resolve_data("key1", "test_store", mall) == "value1"
+    assert resolve_data("key2", "test_store", mall) == 42
 
     # Test fallback to original value
-    assert resolve_data('nonexistent', 'test_store', mall) == 'nonexistent'
-    assert resolve_data(123, 'test_store', mall) == 123
+    assert resolve_data("nonexistent", "test_store", mall) == "nonexistent"
+    assert resolve_data(123, "test_store", mall) == 123
 
 
 @pytest.mark.asyncio
