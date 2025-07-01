@@ -1,0 +1,4 @@
+vd.dog
+======
+.. automodule:: vd.dog
+   :members:

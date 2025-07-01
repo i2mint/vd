@@ -1,0 +1,4 @@
+vd.wip.input_wire
+=================
+.. automodule:: vd.wip.input_wire
+   :members:

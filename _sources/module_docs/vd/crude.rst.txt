@@ -1,0 +1,4 @@
+vd.crude
+========
+.. automodule:: vd.crude
+   :members:

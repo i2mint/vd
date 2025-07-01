@@ -1,0 +1,208 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vd.wip.input_wire &mdash; vd 0.0.7 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=bbaf98b3"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            vd
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd.html">vd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/crude.html">vd.crude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/dog.html">vd.dog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/wip.html">vd.wip</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/wip/input_sourcing.html">vd.wip.input_sourcing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/wip/input_wire.html">vd.wip.input_wire</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">vd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">vd.wip.input_wire</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vd.wip.input_wire</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Value Dispatch using Dependency Injectior Package&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+
+
+<span class="c1"># TODO: Make output_wiring too</span>
+
+
+<div class="viewcode-block" id="input_wiring">
+<a class="viewcode-back" href="../../../module_docs/vd/wip/input_wire.html#vd.wip.input_wire.input_wiring">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">input_wiring</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">global_param_to_store</span><span class="p">,</span> <span class="n">mall</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrap a function to source its inputs from stores.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        func: The function to wrap (sync or async).</span>
+<span class="sd">        global_param_to_store: Dict mapping parameter names to store names (e.g., {&#39;a&#39;: &#39;store1&#39;}).</span>
+<span class="sd">        mall: The mapping container to access the stores that are referenced in global_param_to_store</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A wrapped function that resolves inputs from stores and optionally stores outputs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mall</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A mall must be provided to access storage systems.&quot;</span><span class="p">)</span>
+
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="c1"># Determine which parameters to resolve based on global_param_to_store</span>
+    <span class="n">sig_names</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">param_to_store</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">param</span><span class="p">:</span> <span class="n">global_param_to_store</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">sig_names</span>
+        <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">global_param_to_store</span>
+    <span class="p">}</span>
+
+    <span class="c1"># New inner helper function to resolve inputs</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_bound_args</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">bound_args</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">bound_args</span><span class="o">.</span><span class="n">apply_defaults</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">param_to_store</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">bound_args</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+            <span class="n">store_name</span> <span class="o">=</span> <span class="n">param_to_store</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+            <span class="n">store</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mall</span><span class="p">,</span> <span class="n">store_name</span><span class="p">)()</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">store</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; not found in store &#39;</span><span class="si">{</span><span class="n">store_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="n">bound_args</span><span class="o">.</span><span class="n">arguments</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">bound_args</span>
+
+    <span class="c1"># Define the wrapper based on whether the function is async</span>
+    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">iscoroutinefunction</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">bound_args</span> <span class="o">=</span> <span class="n">resolve_bound_args</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="c1"># Call the function with resolved arguments</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">bound_args</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">bound_args</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">bound_args</span> <span class="o">=</span> <span class="n">resolve_bound_args</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">bound_args</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">bound_args</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">example_with_dependency_injector</span><span class="p">():</span>
+    <span class="c1"># Example container (for reference, typically defined by the user)</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">dependency_injector</span><span class="w"> </span><span class="kn">import</span> <span class="n">containers</span><span class="p">,</span> <span class="n">providers</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">StorageContainer</span><span class="p">(</span><span class="n">containers</span><span class="o">.</span><span class="n">DeclarativeContainer</span><span class="p">):</span>
+        <span class="n">store1</span> <span class="o">=</span> <span class="n">providers</span><span class="o">.</span><span class="n">Singleton</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+        <span class="n">store2</span> <span class="o">=</span> <span class="n">providers</span><span class="o">.</span><span class="n">Singleton</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+        <span class="n">store3</span> <span class="o">=</span> <span class="n">providers</span><span class="o">.</span><span class="n">Singleton</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="n">container</span> <span class="o">=</span> <span class="n">StorageContainer</span><span class="p">()</span>
+    <span class="n">container</span><span class="o">.</span><span class="n">store1</span><span class="p">()[</span><span class="s1">&#39;one&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">container</span><span class="o">.</span><span class="n">store2</span><span class="p">()[</span><span class="s1">&#39;two&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">my_function</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">c</span>
+
+    <span class="n">wrapped</span> <span class="o">=</span> <span class="n">input_wiring</span><span class="p">(</span>
+        <span class="n">my_function</span><span class="p">,</span>
+        <span class="n">global_param_to_store</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;store1&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="s1">&#39;store2&#39;</span><span class="p">},</span>
+        <span class="n">output_store</span><span class="o">=</span><span class="s1">&#39;store3&#39;</span><span class="p">,</span>
+        <span class="n">container</span><span class="o">=</span><span class="n">container</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">wrapped</span><span class="p">(</span><span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;two&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>  <span class="c1"># 7</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
