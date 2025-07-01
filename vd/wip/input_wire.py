@@ -4,12 +4,10 @@ from functools import wraps
 import inspect
 
 
-# TODO: Make output_wiring too 
+# TODO: Make output_wiring too
 
 
-def input_wiring(
-    func, global_param_to_store, mall=None
-):
+def input_wiring(func, global_param_to_store, mall=None):
     """
     Wrap a function to source its inputs from stores.
 
@@ -24,7 +22,7 @@ def input_wiring(
     if mall is None:
         raise ValueError("A mall must be provided to access storage systems.")
 
-    sig = inspect.signature(func) 
+    sig = inspect.signature(func)
     # Determine which parameters to resolve based on global_param_to_store
     sig_names = sig.parameters.keys()
     param_to_store = {
@@ -69,9 +67,8 @@ def input_wiring(
     return wrapper
 
 
-# Example container (for reference, typically defined by the user)
-if __name__ == "__main__":
-
+def example_with_dependency_injector():
+    # Example container (for reference, typically defined by the user)
     from dependency_injector import containers, providers
 
     class StorageContainer(containers.DeclarativeContainer):

@@ -35,14 +35,11 @@ jobs:
           root-dir: ${{ env.PROJECT_NAME }}
           enable: missing-module-docstring
           ignore: tests,examples,scrap
-
-      # extra
-      - name: Install pytest-asyncio
-        run: pip install pytest-asyncio
         
       - name: Pytest Validation
         uses: i2mint/isee/actions/pytest-validation@master
         with:
+          extra-pypi-packages: pytest-asyncio
           root-dir: ${{ env.PROJECT_NAME }}
           paths-to-ignore: examples,scrap
 
