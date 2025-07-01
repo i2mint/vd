@@ -36,6 +36,10 @@ jobs:
           enable: missing-module-docstring
           ignore: tests,examples,scrap
 
+      # extra
+      - name: Install pytest-asyncio
+        run: pip install pytest-asyncio
+        
       - name: Pytest Validation
         uses: i2mint/isee/actions/pytest-validation@master
         with:
