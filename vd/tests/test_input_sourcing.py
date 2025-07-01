@@ -325,6 +325,51 @@ def test_sync_resolve_data():
     assert resolve_data(123, 'test_store', mall) == 123
 
 
+@pytest.mark.asyncio
+async def test_integration_with_fastapi():
+    """Test how the decorator integrates with FastAPI routes."""
+
+    # Mock request object
+    class MockRequest:
+        def __init__(self, json_data):
+            self.json_data = json_data
+
+        async def json(self):
+            return self.json_data
+
+    # Mock endpoint function (simulating FastAPI handler)
+    async def fastapi_endpoint(request):
+        data = await request.json()
+
+        # Extract parameters from request
+        segments = data.get("segments", "hello")
+        embedder = data.get("embedder", "default")
+
+        # Call our decorated function
+        return await embed_with_api_format(segments=segments, embedder=embedder)
+
+    # Define the core function with our decorator
+    @source_variables(
+        segments={'resolver': resolve_data, 'store_key': 'segments'},
+        embedder={'resolver': _get_function_from_store, 'store_key': 'embedders'},
+        egress=lambda x: {"embeddings": x, "status": "success"},
+    )
+    async def embed_with_api_format(segments, embedder):
+        return embedder(segments)
+
+    # Test 1: Simple request with direct values
+    request = MockRequest({"segments": "test"})
+    response = await fastapi_endpoint(request)
+    assert response["status"] == "success"
+    assert response["embeddings"] == [116, 101, 115, 116]  # ASCII for "test"
+
+    # Test 2: Request with store keys
+    request = MockRequest({"segments": "greeting", "embedder": "default"})
+    response = await fastapi_endpoint(request)
+    assert response["status"] == "success"
+    assert response["embeddings"] == [104, 101, 108, 108, 111]  # ASCII for "hello"
+
+
 # Add this to make the tests runnable from command line
 if __name__ == "__main__":
     pytest.main(["-xvs", __file__])
