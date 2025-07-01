@@ -56,7 +56,7 @@ async def _get_function_from_store(key, store_key, mall):
 
 
 # Implementation of source_variables decorator
-def source_variables(__var_store_suffix='s', **config):
+def source_variables(__var_store_suffix="s", **config):
     """
     Decorator to handle variable sourcing and transformation.
 
@@ -76,15 +76,15 @@ def source_variables(__var_store_suffix='s', **config):
         @wraps(func)
         async def wrapper(*args, **kwargs):
             # Handle special configs
-            mall_provider = config.get('mall', lambda: mock_mall)
-            egress_func = config.get('egress')
+            mall_provider = config.get("mall", lambda: mock_mall)
+            egress_func = config.get("egress")
 
             # Get mall
             mall = mall_provider() if callable(mall_provider) else mall_provider
 
             # Process each configured variable
             for var_name, var_config in config.items():
-                if var_name in ('mall', 'egress'):  # Skip special configs
+                if var_name in ("mall", "egress"):  # Skip special configs
                     continue
 
                 if var_name not in kwargs:  # Skip if variable not in kwargs
@@ -93,16 +93,18 @@ def source_variables(__var_store_suffix='s', **config):
                 # Extract config or use defaults
                 if callable(var_config):  # Simple resolver function
                     resolver = var_config
-                    store_key = var_name + __var_store_suffix 
-                    mode = 'hybrid'
+                    store_key = var_name + __var_store_suffix
+                    mode = "hybrid"
                     condition = lambda x: True
                     ingress = lambda obj, v: obj
                 else:  # Detailed config
-                    resolver = var_config.get('resolver', resolve_data)
-                    store_key = var_config.get('store_key', var_name + __var_store_suffix)
-                    mode = var_config.get('mode', 'hybrid')
-                    condition = var_config.get('condition', lambda x: True)
-                    ingress = var_config.get('ingress', lambda obj, v: obj)
+                    resolver = var_config.get("resolver", resolve_data)
+                    store_key = var_config.get(
+                        "store_key", var_name + __var_store_suffix
+                    )
+                    mode = var_config.get("mode", "hybrid")
+                    condition = var_config.get("condition", lambda x: True)
+                    ingress = var_config.get("ingress", lambda obj, v: obj)
 
                 # Apply resolution if condition is met
                 value = kwargs[var_name]
@@ -114,7 +116,7 @@ def source_variables(__var_store_suffix='s', **config):
 
                     # New check: for store_only mode, raise error if resolution did not change the value.
                     if (
-                        mode == 'store_only'
+                        mode == "store_only"
                         and isinstance(value, str)
                         and resolved_value == value
                     ):
@@ -219,7 +221,7 @@ async def test_basic_resolution():
 
     # Define a simple function that just calls an embedder on segments
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
     )
     async def embed_text(segments, embedder):
         # Core logic is simple: just call embedder on segments
@@ -251,8 +253,8 @@ async def test_function_resolution():
 
     # Define a function that embeds text using a named embedder
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
-        embedder={'resolver': _get_function_from_store, 'store_key': 'embedders'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
+        embedder={"resolver": _get_function_from_store, "store_key": "embedders"},
     )
     async def embed_with_named_embedder(segments, embedder):
         # Core logic remains simple despite the complex resolution
@@ -282,10 +284,10 @@ async def test_parameterized_function():
 
     # Define a function that supports parameterized embedders
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
         embedder={
-            'resolver': _get_function_from_store,
-            'store_key': 'embedders',
+            "resolver": _get_function_from_store,
+            "store_key": "embedders",
             # No need for explicit ingress as the resolver already handles partials
         },
     )
@@ -314,9 +316,9 @@ async def test_conditional_resolution():
 
     @source_variables(
         segments={
-            'resolver': resolve_data,
-            'store_key': 'segments',
-            'condition': is_likely_key,  # Only resolve short strings
+            "resolver": resolve_data,
+            "store_key": "segments",
+            "condition": is_likely_key,  # Only resolve short strings
         },
     )
     async def conditional_embed(segments, embedder):
@@ -349,8 +351,8 @@ async def test_output_transformation():
 
     # Define a function with output transformation
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
-        embedder={'resolver': _get_function_from_store, 'store_key': 'embedders'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
+        embedder={"resolver": _get_function_from_store, "store_key": "embedders"},
         egress=lambda x: {"embeddings": x},  # Wrap result in an object
     )
     async def embed_with_formatted_output(segments, embedder):
@@ -379,9 +381,9 @@ async def test_full_pipeline():
 
     # Define a complete pipeline function
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
-        embedder={'resolver': _get_function_from_store, 'store_key': 'embedders'},
-        clusterer={'resolver': _get_function_from_store, 'store_key': 'clusterers'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
+        embedder={"resolver": _get_function_from_store, "store_key": "embedders"},
+        clusterer={"resolver": _get_function_from_store, "store_key": "clusterers"},
         egress=lambda x: {"clusters": x},
     )
     async def embed_and_cluster(segments, embedder, clusterer):
@@ -442,8 +444,8 @@ async def test_integration_with_fastapi():
 
     # Define the core function with our decorator
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
-        embedder={'resolver': _get_function_from_store, 'store_key': 'embedders'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
+        embedder={"resolver": _get_function_from_store, "store_key": "embedders"},
         egress=lambda x: {"embeddings": x, "status": "success"},
     )
     async def embed_with_api_format(segments, embedder):
@@ -474,11 +476,11 @@ async def test_error_handling():
     # Define a function to test error handling
     @source_variables(
         segments={
-            'resolver': resolve_data,
-            'store_key': 'segments',
-            'mode': 'store_only',
+            "resolver": resolve_data,
+            "store_key": "segments",
+            "mode": "store_only",
         },
-        embedder={'resolver': _get_function_from_store, 'store_key': 'embedders'},
+        embedder={"resolver": _get_function_from_store, "store_key": "embedders"},
     )
     async def embed_with_error_handling(segments, embedder):
         return embedder(segments)
@@ -518,8 +520,8 @@ async def test_custom_mall_provider():
 
     # Define a function that uses the user-specific mall
     @source_variables(
-        segments={'resolver': resolve_data, 'store_key': 'segments'},
-        embedder={'resolver': _get_function_from_store, 'store_key': 'embedders'},
+        segments={"resolver": resolve_data, "store_key": "segments"},
+        embedder={"resolver": _get_function_from_store, "store_key": "embedders"},
         mall=lambda: get_user_mall("user1"),  # Get user1's mall
     )
     async def embed_with_user_mall(segments, embedder):

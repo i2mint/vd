@@ -45,99 +45,100 @@ vectorize = lambda func: Pipe(partial(map, func), list)
 
 # Define operation signatures (abstract function types and their I/O)
 operation_signatures = {
-    'embedder': Embedder,  # Callable[[Segments], Embeddings]
-    'planarizer': Planarizer,  # Callable[[Embeddings], PlanarVectors]
-    'clusterer': Clusterer,  # Callable[[Embeddings], ClusterIndices]
+    "embedder": Embedder,  # Callable[[Segments], Embeddings]
+    "planarizer": Planarizer,  # Callable[[Embeddings], PlanarVectors]
+    "clusterer": Clusterer,  # Callable[[Embeddings], ClusterIndices]
 }
 
 # Define data store configurations (what data types they hold, and initial data)
 data_stores = {
-    'segments': {
-        'type': Segments,
-        'store': {
-            'segments_1': ['segment1', 'segment2', 'segment3'],
-            'segments_2': ['segment4', 'segment5'],
+    "segments": {
+        "type": Segments,
+        "store": {
+            "segments_1": ["segment1", "segment2", "segment3"],
+            "segments_2": ["segment4", "segment5"],
         },
     },
-    'embeddings': {
-        'type': Embeddings,
-        'store': dict(),  # This store will hold Embeddings objects
+    "embeddings": {
+        "type": Embeddings,
+        "store": dict(),  # This store will hold Embeddings objects
     },
-    'planar_vectors': {
-        'type': PlanarVectors,
-        'store': dict(),  # This store will hold PlanarVectors objects
+    "planar_vectors": {
+        "type": PlanarVectors,
+        "store": dict(),  # This store will hold PlanarVectors objects
     },
-    'cluster_indices': {
-        'type': ClusterIndices,
-        'store': dict(),  # This store will hold ClusterIndices objects
+    "cluster_indices": {
+        "type": ClusterIndices,
+        "store": dict(),  # This store will hold ClusterIndices objects
     },
 }
 
 # Define concrete operation implementations (the actual functions)
 operation_implementations = {
-    'embedder': {
-        'constant': lambda segments: vectorize(lambda s: [1, 2, 3])(segments),
-        'segment_based': lambda segments: vectorize(lambda s: [len(s), 0.5, 0.5])(
+    "embedder": {
+        "constant": lambda segments: vectorize(lambda s: [1, 2, 3])(segments),
+        "segment_based": lambda segments: vectorize(lambda s: [len(s), 0.5, 0.5])(
             segments
         ),
     },
-    'planarizer': {
-        'constant': lambda embeddings: vectorize(lambda e: (e[0], e[1]))(embeddings),
-        'embedding_based': lambda embeddings: vectorize(
+    "planarizer": {
+        "constant": lambda embeddings: vectorize(lambda e: (e[0], e[1]))(embeddings),
+        "embedding_based": lambda embeddings: vectorize(
             lambda e: [e[0] * 0.5, e[1] * 0.5]
         )(embeddings),
     },
-    'clusterer': {
+    "clusterer": {
         # Note: The original Clusterer signature was Callable[[Embeddings, int], ClusterIndices]
         # but your new Clusterer type is Callable[[Embeddings], ClusterIndices].
         # Adjusted 'kmeans' to remove 'num_clusters' arg to match new signature.
-        'kmeans': lambda embeddings: [0, 1]
+        "kmeans": lambda embeddings: [0, 1]
         * (len(embeddings) // 2 + len(embeddings) % 2),  # Using 0, 1 for ClusterIndex
-        'dbscan': lambda embeddings: [-1]
+        "dbscan": lambda embeddings: [-1]
         * len(embeddings),  # Using -1 for noise (ClusterIndex)
     },
 }
 
 
 # --- Helper Function to Get Test Stores and Operations ---
-def get_test_stores_and_ops(stores_type: Literal['ram', 'local'] = 'ram'):
-    if stores_type == 'ram':
+def get_test_stores_and_ops(stores_type: Literal["ram", "local"] = "ram"):
+    if stores_type == "ram":
         import copy
 
         data_stores = copy.deepcopy(data_stores_orig)
         op_impls = operation_implementations
     else:
         from imbed.imbed_project import get_mall  # pip install imbed
-        mall = get_mall('dog_tests', get_project_mall=stores_type)
+
+        mall = get_mall("dog_tests", get_project_mall=stores_type)
         data_stores = {
-            'segments': {'type': Segments, 'store': mall['segments']},
-            'embeddings': {'type': Embeddings, 'store': mall['embeddings']},
-            'planar_vectors': {
-                'type': PlanarVectors,
-                'store': mall['planar_embeddings'],
+            "segments": {"type": Segments, "store": mall["segments"]},
+            "embeddings": {"type": Embeddings, "store": mall["embeddings"]},
+            "planar_vectors": {
+                "type": PlanarVectors,
+                "store": mall["planar_embeddings"],
             },
-            'cluster_indices': {'type': ClusterIndices, 'store': mall['clusters']},
+            "cluster_indices": {"type": ClusterIndices, "store": mall["clusters"]},
         }
         op_impls = operation_implementations
         # Print rootdir for each store
         print("\n[INFO] Local store root directories:")
         for name, store in data_stores.items():
-            s = store['store']
-            rootdir = getattr(s, 'rootdir', None)
+            s = store["store"]
+            rootdir = getattr(s, "rootdir", None)
             print(f"  {name}: {rootdir}")
         # Optionally clear the stores for a clean test
         for store in data_stores.values():
-            keys = list(store['store'].keys())
+            keys = list(store["store"].keys())
             for k in keys:
                 try:
-                    del store['store'][k]
+                    del store["store"][k]
                 except Exception:
                     pass
         # Add initial data for segments
-        data_stores['segments']['store'].update(
+        data_stores["segments"]["store"].update(
             {
-                'segments_1': ['segment1', 'segment2', 'segment3'],
-                'segments_2': ['segment4', 'segment5'],
+                "segments_1": ["segment1", "segment2", "segment3"],
+                "segments_2": ["segment4", "segment5"],
             }
         )
     return data_stores, op_impls
@@ -152,7 +153,7 @@ data_stores_orig = copy.deepcopy(data_stores)
 # --- The User Story Test ---
 # This test function defines the expected behavior of the DOG.
 # It must run successfully against the implemented DOG class.
-def test_dog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
+def test_dog_operations(stores_type: Literal["ram", "local"] = "ram"):
     data_stores, op_impls = get_test_stores_and_ops(stores_type)
     dog = DOG(
         operation_signatures=operation_signatures,
@@ -164,20 +165,20 @@ def test_dog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
     # We want to confirm that all expected data stores are properly set up and accessible.
     print("\n--- Data Store Inspection ---")
     expected_data_stores = [
-        'segments',
-        'embeddings',
-        'planar_vectors',
-        'cluster_indices',
+        "segments",
+        "embeddings",
+        "planar_vectors",
+        "cluster_indices",
     ]
     assert sorted(list(dog.data_stores.keys())) == sorted(expected_data_stores)
     print(f"All expected data stores are present: {list(dog.data_stores.keys())}.")
 
     # We expect the 'segments' data store to contain its initial predefined data.
-    assert 'segments_1' in dog.data_stores['segments']
-    assert dog.data_stores['segments']['segments_1'] == [
-        'segment1',
-        'segment2',
-        'segment3',
+    assert "segments_1" in dog.data_stores["segments"]
+    assert dog.data_stores["segments"]["segments_1"] == [
+        "segment1",
+        "segment2",
+        "segment3",
     ]
     print("Initial 'segments_1' data verified.")
 
@@ -185,7 +186,7 @@ def test_dog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
     # We want to verify that all expected operation types (e.g., 'embedder') are registered
     # and that their concrete implementations are available.
     print("\n--- Operation Implementations Inspection ---")
-    expected_operation_types = ['embedder', 'planarizer', 'clusterer']
+    expected_operation_types = ["embedder", "planarizer", "clusterer"]
     assert sorted(list(dog.operation_implementations.keys())) == sorted(
         expected_operation_types
     )
@@ -194,8 +195,8 @@ def test_dog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
     )
 
     # Specifically, check for the 'constant' and 'segment_based' implementations of the 'embedder'.
-    assert 'constant' in dog.operation_implementations['embedder']
-    assert 'segment_based' in dog.operation_implementations['embedder']
+    assert "constant" in dog.operation_implementations["embedder"]
+    assert "segment_based" in dog.operation_implementations["embedder"]
     print("Embedder operation implementations ('constant', 'segment_based') verified.")
 
     # 4. Perform CRUD Operations on Data Stores
@@ -203,30 +204,30 @@ def test_dog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
     print("\n--- CRUD Operations on Data Stores ---")
 
     # Create: Add new data to the 'segments' store.
-    dog.data_stores['segments']['segments_3'] = ['segment6', 'segment7']
-    assert 'segments_3' in dog.data_stores['segments']
-    assert dog.data_stores['segments']['segments_3'] == ['segment6', 'segment7']
+    dog.data_stores["segments"]["segments_3"] = ["segment6", "segment7"]
+    assert "segments_3" in dog.data_stores["segments"]
+    assert dog.data_stores["segments"]["segments_3"] == ["segment6", "segment7"]
     print("New 'segments_3' data added successfully.")
 
     # Update: Modify existing data within the 'segments' store.
-    dog.data_stores['segments']['segments_1'] = [
-        'updated_segment_A',
-        'updated_segment_B',
+    dog.data_stores["segments"]["segments_1"] = [
+        "updated_segment_A",
+        "updated_segment_B",
     ]
-    assert dog.data_stores['segments']['segments_1'] == [
-        'updated_segment_A',
-        'updated_segment_B',
+    assert dog.data_stores["segments"]["segments_1"] == [
+        "updated_segment_A",
+        "updated_segment_B",
     ]
     print("Existing 'segments_1' data updated successfully.")
 
     # Read: Retrieve data from the 'segments' store.
-    retrieved_segments = dog.data_stores['segments']['segments_2']
-    assert retrieved_segments == ['segment4', 'segment5']
+    retrieved_segments = dog.data_stores["segments"]["segments_2"]
+    assert retrieved_segments == ["segment4", "segment5"]
     print("Data for 'segments_2' retrieved successfully.")
 
     # Delete: Remove data from the 'segments' store.
-    del dog.data_stores['segments']['segments_3']
-    assert 'segments_3' not in dog.data_stores['segments']
+    del dog.data_stores["segments"]["segments_3"]
+    assert "segments_3" not in dog.data_stores["segments"]
     print("Data for 'segments_3' deleted successfully.")
 
     # 5. Execute Operations and Manage Outputs
@@ -236,15 +237,15 @@ def test_dog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
 
     # A. Call 'embedder' (constant) operation on 'segments_1' data.
     # The output (embeddings) should be automatically directed to the 'embeddings' data store.
-    segments_for_embedding = dog.data_stores['segments'][
-        'segments_1'
+    segments_for_embedding = dog.data_stores["segments"][
+        "segments_1"
     ]  # Use the recently updated 'segments_1'
     output_store_key_embed, output_val_key_embed = dog.call(
-        dog.operation_implementations['embedder']['constant'], segments_for_embedding
+        dog.operation_implementations["embedder"]["constant"], segments_for_embedding
     )
 
     # Assert that the output was indeed stored in 'embeddings' and verify its content.
-    assert output_store_key_embed == 'embeddings'
+    assert output_store_key_embed == "embeddings"
     retrieved_embeddings = dog.data_stores[output_store_key_embed][output_val_key_embed]
     # Since 'segments_1' has 2 items, the constant embedder produces 2 outputs.
     assert retrieved_embeddings == [[1, 2, 3], [1, 2, 3]]
@@ -256,12 +257,12 @@ def test_dog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
     # B. Call 'planarizer' (embedding_based) operation on the retrieved embeddings.
     # This demonstrates chaining operations where the output of one becomes the input for another.
     output_store_key_planar, output_val_key_planar = dog.call(
-        dog.operation_implementations['planarizer']['embedding_based'],
+        dog.operation_implementations["planarizer"]["embedding_based"],
         retrieved_embeddings,  # Use the actual embeddings obtained from the previous step
     )
 
     # Assert that the output was stored in 'planar_vectors' and verify its content.
-    assert output_store_key_planar == 'planar_vectors'
+    assert output_store_key_planar == "planar_vectors"
     retrieved_planar_vectors = dog.data_stores[output_store_key_planar][
         output_val_key_planar
     ]
@@ -275,12 +276,12 @@ def test_dog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
     # C. Call 'clusterer' (kmeans) operation using the generated embeddings.
     # Note: The 'Clusterer' signature was updated, so no 'num_clusters' direct input here.
     output_store_key_cluster, output_val_key_cluster = dog.call(
-        dog.operation_implementations['clusterer']['kmeans'],
+        dog.operation_implementations["clusterer"]["kmeans"],
         retrieved_embeddings,  # Embeddings from previous step
     )
 
     # Assert that the output was stored in 'cluster_indices' and verify its content.
-    assert output_store_key_cluster == 'cluster_indices'
+    assert output_store_key_cluster == "cluster_indices"
     retrieved_cluster_indices = dog.data_stores[output_store_key_cluster][
         output_val_key_cluster
     ]
@@ -295,7 +296,7 @@ def test_dog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
 
 
 # Test ADOG operations
-def test_adog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
+def test_adog_operations(stores_type: Literal["ram", "local"] = "ram"):
     """
     Test the ADOG async operation graph. This mirrors the DOG test but checks async result storage.
     """
@@ -308,17 +309,17 @@ def test_adog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
     )
 
     # CRUD: Add and update segments
-    adog.data_stores['segments']['segments_3'] = ['segment6', 'segment7']
-    adog.data_stores['segments']['segments_1'] = [
-        'updated_segment_A',
-        'updated_segment_B',
+    adog.data_stores["segments"]["segments_3"] = ["segment6", "segment7"]
+    adog.data_stores["segments"]["segments_1"] = [
+        "updated_segment_A",
+        "updated_segment_B",
     ]
-    del adog.data_stores['segments']['segments_3']
+    del adog.data_stores["segments"]["segments_3"]
 
     # --- Async Operation Execution ---
-    segments_for_embedding = adog.data_stores['segments']['segments_1']
+    segments_for_embedding = adog.data_stores["segments"]["segments_1"]
     output_store_key_embed, output_val_key_embed = adog.call(
-        adog.operation_implementations['embedder']['constant'], segments_for_embedding
+        adog.operation_implementations["embedder"]["constant"], segments_for_embedding
     )
     # Wait for async result to appear in the store
     for _ in range(50):  # up to 5 seconds
@@ -342,7 +343,7 @@ def test_adog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
 
     # Planarizer async
     output_store_key_planar, output_val_key_planar = adog.call(
-        adog.operation_implementations['planarizer']['embedding_based'],
+        adog.operation_implementations["planarizer"]["embedding_based"],
         retrieved_embeddings,
     )
     for _ in range(50):
@@ -364,7 +365,7 @@ def test_adog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
 
     # Clusterer async
     output_store_key_cluster, output_val_key_cluster = adog.call(
-        adog.operation_implementations['clusterer']['kmeans'],
+        adog.operation_implementations["clusterer"]["kmeans"],
         retrieved_embeddings,
     )
     for _ in range(50):
@@ -387,13 +388,13 @@ def test_adog_operations(stores_type: Literal['ram', 'local'] = 'ram'):
     print("\n--- All ADOG async operations tested successfully! ---")
 
 
-def test_dog_sourced_operation(stores_type: Literal['ram', 'local'] = 'ram'):
+def test_dog_sourced_operation(stores_type: Literal["ram", "local"] = "ram"):
     """
     Test DOG with sourced_argnames: when an argument name is in sourced_argnames,
     and the value passed is a key, the value is fetched from the corresponding store.
     """
     data_stores, op_impls = get_test_stores_and_ops(stores_type)
-    sourced_argnames = {'segments': 'segments', 'embeddings': 'embeddings'}
+    sourced_argnames = {"segments": "segments", "embeddings": "embeddings"}
     dog = DOG(
         operation_signatures=operation_signatures,
         data_stores=data_stores,
@@ -401,24 +402,24 @@ def test_dog_sourced_operation(stores_type: Literal['ram', 'local'] = 'ram'):
         sourced_argnames=sourced_argnames,
     )
     # Store a new segments list under a key
-    dog.data_stores['segments']['my_segments'] = ['a', 'b', 'c']
+    dog.data_stores["segments"]["my_segments"] = ["a", "b", "c"]
     # Call embedder with a key, not the value
     output_store, output_key = dog.call(
-        dog.operation_implementations['embedder']['constant'], segments='my_segments'
+        dog.operation_implementations["embedder"]["constant"], segments="my_segments"
     )
     result = dog.data_stores[output_store][output_key]
     assert result == [[1, 2, 3], [1, 2, 3], [1, 2, 3]]
     # Now test chaining: planarizer with embeddings key
-    dog.data_stores['embeddings']['my_embeds'] = [[1, 2, 3], [4, 5, 6]]
+    dog.data_stores["embeddings"]["my_embeds"] = [[1, 2, 3], [4, 5, 6]]
     output_store2, output_key2 = dog.call(
-        dog.operation_implementations['planarizer']['constant'], embeddings='my_embeds'
+        dog.operation_implementations["planarizer"]["constant"], embeddings="my_embeds"
     )
     result2 = dog.data_stores[output_store2][output_key2]
     assert list(map(list, result2)) == [[1, 2], [4, 5]]
     print("test_dog_sourced_operation passed.")
 
 
-def run_tests(stores_type='ram'):
+def run_tests(stores_type="ram"):
     """
     Run all tests defined in this module.
     This is useful for running tests in a script or interactive environment.
@@ -438,7 +439,7 @@ if __name__ == "__main__":
         type=str,
         choices=["ram", "local"],
         default="ram",
-        help="Specify the store type to use ('ram' or 'local')."
+        help="Specify the store type to use ('ram' or 'local').",
     )
     args = parser.parse_args()
     run_tests(args.store_type)

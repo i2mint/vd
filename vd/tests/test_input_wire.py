@@ -30,8 +30,8 @@ class MockMall:
     """Mock mall container that provides access to stores"""
 
     def __init__(self):
-        self.store1 = MockStore({'x': 10})
-        self.store2 = MockStore({'y': 5})
+        self.store1 = MockStore({"x": 10})
+        self.store2 = MockStore({"y": 5})
         self.store3 = MockStore()
 
 
@@ -46,15 +46,15 @@ def test_input_wiring_sync_no_save(mall):
 
     wrapped = input_wiring(
         add,
-        global_param_to_store={'a': 'store1', 'b': 'store2'},
+        global_param_to_store={"a": "store1", "b": "store2"},
         mall=mall,
     )
     # Calling without the extra keyword `save_as`
-    result = wrapped('x', 'y', 2)
+    result = wrapped("x", "y", 2)
     # Expected: 10 + (5*2) = 20
     assert result == 20
     # Since save_as not provided, output should not be stored.
-    assert 'result' not in mall.store3()
+    assert "result" not in mall.store3()
 
 
 def test_missing_key_sync(mall):
@@ -63,11 +63,11 @@ def test_missing_key_sync(mall):
 
     wrapped = input_wiring(
         multiply,
-        global_param_to_store={'a': 'store1', 'b': 'store2'},
+        global_param_to_store={"a": "store1", "b": "store2"},
         mall=mall,
     )
     with pytest.raises(KeyError):
-        wrapped('invalid', 'y')
+        wrapped("invalid", "y")
 
 
 def test_input_wiring_sync_with_save_raises_type_error(mall):
@@ -76,12 +76,12 @@ def test_input_wiring_sync_with_save_raises_type_error(mall):
 
     wrapped = input_wiring(
         add,
-        global_param_to_store={'a': 'store1', 'b': 'store2'},
+        global_param_to_store={"a": "store1", "b": "store2"},
         mall=mall,
     )
     # Expect TypeError due to unexpected keyword argument "save_as"
     with pytest.raises(TypeError):
-        wrapped('x', 'y', 2, save_as='result')
+        wrapped("x", "y", 2, save_as="result")
 
 
 @pytest.mark.asyncio
@@ -91,12 +91,12 @@ async def test_input_wiring_async_no_save(mall):
 
     wrapped = input_wiring(
         add,
-        global_param_to_store={'a': 'store1', 'b': 'store2'},
+        global_param_to_store={"a": "store1", "b": "store2"},
         mall=mall,
     )
-    result = await wrapped('x', 'y', 2)
+    result = await wrapped("x", "y", 2)
     assert result == 20
-    assert 'result' not in mall.store3()
+    assert "result" not in mall.store3()
 
 
 @pytest.mark.asyncio
@@ -106,8 +106,8 @@ async def test_input_wiring_async_with_save_raises_type_error(mall):
 
     wrapped = input_wiring(
         add,
-        global_param_to_store={'a': 'store1', 'b': 'store2'},
+        global_param_to_store={"a": "store1", "b": "store2"},
         mall=mall,
     )
     with pytest.raises(TypeError):
-        await wrapped('x', 'y', 2, save_as='result')
+        await wrapped("x", "y", 2, save_as="result")
