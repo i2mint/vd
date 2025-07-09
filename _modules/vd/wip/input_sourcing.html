@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.wip.input_sourcing &mdash; vd 0.0.8 documentation</title>
+  <title>vd.wip.input_sourcing &mdash; vd 0.0.9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=53b53b71"></script>
+      <script src="../../../_static/documentation_options.js?v=f7cdbf68"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -182,17 +182,17 @@
                 <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">var_config</span><span class="p">):</span>  <span class="c1"># Simple resolver function</span>
                     <span class="n">resolver</span> <span class="o">=</span> <span class="n">var_config</span>
                     <span class="n">store_key</span> <span class="o">=</span> <span class="n">var_name</span> <span class="o">+</span> <span class="n">__var_store_suffix</span>
-                    <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;hybrid&#39;</span>
+                    <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;hybrid&quot;</span>
                     <span class="n">condition</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">True</span>
                     <span class="n">ingress</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">obj</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">obj</span>
                 <span class="k">else</span><span class="p">:</span>  <span class="c1"># Detailed config</span>
-                    <span class="n">resolver</span> <span class="o">=</span> <span class="n">var_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;resolver&#39;</span><span class="p">,</span> <span class="n">resolve_data</span><span class="p">)</span>
+                    <span class="n">resolver</span> <span class="o">=</span> <span class="n">var_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;resolver&quot;</span><span class="p">,</span> <span class="n">resolve_data</span><span class="p">)</span>
                     <span class="n">store_key</span> <span class="o">=</span> <span class="n">var_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                        <span class="s1">&#39;store_key&#39;</span><span class="p">,</span> <span class="n">var_name</span> <span class="o">+</span> <span class="n">__var_store_suffix</span>
+                        <span class="s2">&quot;store_key&quot;</span><span class="p">,</span> <span class="n">var_name</span> <span class="o">+</span> <span class="n">__var_store_suffix</span>
                     <span class="p">)</span>
-                    <span class="n">mode</span> <span class="o">=</span> <span class="n">var_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mode&#39;</span><span class="p">,</span> <span class="s1">&#39;hybrid&#39;</span><span class="p">)</span>
-                    <span class="n">condition</span> <span class="o">=</span> <span class="n">var_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">True</span><span class="p">)</span>
-                    <span class="n">ingress</span> <span class="o">=</span> <span class="n">var_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ingress&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">obj</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">obj</span><span class="p">)</span>
+                    <span class="n">mode</span> <span class="o">=</span> <span class="n">var_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;hybrid&quot;</span><span class="p">)</span>
+                    <span class="n">condition</span> <span class="o">=</span> <span class="n">var_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;condition&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">True</span><span class="p">)</span>
+                    <span class="n">ingress</span> <span class="o">=</span> <span class="n">var_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ingress&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">obj</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">obj</span><span class="p">)</span>
 
                 <span class="c1"># Apply resolution if condition is met</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span>
