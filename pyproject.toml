@@ -12,7 +12,10 @@ readme = "README.md"
 requires-python = ">=3.10"
 keywords = []
 authors = []
-dependencies = []
+dependencies = [
+    "dol>=0.2.0",
+    "imbed>=0.0.10",
+]
 
 [project.license]
 text = "mit"
@@ -21,6 +24,16 @@ text = "mit"
 Homepage = "https://github.com/i2mint/vd"
 
 [project.optional-dependencies]
+chromadb = [
+    "chromadb>=0.4.0",
+]
+langchain = [
+    "langchain>=0.1.0",
+    "langchain-community>=0.0.1",
+]
+all = [
+    "vd[chromadb,langchain]",
+]
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
