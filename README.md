@@ -4,6 +4,7 @@ A unified, Pythonic interface for interacting with various vector databases. The
 
 ## Features
 
+### Core Features
 - **Unified API**: Single interface for multiple vector database backends
 - **Backend Discovery**: Easy-to-use tools to find, install, and use different vector databases
 - **Pythonic Design**: Collections behave like MutableMapping (dict-like)
@@ -14,6 +15,17 @@ A unified, Pythonic interface for interacting with various vector databases. The
 - **Helpful Error Messages**: Get installation instructions when backends aren't available
 - **Type-Safe**: Full type hints and protocol-based design
 - **Well-Tested**: Comprehensive test suite with >90% coverage
+
+### Extended Features
+- **Command-Line Interface**: Full-featured CLI for common operations
+- **Configuration Management**: YAML/TOML config files with profiles and environment variables
+- **Backend Comparison**: Compare and get recommendations for backends based on your needs
+- **Import/Export**: Support for JSONL, JSON, and directory formats
+- **Migration**: Move collections between backends with progress tracking
+- **Analytics**: Collection statistics, validation, duplicate detection, outlier analysis
+- **Text Preprocessing**: Clean and chunk text with multiple strategies
+- **Health Checks**: Monitor backend health and benchmark performance
+- **Advanced Search**: Multi-query search, similarity search, reciprocal rank fusion
 
 ## Installation
 
@@ -366,16 +378,306 @@ MIT
 - **Documentation**: Coming soon
 - **PyPI**: Coming soon
 
+## Command-Line Interface
+
+`vd` includes a comprehensive CLI for common operations:
+
+```bash
+# List available backends
+vd backends
+vd backends --planned  # Include planned backends
+
+# Get installation instructions
+vd install chroma
+
+# Check backend health
+vd health memory
+
+# Export a collection
+vd export memory my_docs -o backup.jsonl
+vd export memory my_docs -o backup.json -f json
+
+# Import a collection
+vd import chroma my_docs -i backup.jsonl
+
+# View collection statistics
+vd stats memory my_docs
+vd stats memory my_docs -v  # Verbose output
+
+# Validate a collection
+vd validate memory my_docs
+
+# Migrate between backends
+vd migrate memory source_docs chroma target_docs
+
+# Benchmark search performance
+vd benchmark memory my_docs -q "test query" --queries 100
+```
+
+## Configuration Management
+
+Manage backend configurations with YAML or TOML files:
+
+```python
+import vd
+
+# Connect using a configuration file
+client = vd.connect_from_config('vd.yaml')
+
+# Use a specific profile
+client = vd.connect_from_config('vd.yaml', profile='production')
+
+# Create example configuration
+config_yaml = vd.create_example_config('yaml')
+vd.save_config(config, 'vd.yaml')
+```
+
+Example `vd.yaml`:
+```yaml
+profiles:
+  default:
+    backend: memory
+  dev:
+    backend: memory
+  prod:
+    backend: chroma
+    persist_directory: ./vector_db
+```
+
+Environment variable overrides:
+- `VD_PROFILE`: Select profile (default: 'default')
+- `VD_BACKEND`: Override backend name
+- `VD_EMBEDDING_MODEL`: Override embedding model
+
+## Backend Comparison and Recommendation
+
+Choose the right backend for your needs:
+
+```python
+import vd
+
+# Compare backends
+vd.print_comparison(['memory', 'chroma', 'pinecone'])
+
+# Get recommendations based on requirements
+vd.print_recommendation(
+    dataset_size='medium',      # small, medium, large, very_large
+    persistence_required=True,
+    cloud_required=False,
+    budget='free',              # free, low, medium, high
+    performance_priority='balanced'  # speed, scalability, balanced
+)
+
+# Get backend characteristics
+chars = vd.get_backend_characteristics()
+print(chars['chroma']['use_cases'])
+```
+
+## Import/Export
+
+Export and import collections in multiple formats:
+
+```python
+import vd
+
+# Export to JSONL (recommended for large collections)
+vd.export_collection(docs, 'backup.jsonl', format='jsonl')
+
+# Export to JSON
+vd.export_collection(docs, 'backup.json', format='json')
+
+# Export to directory (one file per document)
+vd.export_collection(docs, './backup_dir', format='directory')
+
+# Import from file
+vd.import_collection(docs, 'backup.jsonl')
+vd.import_collection(docs, 'backup.jsonl', skip_existing=True)
+```
+
+## Migration
+
+Move collections between backends:
+
+```python
+import vd
+
+# Migrate a collection
+source = source_client.get_collection('docs')
+target = target_client.create_collection('docs')
+
+stats = vd.migrate_collection(
+    source,
+    target,
+    batch_size=100,
+    preserve_vectors=True,  # Keep existing embeddings
+    progress_callback=lambda cur, tot: print(f"{cur}/{tot}")
+)
+
+# Migrate entire client (all collections)
+vd.migrate_client(
+    source_client,
+    target_client,
+    collection_names=['docs1', 'docs2']  # Optional filter
+)
+```
+
+## Collection Analytics
+
+Analyze and validate collections:
+
+```python
+import vd
+
+# Get collection statistics
+stats = vd.collection_stats(docs)
+print(f"Total: {stats['total_documents']}")
+print(f"Avg length: {stats['avg_text_length']}")
+print(f"Metadata fields: {stats['metadata_fields']}")
+
+# Metadata distribution
+dist = vd.metadata_distribution(docs, 'category')
+
+# Find duplicate or near-duplicate documents
+duplicates = vd.find_duplicates(docs, threshold=0.95)
+
+# Find outliers (dissimilar documents)
+outliers = vd.find_outliers(docs, threshold=0.3)
+
+# Sample collection
+random_sample = vd.sample_collection(docs, n=10, method='random')
+diverse_sample = vd.sample_collection(docs, n=10, method='diverse')
+
+# Validate collection integrity
+report = vd.validate_collection(docs)
+if not report['valid']:
+    for issue in report['issues']:
+        print(f"Issue: {issue}")
+```
+
+## Text Preprocessing
+
+Clean and chunk text before adding to collections:
+
+```python
+import vd
+
+# Clean text
+clean = vd.clean_text(
+    text,
+    lowercase=True,
+    remove_extra_whitespace=True,
+    remove_urls=True,
+    remove_emails=True
+)
+
+# Chunk text
+chunks = vd.chunk_text(
+    text,
+    chunk_size=500,
+    overlap=50,
+    strategy='sentences'  # chars, words, sentences, paragraphs
+)
+
+# Chunk documents with metadata preservation
+chunked_docs = vd.chunk_documents(
+    documents,
+    chunk_size=500,
+    id_template='{doc_id}_chunk_{chunk_num}',
+    preserve_metadata=True
+)
+
+# Extract metadata from text
+metadata = vd.extract_metadata(
+    text,
+    extract_title=True,
+    extract_length=True,
+    extract_word_count=True
+)
+```
+
+## Health Checks and Benchmarking
+
+Monitor and benchmark performance:
+
+```python
+import vd
+
+# Check backend health
+health = vd.health_check_backend('chroma', persist_directory='./data')
+print(f"Status: {health['status']}")
+print(f"Available: {health['available']}")
+
+# Check collection health
+health = vd.health_check_collection(docs)
+
+# Benchmark search performance
+results = vd.benchmark_search(
+    docs,
+    query="test query",
+    n_queries=100,
+    limit=10
+)
+print(f"Avg latency: {results['avg_latency']*1000:.2f}ms")
+print(f"P95: {results['p95']*1000:.2f}ms")
+print(f"Throughput: {results['queries_per_second']:.1f} queries/sec")
+
+# Benchmark insertion
+results = vd.benchmark_insert(docs, n_documents=100, batch_size=10)
+```
+
+## Advanced Search
+
+Enhanced search capabilities:
+
+```python
+import vd
+
+# Multi-query search
+results = vd.multi_query_search(
+    docs,
+    queries=["AI", "machine learning"],
+    limit=10,
+    combine='best'  # interleave, concatenate, union, best
+)
+
+# Find similar documents
+similar = vd.search_similar_to_document(
+    docs,
+    doc_id='doc1',
+    limit=10,
+    exclude_self=True
+)
+
+# Reciprocal Rank Fusion (combine multiple rankings)
+results1 = list(docs.search("query1"))
+results2 = list(docs.search("query2"))
+combined = vd.reciprocal_rank_fusion([results1, results2])
+
+# Deduplicate results
+unique = vd.deduplicate_results(results, key='id', keep='first')
+```
+
 ## Roadmap
 
+- [x] Import/Export (JSONL, JSON, directory)
+- [x] Migration between backends
+- [x] Collection analytics and validation
+- [x] Text preprocessing and chunking
+- [x] Health checks and benchmarking
+- [x] Advanced search (multi-query, RRF, similarity)
+- [x] Configuration file support (YAML, TOML)
+- [x] Backend comparison and recommendation
+- [x] Command-line interface
 - [ ] Additional backends (Pinecone, Weaviate, Qdrant, FAISS)
 - [ ] Async support
-- [ ] Multi-collection search
 - [ ] Hybrid search (vector + keyword)
-- [ ] Advanced filtering syntax
-- [ ] Performance optimizations
 - [ ] Comprehensive documentation site
 
 ## Examples
 
-See `example_usage.py` for a complete working example demonstrating all major features.
+See the demo scripts for comprehensive examples:
+- `example_usage.py` - Basic usage and core features
+- `demo_backend_discovery.py` - Backend discovery features
+- `demo_config.py` - Configuration management
+- `demo_comparison.py` - Backend comparison and recommendation
+- `demo_utilities.py` - Import/export, migration, analytics, and more
