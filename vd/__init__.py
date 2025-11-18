@@ -56,10 +56,15 @@ from vd.base import (
 )
 from vd.util import (
     connect,
+    get_backend_info,
+    get_install_instructions,
     id_and_score,
     id_only,
     id_text_score,
+    list_all_backends,
+    list_available_backends,
     list_backends,
+    print_backends_table,
     text_only,
 )
 
@@ -78,8 +83,14 @@ __all__ = [
     'SearchResult',
     # Exceptions
     'StaticIndexError',
-    # Utilities
+    # Backend discovery
     'list_backends',
+    'list_available_backends',
+    'list_all_backends',
+    'print_backends_table',
+    'get_backend_info',
+    'get_install_instructions',
+    # Egress functions
     'text_only',
     'id_only',
     'id_and_score',

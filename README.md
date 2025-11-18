@@ -5,11 +5,13 @@ A unified, Pythonic interface for interacting with various vector databases. The
 ## Features
 
 - **Unified API**: Single interface for multiple vector database backends
+- **Backend Discovery**: Easy-to-use tools to find, install, and use different vector databases
 - **Pythonic Design**: Collections behave like MutableMapping (dict-like)
 - **Flexible Document Input**: Support for strings, tuples, and Document objects
 - **Powerful Filtering**: MongoDB-style query syntax for metadata filtering
 - **Automatic Embeddings**: Seamless integration with embedding models via `imbed`
 - **Pluggable Backends**: Easy to add new vector database backends
+- **Helpful Error Messages**: Get installation instructions when backends aren't available
 - **Type-Safe**: Full type hints and protocol-based design
 - **Well-Tested**: Comprehensive test suite with >90% coverage
 
@@ -57,15 +59,54 @@ for result in results:
 - **`memory`**: In-memory storage (always available, great for testing)
 - **`chroma`**: ChromaDB (requires `pip install chromadb`)
 
-More backends coming soon!
+More backends coming soon (Pinecone, Weaviate, Qdrant, Milvus, FAISS)!
 
 ```python
-# List available backends
+# List currently registered backends
 print(vd.list_backends())
 
 # Connect to different backends
 memory_client = vd.connect('memory')
 chroma_client = vd.connect('chroma', persist_directory='./data')
+```
+
+### Backend Discovery
+
+`vd` makes it easy to discover and install vector database backends:
+
+```python
+import vd
+
+# View all backends with a nicely formatted table
+vd.print_backends_table()
+
+# List only backends that are currently available (installed)
+available = vd.list_available_backends()
+print(f"Available: {available}")
+
+# Get detailed information about a specific backend
+info = vd.get_backend_info('chroma')
+print(info['description'])
+print(info['features'])
+
+# Get installation instructions
+instructions = vd.get_install_instructions('chroma')
+print(instructions)
+
+# List ALL possible backends (including planned ones)
+all_backends = vd.list_all_backends(include_planned=True)
+```
+
+When you try to connect to a backend that's not installed, you'll get helpful error messages:
+
+```python
+>>> vd.connect('chroma')
+ValueError: Backend 'chroma' is not available.
+
+To install it:
+  pip install vd[chromadb]
+
+Or run: vd.get_install_instructions('chroma') for more details.
 ```
 
 ### Collections
