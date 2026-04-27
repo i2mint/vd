@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.health &mdash; vd 0.1.0 documentation</title>
+  <title>vd.health &mdash; vd 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/documentation_options.js?v=a58bc63e"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -78,6 +78,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../vd.html">vd</a></li>
       <li class="breadcrumb-item active">vd.health</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -136,22 +137,22 @@
 <span class="sd">    &#39;healthy&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;backend&#39;</span><span class="p">:</span> <span class="n">backend_name</span><span class="p">,</span>
-        <span class="s1">&#39;available&#39;</span><span class="p">:</span> <span class="n">_check_backend_available</span><span class="p">(</span><span class="n">backend_name</span><span class="p">),</span>
-        <span class="s1">&#39;registered&#39;</span><span class="p">:</span> <span class="n">backend_name</span> <span class="ow">in</span> <span class="n">_backend_metadata</span><span class="p">,</span>
-        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;unknown&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;details&#39;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s2">&quot;backend&quot;</span><span class="p">:</span> <span class="n">backend_name</span><span class="p">,</span>
+        <span class="s2">&quot;available&quot;</span><span class="p">:</span> <span class="n">_check_backend_available</span><span class="p">(</span><span class="n">backend_name</span><span class="p">),</span>
+        <span class="s2">&quot;registered&quot;</span><span class="p">:</span> <span class="n">backend_name</span> <span class="ow">in</span> <span class="n">_backend_metadata</span><span class="p">,</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="p">{},</span>
     <span class="p">}</span>
 
     <span class="c1"># Check if available</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">]:</span>
-        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;unavailable&#39;</span>
-        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Backend &#39;</span><span class="si">{</span><span class="n">backend_name</span><span class="si">}</span><span class="s2">&#39; is not installed&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;available&quot;</span><span class="p">]:</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;unavailable&quot;</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Backend &#39;</span><span class="si">{</span><span class="n">backend_name</span><span class="si">}</span><span class="s2">&#39; is not installed&quot;</span>
         <span class="k">if</span> <span class="n">backend_name</span> <span class="ow">in</span> <span class="n">_backend_metadata</span><span class="p">:</span>
-            <span class="n">install_cmd</span> <span class="o">=</span> <span class="n">_backend_metadata</span><span class="p">[</span><span class="n">backend_name</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pip_install&#39;</span><span class="p">)</span>
+            <span class="n">install_cmd</span> <span class="o">=</span> <span class="n">_backend_metadata</span><span class="p">[</span><span class="n">backend_name</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pip_install&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">install_cmd</span><span class="p">:</span>
-                <span class="n">result</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;. Install with: </span><span class="si">{</span><span class="n">install_cmd</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;. Install with: </span><span class="si">{</span><span class="n">install_cmd</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="c1"># Try to connect</span>
@@ -167,16 +168,16 @@
         <span class="c1"># Try basic operations</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">collections</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">list_collections</span><span class="p">())</span>
-            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;details&#39;</span><span class="p">][</span><span class="s1">&#39;collections_count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">collections</span><span class="p">)</span>
-            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;healthy&#39;</span>
-            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Backend is operational&#39;</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;details&quot;</span><span class="p">][</span><span class="s2">&quot;collections_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">collections</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;healthy&quot;</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Backend is operational&quot;</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;unhealthy&#39;</span>
-            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Backend connected but operations failed: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;unhealthy&quot;</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Backend connected but operations failed: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;unhealthy&#39;</span>
-        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Failed to connect: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;unhealthy&quot;</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Failed to connect: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="k">return</span> <span class="n">result</span></div>
 
@@ -214,13 +215,13 @@
     <span class="n">stats</span> <span class="o">=</span> <span class="n">collection_stats</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;healthy&#39;</span> <span class="k">if</span> <span class="n">validation</span><span class="p">[</span><span class="s1">&#39;valid&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="s1">&#39;issues_found&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;valid&#39;</span><span class="p">:</span> <span class="n">validation</span><span class="p">[</span><span class="s1">&#39;valid&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;total_documents&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;total_documents&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;has_vectors&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;has_vectors&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;issues&#39;</span><span class="p">:</span> <span class="n">validation</span><span class="p">[</span><span class="s1">&#39;issues&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;warnings&#39;</span><span class="p">:</span> <span class="n">validation</span><span class="p">[</span><span class="s1">&#39;warnings&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;stats&#39;</span><span class="p">:</span> <span class="n">stats</span><span class="p">,</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;healthy&quot;</span> <span class="k">if</span> <span class="n">validation</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="s2">&quot;issues_found&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">validation</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;total_documents&quot;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;total_documents&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;has_vectors&quot;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;has_vectors&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;issues&quot;</span><span class="p">:</span> <span class="n">validation</span><span class="p">[</span><span class="s2">&quot;issues&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="n">validation</span><span class="p">[</span><span class="s2">&quot;warnings&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;stats&quot;</span><span class="p">:</span> <span class="n">stats</span><span class="p">,</span>
     <span class="p">}</span></div>
 
 
@@ -288,15 +289,15 @@
         <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s1">&#39;n_queries&#39;</span><span class="p">:</span> <span class="n">n_queries</span><span class="p">,</span>
-        <span class="s1">&#39;total_time&#39;</span><span class="p">:</span> <span class="n">total_time</span><span class="p">,</span>
-        <span class="s1">&#39;avg_latency&#39;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">latencies</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">latencies</span><span class="p">),</span>
-        <span class="s1">&#39;min_latency&#39;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">latencies</span><span class="p">),</span>
-        <span class="s1">&#39;max_latency&#39;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">latencies</span><span class="p">),</span>
-        <span class="s1">&#39;p50&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">latencies_sorted</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
-        <span class="s1">&#39;p95&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">latencies_sorted</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
-        <span class="s1">&#39;p99&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">latencies_sorted</span><span class="p">,</span> <span class="mi">99</span><span class="p">),</span>
-        <span class="s1">&#39;queries_per_second&#39;</span><span class="p">:</span> <span class="n">n_queries</span> <span class="o">/</span> <span class="n">total_time</span><span class="p">,</span>
+        <span class="s2">&quot;n_queries&quot;</span><span class="p">:</span> <span class="n">n_queries</span><span class="p">,</span>
+        <span class="s2">&quot;total_time&quot;</span><span class="p">:</span> <span class="n">total_time</span><span class="p">,</span>
+        <span class="s2">&quot;avg_latency&quot;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">latencies</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">latencies</span><span class="p">),</span>
+        <span class="s2">&quot;min_latency&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">latencies</span><span class="p">),</span>
+        <span class="s2">&quot;max_latency&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">latencies</span><span class="p">),</span>
+        <span class="s2">&quot;p50&quot;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">latencies_sorted</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+        <span class="s2">&quot;p95&quot;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">latencies_sorted</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+        <span class="s2">&quot;p99&quot;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">latencies_sorted</span><span class="p">,</span> <span class="mi">99</span><span class="p">),</span>
+        <span class="s2">&quot;queries_per_second&quot;</span><span class="p">:</span> <span class="n">n_queries</span> <span class="o">/</span> <span class="n">total_time</span><span class="p">,</span>
     <span class="p">}</span></div>
 
 
@@ -345,7 +346,7 @@
         <span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
             <span class="nb">id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;bench_doc_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">[:</span><span class="n">text_length</span><span class="p">],</span>
-            <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;benchmark&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="n">i</span><span class="p">},</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;benchmark&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">},</span>
         <span class="p">)</span>
         <span class="n">test_docs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
 
@@ -366,11 +367,11 @@
     <span class="n">total_time</span> <span class="o">=</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s1">&#39;n_documents&#39;</span><span class="p">:</span> <span class="n">n_documents</span><span class="p">,</span>
-        <span class="s1">&#39;total_time&#39;</span><span class="p">:</span> <span class="n">total_time</span><span class="p">,</span>
-        <span class="s1">&#39;avg_time_per_doc&#39;</span><span class="p">:</span> <span class="n">total_time</span> <span class="o">/</span> <span class="n">n_documents</span><span class="p">,</span>
-        <span class="s1">&#39;documents_per_second&#39;</span><span class="p">:</span> <span class="n">n_documents</span> <span class="o">/</span> <span class="n">total_time</span><span class="p">,</span>
-        <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="n">batch_size</span><span class="p">,</span>
+        <span class="s2">&quot;n_documents&quot;</span><span class="p">:</span> <span class="n">n_documents</span><span class="p">,</span>
+        <span class="s2">&quot;total_time&quot;</span><span class="p">:</span> <span class="n">total_time</span><span class="p">,</span>
+        <span class="s2">&quot;avg_time_per_doc&quot;</span><span class="p">:</span> <span class="n">total_time</span> <span class="o">/</span> <span class="n">n_documents</span><span class="p">,</span>
+        <span class="s2">&quot;documents_per_second&quot;</span><span class="p">:</span> <span class="n">n_documents</span> <span class="o">/</span> <span class="n">total_time</span><span class="p">,</span>
+        <span class="s2">&quot;batch_size&quot;</span><span class="p">:</span> <span class="n">batch_size</span><span class="p">,</span>
     <span class="p">}</span></div>
 
 </pre></div>

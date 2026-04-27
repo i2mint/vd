@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.util &mdash; vd 0.1.0 documentation</title>
+  <title>vd.util &mdash; vd 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/documentation_options.js?v=a58bc63e"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -78,6 +78,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../vd.html">vd</a></li>
       <li class="breadcrumb-item active">vd.util</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -116,73 +117,106 @@
 
 <span class="c1"># Backend metadata - information about all possible backends</span>
 <span class="n">_backend_metadata</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;memory&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Memory (In-Memory)&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;In-memory storage for testing and prototyping. No persistence.&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;pip_install&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># Always available</span>
-        <span class="s1">&#39;optional_group&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s1">&#39;module_check&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># No import needed</span>
-        <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Always available&#39;</span><span class="p">,</span> <span class="s1">&#39;Fast&#39;</span><span class="p">,</span> <span class="s1">&#39;No persistence&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;limitations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Not persistent&#39;</span><span class="p">,</span> <span class="s1">&#39;Limited to RAM&#39;</span><span class="p">,</span> <span class="s1">&#39;No distributed support&#39;</span><span class="p">],</span>
+    <span class="s2">&quot;memory&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Memory (In-Memory)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;In-memory storage for testing and prototyping. No persistence.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pip_install&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># Always available</span>
+        <span class="s2">&quot;optional_group&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;module_check&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># No import needed</span>
+        <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Always available&quot;</span><span class="p">,</span> <span class="s2">&quot;Fast&quot;</span><span class="p">,</span> <span class="s2">&quot;No persistence&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;limitations&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Not persistent&quot;</span><span class="p">,</span> <span class="s2">&quot;Limited to RAM&quot;</span><span class="p">,</span> <span class="s2">&quot;No distributed support&quot;</span><span class="p">],</span>
     <span class="p">},</span>
-    <span class="s1">&#39;chroma&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;ChromaDB&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Open-source embedding database with persistence support.&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;pip_install&#39;</span><span class="p">:</span> <span class="s1">&#39;pip install vd[chromadb]&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;optional_group&#39;</span><span class="p">:</span> <span class="s1">&#39;chromadb&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;module_check&#39;</span><span class="p">:</span> <span class="s1">&#39;chromadb&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Persistent storage&#39;</span><span class="p">,</span> <span class="s1">&#39;Local or client/server&#39;</span><span class="p">,</span> <span class="s1">&#39;Active development&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;limitations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Primarily for local use&#39;</span><span class="p">,</span> <span class="s1">&#39;Limited production features&#39;</span><span class="p">],</span>
+    <span class="s2">&quot;chroma&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;ChromaDB&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Open-source embedding database with persistence support.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pip_install&quot;</span><span class="p">:</span> <span class="s2">&quot;pip install vd[chromadb]&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;optional_group&quot;</span><span class="p">:</span> <span class="s2">&quot;chromadb&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;module_check&quot;</span><span class="p">:</span> <span class="s2">&quot;chromadb&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Persistent storage&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Local or client/server&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Active development&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;limitations&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Primarily for local use&quot;</span><span class="p">,</span> <span class="s2">&quot;Limited production features&quot;</span><span class="p">],</span>
     <span class="p">},</span>
-    <span class="s1">&#39;pinecone&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Pinecone&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Managed vector database with serverless and pod-based options.&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;pip_install&#39;</span><span class="p">:</span> <span class="s1">&#39;pip install pinecone-client&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;optional_group&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s1">&#39;module_check&#39;</span><span class="p">:</span> <span class="s1">&#39;pinecone&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Fully managed&#39;</span><span class="p">,</span> <span class="s1">&#39;Serverless option&#39;</span><span class="p">,</span> <span class="s1">&#39;High performance&#39;</span><span class="p">,</span> <span class="s1">&#39;Production-ready&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;limitations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Requires API key&#39;</span><span class="p">,</span> <span class="s1">&#39;Cloud-only&#39;</span><span class="p">,</span> <span class="s1">&#39;Costs money&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;planned&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;pinecone&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Pinecone&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Managed vector database with serverless and pod-based options.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pip_install&quot;</span><span class="p">:</span> <span class="s2">&quot;pip install pinecone-client&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;optional_group&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;module_check&quot;</span><span class="p">:</span> <span class="s2">&quot;pinecone&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Fully managed&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Serverless option&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;High performance&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Production-ready&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;limitations&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Requires API key&quot;</span><span class="p">,</span> <span class="s2">&quot;Cloud-only&quot;</span><span class="p">,</span> <span class="s2">&quot;Costs money&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;planned&quot;</span><span class="p">,</span>
     <span class="p">},</span>
-    <span class="s1">&#39;weaviate&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Weaviate&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Open-source vector database with GraphQL API and hybrid search.&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;pip_install&#39;</span><span class="p">:</span> <span class="s1">&#39;pip install weaviate-client&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;optional_group&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s1">&#39;module_check&#39;</span><span class="p">:</span> <span class="s1">&#39;weaviate&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Hybrid search&#39;</span><span class="p">,</span> <span class="s1">&#39;GraphQL API&#39;</span><span class="p">,</span> <span class="s1">&#39;Self-hosted or cloud&#39;</span><span class="p">,</span> <span class="s1">&#39;Schema-first&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;limitations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Requires server&#39;</span><span class="p">,</span> <span class="s1">&#39;More complex setup&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;planned&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;weaviate&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Weaviate&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Open-source vector database with GraphQL API and hybrid search.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pip_install&quot;</span><span class="p">:</span> <span class="s2">&quot;pip install weaviate-client&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;optional_group&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;module_check&quot;</span><span class="p">:</span> <span class="s2">&quot;weaviate&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Hybrid search&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;GraphQL API&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Self-hosted or cloud&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Schema-first&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;limitations&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Requires server&quot;</span><span class="p">,</span> <span class="s2">&quot;More complex setup&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;planned&quot;</span><span class="p">,</span>
     <span class="p">},</span>
-    <span class="s1">&#39;qdrant&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Qdrant&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;High-performance vector database written in Rust.&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;pip_install&#39;</span><span class="p">:</span> <span class="s1">&#39;pip install qdrant-client&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;optional_group&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s1">&#39;module_check&#39;</span><span class="p">:</span> <span class="s1">&#39;qdrant_client&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;High performance&#39;</span><span class="p">,</span> <span class="s1">&#39;Rich filtering&#39;</span><span class="p">,</span> <span class="s1">&#39;Self-hosted or cloud&#39;</span><span class="p">,</span> <span class="s1">&#39;gRPC API&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;limitations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Requires server for persistence&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;planned&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;qdrant&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Qdrant&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;High-performance vector database written in Rust.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pip_install&quot;</span><span class="p">:</span> <span class="s2">&quot;pip install qdrant-client&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;optional_group&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;module_check&quot;</span><span class="p">:</span> <span class="s2">&quot;qdrant_client&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;High performance&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Rich filtering&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Self-hosted or cloud&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;gRPC API&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;limitations&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Requires server for persistence&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;planned&quot;</span><span class="p">,</span>
     <span class="p">},</span>
-    <span class="s1">&#39;milvus&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Milvus&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Cloud-native vector database built for scalable similarity search.&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;pip_install&#39;</span><span class="p">:</span> <span class="s1">&#39;pip install pymilvus&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;optional_group&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s1">&#39;module_check&#39;</span><span class="p">:</span> <span class="s1">&#39;pymilvus&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Highly scalable&#39;</span><span class="p">,</span> <span class="s1">&#39;Cloud-native&#39;</span><span class="p">,</span> <span class="s1">&#39;Multiple index types&#39;</span><span class="p">,</span> <span class="s1">&#39;Production-ready&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;limitations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Complex setup&#39;</span><span class="p">,</span> <span class="s1">&#39;Resource intensive&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;planned&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;milvus&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Milvus&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Cloud-native vector database built for scalable similarity search.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pip_install&quot;</span><span class="p">:</span> <span class="s2">&quot;pip install pymilvus&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;optional_group&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;module_check&quot;</span><span class="p">:</span> <span class="s2">&quot;pymilvus&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Highly scalable&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Cloud-native&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Multiple index types&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Production-ready&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;limitations&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Complex setup&quot;</span><span class="p">,</span> <span class="s2">&quot;Resource intensive&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;planned&quot;</span><span class="p">,</span>
     <span class="p">},</span>
-    <span class="s1">&#39;faiss&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;FAISS&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Facebook AI Similarity Search - library for efficient similarity search.&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;pip_install&#39;</span><span class="p">:</span> <span class="s1">&#39;pip install faiss-cpu  # or faiss-gpu&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;optional_group&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s1">&#39;module_check&#39;</span><span class="p">:</span> <span class="s1">&#39;faiss&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Very fast&#39;</span><span class="p">,</span> <span class="s1">&#39;Multiple index types&#39;</span><span class="p">,</span> <span class="s1">&#39;GPU support&#39;</span><span class="p">,</span> <span class="s1">&#39;No server needed&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;limitations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Static index (rebuild to update)&#39;</span><span class="p">,</span> <span class="s1">&#39;In-memory only&#39;</span><span class="p">,</span> <span class="s1">&#39;No metadata filtering&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;planned&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;faiss&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;FAISS&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Facebook AI Similarity Search - library for efficient similarity search.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pip_install&quot;</span><span class="p">:</span> <span class="s2">&quot;pip install faiss-cpu  # or faiss-gpu&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;optional_group&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;module_check&quot;</span><span class="p">:</span> <span class="s2">&quot;faiss&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Very fast&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Multiple index types&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;GPU support&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;No server needed&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;limitations&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Static index (rebuild to update)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;In-memory only&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;No metadata filtering&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;planned&quot;</span><span class="p">,</span>
     <span class="p">},</span>
 <span class="p">}</span>
 
@@ -250,16 +284,18 @@
             <span class="n">info</span> <span class="o">=</span> <span class="n">_backend_metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Backend &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; is not available.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
-            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;planned&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;planned&quot;</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;This backend is planned but not yet implemented.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="k">elif</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pip_install&#39;</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pip_install&quot;</span><span class="p">):</span>
                 <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;To install it:</span><span class="se">\n</span><span class="s2">  </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;pip_install&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-                <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Or run: vd.get_install_instructions(&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;) for more details.&quot;</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Or run: vd.get_install_instructions(&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;) for more details.&quot;</span>
+                <span class="p">)</span>
 
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c1"># Unknown backend entirely</span>
-        <span class="n">available</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_backends</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="ow">or</span> <span class="s1">&#39;none&#39;</span>
+        <span class="n">available</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_backends</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="ow">or</span> <span class="s2">&quot;none&quot;</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Unknown backend &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;Available backends: </span><span class="si">{</span><span class="n">available</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -308,7 +344,7 @@
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">metadata</span> <span class="o">=</span> <span class="n">_backend_metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-    <span class="n">module_check</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;module_check&#39;</span><span class="p">)</span>
+    <span class="n">module_check</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_check&quot;</span><span class="p">)</span>
 
     <span class="c1"># Memory backend is always available</span>
     <span class="k">if</span> <span class="n">module_check</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -370,13 +406,13 @@
     <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">metadata</span> <span class="ow">in</span> <span class="n">_backend_metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="c1"># Skip planned backends if not requested</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">include_planned</span> <span class="ow">and</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;planned&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">include_planned</span> <span class="ow">and</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;planned&quot;</span><span class="p">:</span>
             <span class="k">continue</span>
 
         <span class="c1"># Add availability status</span>
         <span class="n">info</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_check_backend_available</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;registered&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_backends</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;available&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_check_backend_available</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;registered&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_backends</span>
         <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span>
 
     <span class="k">return</span> <span class="n">result</span></div>
@@ -413,14 +449,12 @@
 <span class="sd">    &#39;pip install vd[chromadb]&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_backend_metadata</span><span class="p">:</span>
-        <span class="n">available</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_backend_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Unknown backend &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;. Known backends: </span><span class="si">{</span><span class="n">available</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
+        <span class="n">available</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_backend_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown backend &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;. Known backends: </span><span class="si">{</span><span class="n">available</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="n">info</span> <span class="o">=</span> <span class="n">_backend_metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">info</span><span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_check_backend_available</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">info</span><span class="p">[</span><span class="s1">&#39;registered&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_backends</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;available&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_check_backend_available</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;registered&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_backends</span>
 
     <span class="k">return</span> <span class="n">info</span></div>
 
@@ -458,17 +492,17 @@
     <span class="nb">print</span><span class="p">()</span>
 
     <span class="c1"># Group by availability</span>
-    <span class="n">available</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">backends</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">]}</span>
-    <span class="n">unavailable</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">backends</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">]}</span>
+    <span class="n">available</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">backends</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;available&quot;</span><span class="p">]}</span>
+    <span class="n">unavailable</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">backends</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;available&quot;</span><span class="p">]}</span>
 
     <span class="k">if</span> <span class="n">available</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✓ AVAILABLE (Ready to use):&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">available</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot; [PLANNED]&quot;</span> <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;planned&#39;</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot; [PLANNED]&quot;</span> <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;planned&quot;</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  • </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">12</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Features: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">][:</span><span class="mi">3</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">()</span>
 
@@ -476,12 +510,16 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✗ NOT INSTALLED (Installation required):&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">unavailable</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot; [PLANNED - Not yet implemented]&quot;</span> <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;planned&#39;</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot; [PLANNED - Not yet implemented]&quot;</span>
+                <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;planned&quot;</span>
+                <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  • </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">12</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;pip_install&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;pip_install&quot;</span><span class="p">]:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Install: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;pip_install&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Features: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">][:</span><span class="mi">3</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">()</span>
 
@@ -526,7 +564,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">info</span> <span class="o">=</span> <span class="n">get_backend_info</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;available&quot;</span><span class="p">]:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Backend &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; is already installed and ready to use!&quot;</span>
 
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
@@ -534,42 +572,52 @@
         <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
-    <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;planned&#39;</span><span class="p">:</span>
-        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
-            <span class="s2">&quot;Status: PLANNED - Not yet implemented&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;This backend is planned for future development.&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;Description: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Once implemented, installation will be:&quot;</span><span class="p">,</span>
-        <span class="p">])</span>
+    <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;planned&quot;</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;Status: PLANNED - Not yet implemented&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;This backend is planned for future development.&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Description: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Once implemented, installation will be:&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;pip_install&#39;</span><span class="p">]:</span>
-        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
-            <span class="s2">&quot;Installation:&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;pip_install&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;pip_install&quot;</span><span class="p">]:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;Installation:&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;pip_install&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="s2">&quot;Description:&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="p">])</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
 
-    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
-        <span class="s2">&quot;Description:&quot;</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="p">])</span>
-
-    <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;features&#39;</span><span class="p">):</span>
-        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
-            <span class="s2">&quot;Features:&quot;</span><span class="p">,</span>
-        <span class="p">])</span>
-        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">):</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;Features:&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]:</span>
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  • </span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;limitations&#39;</span><span class="p">):</span>
-        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
-            <span class="s2">&quot;Limitations:&quot;</span><span class="p">,</span>
-        <span class="p">])</span>
-        <span class="k">for</span> <span class="n">limitation</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;limitations&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;limitations&quot;</span><span class="p">):</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;Limitations:&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">limitation</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;limitations&quot;</span><span class="p">]:</span>
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  • </span><span class="si">{</span><span class="n">limitation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
@@ -749,7 +797,7 @@
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_generate_id</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;doc&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_generate_id</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;doc&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate a unique ID for a document based on its text.</span>
 
@@ -804,7 +852,7 @@
 <span class="sd">    &gt;&gt;&gt; text_only(result)</span>
 <span class="sd">    &#39;Hello&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span></div>
 
 
 
@@ -830,7 +878,7 @@
 <span class="sd">    &gt;&gt;&gt; id_only(result)</span>
 <span class="sd">    &#39;doc1&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span></div>
 
 
 
@@ -856,7 +904,7 @@
 <span class="sd">    &gt;&gt;&gt; id_and_score(result)</span>
 <span class="sd">    (&#39;doc1&#39;, 0.9)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span></div>
 
 
 
@@ -882,7 +930,7 @@
 <span class="sd">    &gt;&gt;&gt; id_text_score(result)</span>
 <span class="sd">    (&#39;doc1&#39;, &#39;Hello&#39;, 0.9)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span></div>
 
 
 

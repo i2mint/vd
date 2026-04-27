@@ -1,0 +1,351 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vd &mdash; vd 0.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=a58bc63e"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            vd
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd.html">vd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/base.html">vd.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/cli.html">vd.cli</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/compare.html">vd.compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/health.html">vd.health</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/io.html">vd.io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/search.html">vd.search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/text.html">vd.text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/util.html">vd.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">vd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">vd</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vd</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">VectorDB facades - A unified interface for vector databases.</span>
+
+<span class="sd">The `vd` package provides a consistent, Pythonic API for interacting with</span>
+<span class="sd">various vector databases. It abstracts away the specifics of each database&#39;s</span>
+<span class="sd">API to offer a database-agnostic interface for semantic search operations.</span>
+
+<span class="sd">Key Components</span>
+<span class="sd">--------------</span>
+<span class="sd">- connect(): Factory function to create database clients</span>
+<span class="sd">- Document: Standardized document representation</span>
+<span class="sd">- Collection: MutableMapping interface for document collections</span>
+<span class="sd">- Client: Protocol for database connections</span>
+
+<span class="sd">Examples</span>
+<span class="sd">--------</span>
+<span class="sd">&gt;&gt;&gt; import vd</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt; # Connect to a backend</span>
+<span class="sd">&gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt; # Create a collection</span>
+<span class="sd">&gt;&gt;&gt; docs = client.create_collection(&#39;my_docs&#39;)  # doctest: +SKIP</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt; # Add documents (dict-like syntax)</span>
+<span class="sd">&gt;&gt;&gt; docs[&#39;doc1&#39;] = &quot;This is a test document&quot;  # doctest: +SKIP</span>
+<span class="sd">&gt;&gt;&gt; docs[&#39;doc2&#39;] = (&quot;Another document&quot;, {&#39;category&#39;: &#39;test&#39;})  # doctest: +SKIP</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt; # Search</span>
+<span class="sd">&gt;&gt;&gt; results = docs.search(&quot;test query&quot;, limit=5)  # doctest: +SKIP</span>
+<span class="sd">&gt;&gt;&gt; for result in results:  # doctest: +SKIP</span>
+<span class="sd">...     print(result[&#39;id&#39;], result[&#39;score&#39;])</span>
+
+<span class="sd">Available Backends</span>
+<span class="sd">------------------</span>
+<span class="sd">- &#39;memory&#39;: In-memory storage (always available)</span>
+<span class="sd">- &#39;chroma&#39;: ChromaDB (requires: pip install chromadb)</span>
+
+<span class="sd">To list all available backends:</span>
+<span class="sd">&gt;&gt;&gt; vd.list_backends()  # doctest: +SKIP</span>
+<span class="sd">[&#39;memory&#39;, &#39;chroma&#39;]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span> <span class="k">as</span> <span class="n">_Path</span>
+
+
+<div class="viewcode-block" id="skills_dir">
+<a class="viewcode-back" href="../module_docs/vd.html#vd.skills_dir">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">skills_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">_Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the path to the bundled AI-agent skills directory.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span> <span class="o">/</span> <span class="s2">&quot;skills&quot;</span></div>
+
+
+
+<span class="c1"># Import backends to trigger registration</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">vd.backends</span>  <span class="c1"># noqa: F401</span>
+
+<span class="c1"># Public API</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Client</span><span class="p">,</span>
+    <span class="n">Collection</span><span class="p">,</span>
+    <span class="n">Document</span><span class="p">,</span>
+    <span class="n">Filter</span><span class="p">,</span>
+    <span class="n">SearchResult</span><span class="p">,</span>
+    <span class="n">StaticIndexError</span><span class="p">,</span>
+    <span class="n">Vector</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.util</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">connect</span><span class="p">,</span>
+    <span class="n">get_backend_info</span><span class="p">,</span>
+    <span class="n">get_install_instructions</span><span class="p">,</span>
+    <span class="n">id_and_score</span><span class="p">,</span>
+    <span class="n">id_only</span><span class="p">,</span>
+    <span class="n">id_text_score</span><span class="p">,</span>
+    <span class="n">list_all_backends</span><span class="p">,</span>
+    <span class="n">list_available_backends</span><span class="p">,</span>
+    <span class="n">list_backends</span><span class="p">,</span>
+    <span class="n">print_backends_table</span><span class="p">,</span>
+    <span class="n">text_only</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Import/Export utilities</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.io</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">export_collection</span><span class="p">,</span>
+    <span class="n">export_to_directory</span><span class="p">,</span>
+    <span class="n">export_to_json</span><span class="p">,</span>
+    <span class="n">export_to_jsonl</span><span class="p">,</span>
+    <span class="n">import_collection</span><span class="p">,</span>
+    <span class="n">import_from_directory</span><span class="p">,</span>
+    <span class="n">import_from_json</span><span class="p">,</span>
+    <span class="n">import_from_jsonl</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Migration utilities</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.migration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">copy_collection</span><span class="p">,</span>
+    <span class="n">migrate_client</span><span class="p">,</span>
+    <span class="n">migrate_collection</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Analytics utilities</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.analytics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">collection_stats</span><span class="p">,</span>
+    <span class="n">find_duplicates</span><span class="p">,</span>
+    <span class="n">find_outliers</span><span class="p">,</span>
+    <span class="n">metadata_distribution</span><span class="p">,</span>
+    <span class="n">sample_collection</span><span class="p">,</span>
+    <span class="n">validate_collection</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Text preprocessing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.text</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">chunk_documents</span><span class="p">,</span>
+    <span class="n">chunk_text</span><span class="p">,</span>
+    <span class="n">clean_text</span><span class="p">,</span>
+    <span class="n">extract_metadata</span><span class="p">,</span>
+    <span class="n">normalize_whitespace</span><span class="p">,</span>
+    <span class="n">truncate_text</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Health checks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.health</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">benchmark_insert</span><span class="p">,</span>
+    <span class="n">benchmark_search</span><span class="p">,</span>
+    <span class="n">health_check_backend</span><span class="p">,</span>
+    <span class="n">health_check_collection</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Advanced search</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.search</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">deduplicate_results</span><span class="p">,</span>
+    <span class="n">multi_query_search</span><span class="p">,</span>
+    <span class="n">reciprocal_rank_fusion</span><span class="p">,</span>
+    <span class="n">search_similar_to_document</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Configuration management</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.config</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">connect_from_config</span><span class="p">,</span>
+    <span class="n">create_example_config</span><span class="p">,</span>
+    <span class="n">load_config</span><span class="p">,</span>
+    <span class="n">save_config</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Backend comparison and recommendation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.compare</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compare_backends</span><span class="p">,</span>
+    <span class="n">get_backend_characteristics</span><span class="p">,</span>
+    <span class="n">print_comparison</span><span class="p">,</span>
+    <span class="n">print_recommendation</span><span class="p">,</span>
+    <span class="n">recommend_backend</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.1.0&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># Skills (AI agent integration)</span>
+    <span class="s1">&#39;skills_dir&#39;</span><span class="p">,</span>
+    <span class="c1"># Main entry point</span>
+    <span class="s2">&quot;connect&quot;</span><span class="p">,</span>
+    <span class="c1"># Core types</span>
+    <span class="s2">&quot;Document&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Client&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Collection&quot;</span><span class="p">,</span>
+    <span class="c1"># Type aliases</span>
+    <span class="s2">&quot;Vector&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Filter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SearchResult&quot;</span><span class="p">,</span>
+    <span class="c1"># Exceptions</span>
+    <span class="s2">&quot;StaticIndexError&quot;</span><span class="p">,</span>
+    <span class="c1"># Backend discovery</span>
+    <span class="s2">&quot;list_backends&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;list_available_backends&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;list_all_backends&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;print_backends_table&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_backend_info&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_install_instructions&quot;</span><span class="p">,</span>
+    <span class="c1"># Egress functions</span>
+    <span class="s2">&quot;text_only&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;id_only&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;id_and_score&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;id_text_score&quot;</span><span class="p">,</span>
+    <span class="c1"># Import/Export</span>
+    <span class="s2">&quot;export_collection&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;import_collection&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;export_to_jsonl&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;import_from_jsonl&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;export_to_json&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;import_from_json&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;export_to_directory&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;import_from_directory&quot;</span><span class="p">,</span>
+    <span class="c1"># Migration</span>
+    <span class="s2">&quot;migrate_collection&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;migrate_client&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;copy_collection&quot;</span><span class="p">,</span>
+    <span class="c1"># Analytics</span>
+    <span class="s2">&quot;collection_stats&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;metadata_distribution&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;find_duplicates&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;find_outliers&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sample_collection&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;validate_collection&quot;</span><span class="p">,</span>
+    <span class="c1"># Text preprocessing</span>
+    <span class="s2">&quot;chunk_text&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;chunk_documents&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;clean_text&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;normalize_whitespace&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;truncate_text&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;extract_metadata&quot;</span><span class="p">,</span>
+    <span class="c1"># Health checks</span>
+    <span class="s2">&quot;health_check_backend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;health_check_collection&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;benchmark_search&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;benchmark_insert&quot;</span><span class="p">,</span>
+    <span class="c1"># Advanced search</span>
+    <span class="s2">&quot;multi_query_search&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;search_similar_to_document&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;reciprocal_rank_fusion&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;deduplicate_results&quot;</span><span class="p">,</span>
+    <span class="c1"># Configuration</span>
+    <span class="s2">&quot;load_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;save_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;connect_from_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;create_example_config&quot;</span><span class="p">,</span>
+    <span class="c1"># Backend comparison</span>
+    <span class="s2">&quot;compare_backends&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;print_comparison&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;recommend_backend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;print_recommendation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_backend_characteristics&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.compare &mdash; vd 0.1.0 documentation</title>
+  <title>vd.compare &mdash; vd 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/documentation_options.js?v=a58bc63e"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -78,6 +78,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../vd.html">vd</a></li>
       <li class="breadcrumb-item active">vd.compare</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -141,101 +142,103 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">info</span> <span class="o">=</span> <span class="n">get_backend_info</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
             <span class="n">backend_data</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s1">&#39;available&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">],</span>
-                <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">],</span>
-                <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">],</span>
+                <span class="s2">&quot;available&quot;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;available&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">],</span>
             <span class="p">}</span>
 
             <span class="c1"># Add backend-specific characteristics</span>
-            <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;memory&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;memory&quot;</span><span class="p">:</span>
                 <span class="n">backend_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                     <span class="p">{</span>
-                        <span class="s1">&#39;scalability&#39;</span><span class="p">:</span> <span class="s1">&#39;Small datasets only&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;persistence&#39;</span><span class="p">:</span> <span class="s1">&#39;No (in-memory only)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cloud_support&#39;</span><span class="p">:</span> <span class="s1">&#39;No&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;local_support&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cost&#39;</span><span class="p">:</span> <span class="s1">&#39;Free&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;performance&#39;</span><span class="p">:</span> <span class="s1">&#39;Fast for small datasets&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;best_for&#39;</span><span class="p">:</span> <span class="s1">&#39;Prototyping, testing, small datasets&#39;</span><span class="p">,</span>
+                        <span class="s2">&quot;scalability&quot;</span><span class="p">:</span> <span class="s2">&quot;Small datasets only&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;persistence&quot;</span><span class="p">:</span> <span class="s2">&quot;No (in-memory only)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;cloud_support&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;local_support&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;cost&quot;</span><span class="p">:</span> <span class="s2">&quot;Free&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;performance&quot;</span><span class="p">:</span> <span class="s2">&quot;Fast for small datasets&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;best_for&quot;</span><span class="p">:</span> <span class="s2">&quot;Prototyping, testing, small datasets&quot;</span><span class="p">,</span>
                     <span class="p">}</span>
                 <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;chroma&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;chroma&quot;</span><span class="p">:</span>
                 <span class="n">backend_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                     <span class="p">{</span>
-                        <span class="s1">&#39;scalability&#39;</span><span class="p">:</span> <span class="s1">&#39;Medium (up to millions of vectors)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;persistence&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes (local files)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cloud_support&#39;</span><span class="p">:</span> <span class="s1">&#39;Limited&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;local_support&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cost&#39;</span><span class="p">:</span> <span class="s1">&#39;Free (open source)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;performance&#39;</span><span class="p">:</span> <span class="s1">&#39;Good for medium datasets&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;best_for&#39;</span><span class="p">:</span> <span class="s1">&#39;Local development, medium datasets&#39;</span><span class="p">,</span>
+                        <span class="s2">&quot;scalability&quot;</span><span class="p">:</span> <span class="s2">&quot;Medium (up to millions of vectors)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;persistence&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes (local files)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;cloud_support&quot;</span><span class="p">:</span> <span class="s2">&quot;Limited&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;local_support&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;cost&quot;</span><span class="p">:</span> <span class="s2">&quot;Free (open source)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;performance&quot;</span><span class="p">:</span> <span class="s2">&quot;Good for medium datasets&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;best_for&quot;</span><span class="p">:</span> <span class="s2">&quot;Local development, medium datasets&quot;</span><span class="p">,</span>
                     <span class="p">}</span>
                 <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;pinecone&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;pinecone&quot;</span><span class="p">:</span>
                 <span class="n">backend_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                     <span class="p">{</span>
-                        <span class="s1">&#39;scalability&#39;</span><span class="p">:</span> <span class="s1">&#39;Very high (billions of vectors)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;persistence&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes (cloud)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cloud_support&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes (managed service)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;local_support&#39;</span><span class="p">:</span> <span class="s1">&#39;No&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cost&#39;</span><span class="p">:</span> <span class="s1">&#39;Paid (with free tier)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;performance&#39;</span><span class="p">:</span> <span class="s1">&#39;Excellent at scale&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;best_for&#39;</span><span class="p">:</span> <span class="s1">&#39;Production, large-scale applications&#39;</span><span class="p">,</span>
+                        <span class="s2">&quot;scalability&quot;</span><span class="p">:</span> <span class="s2">&quot;Very high (billions of vectors)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;persistence&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes (cloud)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;cloud_support&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes (managed service)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;local_support&quot;</span><span class="p">:</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;cost&quot;</span><span class="p">:</span> <span class="s2">&quot;Paid (with free tier)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;performance&quot;</span><span class="p">:</span> <span class="s2">&quot;Excellent at scale&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;best_for&quot;</span><span class="p">:</span> <span class="s2">&quot;Production, large-scale applications&quot;</span><span class="p">,</span>
                     <span class="p">}</span>
                 <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;weaviate&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;weaviate&quot;</span><span class="p">:</span>
                 <span class="n">backend_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                     <span class="p">{</span>
-                        <span class="s1">&#39;scalability&#39;</span><span class="p">:</span> <span class="s1">&#39;High (billions of vectors)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;persistence&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes (cloud or self-hosted)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cloud_support&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes (managed or self-hosted)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;local_support&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes (Docker)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cost&#39;</span><span class="p">:</span> <span class="s1">&#39;Free (open source) or paid (cloud)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;performance&#39;</span><span class="p">:</span> <span class="s1">&#39;Excellent&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;best_for&#39;</span><span class="p">:</span> <span class="s1">&#39;Production, semantic search, GraphQL&#39;</span><span class="p">,</span>
+                        <span class="s2">&quot;scalability&quot;</span><span class="p">:</span> <span class="s2">&quot;High (billions of vectors)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;persistence&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes (cloud or self-hosted)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;cloud_support&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes (managed or self-hosted)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;local_support&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes (Docker)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;cost&quot;</span><span class="p">:</span> <span class="s2">&quot;Free (open source) or paid (cloud)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;performance&quot;</span><span class="p">:</span> <span class="s2">&quot;Excellent&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;best_for&quot;</span><span class="p">:</span> <span class="s2">&quot;Production, semantic search, GraphQL&quot;</span><span class="p">,</span>
                     <span class="p">}</span>
                 <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;qdrant&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;qdrant&quot;</span><span class="p">:</span>
                 <span class="n">backend_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                     <span class="p">{</span>
-                        <span class="s1">&#39;scalability&#39;</span><span class="p">:</span> <span class="s1">&#39;High (billions of vectors)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;persistence&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes (local or cloud)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cloud_support&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes (managed or self-hosted)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;local_support&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cost&#39;</span><span class="p">:</span> <span class="s1">&#39;Free (open source) or paid (cloud)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;performance&#39;</span><span class="p">:</span> <span class="s1">&#39;Excellent&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;best_for&#39;</span><span class="p">:</span> <span class="s1">&#39;Production, filtering-heavy workloads&#39;</span><span class="p">,</span>
+                        <span class="s2">&quot;scalability&quot;</span><span class="p">:</span> <span class="s2">&quot;High (billions of vectors)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;persistence&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes (local or cloud)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;cloud_support&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes (managed or self-hosted)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;local_support&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;cost&quot;</span><span class="p">:</span> <span class="s2">&quot;Free (open source) or paid (cloud)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;performance&quot;</span><span class="p">:</span> <span class="s2">&quot;Excellent&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;best_for&quot;</span><span class="p">:</span> <span class="s2">&quot;Production, filtering-heavy workloads&quot;</span><span class="p">,</span>
                     <span class="p">}</span>
                 <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;milvus&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;milvus&quot;</span><span class="p">:</span>
                 <span class="n">backend_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                     <span class="p">{</span>
-                        <span class="s1">&#39;scalability&#39;</span><span class="p">:</span> <span class="s1">&#39;Very high (billions of vectors)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;persistence&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes (distributed storage)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cloud_support&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes (managed or self-hosted)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;local_support&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes (Docker)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cost&#39;</span><span class="p">:</span> <span class="s1">&#39;Free (open source) or paid (cloud)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;performance&#39;</span><span class="p">:</span> <span class="s1">&#39;Excellent at large scale&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;best_for&#39;</span><span class="p">:</span> <span class="s1">&#39;Enterprise, very large datasets&#39;</span><span class="p">,</span>
+                        <span class="s2">&quot;scalability&quot;</span><span class="p">:</span> <span class="s2">&quot;Very high (billions of vectors)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;persistence&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes (distributed storage)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;cloud_support&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes (managed or self-hosted)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;local_support&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes (Docker)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;cost&quot;</span><span class="p">:</span> <span class="s2">&quot;Free (open source) or paid (cloud)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;performance&quot;</span><span class="p">:</span> <span class="s2">&quot;Excellent at large scale&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;best_for&quot;</span><span class="p">:</span> <span class="s2">&quot;Enterprise, very large datasets&quot;</span><span class="p">,</span>
                     <span class="p">}</span>
                 <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;faiss&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;faiss&quot;</span><span class="p">:</span>
                 <span class="n">backend_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                     <span class="p">{</span>
-                        <span class="s1">&#39;scalability&#39;</span><span class="p">:</span> <span class="s1">&#39;High (in-memory)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;persistence&#39;</span><span class="p">:</span> <span class="s1">&#39;Manual (save/load indexes)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cloud_support&#39;</span><span class="p">:</span> <span class="s1">&#39;No (library)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;local_support&#39;</span><span class="p">:</span> <span class="s1">&#39;Yes&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;cost&#39;</span><span class="p">:</span> <span class="s1">&#39;Free (open source)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;performance&#39;</span><span class="p">:</span> <span class="s1">&#39;Excellent (optimized)&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;best_for&#39;</span><span class="p">:</span> <span class="s1">&#39;Research, custom implementations&#39;</span><span class="p">,</span>
+                        <span class="s2">&quot;scalability&quot;</span><span class="p">:</span> <span class="s2">&quot;High (in-memory)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;persistence&quot;</span><span class="p">:</span> <span class="s2">&quot;Manual (save/load indexes)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;cloud_support&quot;</span><span class="p">:</span> <span class="s2">&quot;No (library)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;local_support&quot;</span><span class="p">:</span> <span class="s2">&quot;Yes&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;cost&quot;</span><span class="p">:</span> <span class="s2">&quot;Free (open source)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;performance&quot;</span><span class="p">:</span> <span class="s2">&quot;Excellent (optimized)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;best_for&quot;</span><span class="p">:</span> <span class="s2">&quot;Research, custom implementations&quot;</span><span class="p">,</span>
                     <span class="p">}</span>
                 <span class="p">)</span>
 
             <span class="c1"># Filter by criteria if specified</span>
             <span class="k">if</span> <span class="n">criteria</span><span class="p">:</span>
                 <span class="n">backend_data</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">backend_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">criteria</span> <span class="ow">or</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">]</span>
+                    <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">backend_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">criteria</span> <span class="ow">or</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;available&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">]</span>
                 <span class="p">}</span>
 
             <span class="n">comparison</span><span class="p">[</span><span class="n">backend</span><span class="p">]</span> <span class="o">=</span> <span class="n">backend_data</span>
@@ -281,14 +284,14 @@
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">backend</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">comparison</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;✓ AVAILABLE&quot;</span> <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="s2">&quot;✗ NOT AVAILABLE&quot;</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;✓ AVAILABLE&quot;</span> <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;available&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="s2">&quot;✗ NOT AVAILABLE&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">backend</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;available&quot;</span><span class="p">]:</span>
                 <span class="c1"># Format key nicely</span>
-                <span class="n">display_key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+                <span class="n">display_key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">display_key</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span></div>
@@ -299,11 +302,11 @@
 <a class="viewcode-back" href="../../module_docs/vd/compare.html#vd.recommend_backend">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">recommend_backend</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">dataset_size</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;small&#39;</span><span class="p">,</span>
+    <span class="n">dataset_size</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;small&quot;</span><span class="p">,</span>
     <span class="n">persistence_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">cloud_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">budget</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;free&#39;</span><span class="p">,</span>
-    <span class="n">performance_priority</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;balanced&#39;</span><span class="p">,</span>
+    <span class="n">budget</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;free&quot;</span><span class="p">,</span>
+    <span class="n">performance_priority</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;balanced&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Recommend backends based on requirements.</span>
@@ -340,111 +343,113 @@
 <span class="sd">    &gt;&gt;&gt; print(rec[&#39;reasoning&#39;])  # doctest: +SKIP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">recommendations</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;primary&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s1">&#39;alternatives&#39;</span><span class="p">:</span> <span class="p">[],</span>
-        <span class="s1">&#39;reasoning&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;primary&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;alternatives&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;reasoning&quot;</span><span class="p">:</span> <span class="p">[],</span>
     <span class="p">}</span>
 
     <span class="c1"># Get available backends</span>
     <span class="n">available</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">list_available_backends</span><span class="p">())</span>
 
     <span class="c1"># Decision logic</span>
-    <span class="k">if</span> <span class="n">dataset_size</span> <span class="o">==</span> <span class="s1">&#39;small&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">dataset_size</span> <span class="o">==</span> <span class="s2">&quot;small&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">persistence_required</span><span class="p">:</span>
-            <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;memory&#39;</span>
-            <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;reasoning&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;memory&quot;</span>
+            <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;reasoning&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="s2">&quot;Memory backend is perfect for small datasets without persistence needs&quot;</span>
             <span class="p">)</span>
-            <span class="k">if</span> <span class="s1">&#39;chroma&#39;</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;chroma&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;chroma&quot;</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;chroma&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s1">&#39;chroma&#39;</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;chroma&#39;</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;reasoning&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="k">if</span> <span class="s2">&quot;chroma&quot;</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;chroma&quot;</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;reasoning&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="s2">&quot;ChromaDB provides persistence for small to medium datasets&quot;</span>
                 <span class="p">)</span>
-            <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span>
+            <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;memory&quot;</span><span class="p">)</span>
 
-    <span class="k">elif</span> <span class="n">dataset_size</span> <span class="o">==</span> <span class="s1">&#39;medium&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">budget</span> <span class="o">==</span> <span class="s1">&#39;free&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s1">&#39;chroma&#39;</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;chroma&#39;</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;reasoning&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+    <span class="k">elif</span> <span class="n">dataset_size</span> <span class="o">==</span> <span class="s2">&quot;medium&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">budget</span> <span class="o">==</span> <span class="s2">&quot;free&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;chroma&quot;</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;chroma&quot;</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;reasoning&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="s2">&quot;ChromaDB is free and handles medium datasets well&quot;</span>
                 <span class="p">)</span>
-            <span class="k">if</span> <span class="s1">&#39;qdrant&#39;</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;qdrant&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s1">&#39;weaviate&#39;</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;weaviate&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;qdrant&quot;</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;qdrant&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;weaviate&quot;</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;weaviate&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">cloud_required</span><span class="p">:</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;pinecone&#39;</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;reasoning&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pinecone&quot;</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;reasoning&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="s2">&quot;Pinecone offers managed cloud service for medium datasets&quot;</span>
                 <span class="p">)</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;weaviate&#39;</span><span class="p">,</span> <span class="s1">&#39;qdrant&#39;</span><span class="p">])</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;weaviate&quot;</span><span class="p">,</span> <span class="s2">&quot;qdrant&quot;</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="s1">&#39;qdrant&#39;</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
-                    <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;qdrant&#39;</span>
-                <span class="k">elif</span> <span class="s1">&#39;chroma&#39;</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
-                    <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;chroma&#39;</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;weaviate&#39;</span><span class="p">,</span> <span class="s1">&#39;faiss&#39;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="s2">&quot;qdrant&quot;</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
+                    <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;qdrant&quot;</span>
+                <span class="k">elif</span> <span class="s2">&quot;chroma&quot;</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
+                    <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;chroma&quot;</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;weaviate&quot;</span><span class="p">,</span> <span class="s2">&quot;faiss&quot;</span><span class="p">])</span>
 
-    <span class="k">elif</span> <span class="n">dataset_size</span> <span class="o">==</span> <span class="s1">&#39;large&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">dataset_size</span> <span class="o">==</span> <span class="s2">&quot;large&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">cloud_required</span><span class="p">:</span>
-            <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;pinecone&#39;</span>
-            <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;reasoning&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pinecone&quot;</span>
+            <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;reasoning&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="s2">&quot;Pinecone scales well for large datasets with managed service&quot;</span>
             <span class="p">)</span>
-            <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;weaviate&#39;</span><span class="p">,</span> <span class="s1">&#39;qdrant&#39;</span><span class="p">,</span> <span class="s1">&#39;milvus&#39;</span><span class="p">])</span>
+            <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;weaviate&quot;</span><span class="p">,</span> <span class="s2">&quot;qdrant&quot;</span><span class="p">,</span> <span class="s2">&quot;milvus&quot;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">performance_priority</span> <span class="o">==</span> <span class="s1">&#39;speed&#39;</span><span class="p">:</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;faiss&#39;</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;reasoning&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="k">if</span> <span class="n">performance_priority</span> <span class="o">==</span> <span class="s2">&quot;speed&quot;</span><span class="p">:</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;faiss&quot;</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;reasoning&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="s2">&quot;FAISS provides excellent performance for large datasets&quot;</span>
                 <span class="p">)</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;qdrant&#39;</span><span class="p">,</span> <span class="s1">&#39;milvus&#39;</span><span class="p">])</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;qdrant&quot;</span><span class="p">,</span> <span class="s2">&quot;milvus&quot;</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;qdrant&#39;</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;reasoning&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;qdrant&quot;</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;reasoning&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="s2">&quot;Qdrant balances performance and features for large datasets&quot;</span>
                 <span class="p">)</span>
-                <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;milvus&#39;</span><span class="p">,</span> <span class="s1">&#39;weaviate&#39;</span><span class="p">,</span> <span class="s1">&#39;faiss&#39;</span><span class="p">])</span>
+                <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;milvus&quot;</span><span class="p">,</span> <span class="s2">&quot;weaviate&quot;</span><span class="p">,</span> <span class="s2">&quot;faiss&quot;</span><span class="p">])</span>
 
-    <span class="k">elif</span> <span class="n">dataset_size</span> <span class="o">==</span> <span class="s1">&#39;very_large&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">dataset_size</span> <span class="o">==</span> <span class="s2">&quot;very_large&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">cloud_required</span><span class="p">:</span>
-            <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;pinecone&#39;</span>
-            <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;reasoning&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pinecone&quot;</span>
+            <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;reasoning&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="s2">&quot;Pinecone handles billions of vectors with managed infrastructure&quot;</span>
             <span class="p">)</span>
-            <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;milvus&#39;</span><span class="p">,</span> <span class="s1">&#39;weaviate&#39;</span><span class="p">])</span>
+            <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;milvus&quot;</span><span class="p">,</span> <span class="s2">&quot;weaviate&quot;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;milvus&#39;</span>
-            <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;reasoning&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;milvus&quot;</span>
+            <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;reasoning&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="s2">&quot;Milvus is designed for very large scale deployments&quot;</span>
             <span class="p">)</span>
-            <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;qdrant&#39;</span><span class="p">,</span> <span class="s1">&#39;pinecone&#39;</span><span class="p">,</span> <span class="s1">&#39;weaviate&#39;</span><span class="p">])</span>
+            <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;qdrant&quot;</span><span class="p">,</span> <span class="s2">&quot;pinecone&quot;</span><span class="p">,</span> <span class="s2">&quot;weaviate&quot;</span><span class="p">])</span>
 
     <span class="c1"># Add budget reasoning</span>
-    <span class="k">if</span> <span class="n">budget</span> <span class="o">==</span> <span class="s1">&#39;free&#39;</span><span class="p">:</span>
-        <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;reasoning&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+    <span class="k">if</span> <span class="n">budget</span> <span class="o">==</span> <span class="s2">&quot;free&quot;</span><span class="p">:</span>
+        <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;reasoning&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="s2">&quot;Recommendation prioritizes free/open-source options&quot;</span>
         <span class="p">)</span>
 
     <span class="c1"># Add cloud reasoning</span>
     <span class="k">if</span> <span class="n">cloud_required</span><span class="p">:</span>
-        <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;reasoning&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;reasoning&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="s2">&quot;Recommendation includes managed cloud services&quot;</span>
         <span class="p">)</span>
 
     <span class="c1"># Filter alternatives to only available backends</span>
-    <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">available</span> <span class="ow">or</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">_backend_metadata</span>
+    <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">b</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">available</span> <span class="ow">or</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">_backend_metadata</span>
     <span class="p">]</span>
 
     <span class="c1"># Remove duplicates and primary from alternatives</span>
-    <span class="k">if</span> <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]:</span>
-        <span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">recommendations</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]:</span>
+        <span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">recommendations</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">])</span>
 
     <span class="k">return</span> <span class="n">recommendations</span></div>
 
@@ -454,11 +459,11 @@
 <a class="viewcode-back" href="../../module_docs/vd/compare.html#vd.print_recommendation">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">print_recommendation</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">dataset_size</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;small&#39;</span><span class="p">,</span>
+    <span class="n">dataset_size</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;small&quot;</span><span class="p">,</span>
     <span class="n">persistence_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">cloud_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">budget</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;free&#39;</span><span class="p">,</span>
-    <span class="n">performance_priority</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;balanced&#39;</span><span class="p">,</span>
+    <span class="n">budget</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;free&quot;</span><span class="p">,</span>
+    <span class="n">performance_priority</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;balanced&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print backend recommendation based on requirements.</span>
@@ -505,22 +510,22 @@
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;Recommended Backend:&#39;</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">&#39;No recommendation&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">rec</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">]:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Alternatives:&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">alt</span> <span class="ow">in</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">][:</span><span class="mi">5</span><span class="p">]:</span>  <span class="c1"># Show top 5</span>
+        <span class="k">for</span> <span class="n">alt</span> <span class="ow">in</span> <span class="n">rec</span><span class="p">[</span><span class="s2">&quot;alternatives&quot;</span><span class="p">][:</span><span class="mi">5</span><span class="p">]:</span>  <span class="c1"># Show top 5</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">alt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Reasoning:&quot;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">reason</span> <span class="ow">in</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;reasoning&#39;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">reason</span> <span class="ow">in</span> <span class="n">rec</span><span class="p">[</span><span class="s2">&quot;reasoning&quot;</span><span class="p">]:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  • </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Show availability info</span>
-    <span class="k">if</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">rec</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">info</span> <span class="o">=</span> <span class="n">get_backend_info</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">])</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">]:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">get_backend_info</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;available&quot;</span><span class="p">]:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">⚠ Note: </span><span class="si">{</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> is not currently installed&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="s1">&#39;install_instructions&#39;</span> <span class="ow">in</span> <span class="n">info</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;install_instructions&quot;</span> <span class="ow">in</span> <span class="n">info</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Install with: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;install_instructions&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">pass</span>
@@ -547,143 +552,143 @@
 <span class="sd">    &gt;&gt;&gt; print(chars[&#39;chroma&#39;][&#39;strengths&#39;])  # doctest: +SKIP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s1">&#39;memory&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;strengths&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Zero setup required&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Fast for small datasets&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Perfect for testing&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;No dependencies&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;memory&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;strengths&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Zero setup required&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Fast for small datasets&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Perfect for testing&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;No dependencies&quot;</span><span class="p">,</span>
             <span class="p">],</span>
-            <span class="s1">&#39;weaknesses&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;No persistence&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Limited scalability&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Data lost on restart&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Memory constrained&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;weaknesses&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;No persistence&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Limited scalability&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Data lost on restart&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Memory constrained&quot;</span><span class="p">,</span>
             <span class="p">],</span>
-            <span class="s1">&#39;use_cases&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Prototyping and experimentation&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Unit testing&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Temporary caching&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Small datasets (&lt; 10K documents)&#39;</span><span class="p">,</span>
-            <span class="p">],</span>
-        <span class="p">},</span>
-        <span class="s1">&#39;chroma&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;strengths&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Easy to use&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Good documentation&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Local persistence&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Active development&#39;</span><span class="p">,</span>
-            <span class="p">],</span>
-            <span class="s1">&#39;weaknesses&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Limited scalability&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Single-node only&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Basic filtering&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;No distributed mode&#39;</span><span class="p">,</span>
-            <span class="p">],</span>
-            <span class="s1">&#39;use_cases&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Local development&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Medium-sized datasets (10K-1M)&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;RAG applications&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Document search&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;use_cases&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Prototyping and experimentation&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Unit testing&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Temporary caching&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Small datasets (&lt; 10K documents)&quot;</span><span class="p">,</span>
             <span class="p">],</span>
         <span class="p">},</span>
-        <span class="s1">&#39;pinecone&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;strengths&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Fully managed&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Excellent scalability&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Great performance&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Simple API&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;chroma&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;strengths&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Easy to use&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Good documentation&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Local persistence&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Active development&quot;</span><span class="p">,</span>
             <span class="p">],</span>
-            <span class="s1">&#39;weaknesses&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Requires cloud account&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Costs money (after free tier)&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Vendor lock-in&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;No local deployment&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;weaknesses&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Limited scalability&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Single-node only&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Basic filtering&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;No distributed mode&quot;</span><span class="p">,</span>
             <span class="p">],</span>
-            <span class="s1">&#39;use_cases&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Production applications&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Large-scale search&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Recommendation systems&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Enterprise deployments&#39;</span><span class="p">,</span>
-            <span class="p">],</span>
-        <span class="p">},</span>
-        <span class="s1">&#39;weaviate&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;strengths&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;GraphQL interface&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Rich filtering&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Hybrid search&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Multi-modal support&#39;</span><span class="p">,</span>
-            <span class="p">],</span>
-            <span class="s1">&#39;weaknesses&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Complex setup&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Requires Docker/K8s&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Learning curve&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Resource intensive&#39;</span><span class="p">,</span>
-            <span class="p">],</span>
-            <span class="s1">&#39;use_cases&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Semantic search&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Knowledge graphs&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Multi-modal search&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Complex filtering needs&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;use_cases&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Local development&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Medium-sized datasets (10K-1M)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;RAG applications&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Document search&quot;</span><span class="p">,</span>
             <span class="p">],</span>
         <span class="p">},</span>
-        <span class="s1">&#39;qdrant&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;strengths&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Excellent filtering&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Good performance&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Rust-based (fast)&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Rich query language&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;pinecone&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;strengths&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Fully managed&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Excellent scalability&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Great performance&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Simple API&quot;</span><span class="p">,</span>
             <span class="p">],</span>
-            <span class="s1">&#39;weaknesses&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Relatively new&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Smaller community&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Requires setup&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;weaknesses&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Requires cloud account&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Costs money (after free tier)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Vendor lock-in&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;No local deployment&quot;</span><span class="p">,</span>
             <span class="p">],</span>
-            <span class="s1">&#39;use_cases&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Production applications&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Filter-heavy workloads&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;High-performance search&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Custom deployments&#39;</span><span class="p">,</span>
-            <span class="p">],</span>
-        <span class="p">},</span>
-        <span class="s1">&#39;milvus&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;strengths&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Very scalable&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Distributed architecture&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Good for billion-scale&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Enterprise features&#39;</span><span class="p">,</span>
-            <span class="p">],</span>
-            <span class="s1">&#39;weaknesses&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Complex deployment&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Resource intensive&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Steep learning curve&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Requires infrastructure&#39;</span><span class="p">,</span>
-            <span class="p">],</span>
-            <span class="s1">&#39;use_cases&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Enterprise scale&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Billion-vector datasets&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Distributed deployments&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Mission-critical applications&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;use_cases&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Production applications&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Large-scale search&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Recommendation systems&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Enterprise deployments&quot;</span><span class="p">,</span>
             <span class="p">],</span>
         <span class="p">},</span>
-        <span class="s1">&#39;faiss&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;strengths&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Excellent performance&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Highly optimized&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Research-grade&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Flexible&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;weaviate&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;strengths&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;GraphQL interface&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Rich filtering&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Hybrid search&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Multi-modal support&quot;</span><span class="p">,</span>
             <span class="p">],</span>
-            <span class="s1">&#39;weaknesses&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Low-level library&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;No built-in persistence&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Manual index management&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;No server mode&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;weaknesses&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Complex setup&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Requires Docker/K8s&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Learning curve&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Resource intensive&quot;</span><span class="p">,</span>
             <span class="p">],</span>
-            <span class="s1">&#39;use_cases&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s1">&#39;Research&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Custom implementations&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Performance-critical apps&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;Embedding exploration&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;use_cases&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Semantic search&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Knowledge graphs&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Multi-modal search&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Complex filtering needs&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;qdrant&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;strengths&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Excellent filtering&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Good performance&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Rust-based (fast)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Rich query language&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;weaknesses&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Relatively new&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Smaller community&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Requires setup&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;use_cases&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Production applications&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Filter-heavy workloads&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;High-performance search&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Custom deployments&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;milvus&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;strengths&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Very scalable&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Distributed architecture&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Good for billion-scale&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Enterprise features&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;weaknesses&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Complex deployment&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Resource intensive&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Steep learning curve&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Requires infrastructure&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;use_cases&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Enterprise scale&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Billion-vector datasets&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Distributed deployments&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Mission-critical applications&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;faiss&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;strengths&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Excellent performance&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Highly optimized&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Research-grade&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Flexible&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;weaknesses&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Low-level library&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;No built-in persistence&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Manual index management&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;No server mode&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;use_cases&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Research&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Custom implementations&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Performance-critical apps&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Embedding exploration&quot;</span><span class="p">,</span>
             <span class="p">],</span>
         <span class="p">},</span>
     <span class="p">}</span></div>
