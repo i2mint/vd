@@ -61,11 +61,11 @@ def migrate_collection(
     >>> print(f"Migrated {stats['migrated']} documents")  # doctest: +SKIP
     """
     stats = {
-        'total': len(source_collection),
-        'migrated': 0,
-        'skipped': 0,
-        'failed': 0,
-        'errors': [],
+        "total": len(source_collection),
+        "migrated": 0,
+        "skipped": 0,
+        "failed": 0,
+        "errors": [],
     }
 
     batch = []
@@ -75,10 +75,10 @@ def migrate_collection(
         try:
             # Check if should skip
             if skip_existing and doc_id in target_collection:
-                stats['skipped'] += 1
+                stats["skipped"] += 1
                 processed += 1
                 if progress_callback:
-                    progress_callback(processed, stats['total'])
+                    progress_callback(processed, stats["total"])
                 continue
 
             # Get source document
@@ -93,28 +93,28 @@ def migrate_collection(
             # Flush batch
             if len(batch) >= batch_size:
                 target_collection.add_documents(batch)
-                stats['migrated'] += len(batch)
+                stats["migrated"] += len(batch)
                 processed += len(batch)
                 batch = []
 
                 if progress_callback:
-                    progress_callback(processed, stats['total'])
+                    progress_callback(processed, stats["total"])
 
         except Exception as e:
-            stats['failed'] += 1
-            stats['errors'].append(f"Error migrating {doc_id}: {str(e)}")
+            stats["failed"] += 1
+            stats["errors"].append(f"Error migrating {doc_id}: {str(e)}")
             processed += 1
             if progress_callback:
-                progress_callback(processed, stats['total'])
+                progress_callback(processed, stats["total"])
 
     # Flush remaining
     if batch:
         try:
             target_collection.add_documents(batch)
-            stats['migrated'] += len(batch)
+            stats["migrated"] += len(batch)
         except Exception as e:
-            stats['failed'] += len(batch)
-            stats['errors'].append(f"Error in final batch: {str(e)}")
+            stats["failed"] += len(batch)
+            stats["errors"].append(f"Error in final batch: {str(e)}")
 
     return stats
 
@@ -163,13 +163,13 @@ def migrate_client(
         collection_names = list(source_client.list_collections())
 
     overall_stats = {
-        'collections_total': len(collection_names),
-        'collections_migrated': 0,
-        'collections_failed': 0,
-        'total_documents': 0,
-        'migrated_documents': 0,
-        'failed_documents': 0,
-        'errors': [],
+        "collections_total": len(collection_names),
+        "collections_migrated": 0,
+        "collections_failed": 0,
+        "total_documents": 0,
+        "migrated_documents": 0,
+        "failed_documents": 0,
+        "errors": [],
     }
 
     for coll_name in collection_names:
@@ -198,15 +198,17 @@ def migrate_client(
                 progress_callback=coll_callback,
             )
 
-            overall_stats['collections_migrated'] += 1
-            overall_stats['total_documents'] += coll_stats['total']
-            overall_stats['migrated_documents'] += coll_stats['migrated']
-            overall_stats['failed_documents'] += coll_stats['failed']
-            overall_stats['errors'].extend(coll_stats['errors'])
+            overall_stats["collections_migrated"] += 1
+            overall_stats["total_documents"] += coll_stats["total"]
+            overall_stats["migrated_documents"] += coll_stats["migrated"]
+            overall_stats["failed_documents"] += coll_stats["failed"]
+            overall_stats["errors"].extend(coll_stats["errors"])
 
         except Exception as e:
-            overall_stats['collections_failed'] += 1
-            overall_stats['errors'].append(f"Failed to migrate collection {coll_name}: {str(e)}")
+            overall_stats["collections_failed"] += 1
+            overall_stats["errors"].append(
+                f"Failed to migrate collection {coll_name}: {str(e)}"
+            )
 
     return overall_stats
 

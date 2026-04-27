@@ -35,16 +35,16 @@ def main():
     print("-" * 80)
 
     config = {
-        'profiles': {
-            'default': {
-                'backend': 'memory',
+        "profiles": {
+            "default": {
+                "backend": "memory",
             },
-            'dev': {
-                'backend': 'memory',
+            "dev": {
+                "backend": "memory",
             },
-            'prod': {
-                'backend': 'chroma',
-                'persist_directory': './production_data',
+            "prod": {
+                "backend": "chroma",
+                "persist_directory": "./production_data",
             },
         }
     }
@@ -58,7 +58,7 @@ def main():
     print("-" * 80)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        config_path = Path(tmpdir) / 'vd.yaml'
+        config_path = Path(tmpdir) / "vd.yaml"
 
         try:
             vd.save_config(config, config_path)
@@ -76,7 +76,7 @@ def main():
             print("4. Connecting using default profile:")
             print("-" * 80)
             client = vd.connect_from_config(
-                config_path, profile='default', embedding_model=mock_embedding_function
+                config_path, profile="default", embedding_model=mock_embedding_function
             )
             print(f"✓ Connected using 'default' profile")
             print()
@@ -85,7 +85,7 @@ def main():
             print("5. Connecting using dev profile:")
             print("-" * 80)
             dev_client = vd.connect_from_config(
-                config_path, profile='dev', embedding_model=mock_embedding_function
+                config_path, profile="dev", embedding_model=mock_embedding_function
             )
             print(f"✓ Connected using 'dev' profile")
             print()
@@ -93,9 +93,9 @@ def main():
             # 6. Use the connection
             print("6. Using the connection to create a collection:")
             print("-" * 80)
-            collection = dev_client.create_collection('test_docs')
-            collection['doc1'] = "This is a test document"
-            collection['doc2'] = "Another example document"
+            collection = dev_client.create_collection("test_docs")
+            collection["doc1"] = "This is a test document"
+            collection["doc2"] = "Another example document"
             print(f"✓ Created collection with {len(collection)} documents")
             print()
 
@@ -118,7 +118,7 @@ def main():
     print("8. Example YAML configuration format:")
     print("-" * 80)
     try:
-        example_yaml = vd.create_example_config('yaml')
+        example_yaml = vd.create_example_config("yaml")
         print(example_yaml)
     except ImportError:
         print("  (PyYAML not installed - install with: pip install pyyaml)")
@@ -128,7 +128,7 @@ def main():
     print("9. Example TOML configuration format:")
     print("-" * 80)
     try:
-        example_toml = vd.create_example_config('toml')
+        example_toml = vd.create_example_config("toml")
         print(example_toml)
     except ImportError:
         print("  (tomli-w not installed - install with: pip install tomli-w)")
@@ -146,5 +146,5 @@ def main():
     print("=" * 80)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -16,4 +16,4 @@ try:
 except ImportError:
     pass  # ChromaDB not installed
 
-__all__ = ['MemoryBackend']
+__all__ = ["MemoryBackend"]

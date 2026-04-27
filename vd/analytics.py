@@ -47,15 +47,15 @@ def collection_stats(collection: Collection) -> dict[str, Any]:
     """
     if len(collection) == 0:
         return {
-            'total_documents': 0,
-            'avg_text_length': 0,
-            'min_text_length': 0,
-            'max_text_length': 0,
-            'total_chars': 0,
-            'metadata_fields': set(),
-            'metadata_field_counts': {},
-            'embedding_dimension': None,
-            'has_vectors': 0,
+            "total_documents": 0,
+            "avg_text_length": 0,
+            "min_text_length": 0,
+            "max_text_length": 0,
+            "total_chars": 0,
+            "metadata_fields": set(),
+            "metadata_field_counts": {},
+            "embedding_dimension": None,
+            "has_vectors": 0,
         }
 
     text_lengths = []
@@ -85,15 +85,15 @@ def collection_stats(collection: Collection) -> dict[str, Any]:
                 embedding_dim = len(doc.vector)
 
     return {
-        'total_documents': len(collection),
-        'avg_text_length': total_chars / len(collection),
-        'min_text_length': min(text_lengths),
-        'max_text_length': max(text_lengths),
-        'total_chars': total_chars,
-        'metadata_fields': metadata_fields,
-        'metadata_field_counts': dict(metadata_field_counts),
-        'embedding_dimension': embedding_dim,
-        'has_vectors': has_vectors,
+        "total_documents": len(collection),
+        "avg_text_length": total_chars / len(collection),
+        "min_text_length": min(text_lengths),
+        "max_text_length": max(text_lengths),
+        "total_chars": total_chars,
+        "metadata_fields": metadata_fields,
+        "metadata_field_counts": dict(metadata_field_counts),
+        "embedding_dimension": embedding_dim,
+        "has_vectors": has_vectors,
     }
 
 
@@ -154,7 +154,7 @@ def find_duplicates(
     collection: Collection,
     *,
     threshold: float = 0.95,
-    method: str = 'cosine',
+    method: str = "cosine",
 ) -> list[tuple[str, str, float]]:
     """
     Find near-duplicate documents in a collection.
@@ -193,11 +193,11 @@ def find_duplicates(
         for doc_id2 in doc_ids[i + 1 :]:
             doc2 = collection[doc_id2]
 
-            if method == 'exact':
+            if method == "exact":
                 if doc1.text == doc2.text:
                     duplicates.append((doc_id1, doc_id2, 1.0))
 
-            elif method == 'cosine':
+            elif method == "cosine":
                 if doc1.vector and doc2.vector:
                     similarity = cosine_similarity(doc1.vector, doc2.vector)
                     if similarity >= threshold:
@@ -279,7 +279,7 @@ def sample_collection(
     collection: Collection,
     n: int,
     *,
-    method: str = 'random',
+    method: str = "random",
     seed: Optional[int] = None,
 ) -> list[str]:
     """
@@ -316,17 +316,17 @@ def sample_collection(
     if n >= len(doc_ids):
         return doc_ids
 
-    if method == 'first':
+    if method == "first":
         return doc_ids[:n]
 
-    elif method == 'random':
+    elif method == "random":
         import random
 
         if seed is not None:
             random.seed(seed)
         return random.sample(doc_ids, n)
 
-    elif method == 'diverse':
+    elif method == "diverse":
         # Sample diverse documents using greedy selection
         if len(doc_ids) == 0:
             return []
@@ -355,7 +355,7 @@ def sample_collection(
                     continue
 
                 # Find minimum similarity to selected documents
-                min_sim = float('inf')
+                min_sim = float("inf")
                 for selected_id in selected:
                     selected_doc = collection[selected_id]
                     if not selected_doc.vector:
@@ -456,13 +456,13 @@ def validate_collection(collection: Collection) -> dict[str, Any]:
         )
 
     return {
-        'valid': len(issues) == 0,
-        'issues': issues,
-        'warnings': warnings,
-        'stats': {
-            'total_documents': len(collection),
-            'missing_vectors': missing_vectors,
-            'empty_text': empty_text,
-            'inconsistent_dimensions': len(inconsistent_dimensions),
+        "valid": len(issues) == 0,
+        "issues": issues,
+        "warnings": warnings,
+        "stats": {
+            "total_documents": len(collection),
+            "missing_vectors": missing_vectors,
+            "empty_text": empty_text,
+            "inconsistent_dimensions": len(inconsistent_dimensions),
         },
     }

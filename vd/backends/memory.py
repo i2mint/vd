@@ -128,15 +128,15 @@ class MemoryCollection(MutableMapping):
                 score = cosine_similarity(query_vector, doc.vector)
                 results.append(
                     {
-                        'id': doc.id,
-                        'text': doc.text,
-                        'score': score,
-                        'metadata': doc.metadata,
+                        "id": doc.id,
+                        "text": doc.text,
+                        "score": score,
+                        "metadata": doc.metadata,
                     }
                 )
 
         # Sort by score (descending)
-        results.sort(key=lambda x: x['score'], reverse=True)
+        results.sort(key=lambda x: x["score"], reverse=True)
 
         # Limit results
         results = results[:limit]
@@ -201,11 +201,11 @@ class MemoryCollection(MutableMapping):
             True if document matches filter
         """
         for key, condition in filter.items():
-            if key == '$and':
+            if key == "$and":
                 # Logical AND
                 if not all(self._matches_filter(doc, f) for f in condition):
                     return False
-            elif key == '$or':
+            elif key == "$or":
                 # Logical OR
                 if not any(self._matches_filter(doc, f) for f in condition):
                     return False
@@ -216,19 +216,19 @@ class MemoryCollection(MutableMapping):
                 if value is None:
                     return False
                 for op, op_value in condition.items():
-                    if op == '$gte' and not (value >= op_value):
+                    if op == "$gte" and not (value >= op_value):
                         return False
-                    elif op == '$lte' and not (value <= op_value):
+                    elif op == "$lte" and not (value <= op_value):
                         return False
-                    elif op == '$gt' and not (value > op_value):
+                    elif op == "$gt" and not (value > op_value):
                         return False
-                    elif op == '$lt' and not (value < op_value):
+                    elif op == "$lt" and not (value < op_value):
                         return False
-                    elif op == '$eq' and not (value == op_value):
+                    elif op == "$eq" and not (value == op_value):
                         return False
-                    elif op == '$ne' and not (value != op_value):
+                    elif op == "$ne" and not (value != op_value):
                         return False
-                    elif op == '$in':
+                    elif op == "$in":
                         # Handle both scalar and list values
                         if isinstance(value, list):
                             # If value is a list, check if any element is in op_value
@@ -246,7 +246,7 @@ class MemoryCollection(MutableMapping):
         return True
 
 
-@register_backend('memory')
+@register_backend("memory")
 class MemoryBackend(BaseBackend):
     """
     In-memory vector database backend.

@@ -53,25 +53,25 @@ def clean_text(
     'hello world visit https examplecom'
     """
     if remove_urls:
-        text = re.sub(r'https?://\S+|www\.\S+', '', text)
+        text = re.sub(r"https?://\S+|www\.\S+", "", text)
 
     if remove_emails:
-        text = re.sub(r'\S+@\S+', '', text)
+        text = re.sub(r"\S+@\S+", "", text)
 
     if remove_numbers:
-        text = re.sub(r'\d+', '', text)
+        text = re.sub(r"\d+", "", text)
 
     if remove_punctuation:
-        text = re.sub(r'[^\w\s]', '', text)
+        text = re.sub(r"[^\w\s]", "", text)
 
     if lowercase:
         text = text.lower()
 
     if remove_extra_whitespace:
         # Collapse multiple spaces
-        text = re.sub(r' +', ' ', text)
+        text = re.sub(r" +", " ", text)
         # Collapse multiple newlines
-        text = re.sub(r'\n+', '\n', text)
+        text = re.sub(r"\n+", "\n", text)
         # Strip leading/trailing whitespace
         text = text.strip()
 
@@ -83,7 +83,7 @@ def chunk_text(
     chunk_size: int = 500,
     *,
     overlap: int = 50,
-    strategy: str = 'chars',
+    strategy: str = "chars",
     preserve_sentences: bool = True,
 ) -> list[str]:
     """
@@ -125,29 +125,29 @@ def chunk_text(
     if not text or chunk_size <= 0:
         return []
 
-    if strategy == 'paragraphs':
+    if strategy == "paragraphs":
         # Split on double newlines
-        paragraphs = [p.strip() for p in text.split('\n\n') if p.strip()]
+        paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
         return paragraphs
 
-    elif strategy == 'sentences':
+    elif strategy == "sentences":
         # Simple sentence splitting
-        sentences = re.split(r'(?<=[.!?])\s+', text)
+        sentences = re.split(r"(?<=[.!?])\s+", text)
         return [s.strip() for s in sentences if s.strip()]
 
-    elif strategy == 'words':
+    elif strategy == "words":
         words = text.split()
         chunks = []
         i = 0
 
         while i < len(words):
             chunk_words = words[i : i + chunk_size]
-            chunks.append(' '.join(chunk_words))
+            chunks.append(" ".join(chunk_words))
             i += chunk_size - overlap
 
         return chunks
 
-    elif strategy == 'chars':
+    elif strategy == "chars":
         if not preserve_sentences:
             # Simple character-based chunking
             chunks = []
@@ -161,7 +161,7 @@ def chunk_text(
             return chunks
 
         # Try to preserve sentences
-        sentences = re.split(r'(?<=[.!?])\s+', text)
+        sentences = re.split(r"(?<=[.!?])\s+", text)
         chunks = []
         current_chunk = []
         current_length = 0
@@ -172,12 +172,12 @@ def chunk_text(
             # If adding this sentence exceeds chunk_size
             if current_length + sentence_len > chunk_size and current_chunk:
                 # Save current chunk
-                chunks.append(' '.join(current_chunk))
+                chunks.append(" ".join(current_chunk))
 
                 # Start new chunk with overlap
                 if overlap > 0 and current_chunk:
                     # Take last part for overlap
-                    overlap_text = ' '.join(current_chunk)
+                    overlap_text = " ".join(current_chunk)
                     if len(overlap_text) > overlap:
                         overlap_text = overlap_text[-overlap:]
                     current_chunk = [overlap_text, sentence]
@@ -191,7 +191,7 @@ def chunk_text(
 
         # Add final chunk
         if current_chunk:
-            chunks.append(' '.join(current_chunk))
+            chunks.append(" ".join(current_chunk))
 
         return chunks
 
@@ -204,8 +204,8 @@ def chunk_documents(
     chunk_size: int = 500,
     *,
     overlap: int = 50,
-    strategy: str = 'chars',
-    id_template: str = '{doc_id}_chunk_{chunk_num}',
+    strategy: str = "chars",
+    id_template: str = "{doc_id}_chunk_{chunk_num}",
     preserve_metadata: bool = True,
 ) -> Iterator[tuple[str, str, dict]]:
     """
@@ -253,9 +253,9 @@ def chunk_documents(
             chunk_id = id_template.format(doc_id=doc_id, chunk_num=i)
 
             chunk_metadata = metadata.copy() if preserve_metadata else {}
-            chunk_metadata['chunk_num'] = i
-            chunk_metadata['total_chunks'] = len(chunks)
-            chunk_metadata['source_doc_id'] = doc_id
+            chunk_metadata["chunk_num"] = i
+            chunk_metadata["total_chunks"] = len(chunks)
+            chunk_metadata["source_doc_id"] = doc_id
 
             yield (chunk_id, chunk, chunk_metadata)
 
@@ -301,24 +301,24 @@ def extract_metadata(
     metadata = {}
 
     if extract_title:
-        lines = text.strip().split('\n')
+        lines = text.strip().split("\n")
         if lines:
-            metadata['title'] = lines[0].strip()[:200]  # Limit title length
+            metadata["title"] = lines[0].strip()[:200]  # Limit title length
 
     if extract_length:
-        metadata['char_count'] = len(text)
+        metadata["char_count"] = len(text)
 
     if extract_word_count:
-        metadata['word_count'] = len(text.split())
+        metadata["word_count"] = len(text.split())
 
     if extract_language:
         try:
             from langdetect import detect
 
             try:
-                metadata['language'] = detect(text)
+                metadata["language"] = detect(text)
             except:
-                metadata['language'] = 'unknown'
+                metadata["language"] = "unknown"
         except ImportError:
             pass
 
@@ -347,15 +347,15 @@ def normalize_whitespace(text: str) -> str:
     'Hello World \\nTest'
     """
     # Replace tabs with spaces
-    text = text.replace('\t', ' ')
+    text = text.replace("\t", " ")
     # Collapse multiple spaces
-    text = re.sub(r' +', ' ', text)
+    text = re.sub(r" +", " ", text)
     # Collapse multiple newlines to single
-    text = re.sub(r'\n+', '\n', text)
+    text = re.sub(r"\n+", "\n", text)
     return text.strip()
 
 
-def truncate_text(text: str, max_length: int, *, suffix: str = '...') -> str:
+def truncate_text(text: str, max_length: int, *, suffix: str = "...") -> str:
     """
     Truncate text to maximum length.
 

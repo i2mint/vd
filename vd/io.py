@@ -49,18 +49,18 @@ def export_to_jsonl(
     output_path = Path(output_path)
     count = 0
 
-    with output_path.open('w', encoding='utf-8') as f:
+    with output_path.open("w", encoding="utf-8") as f:
         for doc_id in collection:
             doc = collection[doc_id]
             data = {
-                'id': doc.id,
-                'text': doc.text,
-                'metadata': doc.metadata,
+                "id": doc.id,
+                "text": doc.text,
+                "metadata": doc.metadata,
             }
             if include_vectors and doc.vector:
-                data['vector'] = doc.vector
+                data["vector"] = doc.vector
 
-            f.write(json.dumps(data, ensure_ascii=False) + '\n')
+            f.write(json.dumps(data, ensure_ascii=False) + "\n")
             count += 1
 
     return count
@@ -104,20 +104,20 @@ def import_from_jsonl(
     count = 0
     batch = []
 
-    with input_path.open('r', encoding='utf-8') as f:
+    with input_path.open("r", encoding="utf-8") as f:
         for line in f:
             data = json.loads(line)
 
             # Check if we should skip
-            if skip_existing and data['id'] in collection:
+            if skip_existing and data["id"] in collection:
                 continue
 
             # Create document
             doc = Document(
-                id=data['id'],
-                text=data['text'],
-                vector=data.get('vector'),
-                metadata=data.get('metadata', {}),
+                id=data["id"],
+                text=data["text"],
+                vector=data.get("vector"),
+                metadata=data.get("metadata", {}),
             )
 
             batch.append(doc)
@@ -169,16 +169,16 @@ def export_to_json(
     for doc_id in collection:
         doc = collection[doc_id]
         data = {
-            'id': doc.id,
-            'text': doc.text,
-            'metadata': doc.metadata,
+            "id": doc.id,
+            "text": doc.text,
+            "metadata": doc.metadata,
         }
         if include_vectors and doc.vector:
-            data['vector'] = doc.vector
+            data["vector"] = doc.vector
 
         documents.append(data)
 
-    with output_path.open('w', encoding='utf-8') as f:
+    with output_path.open("w", encoding="utf-8") as f:
         json.dump(documents, f, ensure_ascii=False, indent=indent)
 
     return len(documents)
@@ -212,7 +212,7 @@ def import_from_json(
     """
     input_path = Path(input_path)
 
-    with input_path.open('r', encoding='utf-8') as f:
+    with input_path.open("r", encoding="utf-8") as f:
         documents_data = json.load(f)
 
     count = 0
@@ -220,15 +220,15 @@ def import_from_json(
 
     for data in documents_data:
         # Check if we should skip
-        if skip_existing and data['id'] in collection:
+        if skip_existing and data["id"] in collection:
             continue
 
         # Create document
         doc = Document(
-            id=data['id'],
-            text=data['text'],
-            vector=data.get('vector'),
-            metadata=data.get('metadata', {}),
+            id=data["id"],
+            text=data["text"],
+            vector=data.get("vector"),
+            metadata=data.get("metadata", {}),
         )
 
         batch.append(doc)
@@ -276,29 +276,31 @@ def export_to_directory(
 
     # Export metadata
     metadata = {
-        'collection_name': getattr(collection, 'name', 'unknown'),
-        'total_documents': len(collection),
+        "collection_name": getattr(collection, "name", "unknown"),
+        "total_documents": len(collection),
     }
-    (output_dir / '_metadata.json').write_text(
-        json.dumps(metadata, indent=2), encoding='utf-8'
+    (output_dir / "_metadata.json").write_text(
+        json.dumps(metadata, indent=2), encoding="utf-8"
     )
 
     count = 0
     for doc_id in collection:
         doc = collection[doc_id]
         data = {
-            'id': doc.id,
-            'text': doc.text,
-            'metadata': doc.metadata,
+            "id": doc.id,
+            "text": doc.text,
+            "metadata": doc.metadata,
         }
         if include_vectors and doc.vector:
-            data['vector'] = doc.vector
+            data["vector"] = doc.vector
 
         # Sanitize filename
-        safe_id = doc_id.replace('/', '_').replace('\\', '_')
+        safe_id = doc_id.replace("/", "_").replace("\\", "_")
         file_path = output_dir / f"{safe_id}.json"
 
-        file_path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
+        file_path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
         count += 1
 
     return count
@@ -310,7 +312,7 @@ def import_from_directory(
     *,
     batch_size: int = 100,
     skip_existing: bool = False,
-    pattern: str = '*.json',
+    pattern: str = "*.json",
 ) -> int:
     """
     Import documents from a directory of JSON files.
@@ -339,21 +341,21 @@ def import_from_directory(
 
     for file_path in input_dir.glob(pattern):
         # Skip metadata file
-        if file_path.name == '_metadata.json':
+        if file_path.name == "_metadata.json":
             continue
 
-        data = json.loads(file_path.read_text(encoding='utf-8'))
+        data = json.loads(file_path.read_text(encoding="utf-8"))
 
         # Check if we should skip
-        if skip_existing and data['id'] in collection:
+        if skip_existing and data["id"] in collection:
             continue
 
         # Create document
         doc = Document(
-            id=data['id'],
-            text=data['text'],
-            vector=data.get('vector'),
-            metadata=data.get('metadata', {}),
+            id=data["id"],
+            text=data["text"],
+            vector=data.get("vector"),
+            metadata=data.get("metadata", {}),
         )
 
         batch.append(doc)
@@ -373,11 +375,12 @@ def import_from_directory(
 
 # Convenience functions to add to Collection (can be monkey-patched or used via helper)
 
+
 def export_collection(
     collection: Collection,
     output_path: Union[str, Path],
     *,
-    format: str = 'jsonl',
+    format: str = "jsonl",
     **kwargs,
 ) -> int:
     """
@@ -406,11 +409,11 @@ def export_collection(
     >>> docs = client.create_collection('test')  # doctest: +SKIP
     >>> vd.export_collection(docs, 'backup.jsonl')  # doctest: +SKIP
     """
-    if format == 'jsonl':
+    if format == "jsonl":
         return export_to_jsonl(collection, output_path, **kwargs)
-    elif format == 'json':
+    elif format == "json":
         return export_to_json(collection, output_path, **kwargs)
-    elif format == 'directory':
+    elif format == "directory":
         return export_to_directory(collection, output_path, **kwargs)
     else:
         raise ValueError(f"Unknown format: {format}")
@@ -455,19 +458,19 @@ def import_collection(
     # Infer format if not specified
     if format is None:
         if input_path.is_dir():
-            format = 'directory'
-        elif input_path.suffix == '.jsonl':
-            format = 'jsonl'
-        elif input_path.suffix == '.json':
-            format = 'json'
+            format = "directory"
+        elif input_path.suffix == ".jsonl":
+            format = "jsonl"
+        elif input_path.suffix == ".json":
+            format = "json"
         else:
             raise ValueError(f"Cannot infer format from path: {input_path}")
 
-    if format == 'jsonl':
+    if format == "jsonl":
         return import_from_jsonl(collection, input_path, **kwargs)
-    elif format == 'json':
+    elif format == "json":
         return import_from_json(collection, input_path, **kwargs)
-    elif format == 'directory':
+    elif format == "directory":
         return import_from_directory(collection, input_path, **kwargs)
     else:
         raise ValueError(f"Unknown format: {format}")

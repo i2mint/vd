@@ -50,7 +50,7 @@ def main():
     # Get info about a specific backend
     print("4. Get information about ChromaDB:")
     print("-" * 80)
-    chroma_info = vd.get_backend_info('chroma')
+    chroma_info = vd.get_backend_info("chroma")
     print(f"Name: {chroma_info['name']}")
     print(f"Description: {chroma_info['description']}")
     print(f"Available: {chroma_info['available']}")
@@ -62,7 +62,7 @@ def main():
     print("-" * 80)
     # Try Pinecone (which is planned but not yet implemented)
     try:
-        instructions = vd.get_install_instructions('pinecone')
+        instructions = vd.get_install_instructions("pinecone")
         print(instructions)
     except ValueError as e:
         print(f"Error: {e}")
@@ -72,7 +72,7 @@ def main():
     print("6. Trying to connect to an unavailable backend:")
     print("-" * 80)
     try:
-        client = vd.connect('pinecone')
+        client = vd.connect("pinecone")
     except ValueError as e:
         print(f"Got helpful error message:")
         print(e)
@@ -82,7 +82,7 @@ def main():
     print("7. Trying to connect to an unknown backend:")
     print("-" * 80)
     try:
-        client = vd.connect('nonexistent')
+        client = vd.connect("nonexistent")
     except ValueError as e:
         print(f"Got helpful error message:")
         print(e)
@@ -91,7 +91,7 @@ def main():
     # Successfully connect to memory backend
     print("8. Successfully connecting to available backend:")
     print("-" * 80)
-    client = vd.connect('memory', embedding_model=mock_embedding_function)
+    client = vd.connect("memory", embedding_model=mock_embedding_function)
     print(f"✓ Connected to memory backend successfully!")
     print()
 
@@ -105,5 +105,5 @@ def main():
     print("=" * 80)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

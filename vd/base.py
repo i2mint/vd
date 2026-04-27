@@ -36,7 +36,7 @@ DocumentInput = Union[
     tuple[str, str],  # (text, id)
     tuple[str, Metadata],  # (text, metadata)
     tuple[str, str, Metadata],  # (text, id, metadata)
-    'Document',  # Full document object
+    "Document",  # Full document object
 ]
 
 

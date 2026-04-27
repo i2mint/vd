@@ -15,7 +15,7 @@ def multi_query_search(
     queries: list[str],
     *,
     limit: int = 10,
-    combine: str = 'interleave',
+    combine: str = "interleave",
     filter: Optional[dict] = None,
     **kwargs,
 ) -> Iterator[SearchResult]:
@@ -63,7 +63,7 @@ def multi_query_search(
         results = list(collection.search(query, limit=limit, filter=filter, **kwargs))
         all_results.append(results)
 
-    if combine == 'interleave':
+    if combine == "interleave":
         # Interleave results
         combined = []
         max_len = max(len(r) for r in all_results) if all_results else 0
@@ -77,45 +77,45 @@ def multi_query_search(
         seen = set()
         unique = []
         for item in combined:
-            if item['id'] not in seen:
-                seen.add(item['id'])
+            if item["id"] not in seen:
+                seen.add(item["id"])
                 unique.append(item)
 
         yield from unique[:limit]
 
-    elif combine == 'concatenate':
+    elif combine == "concatenate":
         # Simply concatenate
         for results in all_results:
             yield from results
 
-    elif combine == 'union':
+    elif combine == "union":
         # Combine and remove duplicates, keeping best score
         by_id = {}
         for results in all_results:
             for item in results:
-                doc_id = item['id']
-                if doc_id not in by_id or item['score'] > by_id[doc_id]['score']:
+                doc_id = item["id"]
+                if doc_id not in by_id or item["score"] > by_id[doc_id]["score"]:
                     by_id[doc_id] = item
 
         # Sort by score
-        sorted_results = sorted(by_id.values(), key=lambda x: x['score'], reverse=True)
+        sorted_results = sorted(by_id.values(), key=lambda x: x["score"], reverse=True)
         yield from sorted_results[:limit]
 
-    elif combine == 'best':
+    elif combine == "best":
         # Get best results across all queries
         all_items = []
         for results in all_results:
             all_items.extend(results)
 
         # Sort by score
-        all_items.sort(key=lambda x: x['score'], reverse=True)
+        all_items.sort(key=lambda x: x["score"], reverse=True)
 
         # Remove duplicates
         seen = set()
         unique = []
         for item in all_items:
-            if item['id'] not in seen:
-                seen.add(item['id'])
+            if item["id"] not in seen:
+                seen.add(item["id"])
                 unique.append(item)
 
         yield from unique[:limit]
@@ -175,7 +175,7 @@ def search_similar_to_document(
     # Search
     for result in collection.search(query, limit=limit + 1, filter=filter, **kwargs):
         # Optionally exclude self
-        if exclude_self and result['id'] == doc_id:
+        if exclude_self and result["id"] == doc_id:
             continue
 
         yield result
@@ -214,25 +214,23 @@ def reciprocal_rank_fusion(
 
     for results in result_lists:
         for rank, item in enumerate(results, 1):
-            doc_id = item['id']
+            doc_id = item["id"]
             # RRF formula: 1 / (k + rank)
             rrf_score = 1.0 / (k + rank)
 
             if doc_id not in rrf_scores:
-                rrf_scores[doc_id] = {'score': 0.0, 'item': item}
+                rrf_scores[doc_id] = {"score": 0.0, "item": item}
 
-            rrf_scores[doc_id]['score'] += rrf_score
+            rrf_scores[doc_id]["score"] += rrf_score
 
     # Sort by RRF score
-    sorted_items = sorted(
-        rrf_scores.items(), key=lambda x: x[1]['score'], reverse=True
-    )
+    sorted_items = sorted(rrf_scores.items(), key=lambda x: x[1]["score"], reverse=True)
 
     # Return results with RRF score
     results = []
     for doc_id, data in sorted_items:
-        item = data['item'].copy()
-        item['rrf_score'] = data['score']
+        item = data["item"].copy()
+        item["rrf_score"] = data["score"]
         results.append(item)
 
     return results
@@ -305,8 +303,8 @@ def search_with_feedback(
 def deduplicate_results(
     results: Iterator[SearchResult],
     *,
-    key: str = 'id',
-    keep: str = 'first',
+    key: str = "id",
+    keep: str = "first",
 ) -> Iterator[SearchResult]:
     """
     Remove duplicate results.
@@ -344,7 +342,7 @@ def deduplicate_results(
         if key_value not in seen:
             seen[key_value] = result
             yield result
-        elif keep == 'highest_score':
-            if result['score'] > seen[key_value]['score']:
+        elif keep == "highest_score":
+            if result["score"] > seen[key_value]["score"]:
                 seen[key_value] = result
                 yield result

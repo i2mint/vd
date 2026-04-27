@@ -45,7 +45,7 @@ def load_yaml_config(path: Union[str, Path]) -> dict:
     if not path.exists():
         raise FileNotFoundError(f"Configuration file not found: {path}")
 
-    with open(path, 'r') as f:
+    with open(path, "r") as f:
         return yaml.safe_load(f) or {}
 
 
@@ -78,13 +78,13 @@ def load_toml_config(path: Union[str, Path]) -> dict:
     try:
         import tomllib
 
-        with open(path, 'rb') as f:
+        with open(path, "rb") as f:
             return tomllib.load(f)
     except ImportError:
         try:
             import tomli
 
-            with open(path, 'rb') as f:
+            with open(path, "rb") as f:
                 return tomli.load(f)
         except ImportError:
             raise ImportError(
@@ -126,15 +126,15 @@ def load_config(
     # If no path provided, search for default config files
     if path is None:
         default_paths = [
-            Path('vd.yaml'),
-            Path('vd.yml'),
-            Path('vd.toml'),
-            Path('.vd.yaml'),
-            Path('.vd.yml'),
-            Path('.vd.toml'),
-            Path.home() / '.vd' / 'config.yaml',
-            Path.home() / '.vd' / 'config.yml',
-            Path.home() / '.vd' / 'config.toml',
+            Path("vd.yaml"),
+            Path("vd.yml"),
+            Path("vd.toml"),
+            Path(".vd.yaml"),
+            Path(".vd.yml"),
+            Path(".vd.toml"),
+            Path.home() / ".vd" / "config.yaml",
+            Path.home() / ".vd" / "config.yml",
+            Path.home() / ".vd" / "config.toml",
         ]
 
         for default_path in default_paths:
@@ -151,10 +151,10 @@ def load_config(
     # Auto-detect format from extension
     if format is None:
         suffix = path.suffix.lower()
-        if suffix in ['.yaml', '.yml']:
-            format = 'yaml'
-        elif suffix == '.toml':
-            format = 'toml'
+        if suffix in [".yaml", ".yml"]:
+            format = "yaml"
+        elif suffix == ".toml":
+            format = "toml"
         else:
             raise ValueError(
                 f"Cannot detect format from extension '{suffix}'. "
@@ -162,9 +162,9 @@ def load_config(
             )
 
     # Load config
-    if format == 'yaml':
+    if format == "yaml":
         return load_yaml_config(path)
-    elif format == 'toml':
+    elif format == "toml":
         return load_toml_config(path)
     else:
         raise ValueError(f"Unsupported format: {format}")
@@ -198,20 +198,20 @@ def get_profile(
     """
     # Check for environment variable
     if profile is None:
-        profile = os.environ.get('VD_PROFILE', 'default')
+        profile = os.environ.get("VD_PROFILE", "default")
 
     # Look for profile in config
-    if 'profiles' in config:
-        if profile not in config['profiles']:
-            available = ', '.join(config['profiles'].keys())
+    if "profiles" in config:
+        if profile not in config["profiles"]:
+            available = ", ".join(config["profiles"].keys())
             raise ValueError(
                 f"Profile '{profile}' not found in configuration. "
                 f"Available profiles: {available}"
             )
-        return config['profiles'][profile]
+        return config["profiles"][profile]
 
     # If no profiles section, treat entire config as default profile
-    if profile != 'default':
+    if profile != "default":
         raise ValueError(
             f"Profile '{profile}' not found. Configuration has no profiles section."
         )
@@ -248,12 +248,12 @@ def apply_env_overrides(config: dict) -> dict:
     config = config.copy()
 
     # Override backend
-    if 'VD_BACKEND' in os.environ:
-        config['backend'] = os.environ['VD_BACKEND']
+    if "VD_BACKEND" in os.environ:
+        config["backend"] = os.environ["VD_BACKEND"]
 
     # Override embedding model
-    if 'VD_EMBEDDING_MODEL' in os.environ:
-        config['embedding_model'] = os.environ['VD_EMBEDDING_MODEL']
+    if "VD_EMBEDDING_MODEL" in os.environ:
+        config["embedding_model"] = os.environ["VD_EMBEDDING_MODEL"]
 
     return config
 
@@ -320,10 +320,10 @@ def connect_from_config(
 
     # Use provided embedding model if given
     if embedding_model is not None:
-        config['embedding_model'] = embedding_model
+        config["embedding_model"] = embedding_model
 
     # Extract backend name
-    backend_name = config.pop('backend', 'memory')
+    backend_name = config.pop("backend", "memory")
 
     # Connect
     return vd.connect(backend_name, **config)
@@ -363,10 +363,10 @@ def save_config(
     # Auto-detect format
     if format is None:
         suffix = path.suffix.lower()
-        if suffix in ['.yaml', '.yml']:
-            format = 'yaml'
-        elif suffix == '.toml':
-            format = 'toml'
+        if suffix in [".yaml", ".yml"]:
+            format = "yaml"
+        elif suffix == ".toml":
+            format = "toml"
         else:
             raise ValueError(
                 f"Cannot detect format from extension '{suffix}'. "
@@ -374,7 +374,7 @@ def save_config(
             )
 
     # Save config
-    if format == 'yaml':
+    if format == "yaml":
         try:
             import yaml
         except ImportError:
@@ -383,10 +383,10 @@ def save_config(
                 "Install it with: pip install pyyaml"
             )
 
-        with open(path, 'w') as f:
+        with open(path, "w") as f:
             yaml.dump(config, f, default_flow_style=False, sort_keys=False)
 
-    elif format == 'toml':
+    elif format == "toml":
         try:
             import tomli_w
         except ImportError:
@@ -395,14 +395,14 @@ def save_config(
                 "Install it with: pip install tomli-w"
             )
 
-        with open(path, 'wb') as f:
+        with open(path, "wb") as f:
             tomli_w.dump(config, f)
 
     else:
         raise ValueError(f"Unsupported format: {format}")
 
 
-def create_example_config(format: str = 'yaml') -> str:
+def create_example_config(format: str = "yaml") -> str:
     """
     Generate an example configuration file content.
 
@@ -423,29 +423,29 @@ def create_example_config(format: str = 'yaml') -> str:
     >>> toml_config = create_example_config('toml')  # doctest: +SKIP
     """
     example_config = {
-        'profiles': {
-            'default': {
-                'backend': 'memory',
-                'embedding_model': 'text-embedding-3-small',
+        "profiles": {
+            "default": {
+                "backend": "memory",
+                "embedding_model": "text-embedding-3-small",
             },
-            'dev': {
-                'backend': 'memory',
-                'embedding_model': 'text-embedding-3-small',
+            "dev": {
+                "backend": "memory",
+                "embedding_model": "text-embedding-3-small",
             },
-            'prod': {
-                'backend': 'chroma',
-                'persist_directory': './vector_db',
-                'embedding_model': 'text-embedding-3-large',
+            "prod": {
+                "backend": "chroma",
+                "persist_directory": "./vector_db",
+                "embedding_model": "text-embedding-3-large",
             },
-            'local_chroma': {
-                'backend': 'chroma',
-                'persist_directory': './chroma_data',
-                'embedding_model': 'text-embedding-3-small',
+            "local_chroma": {
+                "backend": "chroma",
+                "persist_directory": "./chroma_data",
+                "embedding_model": "text-embedding-3-small",
             },
         }
     }
 
-    if format == 'yaml':
+    if format == "yaml":
         try:
             import yaml
 
@@ -456,7 +456,7 @@ def create_example_config(format: str = 'yaml') -> str:
                 "Install it with: pip install pyyaml"
             )
 
-    elif format == 'toml':
+    elif format == "toml":
         try:
             import tomli_w
 
@@ -464,7 +464,7 @@ def create_example_config(format: str = 'yaml') -> str:
 
             buf = io.BytesIO()
             tomli_w.dump(example_config, buf)
-            return buf.getvalue().decode('utf-8')
+            return buf.getvalue().decode("utf-8")
         except ImportError:
             raise ImportError(
                 "tomli-w is required for writing TOML config files. "

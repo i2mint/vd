@@ -44,22 +44,22 @@ def health_check_backend(
     'healthy'
     """
     result = {
-        'backend': backend_name,
-        'available': _check_backend_available(backend_name),
-        'registered': backend_name in _backend_metadata,
-        'status': 'unknown',
-        'message': '',
-        'details': {},
+        "backend": backend_name,
+        "available": _check_backend_available(backend_name),
+        "registered": backend_name in _backend_metadata,
+        "status": "unknown",
+        "message": "",
+        "details": {},
     }
 
     # Check if available
-    if not result['available']:
-        result['status'] = 'unavailable'
-        result['message'] = f"Backend '{backend_name}' is not installed"
+    if not result["available"]:
+        result["status"] = "unavailable"
+        result["message"] = f"Backend '{backend_name}' is not installed"
         if backend_name in _backend_metadata:
-            install_cmd = _backend_metadata[backend_name].get('pip_install')
+            install_cmd = _backend_metadata[backend_name].get("pip_install")
             if install_cmd:
-                result['message'] += f". Install with: {install_cmd}"
+                result["message"] += f". Install with: {install_cmd}"
         return result
 
     # Try to connect
@@ -75,16 +75,16 @@ def health_check_backend(
         # Try basic operations
         try:
             collections = list(client.list_collections())
-            result['details']['collections_count'] = len(collections)
-            result['status'] = 'healthy'
-            result['message'] = 'Backend is operational'
+            result["details"]["collections_count"] = len(collections)
+            result["status"] = "healthy"
+            result["message"] = "Backend is operational"
         except Exception as e:
-            result['status'] = 'unhealthy'
-            result['message'] = f'Backend connected but operations failed: {str(e)}'
+            result["status"] = "unhealthy"
+            result["message"] = f"Backend connected but operations failed: {str(e)}"
 
     except Exception as e:
-        result['status'] = 'unhealthy'
-        result['message'] = f'Failed to connect: {str(e)}'
+        result["status"] = "unhealthy"
+        result["message"] = f"Failed to connect: {str(e)}"
 
     return result
 
@@ -119,13 +119,13 @@ def health_check_collection(collection: Collection) -> dict[str, Any]:
     stats = collection_stats(collection)
 
     return {
-        'status': 'healthy' if validation['valid'] else 'issues_found',
-        'valid': validation['valid'],
-        'total_documents': stats['total_documents'],
-        'has_vectors': stats['has_vectors'],
-        'issues': validation['issues'],
-        'warnings': validation['warnings'],
-        'stats': stats,
+        "status": "healthy" if validation["valid"] else "issues_found",
+        "valid": validation["valid"],
+        "total_documents": stats["total_documents"],
+        "has_vectors": stats["has_vectors"],
+        "issues": validation["issues"],
+        "warnings": validation["warnings"],
+        "stats": stats,
     }
 
 
@@ -190,15 +190,15 @@ def benchmark_search(
         return data[min(index, len(data) - 1)]
 
     return {
-        'n_queries': n_queries,
-        'total_time': total_time,
-        'avg_latency': sum(latencies) / len(latencies),
-        'min_latency': min(latencies),
-        'max_latency': max(latencies),
-        'p50': percentile(latencies_sorted, 50),
-        'p95': percentile(latencies_sorted, 95),
-        'p99': percentile(latencies_sorted, 99),
-        'queries_per_second': n_queries / total_time,
+        "n_queries": n_queries,
+        "total_time": total_time,
+        "avg_latency": sum(latencies) / len(latencies),
+        "min_latency": min(latencies),
+        "max_latency": max(latencies),
+        "p50": percentile(latencies_sorted, 50),
+        "p95": percentile(latencies_sorted, 95),
+        "p99": percentile(latencies_sorted, 99),
+        "queries_per_second": n_queries / total_time,
     }
 
 
@@ -244,7 +244,7 @@ def benchmark_insert(
         doc = Document(
             id=f"bench_doc_{i}",
             text=text[:text_length],
-            metadata={'benchmark': True, 'index': i},
+            metadata={"benchmark": True, "index": i},
         )
         test_docs.append(doc)
 
@@ -265,9 +265,9 @@ def benchmark_insert(
     total_time = end_time - start_time
 
     return {
-        'n_documents': n_documents,
-        'total_time': total_time,
-        'avg_time_per_doc': total_time / n_documents,
-        'documents_per_second': n_documents / total_time,
-        'batch_size': batch_size,
+        "n_documents": n_documents,
+        "total_time": total_time,
+        "avg_time_per_doc": total_time / n_documents,
+        "documents_per_second": n_documents / total_time,
+        "batch_size": batch_size,
     }

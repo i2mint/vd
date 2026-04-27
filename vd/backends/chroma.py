@@ -80,23 +80,25 @@ class ChromaCollection(MutableMapping):
 
     def __getitem__(self, key: str) -> Document:
         """Retrieve a document by ID."""
-        result = self._collection.get(ids=[key], include=['documents', 'embeddings', 'metadatas'])
+        result = self._collection.get(
+            ids=[key], include=["documents", "embeddings", "metadatas"]
+        )
 
-        if not result['ids']:
+        if not result["ids"]:
             raise KeyError(f"Document '{key}' not found")
 
         return Document(
-            id=result['ids'][0],
-            text=result['documents'][0],
-            vector=result['embeddings'][0] if result['embeddings'] else None,
-            metadata=result['metadatas'][0] if result['metadatas'] else {},
+            id=result["ids"][0],
+            text=result["documents"][0],
+            vector=result["embeddings"][0] if result["embeddings"] else None,
+            metadata=result["metadatas"][0] if result["metadatas"] else {},
         )
 
     def __delitem__(self, key: str) -> None:
         """Delete a document."""
         # Check if exists first
         result = self._collection.get(ids=[key])
-        if not result['ids']:
+        if not result["ids"]:
             raise KeyError(f"Document '{key}' not found")
 
         self._collection.delete(ids=[key])
@@ -105,7 +107,7 @@ class ChromaCollection(MutableMapping):
         """Iterate over document IDs."""
         # Get all IDs from the collection
         result = self._collection.get()
-        return iter(result['ids'])
+        return iter(result["ids"])
 
     def __len__(self) -> int:
         """Get number of documents."""
@@ -149,33 +151,35 @@ class ChromaCollection(MutableMapping):
 
         # Prepare query arguments
         query_args = {
-            'query_embeddings': [query_vector],
-            'n_results': limit,
-            'include': ['documents', 'metadatas', 'distances'],
+            "query_embeddings": [query_vector],
+            "n_results": limit,
+            "include": ["documents", "metadatas", "distances"],
         }
 
         # Add filter if provided
         if filter:
-            query_args['where'] = filter
+            query_args["where"] = filter
 
         # Query ChromaDB
         results = self._collection.query(**query_args)
 
         # Convert to standard format
-        if results['ids']:
-            for i in range(len(results['ids'][0])):
+        if results["ids"]:
+            for i in range(len(results["ids"][0])):
                 # ChromaDB returns distances, convert to similarity scores
                 # Lower distance = higher similarity
-                distance = results['distances'][0][i]
+                distance = results["distances"][0][i]
                 # Convert L2 distance to similarity (inverse)
                 # For cosine similarity, ChromaDB returns 1 - cosine
                 score = 1.0 / (1.0 + distance)
 
                 result = {
-                    'id': results['ids'][0][i],
-                    'text': results['documents'][0][i],
-                    'score': score,
-                    'metadata': results['metadatas'][0][i] if results['metadatas'] else {},
+                    "id": results["ids"][0][i],
+                    "text": results["documents"][0][i],
+                    "score": score,
+                    "metadata": results["metadatas"][0][i]
+                    if results["metadatas"]
+                    else {},
                 }
 
                 if egress is not None:
@@ -250,7 +254,7 @@ class ChromaCollection(MutableMapping):
         self[document.id] = document
 
 
-@register_backend('chroma')
+@register_backend("chroma")
 class ChromaBackend(BaseBackend):
     """
     ChromaDB vector database backend.
@@ -309,7 +313,7 @@ class ChromaBackend(BaseBackend):
         try:
             chroma_collection = self._client.create_collection(name=name, **kwargs)
         except Exception as e:
-            if 'already exists' in str(e).lower():
+            if "already exists" in str(e).lower():
                 raise ValueError(f"Collection '{name}' already exists") from e
             raise
 
@@ -340,6 +344,6 @@ class ChromaBackend(BaseBackend):
         try:
             self._client.delete_collection(name=name)
         except Exception as e:
-            if 'does not exist' in str(e).lower():
+            if "does not exist" in str(e).lower():
                 raise KeyError(f"Collection '{name}' does not exist") from e
             raise

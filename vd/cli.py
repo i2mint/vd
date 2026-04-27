@@ -45,9 +45,9 @@ def cmd_health_check(args):
     print(f"Available: {status['available']}")
     print(f"Message: {status['message']}")
 
-    if status['details']:
+    if status["details"]:
         print("\nDetails:")
-        for key, value in status['details'].items():
+        for key, value in status["details"].items():
             print(f"  {key}: {value}")
 
 
@@ -118,15 +118,15 @@ def cmd_stats(args):
     print(f"Max text length: {stats['max_text_length']}")
     print(f"Total characters: {stats['total_chars']:,}")
 
-    if stats['embedding_dimension']:
+    if stats["embedding_dimension"]:
         print(f"Embedding dimension: {stats['embedding_dimension']}")
 
-    if stats['metadata_fields']:
+    if stats["metadata_fields"]:
         print(f"\nMetadata fields: {', '.join(sorted(stats['metadata_fields']))}")
 
         if args.verbose:
             print("\nMetadata field counts:")
-            for field, count in sorted(stats['metadata_field_counts'].items()):
+            for field, count in sorted(stats["metadata_field_counts"].items()):
                 print(f"  {field}: {count}")
 
 
@@ -145,18 +145,18 @@ def cmd_validate(args):
     print("=" * 60)
     print(f"Valid: {report['valid']}")
 
-    if report['issues']:
+    if report["issues"]:
         print(f"\nIssues ({len(report['issues'])}):")
-        for issue in report['issues']:
+        for issue in report["issues"]:
             print(f"  ✗ {issue}")
 
-    if report['warnings']:
+    if report["warnings"]:
         print(f"\nWarnings ({len(report['warnings'])}):")
-        for warning in report['warnings']:
+        for warning in report["warnings"]:
             print(f"  ⚠ {warning}")
 
     print(f"\nStats:")
-    for key, value in report['stats'].items():
+    for key, value in report["stats"].items():
         print(f"  {key}: {value}")
 
 
@@ -180,7 +180,7 @@ def cmd_migrate(args):
     # Progress callback
     def progress(current, total):
         pct = (current / total) * 100 if total > 0 else 0
-        print(f"\rProgress: {current}/{total} ({pct:.1f}%)", end='', flush=True)
+        print(f"\rProgress: {current}/{total} ({pct:.1f}%)", end="", flush=True)
 
     print(f"Migrating from {args.source_backend} to {args.target_backend}...")
 
@@ -200,9 +200,9 @@ def cmd_migrate(args):
     print(f"  Skipped: {stats['skipped']}")
     print(f"  Failed: {stats['failed']}")
 
-    if stats['errors']:
+    if stats["errors"]:
         print(f"\nErrors:")
-        for error in stats['errors'][:10]:  # Show first 10
+        for error in stats["errors"][:10]:  # Show first 10
             print(f"  {error}")
 
 
@@ -228,19 +228,19 @@ def cmd_benchmark(args):
     print("\nResults:")
     print("=" * 60)
     print(f"Total time: {results['total_time']:.3f}s")
-    print(f"Average latency: {results['avg_latency']*1000:.2f}ms")
-    print(f"Min latency: {results['min_latency']*1000:.2f}ms")
-    print(f"Max latency: {results['max_latency']*1000:.2f}ms")
-    print(f"P50: {results['p50']*1000:.2f}ms")
-    print(f"P95: {results['p95']*1000:.2f}ms")
-    print(f"P99: {results['p99']*1000:.2f}ms")
+    print(f"Average latency: {results['avg_latency'] * 1000:.2f}ms")
+    print(f"Min latency: {results['min_latency'] * 1000:.2f}ms")
+    print(f"Max latency: {results['max_latency'] * 1000:.2f}ms")
+    print(f"P50: {results['p50'] * 1000:.2f}ms")
+    print(f"P95: {results['p95'] * 1000:.2f}ms")
+    print(f"P99: {results['p99'] * 1000:.2f}ms")
     print(f"Throughput: {results['queries_per_second']:.1f} queries/sec")
 
 
 def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
-        description='vd - Vector Database Facades CLI',
+        description="vd - Vector Database Facades CLI",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -267,87 +267,85 @@ Examples:
         """,
     )
 
-    subparsers = parser.add_subparsers(dest='command', help='Command to run')
+    subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
     # Backends command
-    backends_parser = subparsers.add_parser('backends', help='List available backends')
+    backends_parser = subparsers.add_parser("backends", help="List available backends")
     backends_parser.add_argument(
-        '--planned', action='store_true', help='Include planned backends'
+        "--planned", action="store_true", help="Include planned backends"
     )
     backends_parser.set_defaults(func=cmd_backends)
 
     # Install info command
     install_parser = subparsers.add_parser(
-        'install', help='Get installation instructions'
+        "install", help="Get installation instructions"
     )
-    install_parser.add_argument('backend', help='Backend name')
+    install_parser.add_argument("backend", help="Backend name")
     install_parser.set_defaults(func=cmd_install_info)
 
     # Health check command
-    health_parser = subparsers.add_parser('health', help='Check backend health')
-    health_parser.add_argument('backend', help='Backend name')
+    health_parser = subparsers.add_parser("health", help="Check backend health")
+    health_parser.add_argument("backend", help="Backend name")
     health_parser.set_defaults(func=cmd_health_check)
 
     # Export command
-    export_parser = subparsers.add_parser('export', help='Export a collection')
-    export_parser.add_argument('backend', help='Backend name')
-    export_parser.add_argument('collection', help='Collection name')
-    export_parser.add_argument('-o', '--output', required=True, help='Output file')
+    export_parser = subparsers.add_parser("export", help="Export a collection")
+    export_parser.add_argument("backend", help="Backend name")
+    export_parser.add_argument("collection", help="Collection name")
+    export_parser.add_argument("-o", "--output", required=True, help="Output file")
     export_parser.add_argument(
-        '-f', '--format', choices=['jsonl', 'json', 'directory'], default='jsonl'
+        "-f", "--format", choices=["jsonl", "json", "directory"], default="jsonl"
     )
     export_parser.add_argument(
-        '--no-vectors', action='store_true', help='Exclude vectors'
+        "--no-vectors", action="store_true", help="Exclude vectors"
     )
     export_parser.set_defaults(func=cmd_export)
 
     # Import command
-    import_parser = subparsers.add_parser('import', help='Import into a collection')
-    import_parser.add_argument('backend', help='Backend name')
-    import_parser.add_argument('collection', help='Collection name')
-    import_parser.add_argument('-i', '--input', required=True, help='Input file')
+    import_parser = subparsers.add_parser("import", help="Import into a collection")
+    import_parser.add_argument("backend", help="Backend name")
+    import_parser.add_argument("collection", help="Collection name")
+    import_parser.add_argument("-i", "--input", required=True, help="Input file")
+    import_parser.add_argument("-f", "--format", choices=["jsonl", "json", "directory"])
     import_parser.add_argument(
-        '-f', '--format', choices=['jsonl', 'json', 'directory']
-    )
-    import_parser.add_argument(
-        '--skip-existing', action='store_true', help='Skip existing documents'
+        "--skip-existing", action="store_true", help="Skip existing documents"
     )
     import_parser.set_defaults(func=cmd_import)
 
     # Stats command
-    stats_parser = subparsers.add_parser('stats', help='Show collection statistics')
-    stats_parser.add_argument('backend', help='Backend name')
-    stats_parser.add_argument('collection', help='Collection name')
-    stats_parser.add_argument('-v', '--verbose', action='store_true')
+    stats_parser = subparsers.add_parser("stats", help="Show collection statistics")
+    stats_parser.add_argument("backend", help="Backend name")
+    stats_parser.add_argument("collection", help="Collection name")
+    stats_parser.add_argument("-v", "--verbose", action="store_true")
     stats_parser.set_defaults(func=cmd_stats)
 
     # Validate command
-    validate_parser = subparsers.add_parser('validate', help='Validate a collection')
-    validate_parser.add_argument('backend', help='Backend name')
-    validate_parser.add_argument('collection', help='Collection name')
+    validate_parser = subparsers.add_parser("validate", help="Validate a collection")
+    validate_parser.add_argument("backend", help="Backend name")
+    validate_parser.add_argument("collection", help="Collection name")
     validate_parser.set_defaults(func=cmd_validate)
 
     # Migrate command
     migrate_parser = subparsers.add_parser(
-        'migrate', help='Migrate collection between backends'
+        "migrate", help="Migrate collection between backends"
     )
-    migrate_parser.add_argument('source_backend', help='Source backend')
-    migrate_parser.add_argument('source_collection', help='Source collection')
-    migrate_parser.add_argument('target_backend', help='Target backend')
-    migrate_parser.add_argument('target_collection', help='Target collection')
-    migrate_parser.add_argument('--batch-size', type=int, default=100)
+    migrate_parser.add_argument("source_backend", help="Source backend")
+    migrate_parser.add_argument("source_collection", help="Source collection")
+    migrate_parser.add_argument("target_backend", help="Target backend")
+    migrate_parser.add_argument("target_collection", help="Target collection")
+    migrate_parser.add_argument("--batch-size", type=int, default=100)
     migrate_parser.add_argument(
-        '--recompute-vectors', action='store_true', help='Recompute embeddings'
+        "--recompute-vectors", action="store_true", help="Recompute embeddings"
     )
     migrate_parser.set_defaults(func=cmd_migrate)
 
     # Benchmark command
-    benchmark_parser = subparsers.add_parser('benchmark', help='Benchmark search')
-    benchmark_parser.add_argument('backend', help='Backend name')
-    benchmark_parser.add_argument('collection', help='Collection name')
-    benchmark_parser.add_argument('-q', '--query', default='test query')
-    benchmark_parser.add_argument('--queries', type=int, default=100)
-    benchmark_parser.add_argument('--limit', type=int, default=10)
+    benchmark_parser = subparsers.add_parser("benchmark", help="Benchmark search")
+    benchmark_parser.add_argument("backend", help="Backend name")
+    benchmark_parser.add_argument("collection", help="Collection name")
+    benchmark_parser.add_argument("-q", "--query", default="test query")
+    benchmark_parser.add_argument("--queries", type=int, default=100)
+    benchmark_parser.add_argument("--limit", type=int, default=10)
     benchmark_parser.set_defaults(func=cmd_benchmark)
 
     # Parse args
@@ -365,12 +363,12 @@ Examples:
         sys.exit(130)
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
-        if '--verbose' in sys.argv or '-v' in sys.argv:
+        if "--verbose" in sys.argv or "-v" in sys.argv:
             import traceback
 
             traceback.print_exc()
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

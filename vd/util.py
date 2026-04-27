@@ -26,73 +26,106 @@ _backends: dict[str, type[BaseBackend]] = {}
 
 # Backend metadata - information about all possible backends
 _backend_metadata = {
-    'memory': {
-        'name': 'Memory (In-Memory)',
-        'description': 'In-memory storage for testing and prototyping. No persistence.',
-        'pip_install': None,  # Always available
-        'optional_group': None,
-        'module_check': None,  # No import needed
-        'features': ['Always available', 'Fast', 'No persistence'],
-        'limitations': ['Not persistent', 'Limited to RAM', 'No distributed support'],
+    "memory": {
+        "name": "Memory (In-Memory)",
+        "description": "In-memory storage for testing and prototyping. No persistence.",
+        "pip_install": None,  # Always available
+        "optional_group": None,
+        "module_check": None,  # No import needed
+        "features": ["Always available", "Fast", "No persistence"],
+        "limitations": ["Not persistent", "Limited to RAM", "No distributed support"],
     },
-    'chroma': {
-        'name': 'ChromaDB',
-        'description': 'Open-source embedding database with persistence support.',
-        'pip_install': 'pip install vd[chromadb]',
-        'optional_group': 'chromadb',
-        'module_check': 'chromadb',
-        'features': ['Persistent storage', 'Local or client/server', 'Active development'],
-        'limitations': ['Primarily for local use', 'Limited production features'],
+    "chroma": {
+        "name": "ChromaDB",
+        "description": "Open-source embedding database with persistence support.",
+        "pip_install": "pip install vd[chromadb]",
+        "optional_group": "chromadb",
+        "module_check": "chromadb",
+        "features": [
+            "Persistent storage",
+            "Local or client/server",
+            "Active development",
+        ],
+        "limitations": ["Primarily for local use", "Limited production features"],
     },
-    'pinecone': {
-        'name': 'Pinecone',
-        'description': 'Managed vector database with serverless and pod-based options.',
-        'pip_install': 'pip install pinecone-client',
-        'optional_group': None,
-        'module_check': 'pinecone',
-        'features': ['Fully managed', 'Serverless option', 'High performance', 'Production-ready'],
-        'limitations': ['Requires API key', 'Cloud-only', 'Costs money'],
-        'status': 'planned',
+    "pinecone": {
+        "name": "Pinecone",
+        "description": "Managed vector database with serverless and pod-based options.",
+        "pip_install": "pip install pinecone-client",
+        "optional_group": None,
+        "module_check": "pinecone",
+        "features": [
+            "Fully managed",
+            "Serverless option",
+            "High performance",
+            "Production-ready",
+        ],
+        "limitations": ["Requires API key", "Cloud-only", "Costs money"],
+        "status": "planned",
     },
-    'weaviate': {
-        'name': 'Weaviate',
-        'description': 'Open-source vector database with GraphQL API and hybrid search.',
-        'pip_install': 'pip install weaviate-client',
-        'optional_group': None,
-        'module_check': 'weaviate',
-        'features': ['Hybrid search', 'GraphQL API', 'Self-hosted or cloud', 'Schema-first'],
-        'limitations': ['Requires server', 'More complex setup'],
-        'status': 'planned',
+    "weaviate": {
+        "name": "Weaviate",
+        "description": "Open-source vector database with GraphQL API and hybrid search.",
+        "pip_install": "pip install weaviate-client",
+        "optional_group": None,
+        "module_check": "weaviate",
+        "features": [
+            "Hybrid search",
+            "GraphQL API",
+            "Self-hosted or cloud",
+            "Schema-first",
+        ],
+        "limitations": ["Requires server", "More complex setup"],
+        "status": "planned",
     },
-    'qdrant': {
-        'name': 'Qdrant',
-        'description': 'High-performance vector database written in Rust.',
-        'pip_install': 'pip install qdrant-client',
-        'optional_group': None,
-        'module_check': 'qdrant_client',
-        'features': ['High performance', 'Rich filtering', 'Self-hosted or cloud', 'gRPC API'],
-        'limitations': ['Requires server for persistence'],
-        'status': 'planned',
+    "qdrant": {
+        "name": "Qdrant",
+        "description": "High-performance vector database written in Rust.",
+        "pip_install": "pip install qdrant-client",
+        "optional_group": None,
+        "module_check": "qdrant_client",
+        "features": [
+            "High performance",
+            "Rich filtering",
+            "Self-hosted or cloud",
+            "gRPC API",
+        ],
+        "limitations": ["Requires server for persistence"],
+        "status": "planned",
     },
-    'milvus': {
-        'name': 'Milvus',
-        'description': 'Cloud-native vector database built for scalable similarity search.',
-        'pip_install': 'pip install pymilvus',
-        'optional_group': None,
-        'module_check': 'pymilvus',
-        'features': ['Highly scalable', 'Cloud-native', 'Multiple index types', 'Production-ready'],
-        'limitations': ['Complex setup', 'Resource intensive'],
-        'status': 'planned',
+    "milvus": {
+        "name": "Milvus",
+        "description": "Cloud-native vector database built for scalable similarity search.",
+        "pip_install": "pip install pymilvus",
+        "optional_group": None,
+        "module_check": "pymilvus",
+        "features": [
+            "Highly scalable",
+            "Cloud-native",
+            "Multiple index types",
+            "Production-ready",
+        ],
+        "limitations": ["Complex setup", "Resource intensive"],
+        "status": "planned",
     },
-    'faiss': {
-        'name': 'FAISS',
-        'description': 'Facebook AI Similarity Search - library for efficient similarity search.',
-        'pip_install': 'pip install faiss-cpu  # or faiss-gpu',
-        'optional_group': None,
-        'module_check': 'faiss',
-        'features': ['Very fast', 'Multiple index types', 'GPU support', 'No server needed'],
-        'limitations': ['Static index (rebuild to update)', 'In-memory only', 'No metadata filtering'],
-        'status': 'planned',
+    "faiss": {
+        "name": "FAISS",
+        "description": "Facebook AI Similarity Search - library for efficient similarity search.",
+        "pip_install": "pip install faiss-cpu  # or faiss-gpu",
+        "optional_group": None,
+        "module_check": "faiss",
+        "features": [
+            "Very fast",
+            "Multiple index types",
+            "GPU support",
+            "No server needed",
+        ],
+        "limitations": [
+            "Static index (rebuild to update)",
+            "In-memory only",
+            "No metadata filtering",
+        ],
+        "status": "planned",
     },
 }
 
@@ -155,16 +188,18 @@ def get_backend(name: str) -> type[BaseBackend]:
             info = _backend_metadata[name]
             msg = f"Backend '{name}' is not available.\n\n"
 
-            if info.get('status') == 'planned':
+            if info.get("status") == "planned":
                 msg += f"This backend is planned but not yet implemented.\n"
-            elif info.get('pip_install'):
+            elif info.get("pip_install"):
                 msg += f"To install it:\n  {info['pip_install']}\n\n"
-                msg += f"Or run: vd.get_install_instructions('{name}') for more details."
+                msg += (
+                    f"Or run: vd.get_install_instructions('{name}') for more details."
+                )
 
             raise ValueError(msg)
 
         # Unknown backend entirely
-        available = ', '.join(_backends.keys()) or 'none'
+        available = ", ".join(_backends.keys()) or "none"
         raise ValueError(
             f"Unknown backend '{name}'. "
             f"Available backends: {available}\n"
@@ -209,7 +244,7 @@ def _check_backend_available(name: str) -> bool:
         return False
 
     metadata = _backend_metadata[name]
-    module_check = metadata.get('module_check')
+    module_check = metadata.get("module_check")
 
     # Memory backend is always available
     if module_check is None:
@@ -266,13 +301,13 @@ def list_all_backends(*, include_planned: bool = False) -> dict[str, dict[str, A
     result = {}
     for name, metadata in _backend_metadata.items():
         # Skip planned backends if not requested
-        if not include_planned and metadata.get('status') == 'planned':
+        if not include_planned and metadata.get("status") == "planned":
             continue
 
         # Add availability status
         info = metadata.copy()
-        info['available'] = _check_backend_available(name)
-        info['registered'] = name in _backends
+        info["available"] = _check_backend_available(name)
+        info["registered"] = name in _backends
         result[name] = info
 
     return result
@@ -306,14 +341,12 @@ def get_backend_info(name: str) -> dict[str, Any]:
     'pip install vd[chromadb]'
     """
     if name not in _backend_metadata:
-        available = ', '.join(_backend_metadata.keys())
-        raise ValueError(
-            f"Unknown backend '{name}'. Known backends: {available}"
-        )
+        available = ", ".join(_backend_metadata.keys())
+        raise ValueError(f"Unknown backend '{name}'. Known backends: {available}")
 
     info = _backend_metadata[name].copy()
-    info['available'] = _check_backend_available(name)
-    info['registered'] = name in _backends
+    info["available"] = _check_backend_available(name)
+    info["registered"] = name in _backends
 
     return info
 
@@ -348,17 +381,17 @@ def print_backends_table(*, include_planned: bool = False) -> None:
     print()
 
     # Group by availability
-    available = {k: v for k, v in backends.items() if v['available']}
-    unavailable = {k: v for k, v in backends.items() if not v['available']}
+    available = {k: v for k, v in backends.items() if v["available"]}
+    unavailable = {k: v for k, v in backends.items() if not v["available"]}
 
     if available:
         print("✓ AVAILABLE (Ready to use):")
         print("-" * 80)
         for name, info in available.items():
-            status = " [PLANNED]" if info.get('status') == 'planned' else ""
+            status = " [PLANNED]" if info.get("status") == "planned" else ""
             print(f"  • {name:12} - {info['name']}{status}")
             print(f"    {info['description']}")
-            if info['features']:
+            if info["features"]:
                 print(f"    Features: {', '.join(info['features'][:3])}")
             print()
 
@@ -366,12 +399,16 @@ def print_backends_table(*, include_planned: bool = False) -> None:
         print("✗ NOT INSTALLED (Installation required):")
         print("-" * 80)
         for name, info in unavailable.items():
-            status = " [PLANNED - Not yet implemented]" if info.get('status') == 'planned' else ""
+            status = (
+                " [PLANNED - Not yet implemented]"
+                if info.get("status") == "planned"
+                else ""
+            )
             print(f"  • {name:12} - {info['name']}{status}")
             print(f"    {info['description']}")
-            if info['pip_install']:
+            if info["pip_install"]:
                 print(f"    Install: {info['pip_install']}")
-            if info['features']:
+            if info["features"]:
                 print(f"    Features: {', '.join(info['features'][:3])}")
             print()
 
@@ -413,7 +450,7 @@ def get_install_instructions(name: str) -> str:
     """
     info = get_backend_info(name)
 
-    if info['available']:
+    if info["available"]:
         return f"Backend '{name}' is already installed and ready to use!"
 
     lines = [
@@ -421,42 +458,52 @@ def get_install_instructions(name: str) -> str:
         "",
     ]
 
-    if info.get('status') == 'planned':
-        lines.extend([
-            "Status: PLANNED - Not yet implemented",
-            "",
-            f"This backend is planned for future development.",
-            f"Description: {info['description']}",
-            "",
-            "Once implemented, installation will be:",
-        ])
+    if info.get("status") == "planned":
+        lines.extend(
+            [
+                "Status: PLANNED - Not yet implemented",
+                "",
+                f"This backend is planned for future development.",
+                f"Description: {info['description']}",
+                "",
+                "Once implemented, installation will be:",
+            ]
+        )
 
-    if info['pip_install']:
-        lines.extend([
-            "Installation:",
-            f"  {info['pip_install']}",
+    if info["pip_install"]:
+        lines.extend(
+            [
+                "Installation:",
+                f"  {info['pip_install']}",
+                "",
+            ]
+        )
+
+    lines.extend(
+        [
+            "Description:",
+            f"  {info['description']}",
             "",
-        ])
+        ]
+    )
 
-    lines.extend([
-        "Description:",
-        f"  {info['description']}",
-        "",
-    ])
-
-    if info.get('features'):
-        lines.extend([
-            "Features:",
-        ])
-        for feature in info['features']:
+    if info.get("features"):
+        lines.extend(
+            [
+                "Features:",
+            ]
+        )
+        for feature in info["features"]:
             lines.append(f"  • {feature}")
         lines.append("")
 
-    if info.get('limitations'):
-        lines.extend([
-            "Limitations:",
-        ])
-        for limitation in info['limitations']:
+    if info.get("limitations"):
+        lines.extend(
+            [
+                "Limitations:",
+            ]
+        )
+        for limitation in info["limitations"]:
             lines.append(f"  • {limitation}")
         lines.append("")
 
@@ -629,7 +676,7 @@ def normalize_document_input(
     raise ValueError(f"Invalid document input format: {type(doc_input)}")
 
 
-def _generate_id(text: str, *, prefix: str = 'doc') -> str:
+def _generate_id(text: str, *, prefix: str = "doc") -> str:
     """
     Generate a unique ID for a document based on its text.
 
@@ -682,7 +729,7 @@ def text_only(result: SearchResult) -> str:
     >>> text_only(result)
     'Hello'
     """
-    return result['text']
+    return result["text"]
 
 
 def id_only(result: SearchResult) -> str:
@@ -705,7 +752,7 @@ def id_only(result: SearchResult) -> str:
     >>> id_only(result)
     'doc1'
     """
-    return result['id']
+    return result["id"]
 
 
 def id_and_score(result: SearchResult) -> tuple[str, float]:
@@ -728,7 +775,7 @@ def id_and_score(result: SearchResult) -> tuple[str, float]:
     >>> id_and_score(result)
     ('doc1', 0.9)
     """
-    return result['id'], result['score']
+    return result["id"], result["score"]
 
 
 def id_text_score(result: SearchResult) -> tuple[str, str, float]:
@@ -751,7 +798,7 @@ def id_text_score(result: SearchResult) -> tuple[str, str, float]:
     >>> id_text_score(result)
     ('doc1', 'Hello', 0.9)
     """
-    return result['id'], result['text'], result['score']
+    return result["id"], result["text"], result["score"]
 
 
 # Similarity/distance utilities

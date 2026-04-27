@@ -33,26 +33,26 @@ def main():
     print()
 
     # Set up client and collection
-    client = vd.connect('memory', embedding_model=mock_embedding_function)
-    docs = client.create_collection('demo_docs')
+    client = vd.connect("memory", embedding_model=mock_embedding_function)
+    docs = client.create_collection("demo_docs")
 
     # Add some sample documents
     print("Setting up sample collection...")
-    docs['doc1'] = (
+    docs["doc1"] = (
         "Machine learning is a subset of artificial intelligence",
-        {'category': 'AI', 'year': 2023},
+        {"category": "AI", "year": 2023},
     )
-    docs['doc2'] = (
+    docs["doc2"] = (
         "Deep learning uses neural networks with multiple layers",
-        {'category': 'AI', 'year': 2023},
+        {"category": "AI", "year": 2023},
     )
-    docs['doc3'] = (
+    docs["doc3"] = (
         "Python is a popular programming language for data science",
-        {'category': 'Programming', 'year': 2024},
+        {"category": "Programming", "year": 2024},
     )
-    docs['doc4'] = (
+    docs["doc4"] = (
         "Natural language processing helps computers understand human language",
-        {'category': 'AI', 'year': 2024},
+        {"category": "AI", "year": 2024},
     )
     print(f"✓ Created collection with {len(docs)} documents")
     print()
@@ -70,13 +70,13 @@ def main():
     # 2. Metadata Distribution
     print("2. Metadata Distribution:")
     print("-" * 80)
-    category_dist = vd.metadata_distribution(docs, 'category')
+    category_dist = vd.metadata_distribution(docs, "category")
     print("Category distribution:")
     for category, count in category_dist.items():
         print(f"  {category}: {count}")
     print()
 
-    year_dist = vd.metadata_distribution(docs, 'year')
+    year_dist = vd.metadata_distribution(docs, "year")
     print("Year distribution:")
     for year, count in year_dist.items():
         print(f"  {year}: {count}")
@@ -107,7 +107,7 @@ def main():
     print("5. Text Chunking:")
     print("-" * 80)
     long_text = "Machine learning is amazing. It helps solve complex problems. Neural networks are powerful. They can learn from data. Deep learning is a subset. It uses multiple layers."
-    chunks = vd.chunk_text(long_text, chunk_size=50, strategy='sentences')
+    chunks = vd.chunk_text(long_text, chunk_size=50, strategy="sentences")
     print(f"Original text ({len(long_text)} chars):")
     print(f"  {long_text}")
     print(f"\nChunked into {len(chunks)} pieces:")
@@ -119,20 +119,24 @@ def main():
     print("6. Advanced Search - Multi-query:")
     print("-" * 80)
     queries = ["artificial intelligence", "programming language"]
-    results = list(vd.multi_query_search(docs, queries, limit=3, combine='best'))
+    results = list(vd.multi_query_search(docs, queries, limit=3, combine="best"))
     print(f"Searching for: {queries}")
     print(f"Found {len(results)} results:")
     for i, result in enumerate(results, 1):
-        print(f"  {i}. {result['id']}: {result['text'][:50]}... (score: {result['score']:.3f})")
+        print(
+            f"  {i}. {result['id']}: {result['text'][:50]}... (score: {result['score']:.3f})"
+        )
     print()
 
     # 7. Search Similar Documents
     print("7. Find Similar Documents:")
     print("-" * 80)
-    similar = list(vd.search_similar_to_document(docs, 'doc1', limit=2))
+    similar = list(vd.search_similar_to_document(docs, "doc1", limit=2))
     print(f"Documents similar to 'doc1':")
     for i, result in enumerate(similar, 1):
-        print(f"  {i}. {result['id']}: {result['text'][:50]}... (score: {result['score']:.3f})")
+        print(
+            f"  {i}. {result['id']}: {result['text'][:50]}... (score: {result['score']:.3f})"
+        )
     print()
 
     # 8. Import/Export
@@ -140,15 +144,15 @@ def main():
     print("-" * 80)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        export_path = Path(tmpdir) / 'export.jsonl'
+        export_path = Path(tmpdir) / "export.jsonl"
 
         # Export
-        count = vd.export_collection(docs, export_path, format='jsonl')
+        count = vd.export_collection(docs, export_path, format="jsonl")
         print(f"✓ Exported {count} documents to {export_path.name}")
 
         # Create new collection and import
-        client2 = vd.connect('memory', embedding_model=mock_embedding_function)
-        docs2 = client2.create_collection('imported_docs')
+        client2 = vd.connect("memory", embedding_model=mock_embedding_function)
+        docs2 = client2.create_collection("imported_docs")
         count = vd.import_collection(docs2, export_path)
         print(f"✓ Imported {count} documents into new collection")
         print(f"  New collection size: {len(docs2)}")
@@ -157,8 +161,8 @@ def main():
     # 9. Migration
     print("9. Collection Migration:")
     print("-" * 80)
-    target_client = vd.connect('memory', embedding_model=mock_embedding_function)
-    target_docs = target_client.create_collection('migrated_docs')
+    target_client = vd.connect("memory", embedding_model=mock_embedding_function)
+    target_docs = target_client.create_collection("migrated_docs")
 
     migration_stats = vd.migrate_collection(docs, target_docs, batch_size=2)
     print(f"✓ Migration completed:")
@@ -170,7 +174,7 @@ def main():
     # 10. Health Check
     print("10. Backend Health Check:")
     print("-" * 80)
-    health = vd.health_check_backend('memory', embedding_model=mock_embedding_function)
+    health = vd.health_check_backend("memory", embedding_model=mock_embedding_function)
     print(f"Backend: {health['backend']}")
     print(f"Status: {health['status']}")
     print(f"Available: {health['available']}")
@@ -180,18 +184,18 @@ def main():
     print("11. Search Performance Benchmark:")
     print("-" * 80)
     results = vd.benchmark_search(docs, "machine learning", n_queries=10, limit=5)
-    print(f"Average latency: {results['avg_latency']*1000:.2f}ms")
-    print(f"P95 latency: {results['p95']*1000:.2f}ms")
+    print(f"Average latency: {results['avg_latency'] * 1000:.2f}ms")
+    print(f"P95 latency: {results['p95'] * 1000:.2f}ms")
     print(f"Throughput: {results['queries_per_second']:.1f} queries/sec")
     print()
 
     # 12. Sample Collection
     print("12. Sample Collection:")
     print("-" * 80)
-    sample_ids = vd.sample_collection(docs, n=2, method='random', seed=42)
+    sample_ids = vd.sample_collection(docs, n=2, method="random", seed=42)
     print(f"Random sample of 2 documents: {sample_ids}")
 
-    diverse_ids = vd.sample_collection(docs, n=2, method='diverse')
+    diverse_ids = vd.sample_collection(docs, n=2, method="diverse")
     print(f"Diverse sample of 2 documents: {diverse_ids}")
     print()
 
@@ -209,5 +213,5 @@ def main():
     print("=" * 80)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
