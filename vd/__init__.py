@@ -152,7 +152,7 @@ __version__ = "0.1.0"
 
 __all__ = [
     # Skills (AI agent integration)
-    'skills_dir',
+    "skills_dir",
     # Main entry point
     "connect",
     # Core types
