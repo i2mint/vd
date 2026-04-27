@@ -42,6 +42,66 @@ pip install vd[all]
 
 ## Quick Start
 
+`vd` exposes three interfaces. Pick whichever fits your workflow — each has
+its own dedicated section below.
+
+- **[AI Skills Interface](#ai-skills-interface)** — *the modern way, recommended.*
+  Modern programming increasingly happens by describing intent to an AI
+  coding agent and letting it write the code. `vd` ships with a set of
+  skills that teach the agent exactly how to use the package well, so you
+  can simply ask things like *"use `vd` to do semantic search over these
+  articles"* and let it pick the right tools.
+- **[Python Interface](#python-interface)** — the classic path. `import vd`
+  and call functions directly. A small, dict-like API at the top level.
+- **[CLI Interface](#cli-interface)** — common operations exposed as `vd …`
+  commands for scripting, ops, and quick one-offs.
+
+## AI Skills Interface
+
+`vd` ships its AI-agent skills inside the package itself, at
+`vd/data/skills/` (accessible programmatically via `vd.skills_dir()`). You
+are free to point any AI coding agent at this directory however you like —
+copy, symlink, or load it into whatever skill index your agent uses. The
+recommended path is the [`skill`](https://pypi.org/project/skill/) package,
+which wires the bundled skills into the agent's index for you.
+
+The bundled skills:
+
+| Skill | Use when you want to… |
+|---|---|
+| `vd-quickstart` | …connect, create a collection, add docs, run a search |
+| `vd-backend-choose` | …pick / install / configure a backend, set up YAML / TOML configs |
+| `vd-ingest` | …load a corpus: clean, chunk, batch-add documents with metadata |
+| `vd-search` | …do advanced search: filters, multi-query, RRF, similar-to-doc, dedup |
+| `vd-ops` | …export / import, migrate between backends, analyze, benchmark |
+
+### Linking the skills with the `skill` package
+
+```bash
+pip install vd
+pip install skill   # the linker CLI
+
+# Into the current project (./.claude/skills/)
+skill link-skills "$(python -c 'import vd; print(vd.skills_dir())')"
+
+# Or globally (~/.claude/skills/)
+skill link-skills "$(python -c 'import vd; print(vd.skills_dir())')" \
+    --target ~/.claude/skills
+```
+
+Once linked, ask your agent things like:
+
+- *"Use `vd` to do semantic search over these articles."*
+- *"Which `vd` backend should I use? I need persistence and a free option."*
+- *"Load this corpus into a `vd` collection — chunk by sentence, with
+  metadata."*
+- *"Migrate my `memory` collection to `chroma`."*
+
+The agent will pick the matching skill automatically and write the calls
+for you.
+
+## Python Interface
+
 ```python
 import vd
 
@@ -61,8 +121,6 @@ results = docs.search("artificial intelligence", limit=2)
 for result in results:
     print(f"{result['id']}: {result['text']} (score: {result['score']:.3f})")
 ```
-
-## Core Concepts
 
 ### Backends
 
@@ -228,8 +286,6 @@ Supported operators:
 - `$and`: Logical AND
 - `$or`: Logical OR
 
-## Advanced Usage
-
 ### Custom Embedding Models
 
 ```python
@@ -285,136 +341,7 @@ query_vector = [0.15, 0.25, 0.35, ...]
 results = docs.search(query_vector, limit=5)
 ```
 
-## Architecture
-
-The `vd` package is designed with several key principles:
-
-1. **Protocol-based**: Uses Python protocols for type safety without tight coupling
-2. **Separation of Concerns**: Embedding, storage, and search are independent
-3. **Progressive Enhancement**: Same code works from in-memory to distributed databases
-4. **Facade Pattern**: Provides a consistent interface across different backends
-
-### Project Structure
-
-```
-vd/
-├── __init__.py          # Public API
-├── base.py              # Core protocols and types
-├── util.py              # Utility functions and factory
-├── backends/            # Backend implementations
-│   ├── __init__.py
-│   ├── memory.py        # In-memory backend
-│   └── chroma.py        # ChromaDB backend
-└── tests/               # Comprehensive test suite
-```
-
-## Development
-
-### Running Tests
-
-```bash
-# Install development dependencies
-pip install -e .[dev]
-
-# Run tests
-pytest tests/ -v
-
-# Run tests with coverage
-pytest tests/ --cov=vd --cov-report=html
-```
-
-### Adding a New Backend
-
-1. Create a new file in `vd/backends/`
-2. Implement the backend class inheriting from `BaseBackend`
-3. Implement a collection class with the MutableMapping interface
-4. Register the backend with `@register_backend('backend_name')`
-5. Add tests in `tests/`
-
-Example:
-
-```python
-from vd.base import BaseBackend
-from vd.util import register_backend
-
-@register_backend('mydb')
-class MyDBBackend(BaseBackend):
-    def create_collection(self, name, **kwargs):
-        # Implementation
-        pass
-    # ... other methods
-```
-
-## Design Philosophy
-
-The `vd` package follows these design principles:
-
-- **Favor functional over object-oriented** where appropriate
-- **Use Mapping/MutableMapping abstractions** for intuitive interfaces
-- **Leverage existing packages** (dol, imbed) for core functionality
-- **Optional dependencies** for backends (graceful degradation)
-- **Progressive enhancement**: Scale from prototypes to production seamlessly
-
-## Integration with i2mint Ecosystem
-
-`vd` is designed to work seamlessly with the i2mint ecosystem:
-
-- **`dol`**: Provides the underlying Mapping/Store patterns
-- **`imbed`**: Handles embedding generation and management
-- **`i2`**: Signature manipulation for consistent interfaces
-- **`oa`**: OpenAI API integration for embeddings
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-MIT
-
-## Links
-
-- **GitHub**: https://github.com/i2mint/vd
-- **Documentation**: Coming soon
-- **PyPI**: Coming soon
-
-## Command-Line Interface
-
-`vd` includes a comprehensive CLI for common operations:
-
-```bash
-# List available backends
-vd backends
-vd backends --planned  # Include planned backends
-
-# Get installation instructions
-vd install chroma
-
-# Check backend health
-vd health memory
-
-# Export a collection
-vd export memory my_docs -o backup.jsonl
-vd export memory my_docs -o backup.json -f json
-
-# Import a collection
-vd import chroma my_docs -i backup.jsonl
-
-# View collection statistics
-vd stats memory my_docs
-vd stats memory my_docs -v  # Verbose output
-
-# Validate a collection
-vd validate memory my_docs
-
-# Migrate between backends
-vd migrate memory source_docs chroma target_docs
-
-# Benchmark search performance
-vd benchmark memory my_docs -q "test query" --queries 100
-```
-
-## Configuration Management
+### Configuration Management
 
 Manage backend configurations with YAML or TOML files:
 
@@ -449,7 +376,7 @@ Environment variable overrides:
 - `VD_BACKEND`: Override backend name
 - `VD_EMBEDDING_MODEL`: Override embedding model
 
-## Backend Comparison and Recommendation
+### Backend Comparison and Recommendation
 
 Choose the right backend for your needs:
 
@@ -473,7 +400,7 @@ chars = vd.get_backend_characteristics()
 print(chars['chroma']['use_cases'])
 ```
 
-## Import/Export
+### Import/Export
 
 Export and import collections in multiple formats:
 
@@ -494,7 +421,7 @@ vd.import_collection(docs, 'backup.jsonl')
 vd.import_collection(docs, 'backup.jsonl', skip_existing=True)
 ```
 
-## Migration
+### Migration
 
 Move collections between backends:
 
@@ -521,7 +448,7 @@ vd.migrate_client(
 )
 ```
 
-## Collection Analytics
+### Collection Analytics
 
 Analyze and validate collections:
 
@@ -554,7 +481,7 @@ if not report['valid']:
         print(f"Issue: {issue}")
 ```
 
-## Text Preprocessing
+### Text Preprocessing
 
 Clean and chunk text before adding to collections:
 
@@ -595,7 +522,7 @@ metadata = vd.extract_metadata(
 )
 ```
 
-## Health Checks and Benchmarking
+### Health Checks and Benchmarking
 
 Monitor and benchmark performance:
 
@@ -625,7 +552,7 @@ print(f"Throughput: {results['queries_per_second']:.1f} queries/sec")
 results = vd.benchmark_insert(docs, n_documents=100, batch_size=10)
 ```
 
-## Advanced Search
+### Advanced Search
 
 Enhanced search capabilities:
 
@@ -657,6 +584,122 @@ combined = vd.reciprocal_rank_fusion([results1, results2])
 unique = vd.deduplicate_results(results, key='id', keep='first')
 ```
 
+## CLI Interface
+
+`vd` includes a comprehensive CLI for common operations:
+
+```bash
+# List available backends
+vd backends
+vd backends --planned  # Include planned backends
+
+# Get installation instructions
+vd install chroma
+
+# Check backend health
+vd health memory
+
+# Export a collection
+vd export memory my_docs -o backup.jsonl
+vd export memory my_docs -o backup.json -f json
+
+# Import a collection
+vd import chroma my_docs -i backup.jsonl
+
+# View collection statistics
+vd stats memory my_docs
+vd stats memory my_docs -v  # Verbose output
+
+# Validate a collection
+vd validate memory my_docs
+
+# Migrate between backends
+vd migrate memory source_docs chroma target_docs
+
+# Benchmark search performance
+vd benchmark memory my_docs -q "test query" --queries 100
+```
+
+## Architecture
+
+The `vd` package is designed with several key principles:
+
+1. **Protocol-based**: Uses Python protocols for type safety without tight coupling
+2. **Separation of Concerns**: Embedding, storage, and search are independent
+3. **Progressive Enhancement**: Same code works from in-memory to distributed databases
+4. **Facade Pattern**: Provides a consistent interface across different backends
+
+### Project Structure
+
+```
+vd/
+├── __init__.py          # Public API
+├── base.py              # Core protocols and types
+├── util.py              # Utility functions and factory
+├── backends/            # Backend implementations
+│   ├── __init__.py
+│   ├── memory.py        # In-memory backend
+│   └── chroma.py        # ChromaDB backend
+├── data/skills/         # Bundled AI-agent skills
+└── tests/               # Comprehensive test suite
+```
+
+## Design Philosophy
+
+The `vd` package follows these design principles:
+
+- **Favor functional over object-oriented** where appropriate
+- **Use Mapping/MutableMapping abstractions** for intuitive interfaces
+- **Leverage existing packages** (dol, imbed) for core functionality
+- **Optional dependencies** for backends (graceful degradation)
+- **Progressive enhancement**: Scale from prototypes to production seamlessly
+
+## Integration with i2mint Ecosystem
+
+`vd` is designed to work seamlessly with the i2mint ecosystem:
+
+- **`dol`**: Provides the underlying Mapping/Store patterns
+- **`imbed`**: Handles embedding generation and management
+- **`i2`**: Signature manipulation for consistent interfaces
+- **`oa`**: OpenAI API integration for embeddings
+
+## Development
+
+### Running Tests
+
+```bash
+# Install development dependencies
+pip install -e .[dev]
+
+# Run tests
+pytest tests/ -v
+
+# Run tests with coverage
+pytest tests/ --cov=vd --cov-report=html
+```
+
+### Adding a New Backend
+
+1. Create a new file in `vd/backends/`
+2. Implement the backend class inheriting from `BaseBackend`
+3. Implement a collection class with the MutableMapping interface
+4. Register the backend with `@register_backend('backend_name')`
+5. Add tests in `tests/`
+
+Example:
+
+```python
+from vd.base import BaseBackend
+from vd.util import register_backend
+
+@register_backend('mydb')
+class MyDBBackend(BaseBackend):
+    def create_collection(self, name, **kwargs):
+        # Implementation
+        pass
+    # ... other methods
+```
+
 ## Roadmap
 
 - [x] Import/Export (JSONL, JSON, directory)
@@ -668,6 +711,7 @@ unique = vd.deduplicate_results(results, key='id', keep='first')
 - [x] Configuration file support (YAML, TOML)
 - [x] Backend comparison and recommendation
 - [x] Command-line interface
+- [x] AI-agent skills (bundled in `vd/data/skills/`)
 - [ ] Additional backends (Pinecone, Weaviate, Qdrant, FAISS)
 - [ ] Async support
 - [ ] Hybrid search (vector + keyword)
@@ -676,8 +720,22 @@ unique = vd.deduplicate_results(results, key='id', keep='first')
 ## Examples
 
 See the demo scripts for comprehensive examples:
-- `example_usage.py` - Basic usage and core features
-- `demo_backend_discovery.py` - Backend discovery features
-- `demo_config.py` - Configuration management
-- `demo_comparison.py` - Backend comparison and recommendation
-- `demo_utilities.py` - Import/export, migration, analytics, and more
+- `misc/examples/example_usage.py` - Basic usage and core features
+- `misc/examples/demo_backend_discovery.py` - Backend discovery features
+- `misc/examples/demo_config.py` - Configuration management
+- `misc/examples/demo_comparison.py` - Backend comparison and recommendation
+- `misc/examples/demo_utilities.py` - Import/export, migration, analytics, and more
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+MIT
+
+## Links
+
+- **GitHub**: https://github.com/i2mint/vd
+- **Documentation**: Coming soon
+- **PyPI**: Coming soon

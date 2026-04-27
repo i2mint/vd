@@ -41,6 +41,14 @@ To list all available backends:
 ['memory', 'chroma']
 """
 
+from pathlib import Path as _Path
+
+
+def skills_dir() -> _Path:
+    """Return the path to the bundled AI-agent skills directory."""
+    return _Path(__file__).parent / "data" / "skills"
+
+
 # Import backends to trigger registration
 import vd.backends  # noqa: F401
 
@@ -143,6 +151,8 @@ from vd.compare import (
 __version__ = "0.1.0"
 
 __all__ = [
+    # Skills (AI agent integration)
+    'skills_dir',
     # Main entry point
     "connect",
     # Core types

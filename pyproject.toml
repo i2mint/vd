@@ -40,6 +40,9 @@ dev = [
 ]
 docs = ["sphinx>=6.0", "sphinx-rtd-theme>=1.0"]
 
+[tool.hatch.build.targets.wheel]
+packages = ["vd"]
+
 [tool.ruff]
 line-length = 88
 target-version = "py310"
