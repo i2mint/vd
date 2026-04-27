@@ -6,16 +6,16 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to vd’s documentation! &mdash; vd 0.0.10 documentation</title>
+  <title>Welcome to vd’s documentation! &mdash; vd 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=a83ce22a"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -49,11 +49,20 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd.html">vd</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/crude.html">vd.crude</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/dog.html">vd.dog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/wip.html">vd.wip</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/wip/input_sourcing.html">vd.wip.input_sourcing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/wip/input_wire.html">vd.wip.input_wire</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/base.html">vd.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/cli.html">vd.cli</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/compare.html">vd.compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/health.html">vd.health</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/io.html">vd.io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/search.html">vd.search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/text.html">vd.text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/util.html">vd.util</a></li>
 </ul>
 
         </div>
@@ -85,27 +94,186 @@
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd.html">vd</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/crude.html">vd.crude</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/crude.html#vd.crude.Crudifier"><code class="docutils literal notranslate"><span class="pre">Crudifier</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/crude.html#vd.crude.DillFiles"><code class="docutils literal notranslate"><span class="pre">DillFiles</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/crude.html#vd.crude.auto_key"><code class="docutils literal notranslate"><span class="pre">auto_key()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/crude.html#vd.crude.auto_key_from_arguments"><code class="docutils literal notranslate"><span class="pre">auto_key_from_arguments()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/crude.html#vd.crude.auto_key_from_time"><code class="docutils literal notranslate"><span class="pre">auto_key_from_time()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/crude.html#vd.crude.crudify_based_on_names"><code class="docutils literal notranslate"><span class="pre">crudify_based_on_names()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/crude.html#vd.crude.mk_mall_of_dill_stores"><code class="docutils literal notranslate"><span class="pre">mk_mall_of_dill_stores()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/crude.html#vd.crude.simple_mall_dispatch_core_func"><code class="docutils literal notranslate"><span class="pre">simple_mall_dispatch_core_func()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd.html">vd</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#key-components">Key Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#available-backends">Available Backends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.Client"><code class="docutils literal notranslate"><span class="pre">Client</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.Collection"><code class="docutils literal notranslate"><span class="pre">Collection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.Document"><code class="docutils literal notranslate"><span class="pre">Document</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.Filter"><code class="docutils literal notranslate"><span class="pre">Filter</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.SearchResult"><code class="docutils literal notranslate"><span class="pre">SearchResult</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.StaticIndexError"><code class="docutils literal notranslate"><span class="pre">StaticIndexError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.Vector"><code class="docutils literal notranslate"><span class="pre">Vector</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.benchmark_insert"><code class="docutils literal notranslate"><span class="pre">benchmark_insert()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.benchmark_search"><code class="docutils literal notranslate"><span class="pre">benchmark_search()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.chunk_documents"><code class="docutils literal notranslate"><span class="pre">chunk_documents()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.chunk_text"><code class="docutils literal notranslate"><span class="pre">chunk_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.clean_text"><code class="docutils literal notranslate"><span class="pre">clean_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.collection_stats"><code class="docutils literal notranslate"><span class="pre">collection_stats()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.compare_backends"><code class="docutils literal notranslate"><span class="pre">compare_backends()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.connect"><code class="docutils literal notranslate"><span class="pre">connect()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.connect_from_config"><code class="docutils literal notranslate"><span class="pre">connect_from_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.copy_collection"><code class="docutils literal notranslate"><span class="pre">copy_collection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.create_example_config"><code class="docutils literal notranslate"><span class="pre">create_example_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.deduplicate_results"><code class="docutils literal notranslate"><span class="pre">deduplicate_results()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.export_collection"><code class="docutils literal notranslate"><span class="pre">export_collection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.export_to_directory"><code class="docutils literal notranslate"><span class="pre">export_to_directory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.export_to_json"><code class="docutils literal notranslate"><span class="pre">export_to_json()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.export_to_jsonl"><code class="docutils literal notranslate"><span class="pre">export_to_jsonl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.extract_metadata"><code class="docutils literal notranslate"><span class="pre">extract_metadata()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.find_duplicates"><code class="docutils literal notranslate"><span class="pre">find_duplicates()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.find_outliers"><code class="docutils literal notranslate"><span class="pre">find_outliers()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.get_backend_characteristics"><code class="docutils literal notranslate"><span class="pre">get_backend_characteristics()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.get_backend_info"><code class="docutils literal notranslate"><span class="pre">get_backend_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.get_install_instructions"><code class="docutils literal notranslate"><span class="pre">get_install_instructions()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.health_check_backend"><code class="docutils literal notranslate"><span class="pre">health_check_backend()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.health_check_collection"><code class="docutils literal notranslate"><span class="pre">health_check_collection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.id_and_score"><code class="docutils literal notranslate"><span class="pre">id_and_score()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.id_only"><code class="docutils literal notranslate"><span class="pre">id_only()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.id_text_score"><code class="docutils literal notranslate"><span class="pre">id_text_score()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.import_collection"><code class="docutils literal notranslate"><span class="pre">import_collection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.import_from_directory"><code class="docutils literal notranslate"><span class="pre">import_from_directory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.import_from_json"><code class="docutils literal notranslate"><span class="pre">import_from_json()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.import_from_jsonl"><code class="docutils literal notranslate"><span class="pre">import_from_jsonl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.list_all_backends"><code class="docutils literal notranslate"><span class="pre">list_all_backends()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.list_available_backends"><code class="docutils literal notranslate"><span class="pre">list_available_backends()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.list_backends"><code class="docutils literal notranslate"><span class="pre">list_backends()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.load_config"><code class="docutils literal notranslate"><span class="pre">load_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.metadata_distribution"><code class="docutils literal notranslate"><span class="pre">metadata_distribution()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.migrate_client"><code class="docutils literal notranslate"><span class="pre">migrate_client()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.migrate_collection"><code class="docutils literal notranslate"><span class="pre">migrate_collection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.multi_query_search"><code class="docutils literal notranslate"><span class="pre">multi_query_search()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.normalize_whitespace"><code class="docutils literal notranslate"><span class="pre">normalize_whitespace()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.print_backends_table"><code class="docutils literal notranslate"><span class="pre">print_backends_table()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.print_comparison"><code class="docutils literal notranslate"><span class="pre">print_comparison()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.print_recommendation"><code class="docutils literal notranslate"><span class="pre">print_recommendation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.reciprocal_rank_fusion"><code class="docutils literal notranslate"><span class="pre">reciprocal_rank_fusion()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.recommend_backend"><code class="docutils literal notranslate"><span class="pre">recommend_backend()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.sample_collection"><code class="docutils literal notranslate"><span class="pre">sample_collection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.save_config"><code class="docutils literal notranslate"><span class="pre">save_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.search_similar_to_document"><code class="docutils literal notranslate"><span class="pre">search_similar_to_document()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.text_only"><code class="docutils literal notranslate"><span class="pre">text_only()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.truncate_text"><code class="docutils literal notranslate"><span class="pre">truncate_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.validate_collection"><code class="docutils literal notranslate"><span class="pre">validate_collection()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/dog.html">vd.dog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/wip.html">vd.wip</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/wip/input_sourcing.html">vd.wip.input_sourcing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/wip/input_sourcing.html#vd.wip.input_sourcing.resolve_data"><code class="docutils literal notranslate"><span class="pre">resolve_data()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/wip/input_sourcing.html#vd.wip.input_sourcing.source_variables"><code class="docutils literal notranslate"><span class="pre">source_variables()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/analytics.html">vd.analytics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/analytics.html#vd.analytics.collection_stats"><code class="docutils literal notranslate"><span class="pre">collection_stats()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/analytics.html#vd.analytics.find_duplicates"><code class="docutils literal notranslate"><span class="pre">find_duplicates()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/analytics.html#vd.analytics.find_outliers"><code class="docutils literal notranslate"><span class="pre">find_outliers()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/analytics.html#vd.analytics.metadata_distribution"><code class="docutils literal notranslate"><span class="pre">metadata_distribution()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/analytics.html#vd.analytics.sample_collection"><code class="docutils literal notranslate"><span class="pre">sample_collection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/analytics.html#vd.analytics.validate_collection"><code class="docutils literal notranslate"><span class="pre">validate_collection()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/wip/input_wire.html">vd.wip.input_wire</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/wip/input_wire.html#vd.wip.input_wire.input_wiring"><code class="docutils literal notranslate"><span class="pre">input_wiring()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends.html">vd.backends</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/backends.html#vd.backends.MemoryBackend"><code class="docutils literal notranslate"><span class="pre">MemoryBackend</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/memory.html">vd.backends.memory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryBackend"><code class="docutils literal notranslate"><span class="pre">MemoryBackend</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection"><code class="docutils literal notranslate"><span class="pre">MemoryCollection</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/base.html">vd.base</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.BaseBackend"><code class="docutils literal notranslate"><span class="pre">BaseBackend</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.Client"><code class="docutils literal notranslate"><span class="pre">Client</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.Collection"><code class="docutils literal notranslate"><span class="pre">Collection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.Document"><code class="docutils literal notranslate"><span class="pre">Document</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.StaticIndexError"><code class="docutils literal notranslate"><span class="pre">StaticIndexError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/cli.html">vd.cli</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_backends"><code class="docutils literal notranslate"><span class="pre">cmd_backends()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_benchmark"><code class="docutils literal notranslate"><span class="pre">cmd_benchmark()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_export"><code class="docutils literal notranslate"><span class="pre">cmd_export()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_health_check"><code class="docutils literal notranslate"><span class="pre">cmd_health_check()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_import"><code class="docutils literal notranslate"><span class="pre">cmd_import()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_install_info"><code class="docutils literal notranslate"><span class="pre">cmd_install_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_migrate"><code class="docutils literal notranslate"><span class="pre">cmd_migrate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_stats"><code class="docutils literal notranslate"><span class="pre">cmd_stats()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_validate"><code class="docutils literal notranslate"><span class="pre">cmd_validate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/compare.html">vd.compare</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/compare.html#vd.compare.compare_backends"><code class="docutils literal notranslate"><span class="pre">compare_backends()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/compare.html#vd.compare.get_backend_characteristics"><code class="docutils literal notranslate"><span class="pre">get_backend_characteristics()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/compare.html#vd.compare.print_comparison"><code class="docutils literal notranslate"><span class="pre">print_comparison()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/compare.html#vd.compare.print_recommendation"><code class="docutils literal notranslate"><span class="pre">print_recommendation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/compare.html#vd.compare.recommend_backend"><code class="docutils literal notranslate"><span class="pre">recommend_backend()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/config.html">vd.config</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.apply_env_overrides"><code class="docutils literal notranslate"><span class="pre">apply_env_overrides()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.connect_from_config"><code class="docutils literal notranslate"><span class="pre">connect_from_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.create_example_config"><code class="docutils literal notranslate"><span class="pre">create_example_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.get_profile"><code class="docutils literal notranslate"><span class="pre">get_profile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.load_config"><code class="docutils literal notranslate"><span class="pre">load_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.load_toml_config"><code class="docutils literal notranslate"><span class="pre">load_toml_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.load_yaml_config"><code class="docutils literal notranslate"><span class="pre">load_yaml_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.save_config"><code class="docutils literal notranslate"><span class="pre">save_config()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/health.html">vd.health</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/health.html#vd.health.benchmark_insert"><code class="docutils literal notranslate"><span class="pre">benchmark_insert()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/health.html#vd.health.benchmark_search"><code class="docutils literal notranslate"><span class="pre">benchmark_search()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/health.html#vd.health.health_check_backend"><code class="docutils literal notranslate"><span class="pre">health_check_backend()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/health.html#vd.health.health_check_collection"><code class="docutils literal notranslate"><span class="pre">health_check_collection()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/io.html">vd.io</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.export_collection"><code class="docutils literal notranslate"><span class="pre">export_collection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.export_to_directory"><code class="docutils literal notranslate"><span class="pre">export_to_directory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.export_to_json"><code class="docutils literal notranslate"><span class="pre">export_to_json()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.export_to_jsonl"><code class="docutils literal notranslate"><span class="pre">export_to_jsonl()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.import_collection"><code class="docutils literal notranslate"><span class="pre">import_collection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.import_from_directory"><code class="docutils literal notranslate"><span class="pre">import_from_directory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.import_from_json"><code class="docutils literal notranslate"><span class="pre">import_from_json()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.import_from_jsonl"><code class="docutils literal notranslate"><span class="pre">import_from_jsonl()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/migration.html">vd.migration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/migration.html#vd.migration.copy_collection"><code class="docutils literal notranslate"><span class="pre">copy_collection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/migration.html#vd.migration.migrate_client"><code class="docutils literal notranslate"><span class="pre">migrate_client()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/migration.html#vd.migration.migrate_collection"><code class="docutils literal notranslate"><span class="pre">migrate_collection()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/search.html">vd.search</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.deduplicate_results"><code class="docutils literal notranslate"><span class="pre">deduplicate_results()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.multi_query_search"><code class="docutils literal notranslate"><span class="pre">multi_query_search()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.reciprocal_rank_fusion"><code class="docutils literal notranslate"><span class="pre">reciprocal_rank_fusion()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.search_similar_to_document"><code class="docutils literal notranslate"><span class="pre">search_similar_to_document()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.search_with_feedback"><code class="docutils literal notranslate"><span class="pre">search_with_feedback()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/text.html">vd.text</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/text.html#vd.text.chunk_documents"><code class="docutils literal notranslate"><span class="pre">chunk_documents()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/text.html#vd.text.chunk_text"><code class="docutils literal notranslate"><span class="pre">chunk_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/text.html#vd.text.clean_text"><code class="docutils literal notranslate"><span class="pre">clean_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/text.html#vd.text.extract_metadata"><code class="docutils literal notranslate"><span class="pre">extract_metadata()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/text.html#vd.text.normalize_whitespace"><code class="docutils literal notranslate"><span class="pre">normalize_whitespace()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/text.html#vd.text.truncate_text"><code class="docutils literal notranslate"><span class="pre">truncate_text()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/util.html">vd.util</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.connect"><code class="docutils literal notranslate"><span class="pre">connect()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.cosine_similarity"><code class="docutils literal notranslate"><span class="pre">cosine_similarity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.euclidean_distance"><code class="docutils literal notranslate"><span class="pre">euclidean_distance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.get_backend"><code class="docutils literal notranslate"><span class="pre">get_backend()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.get_backend_info"><code class="docutils literal notranslate"><span class="pre">get_backend_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.get_install_instructions"><code class="docutils literal notranslate"><span class="pre">get_install_instructions()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.id_and_score"><code class="docutils literal notranslate"><span class="pre">id_and_score()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.id_only"><code class="docutils literal notranslate"><span class="pre">id_only()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.id_text_score"><code class="docutils literal notranslate"><span class="pre">id_text_score()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.list_all_backends"><code class="docutils literal notranslate"><span class="pre">list_all_backends()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.list_available_backends"><code class="docutils literal notranslate"><span class="pre">list_available_backends()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.list_backends"><code class="docutils literal notranslate"><span class="pre">list_backends()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.normalize_document_input"><code class="docutils literal notranslate"><span class="pre">normalize_document_input()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.print_backends_table"><code class="docutils literal notranslate"><span class="pre">print_backends_table()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.register_backend"><code class="docutils literal notranslate"><span class="pre">register_backend()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.text_only"><code class="docutils literal notranslate"><span class="pre">text_only()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -118,8 +286,8 @@
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-<p>Release: 0.0.10</p>
-<p>Last change: Aug 22, 2025</p>
+<p>Release: 0.1.0</p>
+<p>Last change: Apr 27, 2026</p>
 </section>
 
 

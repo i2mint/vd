@@ -1,0 +1,606 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vd.analytics &mdash; vd 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            vd
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd.html">vd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/base.html">vd.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/cli.html">vd.cli</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/compare.html">vd.compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/health.html">vd.health</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/io.html">vd.io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/search.html">vd.search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/text.html">vd.text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/util.html">vd.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">vd.analytics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vd.analytics</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Analytics and statistics for vd collections.</span>
+
+<span class="sd">Provides functions to analyze collections, find duplicates, compute statistics,</span>
+<span class="sd">and gain insights into your vector database.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Document</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">cosine_similarity</span>
+
+
+<div class="viewcode-block" id="collection_stats">
+<a class="viewcode-back" href="../../module_docs/vd/analytics.html#vd.collection_stats">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">collection_stats</span><span class="p">(</span><span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute comprehensive statistics for a collection.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    collection : Collection</span>
+<span class="sd">        Collection to analyze</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Statistics including:</span>
+<span class="sd">        - total_documents: Number of documents</span>
+<span class="sd">        - avg_text_length: Average text length in characters</span>
+<span class="sd">        - min_text_length: Minimum text length</span>
+<span class="sd">        - max_text_length: Maximum text length</span>
+<span class="sd">        - total_chars: Total characters across all documents</span>
+<span class="sd">        - metadata_fields: Set of all metadata fields used</span>
+<span class="sd">        - metadata_field_counts: Count of documents with each metadata field</span>
+<span class="sd">        - embedding_dimension: Dimension of embeddings (if available)</span>
+<span class="sd">        - has_vectors: Number of documents with vectors</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import vd</span>
+<span class="sd">    &gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; docs = client.create_collection(&#39;test&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; docs[&#39;doc1&#39;] = (&quot;Hello&quot;, {&#39;category&#39;: &#39;greeting&#39;})  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; stats = vd.collection_stats(docs)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; print(stats[&#39;total_documents&#39;])  # doctest: +SKIP</span>
+<span class="sd">    1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;total_documents&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;avg_text_length&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;min_text_length&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;max_text_length&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;total_chars&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;metadata_fields&#39;</span><span class="p">:</span> <span class="nb">set</span><span class="p">(),</span>
+            <span class="s1">&#39;metadata_field_counts&#39;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s1">&#39;embedding_dimension&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;has_vectors&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="n">text_lengths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">total_chars</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">metadata_fields</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">metadata_field_counts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">embedding_dim</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">has_vectors</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+
+        <span class="c1"># Text stats</span>
+        <span class="n">text_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">text_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text_len</span><span class="p">)</span>
+        <span class="n">total_chars</span> <span class="o">+=</span> <span class="n">text_len</span>
+
+        <span class="c1"># Metadata stats</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">metadata_fields</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+            <span class="n">metadata_field_counts</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Vector stats</span>
+        <span class="k">if</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
+            <span class="n">has_vectors</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">embedding_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">embedding_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;total_documents&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">),</span>
+        <span class="s1">&#39;avg_text_length&#39;</span><span class="p">:</span> <span class="n">total_chars</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">),</span>
+        <span class="s1">&#39;min_text_length&#39;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">text_lengths</span><span class="p">),</span>
+        <span class="s1">&#39;max_text_length&#39;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">text_lengths</span><span class="p">),</span>
+        <span class="s1">&#39;total_chars&#39;</span><span class="p">:</span> <span class="n">total_chars</span><span class="p">,</span>
+        <span class="s1">&#39;metadata_fields&#39;</span><span class="p">:</span> <span class="n">metadata_fields</span><span class="p">,</span>
+        <span class="s1">&#39;metadata_field_counts&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">metadata_field_counts</span><span class="p">),</span>
+        <span class="s1">&#39;embedding_dimension&#39;</span><span class="p">:</span> <span class="n">embedding_dim</span><span class="p">,</span>
+        <span class="s1">&#39;has_vectors&#39;</span><span class="p">:</span> <span class="n">has_vectors</span><span class="p">,</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="metadata_distribution">
+<a class="viewcode-back" href="../../module_docs/vd/analytics.html#vd.metadata_distribution">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">metadata_distribution</span><span class="p">(</span>
+    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+    <span class="n">field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">top_n</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the distribution of values for a metadata field.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    collection : Collection</span>
+<span class="sd">        Collection to analyze</span>
+<span class="sd">    field : str</span>
+<span class="sd">        Metadata field name</span>
+<span class="sd">    top_n : int, optional</span>
+<span class="sd">        If specified, return only the top N most common values</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Mapping of field values to their counts</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import vd</span>
+<span class="sd">    &gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; docs = client.create_collection(&#39;test&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; docs[&#39;doc1&#39;] = (&quot;Hello&quot;, {&#39;category&#39;: &#39;A&#39;})  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; docs[&#39;doc2&#39;] = (&quot;World&quot;, {&#39;category&#39;: &#39;A&#39;})  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; docs[&#39;doc3&#39;] = (&quot;Test&quot;, {&#39;category&#39;: &#39;B&#39;})  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; dist = vd.metadata_distribution(docs, &#39;category&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; print(dist)  # doctest: +SKIP</span>
+<span class="sd">    {&#39;A&#39;: 2, &#39;B&#39;: 1}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Handle list values</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">counter</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">counter</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">top_n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="n">top_n</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="find_duplicates">
+<a class="viewcode-back" href="../../module_docs/vd/analytics.html#vd.find_duplicates">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_duplicates</span><span class="p">(</span>
+    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cosine&#39;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find near-duplicate documents in a collection.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    collection : Collection</span>
+<span class="sd">        Collection to analyze</span>
+<span class="sd">    threshold : float, default 0.95</span>
+<span class="sd">        Similarity threshold above which documents are considered duplicates</span>
+<span class="sd">    method : str, default &#39;cosine&#39;</span>
+<span class="sd">        Similarity method: &#39;cosine&#39; or &#39;exact&#39;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of tuples</span>
+<span class="sd">        List of (doc_id1, doc_id2, similarity) tuples for duplicates</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import vd</span>
+<span class="sd">    &gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; docs = client.create_collection(&#39;test&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; docs[&#39;doc1&#39;] = &quot;Hello world&quot;  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; docs[&#39;doc2&#39;] = &quot;Hello world&quot;  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; duplicates = vd.find_duplicates(docs)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; len(duplicates) &gt; 0  # doctest: +SKIP</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">duplicates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">doc_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">doc_id1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">doc_ids</span><span class="p">):</span>
+        <span class="n">doc1</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id1</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">doc_id2</span> <span class="ow">in</span> <span class="n">doc_ids</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]:</span>
+            <span class="n">doc2</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id2</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;exact&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">doc1</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">doc2</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+                    <span class="n">duplicates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">doc_id1</span><span class="p">,</span> <span class="n">doc_id2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;cosine&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">doc1</span><span class="o">.</span><span class="n">vector</span> <span class="ow">and</span> <span class="n">doc2</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
+                    <span class="n">similarity</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">doc1</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="n">doc2</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">similarity</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>
+                        <span class="n">duplicates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">doc_id1</span><span class="p">,</span> <span class="n">doc_id2</span><span class="p">,</span> <span class="n">similarity</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">duplicates</span></div>
+
+
+
+<div class="viewcode-block" id="find_outliers">
+<a class="viewcode-back" href="../../module_docs/vd/analytics.html#vd.find_outliers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_outliers</span><span class="p">(</span>
+    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">n_neighbors</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find outlier documents (those dissimilar to their neighbors).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    collection : Collection</span>
+<span class="sd">        Collection to analyze</span>
+<span class="sd">    n_neighbors : int, default 5</span>
+<span class="sd">        Number of neighbors to consider</span>
+<span class="sd">    threshold : float, default 0.3</span>
+<span class="sd">        Average similarity threshold below which a document is an outlier</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of tuples</span>
+<span class="sd">        List of (doc_id, avg_similarity) for outliers</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import vd</span>
+<span class="sd">    &gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; docs = client.create_collection(&#39;test&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; # Add some documents...</span>
+<span class="sd">    &gt;&gt;&gt; outliers = vd.find_outliers(docs)  # doctest: +SKIP</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">outliers</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Find nearest neighbors</span>
+        <span class="n">similarities</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">other_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">other_id</span> <span class="o">==</span> <span class="n">doc_id</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">other_doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">other_id</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">other_doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">sim</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="n">other_doc</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+            <span class="n">similarities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">similarities</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Get top n_neighbors</span>
+        <span class="n">similarities</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">top_sims</span> <span class="o">=</span> <span class="n">similarities</span><span class="p">[:</span><span class="n">n_neighbors</span><span class="p">]</span>
+        <span class="n">avg_sim</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">top_sims</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">top_sims</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">avg_sim</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">:</span>
+            <span class="n">outliers</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">avg_sim</span><span class="p">))</span>
+
+    <span class="c1"># Sort by similarity (lowest first)</span>
+    <span class="n">outliers</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">outliers</span></div>
+
+
+
+<div class="viewcode-block" id="sample_collection">
+<a class="viewcode-back" href="../../module_docs/vd/analytics.html#vd.sample_collection">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sample_collection</span><span class="p">(</span>
+    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;random&#39;</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sample document IDs from a collection.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    collection : Collection</span>
+<span class="sd">        Collection to sample from</span>
+<span class="sd">    n : int</span>
+<span class="sd">        Number of documents to sample</span>
+<span class="sd">    method : str, default &#39;random&#39;</span>
+<span class="sd">        Sampling method: &#39;random&#39;, &#39;first&#39;, &#39;diverse&#39;</span>
+<span class="sd">    seed : int, optional</span>
+<span class="sd">        Random seed for reproducibility</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of str</span>
+<span class="sd">        Sampled document IDs</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import vd</span>
+<span class="sd">    &gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; docs = client.create_collection(&#39;test&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; # Add 100 documents...</span>
+<span class="sd">    &gt;&gt;&gt; sample = vd.sample_collection(docs, 10, method=&#39;random&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; len(sample)  # doctest: +SKIP</span>
+<span class="sd">    10</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">doc_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc_ids</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">doc_ids</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;first&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">doc_ids</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
+
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;random&#39;</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">doc_ids</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;diverse&#39;</span><span class="p">:</span>
+        <span class="c1"># Sample diverse documents using greedy selection</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc_ids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">selected</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">remaining</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">doc_ids</span><span class="p">)</span>
+
+        <span class="c1"># Start with a random document</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="n">first_id</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">remaining</span><span class="p">))</span>
+        <span class="n">selected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">first_id</span><span class="p">)</span>
+        <span class="n">remaining</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">first_id</span><span class="p">)</span>
+
+        <span class="c1"># Greedily select most diverse documents</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="ow">and</span> <span class="n">remaining</span><span class="p">:</span>
+            <span class="n">best_id</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">best_min_sim</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+            <span class="k">for</span> <span class="n">candidate_id</span> <span class="ow">in</span> <span class="n">remaining</span><span class="p">:</span>
+                <span class="n">candidate_doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">candidate_id</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">candidate_doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Find minimum similarity to selected documents</span>
+                <span class="n">min_sim</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">selected_id</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">:</span>
+                    <span class="n">selected_doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">selected_id</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">selected_doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="n">sim</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">candidate_doc</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="n">selected_doc</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+                    <span class="n">min_sim</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">min_sim</span><span class="p">,</span> <span class="n">sim</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">min_sim</span> <span class="o">&gt;</span> <span class="n">best_min_sim</span><span class="p">:</span>
+                    <span class="n">best_min_sim</span> <span class="o">=</span> <span class="n">min_sim</span>
+                    <span class="n">best_id</span> <span class="o">=</span> <span class="n">candidate_id</span>
+
+            <span class="k">if</span> <span class="n">best_id</span><span class="p">:</span>
+                <span class="n">selected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_id</span><span class="p">)</span>
+                <span class="n">remaining</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">best_id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Fallback to random if no vectors</span>
+                <span class="n">best_id</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">remaining</span><span class="p">))</span>
+                <span class="n">selected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_id</span><span class="p">)</span>
+                <span class="n">remaining</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">best_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">selected</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown sampling method: </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="validate_collection">
+<a class="viewcode-back" href="../../module_docs/vd/analytics.html#vd.validate_collection">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_collection</span><span class="p">(</span><span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate collection integrity and identify issues.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    collection : Collection</span>
+<span class="sd">        Collection to validate</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Validation report with:</span>
+<span class="sd">        - valid: Whether collection is valid</span>
+<span class="sd">        - issues: List of issue descriptions</span>
+<span class="sd">        - warnings: List of warning messages</span>
+<span class="sd">        - stats: Basic stats</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import vd</span>
+<span class="sd">    &gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; docs = client.create_collection(&#39;test&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; report = vd.validate_collection(docs)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; print(report[&#39;valid&#39;])  # doctest: +SKIP</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">issues</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Check for empty collection</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Collection is empty&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check each document</span>
+    <span class="n">missing_vectors</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">empty_text</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">inconsistent_dimensions</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">expected_dim</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+
+            <span class="c1"># Check for empty text</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="n">empty_text</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Document </span><span class="si">{</span><span class="n">doc_id</span><span class="si">}</span><span class="s2"> has empty text&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Check vectors</span>
+            <span class="k">if</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">missing_vectors</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">expected_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">expected_dim</span> <span class="o">=</span> <span class="n">dim</span>
+                <span class="k">elif</span> <span class="n">dim</span> <span class="o">!=</span> <span class="n">expected_dim</span><span class="p">:</span>
+                    <span class="n">inconsistent_dimensions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error reading document </span><span class="si">{</span><span class="n">doc_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Summary warnings</span>
+    <span class="k">if</span> <span class="n">missing_vectors</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">missing_vectors</span><span class="si">}</span><span class="s2"> documents missing vectors&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">inconsistent_dimensions</span><span class="p">:</span>
+        <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Inconsistent vector dimensions found: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">inconsistent_dimensions</span><span class="p">)</span><span class="si">}</span><span class="s2"> documents&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;valid&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;issues&#39;</span><span class="p">:</span> <span class="n">issues</span><span class="p">,</span>
+        <span class="s1">&#39;warnings&#39;</span><span class="p">:</span> <span class="n">warnings</span><span class="p">,</span>
+        <span class="s1">&#39;stats&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;total_documents&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">),</span>
+            <span class="s1">&#39;missing_vectors&#39;</span><span class="p">:</span> <span class="n">missing_vectors</span><span class="p">,</span>
+            <span class="s1">&#39;empty_text&#39;</span><span class="p">:</span> <span class="n">empty_text</span><span class="p">,</span>
+            <span class="s1">&#39;inconsistent_dimensions&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">inconsistent_dimensions</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">}</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

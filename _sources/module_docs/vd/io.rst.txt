@@ -1,0 +1,4 @@
+vd.io
+=====
+.. automodule:: vd.io
+   :members:

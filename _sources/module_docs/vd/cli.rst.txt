@@ -1,0 +1,4 @@
+vd.cli
+======
+.. automodule:: vd.cli
+   :members:

@@ -6,16 +6,16 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.wip.input_wire &mdash; vd 0.0.10 documentation</title>
+  <title>vd.backends.chroma &mdash; vd 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=a83ce22a"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -24,7 +24,8 @@
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="prev" title="vd.wip.input_sourcing" href="input_sourcing.html" /> 
+    <link rel="next" title="vd.backends.memory" href="memory.html" />
+    <link rel="prev" title="vd.backends" href="../backends.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,14 +50,20 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../vd.html">vd</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../crude.html">vd.crude</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dog.html">vd.dog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../wip.html">vd.wip</a></li>
-<li class="toctree-l1"><a class="reference internal" href="input_sourcing.html">vd.wip.input_sourcing</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">vd.wip.input_wire</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#vd.wip.input_wire.input_wiring"><code class="docutils literal notranslate"><span class="pre">input_wiring()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backends.html">vd.backends</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../base.html">vd.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">vd.cli</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compare.html">vd.compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../health.html">vd.health</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../io.html">vd.io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../search.html">vd.search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../text.html">vd.text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../util.html">vd.util</a></li>
 </ul>
 
         </div>
@@ -73,9 +80,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">vd.wip.input_wire</li>
+      <li class="breadcrumb-item active">vd.backends.chroma</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../../_sources/module_docs/vd/wip/input_wire.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/module_docs/vd/backends/chroma.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -83,34 +90,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-vd.wip.input_wire">
-<span id="vd-wip-input-wire"></span><h1>vd.wip.input_wire<a class="headerlink" href="#module-vd.wip.input_wire" title="Link to this heading"></a></h1>
-<p>Value Dispatch using Dependency Injectior Package</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="vd.wip.input_wire.input_wiring">
-<span class="sig-prename descclassname"><span class="pre">vd.wip.input_wire.</span></span><span class="sig-name descname"><span class="pre">input_wiring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_param_to_store</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mall</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/vd/wip/input_wire.html#input_wiring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.wip.input_wire.input_wiring" title="Link to this definition"></a></dt>
-<dd><p>Wrap a function to source its inputs from stores.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>func</strong> – The function to wrap (sync or async).</p></li>
-<li><p><strong>global_param_to_store</strong> – Dict mapping parameter names to store names (e.g., {‘a’: ‘store1’}).</p></li>
-<li><p><strong>mall</strong> – The mapping container to access the stores that are referenced in global_param_to_store</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A wrapped function that resolves inputs from stores and optionally stores outputs.</p>
-</dd>
-</dl>
-</dd></dl>
-
+  <section id="vd-backends-chroma">
+<h1>vd.backends.chroma<a class="headerlink" href="#vd-backends-chroma" title="Link to this heading"></a></h1>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="input_sourcing.html" class="btn btn-neutral float-left" title="vd.wip.input_sourcing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../backends.html" class="btn btn-neutral float-left" title="vd.backends" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="memory.html" class="btn btn-neutral float-right" title="vd.backends.memory" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

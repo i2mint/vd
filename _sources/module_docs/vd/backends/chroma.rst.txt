@@ -1,0 +1,4 @@
+vd.backends.chroma
+==================
+.. automodule:: vd.backends.chroma
+   :members:

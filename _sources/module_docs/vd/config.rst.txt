@@ -1,0 +1,4 @@
+vd.config
+=========
+.. automodule:: vd.config
+   :members:

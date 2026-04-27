@@ -1,4 +1,0 @@
-vd.wip.input_sourcing
-=====================
-.. automodule:: vd.wip.input_sourcing
-   :members:

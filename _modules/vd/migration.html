@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vd.migration &mdash; vd 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            vd
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd.html">vd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/base.html">vd.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/cli.html">vd.cli</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/compare.html">vd.compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/health.html">vd.health</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/io.html">vd.io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/search.html">vd.search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/text.html">vd.text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/util.html">vd.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">vd.migration</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vd.migration</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Migration utilities for moving data between backends.</span>
+
+<span class="sd">Provides functions to migrate collections between different vector database</span>
+<span class="sd">backends while preserving all data, metadata, and embeddings.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span><span class="p">,</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Document</span>
+
+
+<div class="viewcode-block" id="migrate_collection">
+<a class="viewcode-back" href="../../module_docs/vd/migration.html#vd.migrate_collection">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">migrate_collection</span><span class="p">(</span>
+    <span class="n">source_collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+    <span class="n">target_collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">preserve_vectors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">progress_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">skip_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Migrate a collection from one backend to another.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_collection : Collection</span>
+<span class="sd">        Source collection to migrate from</span>
+<span class="sd">    target_collection : Collection</span>
+<span class="sd">        Target collection to migrate to</span>
+<span class="sd">    batch_size : int, default 100</span>
+<span class="sd">        Number of documents to migrate per batch</span>
+<span class="sd">    preserve_vectors : bool, default True</span>
+<span class="sd">        Whether to preserve pre-computed vectors</span>
+<span class="sd">    progress_callback : callable, optional</span>
+<span class="sd">        Function called with (current, total) to report progress</span>
+<span class="sd">    skip_existing : bool, default False</span>
+<span class="sd">        If True, skip documents that already exist in target</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Migration statistics with keys:</span>
+<span class="sd">        - total: Total documents in source</span>
+<span class="sd">        - migrated: Number of documents migrated</span>
+<span class="sd">        - skipped: Number of documents skipped</span>
+<span class="sd">        - failed: Number of failures</span>
+<span class="sd">        - errors: List of error messages</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import vd</span>
+<span class="sd">    &gt;&gt;&gt; # Create source and target</span>
+<span class="sd">    &gt;&gt;&gt; source_client = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; target_client = vd.connect(&#39;chroma&#39;, persist_directory=&#39;./data&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; source = source_client.get_collection(&#39;my_docs&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; target = target_client.create_collection(&#39;my_docs&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Migrate</span>
+<span class="sd">    &gt;&gt;&gt; stats = vd.migrate_collection(source, target)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;Migrated {stats[&#39;migrated&#39;]} documents&quot;)  # doctest: +SKIP</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;total&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_collection</span><span class="p">),</span>
+        <span class="s1">&#39;migrated&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;skipped&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;failed&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;errors&#39;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">}</span>
+
+    <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">processed</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">source_collection</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Check if should skip</span>
+            <span class="k">if</span> <span class="n">skip_existing</span> <span class="ow">and</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">target_collection</span><span class="p">:</span>
+                <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;skipped&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">processed</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">progress_callback</span><span class="p">:</span>
+                    <span class="n">progress_callback</span><span class="p">(</span><span class="n">processed</span><span class="p">,</span> <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">])</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Get source document</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">source_collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+
+            <span class="c1"># Optionally clear vectors to force re-embedding</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">preserve_vectors</span><span class="p">:</span>
+                <span class="n">doc</span><span class="o">.</span><span class="n">vector</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+
+            <span class="c1"># Flush batch</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">batch_size</span><span class="p">:</span>
+                <span class="n">target_collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+                <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;migrated&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+                <span class="n">processed</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">if</span> <span class="n">progress_callback</span><span class="p">:</span>
+                    <span class="n">progress_callback</span><span class="p">(</span><span class="n">processed</span><span class="p">,</span> <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">])</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;failed&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error migrating </span><span class="si">{</span><span class="n">doc_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">processed</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">progress_callback</span><span class="p">:</span>
+                <span class="n">progress_callback</span><span class="p">(</span><span class="n">processed</span><span class="p">,</span> <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Flush remaining</span>
+    <span class="k">if</span> <span class="n">batch</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">target_collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+            <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;migrated&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;failed&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+            <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in final batch: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">stats</span></div>
+
+
+
+<div class="viewcode-block" id="migrate_client">
+<a class="viewcode-back" href="../../module_docs/vd/migration.html#vd.migrate_client">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">migrate_client</span><span class="p">(</span>
+    <span class="n">source_client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
+    <span class="n">target_client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">collection_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">preserve_vectors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">progress_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Migrate all (or selected) collections from one client to another.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_client : Client</span>
+<span class="sd">        Source database client</span>
+<span class="sd">    target_client : Client</span>
+<span class="sd">        Target database client</span>
+<span class="sd">    collection_names : list of str, optional</span>
+<span class="sd">        Specific collections to migrate. If None, migrates all.</span>
+<span class="sd">    batch_size : int, default 100</span>
+<span class="sd">        Batch size for migration</span>
+<span class="sd">    preserve_vectors : bool, default True</span>
+<span class="sd">        Whether to preserve vectors</span>
+<span class="sd">    progress_callback : callable, optional</span>
+<span class="sd">        Function called with (collection_name, current, total)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Overall migration statistics</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import vd</span>
+<span class="sd">    &gt;&gt;&gt; source = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; target = vd.connect(&#39;chroma&#39;, persist_directory=&#39;./backup&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; stats = vd.migrate_client(source, target)  # doctest: +SKIP</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get collections to migrate</span>
+    <span class="k">if</span> <span class="n">collection_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">collection_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">source_client</span><span class="o">.</span><span class="n">list_collections</span><span class="p">())</span>
+
+    <span class="n">overall_stats</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;collections_total&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection_names</span><span class="p">),</span>
+        <span class="s1">&#39;collections_migrated&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;collections_failed&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;total_documents&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;migrated_documents&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;failed_documents&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;errors&#39;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">coll_name</span> <span class="ow">in</span> <span class="n">collection_names</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Get source collection</span>
+            <span class="n">source_coll</span> <span class="o">=</span> <span class="n">source_client</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span><span class="n">coll_name</span><span class="p">)</span>
+
+            <span class="c1"># Create or get target collection</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">target_coll</span> <span class="o">=</span> <span class="n">target_client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="n">coll_name</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="c1"># Collection exists, get it</span>
+                <span class="n">target_coll</span> <span class="o">=</span> <span class="n">target_client</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span><span class="n">coll_name</span><span class="p">)</span>
+
+            <span class="c1"># Create progress callback for this collection</span>
+            <span class="n">coll_callback</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">progress_callback</span><span class="p">:</span>
+                <span class="n">coll_callback</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">c</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="n">progress_callback</span><span class="p">(</span><span class="n">coll_name</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+            <span class="c1"># Migrate</span>
+            <span class="n">coll_stats</span> <span class="o">=</span> <span class="n">migrate_collection</span><span class="p">(</span>
+                <span class="n">source_coll</span><span class="p">,</span>
+                <span class="n">target_coll</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">preserve_vectors</span><span class="o">=</span><span class="n">preserve_vectors</span><span class="p">,</span>
+                <span class="n">progress_callback</span><span class="o">=</span><span class="n">coll_callback</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">overall_stats</span><span class="p">[</span><span class="s1">&#39;collections_migrated&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">overall_stats</span><span class="p">[</span><span class="s1">&#39;total_documents&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">coll_stats</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span>
+            <span class="n">overall_stats</span><span class="p">[</span><span class="s1">&#39;migrated_documents&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">coll_stats</span><span class="p">[</span><span class="s1">&#39;migrated&#39;</span><span class="p">]</span>
+            <span class="n">overall_stats</span><span class="p">[</span><span class="s1">&#39;failed_documents&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">coll_stats</span><span class="p">[</span><span class="s1">&#39;failed&#39;</span><span class="p">]</span>
+            <span class="n">overall_stats</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">coll_stats</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">])</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">overall_stats</span><span class="p">[</span><span class="s1">&#39;collections_failed&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">overall_stats</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to migrate collection </span><span class="si">{</span><span class="n">coll_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">overall_stats</span></div>
+
+
+
+<div class="viewcode-block" id="copy_collection">
+<a class="viewcode-back" href="../../module_docs/vd/migration.html#vd.copy_collection">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">copy_collection</span><span class="p">(</span>
+    <span class="n">source</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">Collection</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="n">Collection</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">preserve_vectors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Copy a collection with flexible source/target specification.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source : tuple or Collection</span>
+<span class="sd">        Either a Collection object or (backend_name, collection_name) tuple</span>
+<span class="sd">    target : tuple or Collection</span>
+<span class="sd">        Either a Collection object or (backend_name, collection_name, config) tuple</span>
+<span class="sd">    batch_size : int</span>
+<span class="sd">        Batch size for copying</span>
+<span class="sd">    preserve_vectors : bool</span>
+<span class="sd">        Whether to preserve vectors</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Migration statistics</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import vd</span>
+<span class="sd">    &gt;&gt;&gt; # Copy between backends</span>
+<span class="sd">    &gt;&gt;&gt; stats = vd.copy_collection(  # doctest: +SKIP</span>
+<span class="sd">    ...     source=(&#39;memory&#39;, &#39;docs&#39;),</span>
+<span class="sd">    ...     target=(&#39;chroma&#39;, &#39;docs&#39;, {&#39;persist_directory&#39;: &#39;./data&#39;}),</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">vd</span><span class="w"> </span><span class="kn">import</span> <span class="n">connect</span>
+
+    <span class="c1"># Resolve source</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">backend_name</span><span class="p">,</span> <span class="n">coll_name</span> <span class="o">=</span> <span class="n">source</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">backend_name</span><span class="p">)</span>
+        <span class="n">source_coll</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span><span class="n">coll_name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">source_coll</span> <span class="o">=</span> <span class="n">source</span>
+
+    <span class="c1"># Resolve target</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">backend_name</span><span class="p">,</span> <span class="n">coll_name</span><span class="p">,</span> <span class="n">config</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">backend_name</span><span class="p">,</span> <span class="n">coll_name</span> <span class="o">=</span> <span class="n">target</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">backend_name</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">target_coll</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="n">coll_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">target_coll</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span><span class="n">coll_name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">target_coll</span> <span class="o">=</span> <span class="n">target</span>
+
+    <span class="k">return</span> <span class="n">migrate_collection</span><span class="p">(</span>
+        <span class="n">source_coll</span><span class="p">,</span>
+        <span class="n">target_coll</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">preserve_vectors</span><span class="o">=</span><span class="n">preserve_vectors</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

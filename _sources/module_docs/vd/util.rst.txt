@@ -1,0 +1,4 @@
+vd.util
+=======
+.. automodule:: vd.util
+   :members:

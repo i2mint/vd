@@ -1,0 +1,990 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vd.util &mdash; vd 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            vd
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd.html">vd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/base.html">vd.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/cli.html">vd.cli</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/compare.html">vd.compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/health.html">vd.health</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/io.html">vd.io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/search.html">vd.search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/text.html">vd.text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/util.html">vd.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">vd.util</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vd.util</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Utility functions and facades for the vd package.</span>
+
+<span class="sd">This module provides:</span>
+<span class="sd">- Backend registration system</span>
+<span class="sd">- Connection factory function</span>
+<span class="sd">- Utility functions for common operations</span>
+<span class="sd">- Egress functions for search result transformation</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BaseBackend</span><span class="p">,</span>
+    <span class="n">Client</span><span class="p">,</span>
+    <span class="n">Document</span><span class="p">,</span>
+    <span class="n">DocumentInput</span><span class="p">,</span>
+    <span class="n">SearchResult</span><span class="p">,</span>
+    <span class="n">Vector</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Backend registry</span>
+<span class="n">_backends</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseBackend</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="c1"># Backend metadata - information about all possible backends</span>
+<span class="n">_backend_metadata</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;memory&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Memory (In-Memory)&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;In-memory storage for testing and prototyping. No persistence.&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pip_install&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># Always available</span>
+        <span class="s1">&#39;optional_group&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">&#39;module_check&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># No import needed</span>
+        <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Always available&#39;</span><span class="p">,</span> <span class="s1">&#39;Fast&#39;</span><span class="p">,</span> <span class="s1">&#39;No persistence&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;limitations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Not persistent&#39;</span><span class="p">,</span> <span class="s1">&#39;Limited to RAM&#39;</span><span class="p">,</span> <span class="s1">&#39;No distributed support&#39;</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;chroma&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;ChromaDB&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Open-source embedding database with persistence support.&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pip_install&#39;</span><span class="p">:</span> <span class="s1">&#39;pip install vd[chromadb]&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;optional_group&#39;</span><span class="p">:</span> <span class="s1">&#39;chromadb&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;module_check&#39;</span><span class="p">:</span> <span class="s1">&#39;chromadb&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Persistent storage&#39;</span><span class="p">,</span> <span class="s1">&#39;Local or client/server&#39;</span><span class="p">,</span> <span class="s1">&#39;Active development&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;limitations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Primarily for local use&#39;</span><span class="p">,</span> <span class="s1">&#39;Limited production features&#39;</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;pinecone&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Pinecone&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Managed vector database with serverless and pod-based options.&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pip_install&#39;</span><span class="p">:</span> <span class="s1">&#39;pip install pinecone-client&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;optional_group&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">&#39;module_check&#39;</span><span class="p">:</span> <span class="s1">&#39;pinecone&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Fully managed&#39;</span><span class="p">,</span> <span class="s1">&#39;Serverless option&#39;</span><span class="p">,</span> <span class="s1">&#39;High performance&#39;</span><span class="p">,</span> <span class="s1">&#39;Production-ready&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;limitations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Requires API key&#39;</span><span class="p">,</span> <span class="s1">&#39;Cloud-only&#39;</span><span class="p">,</span> <span class="s1">&#39;Costs money&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;planned&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;weaviate&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Weaviate&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Open-source vector database with GraphQL API and hybrid search.&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pip_install&#39;</span><span class="p">:</span> <span class="s1">&#39;pip install weaviate-client&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;optional_group&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">&#39;module_check&#39;</span><span class="p">:</span> <span class="s1">&#39;weaviate&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Hybrid search&#39;</span><span class="p">,</span> <span class="s1">&#39;GraphQL API&#39;</span><span class="p">,</span> <span class="s1">&#39;Self-hosted or cloud&#39;</span><span class="p">,</span> <span class="s1">&#39;Schema-first&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;limitations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Requires server&#39;</span><span class="p">,</span> <span class="s1">&#39;More complex setup&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;planned&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;qdrant&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Qdrant&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;High-performance vector database written in Rust.&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pip_install&#39;</span><span class="p">:</span> <span class="s1">&#39;pip install qdrant-client&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;optional_group&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">&#39;module_check&#39;</span><span class="p">:</span> <span class="s1">&#39;qdrant_client&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;High performance&#39;</span><span class="p">,</span> <span class="s1">&#39;Rich filtering&#39;</span><span class="p">,</span> <span class="s1">&#39;Self-hosted or cloud&#39;</span><span class="p">,</span> <span class="s1">&#39;gRPC API&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;limitations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Requires server for persistence&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;planned&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;milvus&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Milvus&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Cloud-native vector database built for scalable similarity search.&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pip_install&#39;</span><span class="p">:</span> <span class="s1">&#39;pip install pymilvus&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;optional_group&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">&#39;module_check&#39;</span><span class="p">:</span> <span class="s1">&#39;pymilvus&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Highly scalable&#39;</span><span class="p">,</span> <span class="s1">&#39;Cloud-native&#39;</span><span class="p">,</span> <span class="s1">&#39;Multiple index types&#39;</span><span class="p">,</span> <span class="s1">&#39;Production-ready&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;limitations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Complex setup&#39;</span><span class="p">,</span> <span class="s1">&#39;Resource intensive&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;planned&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;faiss&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;FAISS&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Facebook AI Similarity Search - library for efficient similarity search.&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pip_install&#39;</span><span class="p">:</span> <span class="s1">&#39;pip install faiss-cpu  # or faiss-gpu&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;optional_group&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">&#39;module_check&#39;</span><span class="p">:</span> <span class="s1">&#39;faiss&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Very fast&#39;</span><span class="p">,</span> <span class="s1">&#39;Multiple index types&#39;</span><span class="p">,</span> <span class="s1">&#39;GPU support&#39;</span><span class="p">,</span> <span class="s1">&#39;No server needed&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;limitations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Static index (rebuild to update)&#39;</span><span class="p">,</span> <span class="s1">&#39;In-memory only&#39;</span><span class="p">,</span> <span class="s1">&#39;No metadata filtering&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;planned&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="n">_backend_metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_backend_metadata</span>
+
+
+<div class="viewcode-block" id="register_backend">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.register_backend">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_backend</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator to register a backend implementation.</span>
+
+<span class="sd">    This allows backends to be dynamically registered and accessed via the</span>
+<span class="sd">    connect() function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name identifier for the backend (e.g., &#39;memory&#39;, &#39;chroma&#39;, &#39;pinecone&#39;)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    callable</span>
+<span class="sd">        Decorator function</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; @register_backend(&#39;custom&#39;)  # doctest: +SKIP</span>
+<span class="sd">    ... class CustomBackend(BaseBackend):</span>
+<span class="sd">    ...     pass</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">backend_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseBackend</span><span class="p">]):</span>
+        <span class="n">_backends</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">backend_class</span>
+        <span class="k">return</span> <span class="n">backend_class</span>
+
+    <span class="k">return</span> <span class="n">decorator</span></div>
+
+
+
+<div class="viewcode-block" id="get_backend">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.get_backend">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_backend</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseBackend</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a registered backend class by name.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Backend identifier</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    type[BaseBackend]</span>
+<span class="sd">        The backend class</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If backend is not registered</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_backends</span><span class="p">:</span>
+        <span class="c1"># Check if it&#39;s a known backend that&#39;s just not installed</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_backend_metadata</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">_backend_metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Backend &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; is not available.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;planned&#39;</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;This backend is planned but not yet implemented.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pip_install&#39;</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;To install it:</span><span class="se">\n</span><span class="s2">  </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;pip_install&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Or run: vd.get_install_instructions(&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;) for more details.&quot;</span>
+
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="c1"># Unknown backend entirely</span>
+        <span class="n">available</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_backends</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="ow">or</span> <span class="s1">&#39;none&#39;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown backend &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Available backends: </span><span class="si">{</span><span class="n">available</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Run vd.print_backends_table() to see all options.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">_backends</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="list_backends">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.list_backends">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_backends</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List all registered backend names.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of str</span>
+<span class="sd">        Names of all registered backends</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; backends = list_backends()  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; &#39;memory&#39; in backends  # doctest: +SKIP</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">_backends</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_backend_available</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a backend is available (installed and importable).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Backend name</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if backend is available</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_backend_metadata</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">_backend_metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">module_check</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;module_check&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Memory backend is always available</span>
+    <span class="k">if</span> <span class="n">module_check</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="c1"># Try to import the required module</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">__import__</span><span class="p">(</span><span class="n">module_check</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="list_available_backends">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.list_available_backends">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_available_backends</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List backends that are currently available (installed).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of str</span>
+<span class="sd">        Names of backends that can be used right now</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; available = list_available_backends()  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; &#39;memory&#39; in available  # doctest: +SKIP</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_backend_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">_check_backend_available</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="list_all_backends">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.list_all_backends">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_all_backends</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">include_planned</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List all possible backends with their status and information.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    include_planned : bool, default False</span>
+<span class="sd">        If True, include backends that are planned but not yet implemented</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary mapping backend names to their metadata, with &#39;available&#39; status added</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; all_backends = list_all_backends()  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; print(all_backends[&#39;chroma&#39;][&#39;name&#39;])  # doctest: +SKIP</span>
+<span class="sd">    &#39;ChromaDB&#39;</span>
+<span class="sd">    &gt;&gt;&gt; print(all_backends[&#39;chroma&#39;][&#39;available&#39;])  # doctest: +SKIP</span>
+<span class="sd">    True  # or False if not installed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">metadata</span> <span class="ow">in</span> <span class="n">_backend_metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Skip planned backends if not requested</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">include_planned</span> <span class="ow">and</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;planned&#39;</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Add availability status</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_check_backend_available</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;registered&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_backends</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="get_backend_info">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.get_backend_info">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_backend_info</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get detailed information about a specific backend.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Backend name</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Backend metadata including installation instructions and status</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If backend name is unknown</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; info = get_backend_info(&#39;chroma&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; print(info[&#39;description&#39;])  # doctest: +SKIP</span>
+<span class="sd">    &#39;Open-source embedding database with persistence support.&#39;</span>
+<span class="sd">    &gt;&gt;&gt; print(info[&#39;pip_install&#39;])  # doctest: +SKIP</span>
+<span class="sd">    &#39;pip install vd[chromadb]&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_backend_metadata</span><span class="p">:</span>
+        <span class="n">available</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_backend_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown backend &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;. Known backends: </span><span class="si">{</span><span class="n">available</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">info</span> <span class="o">=</span> <span class="n">_backend_metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">info</span><span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_check_backend_available</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s1">&#39;registered&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_backends</span>
+
+    <span class="k">return</span> <span class="n">info</span></div>
+
+
+
+<div class="viewcode-block" id="print_backends_table">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.print_backends_table">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_backends_table</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">include_planned</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print a formatted table of all backends with their status.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    include_planned : bool, default False</span>
+<span class="sd">        If True, include backends that are planned but not yet implemented</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; print_backends_table()  # doctest: +SKIP</span>
+<span class="sd">    Backend Status:</span>
+<span class="sd">    ===============</span>
+<span class="sd">    ✓ memory     - Memory (In-Memory)</span>
+<span class="sd">      chroma     - ChromaDB (install: pip install vd[chromadb])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+    <span class="n">backends</span> <span class="o">=</span> <span class="n">list_all_backends</span><span class="p">(</span><span class="n">include_planned</span><span class="o">=</span><span class="n">include_planned</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">backends</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No backends available.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Vector Database Backends:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+    <span class="c1"># Group by availability</span>
+    <span class="n">available</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">backends</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">]}</span>
+    <span class="n">unavailable</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">backends</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">]}</span>
+
+    <span class="k">if</span> <span class="n">available</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✓ AVAILABLE (Ready to use):&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">available</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot; [PLANNED]&quot;</span> <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;planned&#39;</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  • </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">12</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Features: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">][:</span><span class="mi">3</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">unavailable</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✗ NOT INSTALLED (Installation required):&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">unavailable</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot; [PLANNED - Not yet implemented]&quot;</span> <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;planned&#39;</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  • </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">12</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;pip_install&#39;</span><span class="p">]:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Install: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;pip_install&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Features: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">][:</span><span class="mi">3</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">available</span><span class="p">)</span><span class="si">}</span><span class="s2"> available, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">unavailable</span><span class="p">)</span><span class="si">}</span><span class="s2"> not installed&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="get_install_instructions">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.get_install_instructions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_install_instructions</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get installation instructions for a backend.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Backend name</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Installation instructions</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If backend name is unknown</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; print(get_install_instructions(&#39;chroma&#39;))  # doctest: +SKIP</span>
+<span class="sd">    To use the &#39;chroma&#39; backend (ChromaDB):</span>
+
+<span class="sd">    Installation:</span>
+<span class="sd">      pip install vd[chromadb]</span>
+
+<span class="sd">    Description:</span>
+<span class="sd">      Open-source embedding database with persistence support.</span>
+<span class="sd">    ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">get_backend_info</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;available&#39;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Backend &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; is already installed and ready to use!&quot;</span>
+
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s2">&quot;To use the &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; backend (</span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">):&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;planned&#39;</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+            <span class="s2">&quot;Status: PLANNED - Not yet implemented&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;This backend is planned for future development.&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Description: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Once implemented, installation will be:&quot;</span><span class="p">,</span>
+        <span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;pip_install&#39;</span><span class="p">]:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+            <span class="s2">&quot;Installation:&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;pip_install&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">])</span>
+
+    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+        <span class="s2">&quot;Description:&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;features&#39;</span><span class="p">):</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+            <span class="s2">&quot;Features:&quot;</span><span class="p">,</span>
+        <span class="p">])</span>
+        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  • </span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;limitations&#39;</span><span class="p">):</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+            <span class="s2">&quot;Limitations:&quot;</span><span class="p">,</span>
+        <span class="p">])</span>
+        <span class="k">for</span> <span class="n">limitation</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;limitations&#39;</span><span class="p">]:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  • </span><span class="si">{</span><span class="n">limitation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="connect">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.connect">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span>
+    <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">backend_kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Client</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Connect to a vector database backend.</span>
+
+<span class="sd">    This is the main entry point for creating a client to interact with</span>
+<span class="sd">    vector databases. It uses a factory pattern to instantiate the appropriate</span>
+<span class="sd">    backend based on the backend name.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    backend : str</span>
+<span class="sd">        Backend identifier (&#39;memory&#39;, &#39;chroma&#39;, &#39;pinecone&#39;, etc.)</span>
+<span class="sd">    embedding_model : str or callable, optional</span>
+<span class="sd">        Embedding model specification. Can be:</span>
+<span class="sd">        - Model name string (e.g., &#39;text-embedding-3-small&#39;)</span>
+<span class="sd">        - Callable that takes text and returns a vector</span>
+<span class="sd">        - None to use the default from imbed</span>
+<span class="sd">    **backend_kwargs</span>
+<span class="sd">        Backend-specific configuration (API keys, URLs, persist_directory, etc.)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Client</span>
+<span class="sd">        A client instance for the specified backend</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If backend is not registered</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; # Connect to in-memory backend</span>
+<span class="sd">    &gt;&gt;&gt; client = connect(&#39;memory&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Connect to ChromaDB with persistence</span>
+<span class="sd">    &gt;&gt;&gt; client = connect(&#39;chroma&#39;, persist_directory=&#39;./data&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Connect with custom embedding model</span>
+<span class="sd">    &gt;&gt;&gt; client = connect(  # doctest: +SKIP</span>
+<span class="sd">    ...     &#39;memory&#39;,</span>
+<span class="sd">    ...     embedding_model=&#39;text-embedding-3-large&#39;</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">backend_class</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+
+    <span class="c1"># Get embedding function</span>
+    <span class="n">embed_func</span> <span class="o">=</span> <span class="n">_get_embedding_function</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">)</span>
+
+    <span class="c1"># Instantiate and return backend</span>
+    <span class="k">return</span> <span class="n">backend_class</span><span class="p">(</span><span class="n">embedding_model</span><span class="o">=</span><span class="n">embed_func</span><span class="p">,</span> <span class="o">**</span><span class="n">backend_kwargs</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_embedding_function</span><span class="p">(</span>
+    <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the embedding function to use.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    embedding_model : str, callable, or None</span>
+<span class="sd">        Embedding model specification</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    callable</span>
+<span class="sd">        Function that takes text and returns a vector</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">):</span>
+        <span class="c1"># Already a function, use it directly</span>
+        <span class="k">return</span> <span class="n">embedding_model</span>
+
+    <span class="c1"># Import imbed to get embedding function</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">imbed</span><span class="w"> </span><span class="kn">import</span> <span class="n">Embed</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;The &#39;imbed&#39; package is required for embedding generation. &quot;</span>
+            <span class="s2">&quot;Install it with: pip install imbed&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Create Embed instance</span>
+    <span class="n">embed</span> <span class="o">=</span> <span class="n">Embed</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">embedding_model</span><span class="p">)</span> <span class="k">if</span> <span class="n">embedding_model</span> <span class="k">else</span> <span class="n">Embed</span><span class="p">()</span>
+
+    <span class="c1"># Return a function that uses the Embed instance</span>
+    <span class="k">return</span> <span class="n">embed</span>
+
+
+<span class="c1"># Utility functions for document handling</span>
+
+
+<div class="viewcode-block" id="normalize_document_input">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.normalize_document_input">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_document_input</span><span class="p">(</span>
+    <span class="n">doc_input</span><span class="p">:</span> <span class="n">DocumentInput</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">auto_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Document</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalize various document input formats to a Document object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    doc_input : DocumentInput</span>
+<span class="sd">        Input in one of the supported formats:</span>
+<span class="sd">        - str: Just text</span>
+<span class="sd">        - (text, id): Text with ID</span>
+<span class="sd">        - (text, metadata): Text with metadata</span>
+<span class="sd">        - (text, id, metadata): Full specification</span>
+<span class="sd">        - Document: Already a Document object</span>
+<span class="sd">    auto_id : bool, default True</span>
+<span class="sd">        If True, auto-generate ID when not provided</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Document</span>
+<span class="sd">        Normalized Document object</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; doc = normalize_document_input(&quot;Hello world&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; doc.text</span>
+<span class="sd">    &#39;Hello world&#39;</span>
+<span class="sd">    &gt;&gt;&gt; doc.id  # doctest: +SKIP</span>
+<span class="sd">    &#39;...&#39;  # Auto-generated ID</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; doc = normalize_document_input((&quot;Hello&quot;, &quot;doc1&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; doc.id</span>
+<span class="sd">    &#39;doc1&#39;</span>
+<span class="sd">    &gt;&gt;&gt; doc.text</span>
+<span class="sd">    &#39;Hello&#39;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; doc = normalize_document_input((&quot;Hello&quot;, {&#39;category&#39;: &#39;test&#39;}))</span>
+<span class="sd">    &gt;&gt;&gt; doc.metadata</span>
+<span class="sd">    {&#39;category&#39;: &#39;test&#39;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="n">Document</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">doc_input</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># Just text</span>
+        <span class="n">doc_id</span> <span class="o">=</span> <span class="n">_generate_id</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="k">if</span> <span class="n">auto_id</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">doc_input</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">text</span><span class="p">,</span> <span class="n">second</span> <span class="o">=</span> <span class="n">doc_input</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">second</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="c1"># (text, id)</span>
+                <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">second</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># (text, metadata)</span>
+                <span class="n">doc_id</span> <span class="o">=</span> <span class="n">_generate_id</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">if</span> <span class="n">auto_id</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">second</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="c1"># (text, id, metadata)</span>
+            <span class="n">text</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">doc_input</span>
+            <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid document input format: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_generate_id</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;doc&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a unique ID for a document based on its text.</span>
+
+<span class="sd">    Uses a hash of the text combined with a UUID to ensure uniqueness.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    text : str</span>
+<span class="sd">        Text to generate ID from</span>
+<span class="sd">    prefix : str, default &#39;doc&#39;</span>
+<span class="sd">        Prefix for the generated ID</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Generated document ID</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; doc_id = _generate_id(&quot;Hello world&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; doc_id.startswith(&#39;doc_&#39;)</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Use hash of text + short uuid for reasonable uniqueness</span>
+    <span class="n">text_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
+    <span class="n">unique_suffix</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())[:</span><span class="mi">8</span><span class="p">]</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">text_hash</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">unique_suffix</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="c1"># Egress functions for search result transformation</span>
+
+
+<div class="viewcode-block" id="text_only">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.text_only">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">text_only</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract only the text from a search result.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    result : dict</span>
+<span class="sd">        Search result dictionary</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The text content</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; result = {&#39;id&#39;: &#39;doc1&#39;, &#39;text&#39;: &#39;Hello&#39;, &#39;score&#39;: 0.9}</span>
+<span class="sd">    &gt;&gt;&gt; text_only(result)</span>
+<span class="sd">    &#39;Hello&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="id_only">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.id_only">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">id_only</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract only the ID from a search result.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    result : dict</span>
+<span class="sd">        Search result dictionary</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The document ID</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; result = {&#39;id&#39;: &#39;doc1&#39;, &#39;text&#39;: &#39;Hello&#39;, &#39;score&#39;: 0.9}</span>
+<span class="sd">    &gt;&gt;&gt; id_only(result)</span>
+<span class="sd">    &#39;doc1&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="id_and_score">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.id_and_score">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">id_and_score</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract ID and score from a search result.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    result : dict</span>
+<span class="sd">        Search result dictionary</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of (str, float)</span>
+<span class="sd">        Document ID and similarity score</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; result = {&#39;id&#39;: &#39;doc1&#39;, &#39;text&#39;: &#39;Hello&#39;, &#39;score&#39;: 0.9}</span>
+<span class="sd">    &gt;&gt;&gt; id_and_score(result)</span>
+<span class="sd">    (&#39;doc1&#39;, 0.9)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="id_text_score">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.id_text_score">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">id_text_score</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract ID, text, and score from a search result.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    result : dict</span>
+<span class="sd">        Search result dictionary</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of (str, str, float)</span>
+<span class="sd">        Document ID, text, and similarity score</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; result = {&#39;id&#39;: &#39;doc1&#39;, &#39;text&#39;: &#39;Hello&#39;, &#39;score&#39;: 0.9}</span>
+<span class="sd">    &gt;&gt;&gt; id_text_score(result)</span>
+<span class="sd">    (&#39;doc1&#39;, &#39;Hello&#39;, 0.9)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span></div>
+
+
+
+<span class="c1"># Similarity/distance utilities</span>
+
+
+<div class="viewcode-block" id="cosine_similarity">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.cosine_similarity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">vec1</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">vec2</span><span class="p">:</span> <span class="n">Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute cosine similarity between two vectors.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vec1 : list of float</span>
+<span class="sd">        First vector</span>
+<span class="sd">    vec2 : list of float</span>
+<span class="sd">        Second vector</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Cosine similarity (1.0 = identical, 0.0 = orthogonal, -1.0 = opposite)</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; v1 = [1.0, 0.0, 0.0]</span>
+<span class="sd">    &gt;&gt;&gt; v2 = [1.0, 0.0, 0.0]</span>
+<span class="sd">    &gt;&gt;&gt; cosine_similarity(v1, v2)</span>
+<span class="sd">    1.0</span>
+<span class="sd">    &gt;&gt;&gt; v3 = [0.0, 1.0, 0.0]</span>
+<span class="sd">    &gt;&gt;&gt; cosine_similarity(v1, v3)</span>
+<span class="sd">    0.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dot_product</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vec1</span><span class="p">,</span> <span class="n">vec2</span><span class="p">))</span>
+    <span class="n">mag1</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">vec1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="n">mag2</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">vec2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+
+    <span class="k">if</span> <span class="n">mag1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">mag2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="k">return</span> <span class="n">dot_product</span> <span class="o">/</span> <span class="p">(</span><span class="n">mag1</span> <span class="o">*</span> <span class="n">mag2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="euclidean_distance">
+<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.euclidean_distance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">euclidean_distance</span><span class="p">(</span><span class="n">vec1</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">vec2</span><span class="p">:</span> <span class="n">Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute Euclidean distance between two vectors.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vec1 : list of float</span>
+<span class="sd">        First vector</span>
+<span class="sd">    vec2 : list of float</span>
+<span class="sd">        Second vector</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Euclidean distance (0.0 = identical, larger = more different)</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; v1 = [1.0, 0.0, 0.0]</span>
+<span class="sd">    &gt;&gt;&gt; v2 = [1.0, 0.0, 0.0]</span>
+<span class="sd">    &gt;&gt;&gt; euclidean_distance(v1, v2)</span>
+<span class="sd">    0.0</span>
+<span class="sd">    &gt;&gt;&gt; v3 = [0.0, 1.0, 0.0]</span>
+<span class="sd">    &gt;&gt;&gt; euclidean_distance(v1, v3)  # doctest: +ELLIPSIS</span>
+<span class="sd">    1.414...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vec1</span><span class="p">,</span> <span class="n">vec2</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

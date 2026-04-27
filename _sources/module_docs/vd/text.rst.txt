@@ -1,0 +1,4 @@
+vd.text
+=======
+.. automodule:: vd.text
+   :members:

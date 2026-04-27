@@ -3,8 +3,17 @@
    :caption: Contents:
 
    module_docs/vd
-   module_docs/vd/crude
-   module_docs/vd/dog
-   module_docs/vd/wip
-   module_docs/vd/wip/input_sourcing
-   module_docs/vd/wip/input_wire
+   module_docs/vd/analytics
+   module_docs/vd/backends
+   module_docs/vd/backends/chroma
+   module_docs/vd/backends/memory
+   module_docs/vd/base
+   module_docs/vd/cli
+   module_docs/vd/compare
+   module_docs/vd/config
+   module_docs/vd/health
+   module_docs/vd/io
+   module_docs/vd/migration
+   module_docs/vd/search
+   module_docs/vd/text
+   module_docs/vd/util
