@@ -70,3 +70,17 @@ convention = "google"
 minversion = "6.0"
 testpaths = ["tests"]
 doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS"]
+
+[tool.wads.ci]
+installer = "uv"
+
+[tool.wads.ci.testing]
+python_versions = ["3.10", "3.12"]
+pytest_args = ["-v", "--tb=short"]
+coverage_enabled = true
+exclude_paths = ["examples", "scrap"]
+test_on_windows = true
+
+[tool.wads.ci.build]
+sdist = true
+wheel = true
