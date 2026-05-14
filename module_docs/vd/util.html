@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.util &mdash; vd 0.1.2 documentation</title>
+  <title>vd.util &mdash; vd 0.1.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,9 +15,9 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=92734c54"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=360bc84d"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -117,7 +117,7 @@
 - Egress functions for search result transformation</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.connect">
-<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">backend_kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#vd.base.Client" title="vd.base.Client"><span class="pre">Client</span></a></span></span><a class="reference internal" href="../../_modules/vd/util.html#connect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.connect" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">backend_kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#vd.base.Client" title="vd.base.Client"><span class="pre">Client</span></a></span></span><a class="reference internal" href="../../_modules/vd/util.html#connect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.connect" title="Link to this definition"></a></dt>
 <dd><p>Connect to a vector database backend.</p>
 <p>This is the main entry point for creating a client to interact with
 vector databases. It uses a factory pattern to instantiate the appropriate
@@ -145,13 +145,13 @@ backend based on the backend name.</p>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Connect to in-memory backend</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Connect to ChromaDB with persistence</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;chroma&#39;</span><span class="p">,</span> <span class="n">persist_directory</span><span class="o">=</span><span class="s1">&#39;./data&#39;</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;chroma&#39;</span><span class="p">,</span> <span class="n">persist_directory</span><span class="o">=</span><span class="s1">&#39;./data&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Connect with custom embedding model</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="s1">&#39;memory&#39;</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">embedding_model</span><span class="o">=</span><span class="s1">&#39;text-embedding-3-large&#39;</span>
 <span class="gp">... </span><span class="p">)</span>
@@ -213,7 +213,7 @@ backend based on the backend name.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">euclidean_distance</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
 <span class="go">0.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v3</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">euclidean_distance</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v3</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">euclidean_distance</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v3</span><span class="p">)</span>
 <span class="go">1.414...</span>
 </pre></div>
 </div>
@@ -258,10 +258,10 @@ backend based on the backend name.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="n">get_backend_info</span><span class="p">(</span><span class="s1">&#39;chroma&#39;</span><span class="p">)</span>  
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">])</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="n">get_backend_info</span><span class="p">(</span><span class="s1">&#39;chroma&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">])</span>
 <span class="go">&#39;Open-source embedding database with persistence support.&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;pip_install&#39;</span><span class="p">])</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;pip_install&#39;</span><span class="p">])</span>
 <span class="go">&#39;pip install vd[chromadb]&#39;</span>
 </pre></div>
 </div>
@@ -286,7 +286,7 @@ backend based on the backend name.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">get_install_instructions</span><span class="p">(</span><span class="s1">&#39;chroma&#39;</span><span class="p">))</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">get_install_instructions</span><span class="p">(</span><span class="s1">&#39;chroma&#39;</span><span class="p">))</span>
 <span class="go">To use the &#39;chroma&#39; backend (ChromaDB):</span>
 </pre></div>
 </div>
@@ -370,7 +370,7 @@ backend based on the backend name.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.list_all_backends">
-<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">list_all_backends</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_planned</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/util.html#list_all_backends"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.list_all_backends" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">list_all_backends</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_planned</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/util.html#list_all_backends"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.list_all_backends" title="Link to this definition"></a></dt>
 <dd><p>List all possible backends with their status and information.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -384,10 +384,10 @@ backend based on the backend name.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">all_backends</span> <span class="o">=</span> <span class="n">list_all_backends</span><span class="p">()</span>  
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">all_backends</span><span class="p">[</span><span class="s1">&#39;chroma&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">all_backends</span> <span class="o">=</span> <span class="n">list_all_backends</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">all_backends</span><span class="p">[</span><span class="s1">&#39;chroma&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
 <span class="go">&#39;ChromaDB&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">all_backends</span><span class="p">[</span><span class="s1">&#39;chroma&#39;</span><span class="p">][</span><span class="s1">&#39;available&#39;</span><span class="p">])</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">all_backends</span><span class="p">[</span><span class="s1">&#39;chroma&#39;</span><span class="p">][</span><span class="s1">&#39;available&#39;</span><span class="p">])</span>
 <span class="go">True  # or False if not installed</span>
 </pre></div>
 </div>
@@ -406,8 +406,8 @@ backend based on the backend name.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">available</span> <span class="o">=</span> <span class="n">list_available_backends</span><span class="p">()</span>  
-<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;memory&#39;</span> <span class="ow">in</span> <span class="n">available</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">available</span> <span class="o">=</span> <span class="n">list_available_backends</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;memory&#39;</span> <span class="ow">in</span> <span class="n">available</span>
 <span class="go">True</span>
 </pre></div>
 </div>
@@ -426,8 +426,8 @@ backend based on the backend name.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">backends</span> <span class="o">=</span> <span class="n">list_backends</span><span class="p">()</span>  
-<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;memory&#39;</span> <span class="ow">in</span> <span class="n">backends</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">backends</span> <span class="o">=</span> <span class="n">list_backends</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;memory&#39;</span> <span class="ow">in</span> <span class="n">backends</span>
 <span class="go">True</span>
 </pre></div>
 </div>
@@ -435,7 +435,7 @@ backend based on the backend name.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.normalize_document_input">
-<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">normalize_document_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a></span></span><a class="reference internal" href="../../_modules/vd/util.html#normalize_document_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.normalize_document_input" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">normalize_document_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a></span></span><a class="reference internal" href="../../_modules/vd/util.html#normalize_document_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.normalize_document_input" title="Link to this definition"></a></dt>
 <dd><p>Normalize various document input formats to a Document object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -460,7 +460,7 @@ backend based on the backend name.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span> <span class="o">=</span> <span class="n">normalize_document_input</span><span class="p">(</span><span class="s2">&quot;Hello world&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="o">.</span><span class="n">text</span>
 <span class="go">&#39;Hello world&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="o">.</span><span class="n">id</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="o">.</span><span class="n">id</span>
 <span class="go">&#39;...&#39;  # Auto-generated ID</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span> <span class="o">=</span> <span class="n">normalize_document_input</span><span class="p">((</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="s2">&quot;doc1&quot;</span><span class="p">))</span>
@@ -478,7 +478,7 @@ backend based on the backend name.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.print_backends_table">
-<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">print_backends_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_planned</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/util.html#print_backends_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.print_backends_table" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">print_backends_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_planned</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/util.html#print_backends_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.print_backends_table" title="Link to this definition"></a></dt>
 <dd><p>Print a formatted table of all backends with their status.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -486,7 +486,7 @@ backend based on the backend name.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">print_backends_table</span><span class="p">()</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">print_backends_table</span><span class="p">()</span>
 <span class="go">Backend Status:</span>
 <span class="go">===============</span>
 <span class="go">✓ memory     - Memory (In-Memory)</span>
@@ -513,7 +513,7 @@ connect() function.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@register_backend</span><span class="p">(</span><span class="s1">&#39;custom&#39;</span><span class="p">)</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@register_backend</span><span class="p">(</span><span class="s1">&#39;custom&#39;</span><span class="p">)</span>
 <span class="gp">... </span><span class="k">class</span><span class="w"> </span><span class="nc">CustomBackend</span><span class="p">(</span><span class="n">BaseBackend</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">pass</span>
 </pre></div>
