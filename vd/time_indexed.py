@@ -228,7 +228,9 @@ class TimeIndexedCollection(MutableMapping):
         items: list[tuple[float, str]] = []
         for doc_id in self._coll:
             doc = self._coll[doc_id]
-            ts_raw = doc.metadata.get(self._ts_field) if hasattr(doc, "metadata") else None
+            ts_raw = (
+                doc.metadata.get(self._ts_field) if hasattr(doc, "metadata") else None
+            )
             if ts_raw is None:
                 continue
             try:
@@ -269,7 +271,9 @@ class TimeIndexedCollection(MutableMapping):
         # may convert tuple→Document, so we extract first).
         if isinstance(value, Document):
             metadata = dict(value.metadata)
-        elif isinstance(value, tuple) and len(value) >= 2 and isinstance(value[-1], dict):
+        elif (
+            isinstance(value, tuple) and len(value) >= 2 and isinstance(value[-1], dict)
+        ):
             metadata = dict(value[-1])
         else:
             raise ValueError(
@@ -393,8 +397,10 @@ class TimeIndexedCollection(MutableMapping):
             return
         data_lo, data_hi = tr if tr else (None, None)
         win_start = to_datetime(start) if start is not None else data_lo
-        win_end = to_datetime(end) if end is not None else (
-            data_hi + timedelta(seconds=1) if data_hi else win_start + step
+        win_end = (
+            to_datetime(end)
+            if end is not None
+            else (data_hi + timedelta(seconds=1) if data_hi else win_start + step)
         )
         if align:
             win_start = _align_floor(win_start, step)
