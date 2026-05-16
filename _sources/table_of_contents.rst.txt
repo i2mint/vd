@@ -16,4 +16,5 @@
    module_docs/vd/migration
    module_docs/vd/search
    module_docs/vd/text
+   module_docs/vd/time_indexed
    module_docs/vd/util
