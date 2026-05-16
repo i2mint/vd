@@ -148,6 +148,18 @@ from vd.compare import (
     recommend_backend,
 )
 
+# Time-indexed wrapper
+from vd.time_indexed import (
+    TimeIndexedCollection,
+    TimestampLike,
+    WindowSlice,
+    count_docs,
+    mean_vector,
+    parse_window,
+    to_datetime,
+    to_iso,
+)
+
 __version__ = "0.1.0"
 
 __all__ = [
@@ -225,4 +237,13 @@ __all__ = [
     "recommend_backend",
     "print_recommendation",
     "get_backend_characteristics",
+    # Time-indexed wrapper
+    "TimeIndexedCollection",
+    "TimestampLike",
+    "WindowSlice",
+    "count_docs",
+    "mean_vector",
+    "parse_window",
+    "to_datetime",
+    "to_iso",
 ]
