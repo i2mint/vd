@@ -14,7 +14,7 @@ audience: developers
 
 This skill is for working **on** `vd` — adding or refactoring a backend adapter.
 For *using* `vd`, see the user-facing skills in `vd/data/skills/`. Read
-[`../../misc/docs/vd_design_notes.md`](../../misc/docs/vd_design_notes.md) first.
+[`misc/docs/vd_design_notes.md`](../../../misc/docs/vd_design_notes.md) first.
 
 ## The contract a backend must satisfy
 

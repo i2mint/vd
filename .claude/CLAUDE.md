@@ -3,8 +3,9 @@
 > Design constitution for refactoring/implementing `vd` to a highly functional,
 > robust state. Distilled 2026-05-20 from deep research — full notes in
 > [`misc/docs/vd_design_notes.md`](../misc/docs/vd_design_notes.md) and use
-> cases in [`misc/docs/vd_use_cases.md`](../misc/docs/vd_use_cases.md). Group
-> context: [`embeddings/docs/semantic_search_design_notes.md`](../../../priv/data/groups/embeddings/docs/semantic_search_design_notes.md).
+> cases in [`misc/docs/vd_use_cases.md`](../misc/docs/vd_use_cases.md). When
+> developed as part of the embeddings package group, see also that group's
+> `semantic_search_design_notes.md` for cross-package architecture.
 
 ---
 
