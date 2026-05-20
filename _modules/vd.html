@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd &mdash; vd 0.1.4 documentation</title>
+  <title>vd &mdash; vd 0.1.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../_static/documentation_options.js?v=59fadc99"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -55,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/cli.html">vd.cli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/compare.html">vd.compare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/filters.html">vd.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/health.html">vd.health</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/io.html">vd.io</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/migration.html">vd.migration</a></li>
@@ -154,7 +155,18 @@
     <span class="n">Filter</span><span class="p">,</span>
     <span class="n">SearchResult</span><span class="p">,</span>
     <span class="n">StaticIndexError</span><span class="p">,</span>
+    <span class="n">SupportsBatch</span><span class="p">,</span>
+    <span class="n">SupportsHybrid</span><span class="p">,</span>
+    <span class="n">UnsupportedCapabilityError</span><span class="p">,</span>
+    <span class="n">UnsupportedFilterError</span><span class="p">,</span>
     <span class="n">Vector</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Metadata-filter language</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.filters</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SUPPORTED_FILTER_OPERATORS</span><span class="p">,</span>
+    <span class="n">matches_filter</span><span class="p">,</span>
+    <span class="n">validate_filter</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">vd.util</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">connect</span><span class="p">,</span>
@@ -271,6 +283,15 @@
     <span class="s2">&quot;SearchResult&quot;</span><span class="p">,</span>
     <span class="c1"># Exceptions</span>
     <span class="s2">&quot;StaticIndexError&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;UnsupportedFilterError&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;UnsupportedCapabilityError&quot;</span><span class="p">,</span>
+    <span class="c1"># Capability protocols</span>
+    <span class="s2">&quot;SupportsBatch&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SupportsHybrid&quot;</span><span class="p">,</span>
+    <span class="c1"># Metadata-filter language</span>
+    <span class="s2">&quot;matches_filter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;validate_filter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SUPPORTED_FILTER_OPERATORS&quot;</span><span class="p">,</span>
     <span class="c1"># Backend discovery</span>
     <span class="s2">&quot;list_backends&quot;</span><span class="p">,</span>
     <span class="s2">&quot;list_available_backends&quot;</span><span class="p">,</span>

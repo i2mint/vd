@@ -1,0 +1,261 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vd.filters &mdash; vd 0.1.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=59fadc99"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="vd.health" href="health.html" />
+    <link rel="prev" title="vd.config" href="config.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            vd
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../vd.html">vd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">vd.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">vd.cli</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compare.html">vd.compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">vd.config</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">vd.filters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#filter-syntax">Filter syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.filters.FIELD_OPERATORS"><code class="docutils literal notranslate"><span class="pre">FIELD_OPERATORS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.filters.LOGICAL_OPERATORS"><code class="docutils literal notranslate"><span class="pre">LOGICAL_OPERATORS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.filters.SUPPORTED_FILTER_OPERATORS"><code class="docutils literal notranslate"><span class="pre">SUPPORTED_FILTER_OPERATORS</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.filters.matches_filter"><code class="docutils literal notranslate"><span class="pre">matches_filter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.filters.validate_filter"><code class="docutils literal notranslate"><span class="pre">validate_filter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="health.html">vd.health</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">vd.io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="search.html">vd.search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="text.html">vd.text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="time_indexed.html">vd.time_indexed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">vd.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">vd.filters</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/vd/filters.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-vd.filters">
+<span id="vd-filters"></span><h1>vd.filters<a class="headerlink" href="#module-vd.filters" title="Link to this heading"></a></h1>
+<p>The canonical metadata-filter language for <code class="docutils literal notranslate"><span class="pre">vd</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">vd</span></code> uses a single, backend-agnostic, MongoDB-style JSON dialect to filter
+documents by metadata. This module is the <strong>single source of truth</strong> for that
+language:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#vd.filters.SUPPORTED_FILTER_OPERATORS" title="vd.filters.SUPPORTED_FILTER_OPERATORS"><code class="xref py py-data docutils literal notranslate"><span class="pre">SUPPORTED_FILTER_OPERATORS</span></code></a> — every operator the language defines.</p></li>
+<li><p><a class="reference internal" href="#vd.filters.matches_filter" title="vd.filters.matches_filter"><code class="xref py py-func docutils literal notranslate"><span class="pre">matches_filter()</span></code></a> — evaluate a filter against a metadata dict in Python.
+Used directly by backends that filter client-side (e.g. the <code class="docutils literal notranslate"><span class="pre">memory</span></code>
+backend), and the reference semantics every backend’s native translation
+must agree with.</p></li>
+<li><p><a class="reference internal" href="#vd.filters.validate_filter" title="vd.filters.validate_filter"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate_filter()</span></code></a> — walk a filter and fail loud
+(<a class="reference internal" href="base.html#vd.base.UnsupportedFilterError" title="vd.base.UnsupportedFilterError"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a>) on any unknown / unsupported
+operator. Used by backends that translate the filter to a native query, so
+the caller gets a clear <code class="docutils literal notranslate"><span class="pre">vd</span></code> error instead of an opaque backend error.</p></li>
+</ul>
+<section id="filter-syntax">
+<h2>Filter syntax<a class="headerlink" href="#filter-syntax" title="Link to this heading"></a></h2>
+<p>A filter is a <code class="docutils literal notranslate"><span class="pre">dict</span></code>. Each key is either a <strong>metadata field name</strong> or a
+<strong>logical operator</strong> (<code class="docutils literal notranslate"><span class="pre">$and</span></code>, <code class="docutils literal notranslate"><span class="pre">$or</span></code>, <code class="docutils literal notranslate"><span class="pre">$not</span></code>). A bare <code class="docutils literal notranslate"><span class="pre">{'field':</span> <span class="pre">value}</span></code>
+is sugar for <code class="docutils literal notranslate"><span class="pre">{'field':</span> <span class="pre">{'$eq':</span> <span class="pre">value}}</span></code>. Multiple top-level fields combine
+with an implicit <code class="docutils literal notranslate"><span class="pre">$and</span></code>.</p>
+<p>Field operators (inside <code class="docutils literal notranslate"><span class="pre">{'field':</span> <span class="pre">{...}}</span></code>): <code class="docutils literal notranslate"><span class="pre">$eq</span></code>, <code class="docutils literal notranslate"><span class="pre">$ne</span></code>, <code class="docutils literal notranslate"><span class="pre">$gt</span></code>,
+<code class="docutils literal notranslate"><span class="pre">$gte</span></code>, <code class="docutils literal notranslate"><span class="pre">$lt</span></code>, <code class="docutils literal notranslate"><span class="pre">$lte</span></code>, <code class="docutils literal notranslate"><span class="pre">$in</span></code>, <code class="docutils literal notranslate"><span class="pre">$nin</span></code>, <code class="docutils literal notranslate"><span class="pre">$exists</span></code>.</p>
+<p>Logical operators (top-level): <code class="docutils literal notranslate"><span class="pre">$and</span></code> / <code class="docutils literal notranslate"><span class="pre">$or</span></code> take a list of subfilters;
+<code class="docutils literal notranslate"><span class="pre">$not</span></code> takes a single subfilter.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">matches_filter</span><span class="p">({</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="s1">&#39;ai&#39;</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">})</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matches_filter</span><span class="p">({</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$gte&#39;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">}})</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matches_filter</span><span class="p">({</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;$or&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">}]})</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matches_filter</span><span class="p">({</span><span class="s1">&#39;tags&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="s1">&#39;ai&#39;</span><span class="p">]},</span> <span class="p">{</span><span class="s1">&#39;tags&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$in&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ai&#39;</span><span class="p">]}})</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matches_filter</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$exists&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}})</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matches_filter</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;$not&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}})</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>An unknown operator fails loud rather than silently matching everything:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">matches_filter</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$bogus&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}})</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">vd.base.UnsupportedFilterError</span>: <span class="n">Unknown filter operator &#39;$bogus&#39;. ...</span>
+</pre></div>
+</div>
+</section>
+<dl class="py data">
+<dt class="sig sig-object py" id="vd.filters.FIELD_OPERATORS">
+<span class="sig-prename descclassname"><span class="pre">vd.filters.</span></span><span class="sig-name descname"><span class="pre">FIELD_OPERATORS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin'})</span></span><a class="headerlink" href="#vd.filters.FIELD_OPERATORS" title="Link to this definition"></a></dt>
+<dd><p>Operators used inside a <code class="docutils literal notranslate"><span class="pre">{'field':</span> <span class="pre">{...}}</span></code> condition.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="vd.filters.LOGICAL_OPERATORS">
+<span class="sig-prename descclassname"><span class="pre">vd.filters.</span></span><span class="sig-name descname"><span class="pre">LOGICAL_OPERATORS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$and',</span> <span class="pre">'$not',</span> <span class="pre">'$or'})</span></span><a class="headerlink" href="#vd.filters.LOGICAL_OPERATORS" title="Link to this definition"></a></dt>
+<dd><p>Operators used at the top level of a filter to combine subfilters.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="vd.filters.SUPPORTED_FILTER_OPERATORS">
+<span class="sig-prename descclassname"><span class="pre">vd.filters.</span></span><span class="sig-name descname"><span class="pre">SUPPORTED_FILTER_OPERATORS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or'})</span></span><a class="headerlink" href="#vd.filters.SUPPORTED_FILTER_OPERATORS" title="Link to this definition"></a></dt>
+<dd><p>Every operator the canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> filter language defines.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.filters.matches_filter">
+<span class="sig-prename descclassname"><span class="pre">vd.filters.</span></span><span class="sig-name descname"><span class="pre">matches_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/vd/filters.html#matches_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.filters.matches_filter" title="Link to this definition"></a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if <code class="docutils literal notranslate"><span class="pre">metadata</span></code> satisfies the MongoDB-style <code class="docutils literal notranslate"><span class="pre">filter</span></code>.</p>
+<p>An empty or <code class="docutils literal notranslate"><span class="pre">None</span></code> filter matches everything. Unknown operators raise
+<a class="reference internal" href="base.html#vd.base.UnsupportedFilterError" title="vd.base.UnsupportedFilterError"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a> — they never silently match.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metadata</strong> (<em>Mapping</em>) – A document’s metadata dict.</p></li>
+<li><p><strong>filter</strong> (<em>dict</em><em> or </em><em>None</em>) – A filter in the canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> dialect (see the module docstring).</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">matches_filter</span><span class="p">({</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">},</span> <span class="kc">None</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matches_filter</span><span class="p">({</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="s1">&#39;cat&#39;</span><span class="p">:</span> <span class="s1">&#39;tech&#39;</span><span class="p">},</span>
+<span class="gp">... </span>               <span class="p">{</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$gte&#39;</span><span class="p">:</span> <span class="mi">2020</span><span class="p">},</span> <span class="s1">&#39;cat&#39;</span><span class="p">:</span> <span class="s1">&#39;tech&#39;</span><span class="p">})</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matches_filter</span><span class="p">({</span><span class="s1">&#39;views&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;views&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$gte&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;$lte&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">}})</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.filters.validate_filter">
+<span class="sig-prename descclassname"><span class="pre">vd.filters.</span></span><span class="sig-name descname"><span class="pre">validate_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">supported</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or'})</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/filters.html#validate_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.filters.validate_filter" title="Link to this definition"></a></dt>
+<dd><p>Walk <code class="docutils literal notranslate"><span class="pre">filter</span></code> and raise <a class="reference internal" href="base.html#vd.base.UnsupportedFilterError" title="vd.base.UnsupportedFilterError"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a> on any
+operator that is unknown or not in <code class="docutils literal notranslate"><span class="pre">supported</span></code>.</p>
+<p>Backends that translate the canonical filter to a native query call this
+with their own (possibly narrower) <code class="docutils literal notranslate"><span class="pre">supported</span></code> subset, so callers get a
+clear <code class="docutils literal notranslate"><span class="pre">vd</span></code> error up front instead of an opaque backend error later.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filter</strong> (<em>dict</em><em> or </em><em>None</em>) – A filter in the canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> dialect. <code class="docutils literal notranslate"><span class="pre">None</span></code> / empty is valid.</p></li>
+<li><p><strong>supported</strong> (<em>iterable</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – The operator subset to allow. Defaults to every operator the language
+defines.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">validate_filter</span><span class="p">({</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$gte&#39;</span><span class="p">:</span> <span class="mi">2020</span><span class="p">}})</span>            <span class="c1"># ok, returns None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">validate_filter</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$regex&#39;</span><span class="p">:</span> <span class="s1">&#39;.*&#39;</span><span class="p">}})</span>             <span class="c1"># not in the language</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">vd.base.UnsupportedFilterError</span>: <span class="n">Unknown filter operator &#39;$regex&#39;. ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">validate_filter</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$exists&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span> <span class="n">supported</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;$eq&#39;</span><span class="p">})</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">vd.base.UnsupportedFilterError</span>: <span class="n">Filter operator &#39;$exists&#39; is not supported ...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="config.html" class="btn btn-neutral float-left" title="vd.config" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="health.html" class="btn btn-neutral float-right" title="vd.health" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

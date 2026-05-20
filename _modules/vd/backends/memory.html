@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.backends.memory &mdash; vd 0.1.4 documentation</title>
+  <title>vd.backends.memory &mdash; vd 0.1.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../../../_static/documentation_options.js?v=59fadc99"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -55,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/cli.html">vd.cli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/compare.html">vd.compare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/filters.html">vd.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/health.html">vd.health</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/io.html">vd.io</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/migration.html">vd.migration</a></li>
@@ -110,6 +111,7 @@
     <span class="n">SearchResult</span><span class="p">,</span>
     <span class="n">Vector</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">SUPPORTED_FILTER_OPERATORS</span><span class="p">,</span> <span class="n">matches_filter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">vd.util</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">cosine_similarity</span><span class="p">,</span>
     <span class="n">normalize_document_input</span><span class="p">,</span>
@@ -134,11 +136,28 @@
 <span class="sd">        Function to generate embeddings from text</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1">#: The in-memory backend accepts writes at any time.</span>
+    <span class="n">supports_incremental_writes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1">#: The in-memory backend evaluates filters in Python, so it supports the</span>
+    <span class="c1">#: full canonical ``vd`` filter language (see :mod:`vd.filters`).</span>
+    <span class="n">supported_filter_operators</span> <span class="o">=</span> <span class="n">SUPPORTED_FILTER_OPERATORS</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the memory collection.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span> <span class="o">=</span> <span class="n">embedding_model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_documents</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Document</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">native</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Document</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The raw underlying store (escape hatch).</span>
+
+<span class="sd">        For the in-memory backend this is the ``dict[str, Document]`` that backs</span>
+<span class="sd">        the collection. A *supported, documented* part of the API.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_documents</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add or update a document.&quot;&quot;&quot;</span>
@@ -285,68 +304,24 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if a document matches the filter.</span>
 
-<span class="sd">        This is a basic implementation supporting:</span>
-<span class="sd">        - Simple equality: {&#39;key&#39;: value}</span>
-<span class="sd">        - $gte, $lte, $gt, $lt: {&#39;key&#39;: {&#39;$gte&#39;: value}}</span>
-<span class="sd">        - $in: {&#39;key&#39;: {&#39;$in&#39;: [value1, value2]}}</span>
-<span class="sd">        - $and: {&#39;$and&#39;: [filter1, filter2]}</span>
+<span class="sd">        Delegates to :func:`vd.filters.matches_filter`, the single source of</span>
+<span class="sd">        truth for the canonical MongoDB-style filter language. Unknown</span>
+<span class="sd">        operators raise :class:`~vd.base.UnsupportedFilterError` rather than</span>
+<span class="sd">        silently matching.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        doc : Document</span>
 <span class="sd">            Document to check</span>
 <span class="sd">        filter : dict</span>
-<span class="sd">            Filter specification</span>
+<span class="sd">            Filter specification (see :mod:`vd.filters` for the full syntax)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
-<span class="sd">            True if document matches filter</span>
+<span class="sd">            True if the document&#39;s metadata matches the filter</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">condition</span> <span class="ow">in</span> <span class="nb">filter</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;$and&quot;</span><span class="p">:</span>
-                <span class="c1"># Logical AND</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_matches_filter</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">condition</span><span class="p">):</span>
-                    <span class="k">return</span> <span class="kc">False</span>
-            <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;$or&quot;</span><span class="p">:</span>
-                <span class="c1"># Logical OR</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_matches_filter</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">condition</span><span class="p">):</span>
-                    <span class="k">return</span> <span class="kc">False</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="c1"># Operator-based filter</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-                <span class="c1"># If the field doesn&#39;t exist, the filter doesn&#39;t match</span>
-                <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="kc">False</span>
-                <span class="k">for</span> <span class="n">op</span><span class="p">,</span> <span class="n">op_value</span> <span class="ow">in</span> <span class="n">condition</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$gte&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="n">op_value</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="kc">False</span>
-                    <span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$lte&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">value</span> <span class="o">&lt;=</span> <span class="n">op_value</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="kc">False</span>
-                    <span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$gt&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">value</span> <span class="o">&gt;</span> <span class="n">op_value</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="kc">False</span>
-                    <span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$lt&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">value</span> <span class="o">&lt;</span> <span class="n">op_value</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="kc">False</span>
-                    <span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$eq&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">value</span> <span class="o">==</span> <span class="n">op_value</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="kc">False</span>
-                    <span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$ne&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">value</span> <span class="o">!=</span> <span class="n">op_value</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="kc">False</span>
-                    <span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$in&quot;</span><span class="p">:</span>
-                        <span class="c1"># Handle both scalar and list values</span>
-                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                            <span class="c1"># If value is a list, check if any element is in op_value</span>
-                            <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">v</span> <span class="ow">in</span> <span class="n">op_value</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">):</span>
-                                <span class="k">return</span> <span class="kc">False</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="c1"># If value is scalar, check if it&#39;s in op_value</span>
-                            <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">op_value</span><span class="p">:</span>
-                                <span class="k">return</span> <span class="kc">False</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Simple equality</span>
-                <span class="k">if</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">!=</span> <span class="n">condition</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="k">return</span> <span class="kc">True</span></div>
+        <span class="k">return</span> <span class="n">matches_filter</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="nb">filter</span><span class="p">)</span></div>
 
 
 

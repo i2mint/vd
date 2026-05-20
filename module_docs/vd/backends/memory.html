@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.backends.memory &mdash; vd 0.1.4 documentation</title>
+  <title>vd.backends.memory &mdash; vd 0.1.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../../../_static/documentation_options.js?v=59fadc99"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -63,7 +63,10 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.backends.memory.MemoryCollection"><code class="docutils literal notranslate"><span class="pre">MemoryCollection</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryCollection.add_documents"><code class="docutils literal notranslate"><span class="pre">MemoryCollection.add_documents()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryCollection.native"><code class="docutils literal notranslate"><span class="pre">MemoryCollection.native</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryCollection.search"><code class="docutils literal notranslate"><span class="pre">MemoryCollection.search()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryCollection.supported_filter_operators"><code class="docutils literal notranslate"><span class="pre">MemoryCollection.supported_filter_operators</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryCollection.supports_incremental_writes"><code class="docutils literal notranslate"><span class="pre">MemoryCollection.supports_incremental_writes</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryCollection.upsert"><code class="docutils literal notranslate"><span class="pre">MemoryCollection.upsert()</span></code></a></li>
 </ul>
 </li>
@@ -73,6 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../cli.html">vd.cli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../compare.html">vd.compare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filters.html">vd.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../health.html">vd.health</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../io.html">vd.io</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../migration.html">vd.migration</a></li>
@@ -180,6 +184,14 @@ search. Suitable for small datasets and testing.</p>
 </dl>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection.native">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">native</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#vd.backends.memory.MemoryCollection.native" title="Link to this definition"></a></dt>
+<dd><p>The raw underlying store (escape hatch).</p>
+<p>For the in-memory backend this is the <code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">Document]</span></code> that backs
+the collection. A <em>supported, documented</em> part of the API.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection.search">
 <span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryCollection.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryCollection.search" title="Link to this definition"></a></dt>
@@ -198,6 +210,19 @@ search. Suitable for small datasets and testing.</p>
 <dd class="field-even"><p><em>dict or transformed result</em> – Search results sorted by similarity score</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection.supported_filter_operators">
+<span class="sig-name descname"><span class="pre">supported_filter_operators</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or'})</span></span><a class="headerlink" href="#vd.backends.memory.MemoryCollection.supported_filter_operators" title="Link to this definition"></a></dt>
+<dd><p>The in-memory backend evaluates filters in Python, so it supports the
+full canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> filter language (see <a class="reference internal" href="../filters.html#module-vd.filters" title="vd.filters"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vd.filters</span></code></a>).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection.supports_incremental_writes">
+<span class="sig-name descname"><span class="pre">supports_incremental_writes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#vd.backends.memory.MemoryCollection.supports_incremental_writes" title="Link to this definition"></a></dt>
+<dd><p>The in-memory backend accepts writes at any time.</p>
 </dd></dl>
 
 <dl class="py method">

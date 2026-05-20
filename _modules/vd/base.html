@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.base &mdash; vd 0.1.4 documentation</title>
+  <title>vd.base &mdash; vd 0.1.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../../_static/documentation_options.js?v=59fadc99"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -55,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/cli.html">vd.cli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/compare.html">vd.compare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/filters.html">vd.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/health.html">vd.health</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/io.html">vd.io</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/migration.html">vd.migration</a></li>
@@ -111,6 +112,7 @@
     <span class="n">Optional</span><span class="p">,</span>
     <span class="n">Protocol</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
+    <span class="n">runtime_checkable</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Type aliases</span>
@@ -527,7 +529,18 @@
 <span class="sd">        Function to generate embeddings from text</span>
 <span class="sd">    **config</span>
 <span class="sd">        Backend-specific configuration</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    supports_incremental_writes : bool</span>
+<span class="sd">        Whether collections from this backend accept writes after creation.</span>
+<span class="sd">        Static-index backends (e.g. FAISS, Annoy) set this ``False`` and raise</span>
+<span class="sd">        :class:`StaticIndexError` on ``__setitem__`` / ``__delitem__``. Callers</span>
+<span class="sd">        can branch on this flag to avoid triggering the error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#: Whether collections of this backend accept incremental writes (see above).</span>
+    <span class="n">supports_incremental_writes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -547,6 +560,24 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span> <span class="o">=</span> <span class="n">embedding_model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The raw backend client — the escape hatch to backend-specific features.</span>
+
+<span class="sd">        This is a *supported, documented* part of the API: when the unified</span>
+<span class="sd">        facade does not expose a backend-specific feature, drop to the native</span>
+<span class="sd">        client rather than circumventing ``vd``. Returns ``None`` for backends</span>
+<span class="sd">        that have no external client (e.g. the in-memory backend).</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; client = vd.connect(&#39;chroma&#39;)          # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; raw = client.client                    # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; raw.heartbeat()                        # native ChromaDB call  # doctest: +SKIP</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_client&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BaseBackend.create_collection">
 <a class="viewcode-back" href="../../module_docs/vd/base.html#vd.BaseBackend.create_collection">[docs]</a>
@@ -597,9 +628,99 @@
 <span class="sd">    Some backends (like FAISS, Annoy) use static indexes that cannot be</span>
 <span class="sd">    modified after they are built. This exception is raised when users</span>
 <span class="sd">    attempt write operations on such backends.</span>
+
+<span class="sd">    See also the ``supports_incremental_writes`` flag on :class:`BaseBackend`,</span>
+<span class="sd">    which lets callers branch *before* triggering this error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="UnsupportedFilterError">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.UnsupportedFilterError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnsupportedFilterError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when a metadata filter uses an operator a backend does not support.</span>
+
+<span class="sd">    The canonical, backend-agnostic filter language is defined in</span>
+<span class="sd">    :mod:`vd.filters` (a MongoDB-style JSON dialect). When a filter uses an</span>
+<span class="sd">    operator outside a backend&#39;s supported subset — or an operator that does</span>
+<span class="sd">    not exist at all — this is raised so the caller can simplify the filter or</span>
+<span class="sd">    drop to a backend-specific filter via the escape hatch (``collection.native``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="UnsupportedCapabilityError">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.UnsupportedCapabilityError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnsupportedCapabilityError</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when an operation requires a capability the backend does not have.</span>
+
+<span class="sd">    Prefer feature-discovery — ``isinstance(collection, SupportsHybrid)`` — over</span>
+<span class="sd">    catching this exception, but it is raised as a clear, typed fallback when an</span>
+<span class="sd">    optional operation is called on a backend that does not implement it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="SupportsBatch">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.SupportsBatch">[docs]</a>
+<span class="nd">@runtime_checkable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SupportsBatch</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Capability protocol: a collection that supports efficient batch operations.</span>
+
+<span class="sd">    Batch insertion (``add_documents``) and idempotent single upsert</span>
+<span class="sd">    (``upsert``) are *optional* — not part of the minimal ``Collection``</span>
+<span class="sd">    contract. Feature-discover support at runtime::</span>
+
+<span class="sd">        if isinstance(collection, SupportsBatch):</span>
+<span class="sd">            collection.add_documents(many_docs, batch_size=100)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_documents</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DocumentInput</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">upsert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">:</span> <span class="s2">&quot;Document&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span></div>
+
+
+
+<div class="viewcode-block" id="SupportsHybrid">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.SupportsHybrid">[docs]</a>
+<span class="nd">@runtime_checkable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SupportsHybrid</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Capability protocol: a collection that supports hybrid (dense + lexical) search.</span>
+
+<span class="sd">    Hybrid search has no syntactic convergence across vector databases, so it is</span>
+<span class="sd">    an *opt-in capability*, never part of the baseline contract. Feature-discover</span>
+<span class="sd">    before calling::</span>
+
+<span class="sd">        if isinstance(collection, SupportsHybrid):</span>
+<span class="sd">            hits = collection.hybrid_search(vec, &quot;query text&quot;, alpha=0.5)</span>
+
+<span class="sd">    Backends without native hybrid do not implement this protocol; combine</span>
+<span class="sd">    separate dense + lexical result lists with :func:`vd.reciprocal_rank_fusion`</span>
+<span class="sd">    as a client-side fallback.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">hybrid_search</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="s2">&quot;Vector&quot;</span><span class="p">,</span>
+        <span class="n">query_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nb">filter</span><span class="p">:</span> <span class="s2">&quot;Optional[Filter]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">fusion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rrf&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">:</span> <span class="o">...</span></div>
 
 </pre></div>
 

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd &mdash; vd 0.1.4 documentation</title>
+  <title>vd &mdash; vd 0.1.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../_static/documentation_options.js?v=59fadc99"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -67,6 +67,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.Document"><code class="docutils literal notranslate"><span class="pre">Document</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.StaticIndexError"><code class="docutils literal notranslate"><span class="pre">StaticIndexError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.SupportsBatch"><code class="docutils literal notranslate"><span class="pre">SupportsBatch</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.SupportsHybrid"><code class="docutils literal notranslate"><span class="pre">SupportsHybrid</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.TimeIndexedCollection"><code class="docutils literal notranslate"><span class="pre">TimeIndexedCollection</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#vd.TimeIndexedCollection.base"><code class="docutils literal notranslate"><span class="pre">TimeIndexedCollection.base</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#vd.TimeIndexedCollection.query_window"><code class="docutils literal notranslate"><span class="pre">TimeIndexedCollection.query_window()</span></code></a></li>
@@ -76,6 +78,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#vd.TimeIndexedCollection.window_iter"><code class="docutils literal notranslate"><span class="pre">TimeIndexedCollection.window_iter()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.UnsupportedCapabilityError"><code class="docutils literal notranslate"><span class="pre">UnsupportedCapabilityError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.UnsupportedFilterError"><code class="docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.WindowSlice"><code class="docutils literal notranslate"><span class="pre">WindowSlice</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.benchmark_insert"><code class="docutils literal notranslate"><span class="pre">benchmark_insert()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.benchmark_search"><code class="docutils literal notranslate"><span class="pre">benchmark_search()</span></code></a></li>
@@ -113,6 +117,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#vd.list_available_backends"><code class="docutils literal notranslate"><span class="pre">list_available_backends()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.list_backends"><code class="docutils literal notranslate"><span class="pre">list_backends()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.load_config"><code class="docutils literal notranslate"><span class="pre">load_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.matches_filter"><code class="docutils literal notranslate"><span class="pre">matches_filter()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.mean_vector"><code class="docutils literal notranslate"><span class="pre">mean_vector()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.metadata_distribution"><code class="docutils literal notranslate"><span class="pre">metadata_distribution()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.migrate_client"><code class="docutils literal notranslate"><span class="pre">migrate_client()</span></code></a></li>
@@ -134,6 +139,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#vd.to_iso"><code class="docutils literal notranslate"><span class="pre">to_iso()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.truncate_text"><code class="docutils literal notranslate"><span class="pre">truncate_text()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.validate_collection"><code class="docutils literal notranslate"><span class="pre">validate_collection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.validate_filter"><code class="docutils literal notranslate"><span class="pre">validate_filter()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="vd/analytics.html">vd.analytics</a></li>
@@ -144,6 +150,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vd/cli.html">vd.cli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vd/compare.html">vd.compare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vd/config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vd/filters.html">vd.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vd/health.html">vd.health</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vd/io.html">vd.io</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vd/migration.html">vd.migration</a></li>
@@ -465,6 +472,37 @@ embedding model.</p></li>
 <p>Some backends (like FAISS, Annoy) use static indexes that cannot be
 modified after they are built. This exception is raised when users
 attempt write operations on such backends.</p>
+<p>See also the <code class="docutils literal notranslate"><span class="pre">supports_incremental_writes</span></code> flag on <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBackend</span></code>,
+which lets callers branch <em>before</em> triggering this error.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="vd.SupportsBatch">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.</span></span><span class="sig-name descname"><span class="pre">SupportsBatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/base.html#SupportsBatch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.SupportsBatch" title="Link to this definition"></a></dt>
+<dd><p>Capability protocol: a collection that supports efficient batch operations.</p>
+<p>Batch insertion (<code class="docutils literal notranslate"><span class="pre">add_documents</span></code>) and idempotent single upsert
+(<code class="docutils literal notranslate"><span class="pre">upsert</span></code>) are <em>optional</em> — not part of the minimal <code class="docutils literal notranslate"><span class="pre">Collection</span></code>
+contract. Feature-discover support at runtime:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">SupportsBatch</span><span class="p">):</span>
+    <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">many_docs</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="vd.SupportsHybrid">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.</span></span><span class="sig-name descname"><span class="pre">SupportsHybrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/base.html#SupportsHybrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.SupportsHybrid" title="Link to this definition"></a></dt>
+<dd><p>Capability protocol: a collection that supports hybrid (dense + lexical) search.</p>
+<p>Hybrid search has no syntactic convergence across vector databases, so it is
+an <em>opt-in capability</em>, never part of the baseline contract. Feature-discover
+before calling:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">SupportsHybrid</span><span class="p">):</span>
+    <span class="n">hits</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">hybrid_search</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="s2">&quot;query text&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Backends without native hybrid do not implement this protocol; combine
+separate dense + lexical result lists with <a class="reference internal" href="#vd.reciprocal_rank_fusion" title="vd.reciprocal_rank_fusion"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.reciprocal_rank_fusion()</span></code></a>
+as a client-side fallback.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -557,6 +595,26 @@ joins are clean. If False, use the literal <code class="docutils literal notrans
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="vd.UnsupportedCapabilityError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.</span></span><span class="sig-name descname"><span class="pre">UnsupportedCapabilityError</span></span><a class="reference internal" href="../_modules/vd/base.html#UnsupportedCapabilityError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.UnsupportedCapabilityError" title="Link to this definition"></a></dt>
+<dd><p>Raised when an operation requires a capability the backend does not have.</p>
+<p>Prefer feature-discovery — <code class="docutils literal notranslate"><span class="pre">isinstance(collection,</span> <span class="pre">SupportsHybrid)</span></code> — over
+catching this exception, but it is raised as a clear, typed fallback when an
+optional operation is called on a backend that does not implement it.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="vd.UnsupportedFilterError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.</span></span><span class="sig-name descname"><span class="pre">UnsupportedFilterError</span></span><a class="reference internal" href="../_modules/vd/base.html#UnsupportedFilterError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.UnsupportedFilterError" title="Link to this definition"></a></dt>
+<dd><p>Raised when a metadata filter uses an operator a backend does not support.</p>
+<p>The canonical, backend-agnostic filter language is defined in
+<a class="reference internal" href="vd/filters.html#module-vd.filters" title="vd.filters"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vd.filters</span></code></a> (a MongoDB-style JSON dialect). When a filter uses an
+operator outside a backend’s supported subset — or an operator that does
+not exist at all — this is raised so the caller can simplify the filter or
+drop to a backend-specific filter via the escape hatch (<code class="docutils literal notranslate"><span class="pre">collection.native</span></code>).</p>
 </dd></dl>
 
 <dl class="py class">
@@ -1578,6 +1636,32 @@ if not provided.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="vd.matches_filter">
+<span class="sig-prename descclassname"><span class="pre">vd.</span></span><span class="sig-name descname"><span class="pre">matches_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/vd/filters.html#matches_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.matches_filter" title="Link to this definition"></a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if <code class="docutils literal notranslate"><span class="pre">metadata</span></code> satisfies the MongoDB-style <code class="docutils literal notranslate"><span class="pre">filter</span></code>.</p>
+<p>An empty or <code class="docutils literal notranslate"><span class="pre">None</span></code> filter matches everything. Unknown operators raise
+<a class="reference internal" href="vd/base.html#vd.base.UnsupportedFilterError" title="vd.base.UnsupportedFilterError"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a> — they never silently match.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metadata</strong> (<em>Mapping</em>) – A document’s metadata dict.</p></li>
+<li><p><strong>filter</strong> (<em>dict</em><em> or </em><em>None</em>) – A filter in the canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> dialect (see the module docstring).</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">matches_filter</span><span class="p">({</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">},</span> <span class="kc">None</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matches_filter</span><span class="p">({</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="s1">&#39;cat&#39;</span><span class="p">:</span> <span class="s1">&#39;tech&#39;</span><span class="p">},</span>
+<span class="gp">... </span>               <span class="p">{</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$gte&#39;</span><span class="p">:</span> <span class="mi">2020</span><span class="p">},</span> <span class="s1">&#39;cat&#39;</span><span class="p">:</span> <span class="s1">&#39;tech&#39;</span><span class="p">})</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matches_filter</span><span class="p">({</span><span class="s1">&#39;views&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;views&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$gte&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;$lte&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">}})</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="vd.mean_vector">
 <span class="sig-prename descclassname"><span class="pre">vd.</span></span><span class="sig-name descname"><span class="pre">mean_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">docs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="vd/base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/vd/time_indexed.html#mean_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.mean_vector" title="Link to this definition"></a></dt>
 <dd><p>Element-wise mean of document embeddings. <code class="docutils literal notranslate"><span class="pre">None</span></code> if empty / no vectors.</p>
@@ -2095,6 +2179,37 @@ Naive datetimes / strings are assumed UTC.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">report</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">validate_collection</span><span class="p">(</span><span class="n">docs</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;valid&#39;</span><span class="p">])</span>
 <span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.validate_filter">
+<span class="sig-prename descclassname"><span class="pre">vd.</span></span><span class="sig-name descname"><span class="pre">validate_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">supported</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or'})</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/vd/filters.html#validate_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.validate_filter" title="Link to this definition"></a></dt>
+<dd><p>Walk <code class="docutils literal notranslate"><span class="pre">filter</span></code> and raise <a class="reference internal" href="vd/base.html#vd.base.UnsupportedFilterError" title="vd.base.UnsupportedFilterError"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a> on any
+operator that is unknown or not in <code class="docutils literal notranslate"><span class="pre">supported</span></code>.</p>
+<p>Backends that translate the canonical filter to a native query call this
+with their own (possibly narrower) <code class="docutils literal notranslate"><span class="pre">supported</span></code> subset, so callers get a
+clear <code class="docutils literal notranslate"><span class="pre">vd</span></code> error up front instead of an opaque backend error later.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filter</strong> (<em>dict</em><em> or </em><em>None</em>) – A filter in the canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> dialect. <code class="docutils literal notranslate"><span class="pre">None</span></code> / empty is valid.</p></li>
+<li><p><strong>supported</strong> (<em>iterable</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – The operator subset to allow. Defaults to every operator the language
+defines.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">validate_filter</span><span class="p">({</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$gte&#39;</span><span class="p">:</span> <span class="mi">2020</span><span class="p">}})</span>            <span class="c1"># ok, returns None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">validate_filter</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$regex&#39;</span><span class="p">:</span> <span class="s1">&#39;.*&#39;</span><span class="p">}})</span>             <span class="c1"># not in the language</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">vd.base.UnsupportedFilterError</span>: <span class="n">Unknown filter operator &#39;$regex&#39;. ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">validate_filter</span><span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$exists&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span> <span class="n">supported</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;$eq&#39;</span><span class="p">})</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">vd.base.UnsupportedFilterError</span>: <span class="n">Filter operator &#39;$exists&#39; is not supported ...</span>
 </pre></div>
 </div>
 </dd></dl>

@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vd.filters &mdash; vd 0.1.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=59fadc99"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            vd
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd.html">vd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/base.html">vd.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/cli.html">vd.cli</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/compare.html">vd.compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/filters.html">vd.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/health.html">vd.health</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/io.html">vd.io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/search.html">vd.search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/text.html">vd.text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/time_indexed.html">vd.time_indexed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/util.html">vd.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../vd.html">vd</a></li>
+      <li class="breadcrumb-item active">vd.filters</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vd.filters</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The canonical metadata-filter language for ``vd``.</span>
+
+<span class="sd">``vd`` uses a single, backend-agnostic, MongoDB-style JSON dialect to filter</span>
+<span class="sd">documents by metadata. This module is the **single source of truth** for that</span>
+<span class="sd">language:</span>
+
+<span class="sd">- :data:`SUPPORTED_FILTER_OPERATORS` — every operator the language defines.</span>
+<span class="sd">- :func:`matches_filter` — evaluate a filter against a metadata dict in Python.</span>
+<span class="sd">  Used directly by backends that filter client-side (e.g. the ``memory``</span>
+<span class="sd">  backend), and the reference semantics every backend&#39;s native translation</span>
+<span class="sd">  must agree with.</span>
+<span class="sd">- :func:`validate_filter` — walk a filter and fail loud</span>
+<span class="sd">  (:class:`~vd.base.UnsupportedFilterError`) on any unknown / unsupported</span>
+<span class="sd">  operator. Used by backends that translate the filter to a native query, so</span>
+<span class="sd">  the caller gets a clear ``vd`` error instead of an opaque backend error.</span>
+
+<span class="sd">Filter syntax</span>
+<span class="sd">-------------</span>
+<span class="sd">A filter is a ``dict``. Each key is either a **metadata field name** or a</span>
+<span class="sd">**logical operator** (``$and``, ``$or``, ``$not``). A bare ``{&#39;field&#39;: value}``</span>
+<span class="sd">is sugar for ``{&#39;field&#39;: {&#39;$eq&#39;: value}}``. Multiple top-level fields combine</span>
+<span class="sd">with an implicit ``$and``.</span>
+
+<span class="sd">Field operators (inside ``{&#39;field&#39;: {...}}``): ``$eq``, ``$ne``, ``$gt``,</span>
+<span class="sd">``$gte``, ``$lt``, ``$lte``, ``$in``, ``$nin``, ``$exists``.</span>
+
+<span class="sd">Logical operators (top-level): ``$and`` / ``$or`` take a list of subfilters;</span>
+<span class="sd">``$not`` takes a single subfilter.</span>
+
+<span class="sd">Examples</span>
+<span class="sd">--------</span>
+<span class="sd">&gt;&gt;&gt; matches_filter({&#39;year&#39;: 2024, &#39;tag&#39;: &#39;ai&#39;}, {&#39;year&#39;: 2024})</span>
+<span class="sd">True</span>
+<span class="sd">&gt;&gt;&gt; matches_filter({&#39;year&#39;: 2024}, {&#39;year&#39;: {&#39;$gte&#39;: 2025}})</span>
+<span class="sd">False</span>
+<span class="sd">&gt;&gt;&gt; matches_filter({&#39;year&#39;: 2024}, {&#39;$or&#39;: [{&#39;year&#39;: 2024}, {&#39;year&#39;: 2025}]})</span>
+<span class="sd">True</span>
+<span class="sd">&gt;&gt;&gt; matches_filter({&#39;tags&#39;: [&#39;python&#39;, &#39;ai&#39;]}, {&#39;tags&#39;: {&#39;$in&#39;: [&#39;ai&#39;]}})</span>
+<span class="sd">True</span>
+<span class="sd">&gt;&gt;&gt; matches_filter({&#39;a&#39;: 1}, {&#39;b&#39;: {&#39;$exists&#39;: False}})</span>
+<span class="sd">True</span>
+<span class="sd">&gt;&gt;&gt; matches_filter({&#39;a&#39;: 1}, {&#39;$not&#39;: {&#39;a&#39;: 1}})</span>
+<span class="sd">False</span>
+
+<span class="sd">An unknown operator fails loud rather than silently matching everything:</span>
+
+<span class="sd">&gt;&gt;&gt; matches_filter({&#39;a&#39;: 1}, {&#39;a&#39;: {&#39;$bogus&#39;: 1}})</span>
+<span class="sd">Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">vd.base.UnsupportedFilterError: Unknown filter operator &#39;$bogus&#39;. ...</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Filter</span><span class="p">,</span> <span class="n">UnsupportedFilterError</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># The operator vocabulary (single source of truth)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="c1">#: Operators used at the top level of a filter to combine subfilters.</span>
+<span class="n">LOGICAL_OPERATORS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;$and&quot;</span><span class="p">,</span> <span class="s2">&quot;$or&quot;</span><span class="p">,</span> <span class="s2">&quot;$not&quot;</span><span class="p">})</span>
+
+<span class="c1">#: Operators used inside a ``{&#39;field&#39;: {...}}`` condition.</span>
+<span class="n">FIELD_OPERATORS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;$eq&quot;</span><span class="p">,</span> <span class="s2">&quot;$ne&quot;</span><span class="p">,</span> <span class="s2">&quot;$gt&quot;</span><span class="p">,</span> <span class="s2">&quot;$gte&quot;</span><span class="p">,</span> <span class="s2">&quot;$lt&quot;</span><span class="p">,</span> <span class="s2">&quot;$lte&quot;</span><span class="p">,</span> <span class="s2">&quot;$in&quot;</span><span class="p">,</span> <span class="s2">&quot;$nin&quot;</span><span class="p">,</span> <span class="s2">&quot;$exists&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1">#: Every operator the canonical ``vd`` filter language defines.</span>
+<span class="n">SUPPORTED_FILTER_OPERATORS</span> <span class="o">=</span> <span class="n">LOGICAL_OPERATORS</span> <span class="o">|</span> <span class="n">FIELD_OPERATORS</span>
+
+<span class="c1"># Sentinel distinguishing &quot;field absent from metadata&quot; from &quot;field present and None&quot;.</span>
+<span class="n">_MISSING</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_in</span><span class="p">(</span><span class="n">actual</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">operand</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;True if ``actual`` is in ``operand`` (list-valued ``actual`` matches on overlap).&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operand</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="n">UnsupportedFilterError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;$in / $nin operand must be a list, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">operand</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">a</span> <span class="ow">in</span> <span class="n">operand</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">actual</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">actual</span> <span class="ow">in</span> <span class="n">operand</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_field_operator</span><span class="p">(</span><span class="n">op</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">actual</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">operand</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate a single field operator. ``actual`` may be the ``_MISSING`` sentinel.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$exists&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">actual</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_MISSING</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">bool</span><span class="p">(</span><span class="n">operand</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">actual</span> <span class="ow">is</span> <span class="n">_MISSING</span><span class="p">:</span>
+        <span class="c1"># A missing field can only satisfy &quot;not equal&quot; / &quot;not in&quot;.</span>
+        <span class="k">return</span> <span class="n">op</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;$ne&quot;</span><span class="p">,</span> <span class="s2">&quot;$nin&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$eq&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">operand</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$ne&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">actual</span> <span class="o">!=</span> <span class="n">operand</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$in&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_in</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">operand</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$nin&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="n">_in</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">operand</span><span class="p">)</span>
+
+    <span class="c1"># Ordered comparisons — incomparable types never match (rather than erroring).</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$gt&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">actual</span> <span class="o">&gt;</span> <span class="n">operand</span>
+        <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$gte&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">actual</span> <span class="o">&gt;=</span> <span class="n">operand</span>
+        <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$lt&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">actual</span> <span class="o">&lt;</span> <span class="n">operand</span>
+        <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;$lte&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">actual</span> <span class="o">&lt;=</span> <span class="n">operand</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># Unreachable when the caller validated `op` against FIELD_OPERATORS first.</span>
+    <span class="k">raise</span> <span class="n">UnsupportedFilterError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown filter operator </span><span class="si">{</span><span class="n">op</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_match_field</span><span class="p">(</span><span class="n">actual</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Match one field. ``condition`` is a bare value (``$eq`` sugar) or an operator dict.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="c1"># Bare-value equality. A missing field never equals a concrete value.</span>
+        <span class="k">return</span> <span class="n">actual</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_MISSING</span> <span class="ow">and</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">condition</span>
+    <span class="k">for</span> <span class="n">op</span><span class="p">,</span> <span class="n">operand</span> <span class="ow">in</span> <span class="n">condition</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">op</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">FIELD_OPERATORS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnsupportedFilterError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown filter operator </span><span class="si">{</span><span class="n">op</span><span class="si">!r}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Supported field operators: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">FIELD_OPERATORS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_apply_field_operator</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span> <span class="n">operand</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<div class="viewcode-block" id="matches_filter">
+<a class="viewcode-back" href="../../module_docs/vd/filters.html#vd.matches_filter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">matches_filter</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Filter</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return ``True`` if ``metadata`` satisfies the MongoDB-style ``filter``.</span>
+
+<span class="sd">    An empty or ``None`` filter matches everything. Unknown operators raise</span>
+<span class="sd">    :class:`~vd.base.UnsupportedFilterError` — they never silently match.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    metadata : Mapping</span>
+<span class="sd">        A document&#39;s metadata dict.</span>
+<span class="sd">    filter : dict or None</span>
+<span class="sd">        A filter in the canonical ``vd`` dialect (see the module docstring).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; matches_filter({&#39;year&#39;: 2024}, None)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; matches_filter({&#39;year&#39;: 2024, &#39;cat&#39;: &#39;tech&#39;},</span>
+<span class="sd">    ...                {&#39;year&#39;: {&#39;$gte&#39;: 2020}, &#39;cat&#39;: &#39;tech&#39;})</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; matches_filter({&#39;views&#39;: 50}, {&#39;views&#39;: {&#39;$gte&#39;: 10, &#39;$lte&#39;: 100}})</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">filter</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">condition</span> <span class="ow">in</span> <span class="nb">filter</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;$and&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">matches_filter</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">condition</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;$or&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">matches_filter</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">condition</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;$not&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">matches_filter</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">condition</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;$&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">UnsupportedFilterError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown logical operator </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Supported logical operators: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">LOGICAL_OPERATORS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">_match_field</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">_MISSING</span><span class="p">),</span> <span class="n">condition</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="validate_filter">
+<a class="viewcode-back" href="../../module_docs/vd/filters.html#vd.validate_filter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_filter</span><span class="p">(</span>
+    <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Filter</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">supported</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">SUPPORTED_FILTER_OPERATORS</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Walk ``filter`` and raise :class:`~vd.base.UnsupportedFilterError` on any</span>
+<span class="sd">    operator that is unknown or not in ``supported``.</span>
+
+<span class="sd">    Backends that translate the canonical filter to a native query call this</span>
+<span class="sd">    with their own (possibly narrower) ``supported`` subset, so callers get a</span>
+<span class="sd">    clear ``vd`` error up front instead of an opaque backend error later.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filter : dict or None</span>
+<span class="sd">        A filter in the canonical ``vd`` dialect. ``None`` / empty is valid.</span>
+<span class="sd">    supported : iterable of str, optional</span>
+<span class="sd">        The operator subset to allow. Defaults to every operator the language</span>
+<span class="sd">        defines.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; validate_filter({&#39;year&#39;: {&#39;$gte&#39;: 2020}})            # ok, returns None</span>
+<span class="sd">    &gt;&gt;&gt; validate_filter({&#39;a&#39;: {&#39;$regex&#39;: &#39;.*&#39;}})             # not in the language</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">    vd.base.UnsupportedFilterError: Unknown filter operator &#39;$regex&#39;. ...</span>
+<span class="sd">    &gt;&gt;&gt; validate_filter({&#39;a&#39;: {&#39;$exists&#39;: True}}, supported={&#39;$eq&#39;})</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">    vd.base.UnsupportedFilterError: Filter operator &#39;$exists&#39; is not supported ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">filter</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">supported</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">supported</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">condition</span> <span class="ow">in</span> <span class="nb">filter</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">LOGICAL_OPERATORS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">supported</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">UnsupportedFilterError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Filter operator </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2"> is not supported by this backend. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Supported here: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">supported</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="n">subfilters</span> <span class="o">=</span> <span class="n">condition</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;$and&quot;</span><span class="p">,</span> <span class="s2">&quot;$or&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">condition</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subfilters</span><span class="p">:</span>
+                <span class="n">validate_filter</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="n">supported</span><span class="o">=</span><span class="n">supported</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;$&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">UnsupportedFilterError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown logical operator </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Supported logical operators: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">LOGICAL_OPERATORS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">condition</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">op</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">FIELD_OPERATORS</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">UnsupportedFilterError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Unknown filter operator </span><span class="si">{</span><span class="n">op</span><span class="si">!r}</span><span class="s2">. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Supported field operators: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">FIELD_OPERATORS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="n">op</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">supported</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">UnsupportedFilterError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Filter operator </span><span class="si">{</span><span class="n">op</span><span class="si">!r}</span><span class="s2"> is not supported by this backend. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Supported here: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">supported</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span></div>
+
+        <span class="c1"># else: bare-value equality — always supported, nothing to validate.</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

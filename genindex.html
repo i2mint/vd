@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; vd 0.1.4 documentation</title>
+  <title>Index &mdash; vd 0.1.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=fd825880"></script>
+      <script src="_static/documentation_options.js?v=59fadc99"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -55,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/cli.html">vd.cli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/compare.html">vd.compare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/filters.html">vd.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/health.html">vd.health</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/io.html">vd.io</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/migration.html">vd.migration</a></li>
@@ -186,6 +187,8 @@
         <li><a href="module_docs/vd/base.html#vd.base.Client">(class in vd.base)</a>
 </li>
       </ul></li>
+      <li><a href="module_docs/vd/base.html#vd.base.BaseBackend.client">client (vd.base.BaseBackend property)</a>
+</li>
       <li><a href="module_docs/vd/cli.html#vd.cli.cmd_backends">cmd_backends() (in module vd.cli)</a>
 </li>
       <li><a href="module_docs/vd/cli.html#vd.cli.cmd_benchmark">cmd_benchmark() (in module vd.cli)</a>
@@ -346,6 +349,8 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd/filters.html#vd.filters.FIELD_OPERATORS">FIELD_OPERATORS (in module vd.filters)</a>
+</li>
       <li><a href="module_docs/vd.html#vd.find_duplicates">find_duplicates() (in module vd)</a>
 
       <ul>
@@ -520,6 +525,8 @@
 </li>
       <li><a href="module_docs/vd/config.html#vd.config.load_yaml_config">load_yaml_config() (in module vd.config)</a>
 </li>
+      <li><a href="module_docs/vd/filters.html#vd.filters.LOGICAL_OPERATORS">LOGICAL_OPERATORS (in module vd.filters)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -528,6 +535,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd/cli.html#vd.cli.main">main() (in module vd.cli)</a>
 </li>
+      <li><a href="module_docs/vd.html#vd.matches_filter">matches_filter() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/filters.html#vd.filters.matches_filter">(in module vd.filters)</a>
+</li>
+      </ul></li>
       <li><a href="module_docs/vd.html#vd.mean_vector">mean_vector() (in module vd)</a>
 
       <ul>
@@ -580,6 +593,8 @@
 </li>
         <li><a href="module_docs/vd/config.html#module-vd.config">vd.config</a>
 </li>
+        <li><a href="module_docs/vd/filters.html#module-vd.filters">vd.filters</a>
+</li>
         <li><a href="module_docs/vd/health.html#module-vd.health">vd.health</a>
 </li>
         <li><a href="module_docs/vd/io.html#module-vd.io">vd.io</a>
@@ -609,6 +624,8 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection.native">native (vd.backends.memory.MemoryCollection property)</a>
+</li>
       <li><a href="module_docs/vd/util.html#vd.util.normalize_document_input">normalize_document_input() (in module vd.util)</a>
 </li>
   </ul></td>
@@ -717,8 +734,6 @@
         <li><a href="module_docs/vd.html#vd.Collection.search">(vd.Collection method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd.html#vd.search_similar_to_document">search_similar_to_document() (in module vd)</a>
 
       <ul>
@@ -731,12 +746,36 @@
         <li><a href="module_docs/vd.html#vd.TimeIndexedCollection.search_window">(vd.TimeIndexedCollection method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd/search.html#vd.search.search_with_feedback">search_with_feedback() (in module vd.search)</a>
 </li>
       <li><a href="module_docs/vd.html#vd.skills_dir">skills_dir() (in module vd)</a>
 </li>
       <li><a href="module_docs/vd.html#vd.StaticIndexError">StaticIndexError</a>, <a href="module_docs/vd/base.html#vd.base.StaticIndexError">[1]</a>
 </li>
+      <li><a href="module_docs/vd/filters.html#vd.filters.SUPPORTED_FILTER_OPERATORS">SUPPORTED_FILTER_OPERATORS (in module vd.filters)</a>
+</li>
+      <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection.supported_filter_operators">supported_filter_operators (vd.backends.memory.MemoryCollection attribute)</a>
+</li>
+      <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection.supports_incremental_writes">supports_incremental_writes (vd.backends.memory.MemoryCollection attribute)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/base.html#id0">(vd.base.BaseBackend attribute)</a>, <a href="module_docs/vd/base.html#vd.base.BaseBackend.supports_incremental_writes">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.SupportsBatch">SupportsBatch (class in vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/base.html#vd.base.SupportsBatch">(class in vd.base)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.SupportsHybrid">SupportsHybrid (class in vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/base.html#vd.base.SupportsHybrid">(class in vd.base)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -787,6 +826,12 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd.html#vd.UnsupportedCapabilityError">UnsupportedCapabilityError</a>, <a href="module_docs/vd/base.html#vd.base.UnsupportedCapabilityError">[1]</a>
+</li>
+      <li><a href="module_docs/vd.html#vd.UnsupportedFilterError">UnsupportedFilterError</a>, <a href="module_docs/vd/base.html#vd.base.UnsupportedFilterError">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection.upsert">upsert() (vd.backends.memory.MemoryCollection method)</a>
 
       <ul>
@@ -805,6 +850,12 @@
 
       <ul>
         <li><a href="module_docs/vd/analytics.html#vd.analytics.validate_collection">(in module vd.analytics)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.validate_filter">validate_filter() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/filters.html#vd.filters.validate_filter">(in module vd.filters)</a>
 </li>
       </ul></li>
       <li>
@@ -863,6 +914,13 @@
 
       <ul>
         <li><a href="module_docs/vd/config.html#module-vd.config">module</a>
+</li>
+      </ul></li>
+      <li>
+    vd.filters
+
+      <ul>
+        <li><a href="module_docs/vd/filters.html#module-vd.filters">module</a>
 </li>
       </ul></li>
       <li>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.base &mdash; vd 0.1.4 documentation</title>
+  <title>vd.base &mdash; vd 0.1.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fd825880"></script>
+      <script src="../../_static/documentation_options.js?v=59fadc99"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -56,10 +56,13 @@
 <li class="toctree-l1"><a class="reference internal" href="backends/memory.html">vd.backends.memory</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">vd.base</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.BaseBackend"><code class="docutils literal notranslate"><span class="pre">BaseBackend</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.BaseBackend.supports_incremental_writes"><code class="docutils literal notranslate"><span class="pre">BaseBackend.supports_incremental_writes</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.BaseBackend.client"><code class="docutils literal notranslate"><span class="pre">BaseBackend.client</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#vd.base.BaseBackend.create_collection"><code class="docutils literal notranslate"><span class="pre">BaseBackend.create_collection()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#vd.base.BaseBackend.delete_collection"><code class="docutils literal notranslate"><span class="pre">BaseBackend.delete_collection()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#vd.base.BaseBackend.get_collection"><code class="docutils literal notranslate"><span class="pre">BaseBackend.get_collection()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#vd.base.BaseBackend.list_collections"><code class="docutils literal notranslate"><span class="pre">BaseBackend.list_collections()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">BaseBackend.supports_incremental_writes</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.Client"><code class="docutils literal notranslate"><span class="pre">Client</span></code></a><ul>
@@ -77,11 +80,16 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.Document"><code class="docutils literal notranslate"><span class="pre">Document</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.StaticIndexError"><code class="docutils literal notranslate"><span class="pre">StaticIndexError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.base.SupportsBatch"><code class="docutils literal notranslate"><span class="pre">SupportsBatch</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.base.SupportsHybrid"><code class="docutils literal notranslate"><span class="pre">SupportsHybrid</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.base.UnsupportedCapabilityError"><code class="docutils literal notranslate"><span class="pre">UnsupportedCapabilityError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.base.UnsupportedFilterError"><code class="docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">vd.cli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="compare.html">vd.compare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filters.html">vd.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="health.html">vd.health</a></li>
 <li class="toctree-l1"><a class="reference internal" href="io.html">vd.io</a></li>
 <li class="toctree-l1"><a class="reference internal" href="migration.html">vd.migration</a></li>
@@ -137,6 +145,36 @@ all abstract methods.</p>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vd.base.BaseBackend.supports_incremental_writes">
+<span class="sig-name descname"><span class="pre">supports_incremental_writes</span></span><a class="headerlink" href="#vd.base.BaseBackend.supports_incremental_writes" title="Link to this definition"></a></dt>
+<dd><p>Whether collections from this backend accept writes after creation.
+Static-index backends (e.g. FAISS, Annoy) set this <code class="docutils literal notranslate"><span class="pre">False</span></code> and raise
+<a class="reference internal" href="#vd.base.StaticIndexError" title="vd.base.StaticIndexError"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaticIndexError</span></code></a> on <code class="docutils literal notranslate"><span class="pre">__setitem__</span></code> / <code class="docutils literal notranslate"><span class="pre">__delitem__</span></code>. Callers
+can branch on this flag to avoid triggering the error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vd.base.BaseBackend.client">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">client</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></span><a class="headerlink" href="#vd.base.BaseBackend.client" title="Link to this definition"></a></dt>
+<dd><p>The raw backend client — the escape hatch to backend-specific features.</p>
+<p>This is a <em>supported, documented</em> part of the API: when the unified
+facade does not expose a backend-specific feature, drop to the native
+client rather than circumventing <code class="docutils literal notranslate"><span class="pre">vd</span></code>. Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> for backends
+that have no external client (e.g. the in-memory backend).</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;chroma&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">raw</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">client</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">raw</span><span class="o">.</span><span class="n">heartbeat</span><span class="p">()</span>                        <span class="c1"># native ChromaDB call</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="vd.base.BaseBackend.create_collection">
 <span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></span><a class="reference internal" href="../../_modules/vd/base.html#BaseBackend.create_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.BaseBackend.create_collection" title="Link to this definition"></a></dt>
@@ -159,6 +197,12 @@ all abstract methods.</p>
 <dt class="sig sig-object py" id="vd.base.BaseBackend.list_collections">
 <span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_collections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/base.html#BaseBackend.list_collections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.BaseBackend.list_collections" title="Link to this definition"></a></dt>
 <dd><p>List all collection names.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">supports_incremental_writes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Whether collections of this backend accept incremental writes (see above).</p>
 </dd></dl>
 
 </dd></dl>
@@ -407,6 +451,57 @@ embedding model.</p></li>
 <p>Some backends (like FAISS, Annoy) use static indexes that cannot be
 modified after they are built. This exception is raised when users
 attempt write operations on such backends.</p>
+<p>See also the <code class="docutils literal notranslate"><span class="pre">supports_incremental_writes</span></code> flag on <a class="reference internal" href="#vd.base.BaseBackend" title="vd.base.BaseBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBackend</span></code></a>,
+which lets callers branch <em>before</em> triggering this error.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="vd.base.SupportsBatch">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">SupportsBatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/base.html#SupportsBatch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.SupportsBatch" title="Link to this definition"></a></dt>
+<dd><p>Capability protocol: a collection that supports efficient batch operations.</p>
+<p>Batch insertion (<code class="docutils literal notranslate"><span class="pre">add_documents</span></code>) and idempotent single upsert
+(<code class="docutils literal notranslate"><span class="pre">upsert</span></code>) are <em>optional</em> — not part of the minimal <code class="docutils literal notranslate"><span class="pre">Collection</span></code>
+contract. Feature-discover support at runtime:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">SupportsBatch</span><span class="p">):</span>
+    <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">many_docs</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="vd.base.SupportsHybrid">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">SupportsHybrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/base.html#SupportsHybrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.SupportsHybrid" title="Link to this definition"></a></dt>
+<dd><p>Capability protocol: a collection that supports hybrid (dense + lexical) search.</p>
+<p>Hybrid search has no syntactic convergence across vector databases, so it is
+an <em>opt-in capability</em>, never part of the baseline contract. Feature-discover
+before calling:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">SupportsHybrid</span><span class="p">):</span>
+    <span class="n">hits</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">hybrid_search</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="s2">&quot;query text&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Backends without native hybrid do not implement this protocol; combine
+separate dense + lexical result lists with <a class="reference internal" href="../vd.html#vd.reciprocal_rank_fusion" title="vd.reciprocal_rank_fusion"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.reciprocal_rank_fusion()</span></code></a>
+as a client-side fallback.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="vd.base.UnsupportedCapabilityError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">UnsupportedCapabilityError</span></span><a class="reference internal" href="../../_modules/vd/base.html#UnsupportedCapabilityError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.UnsupportedCapabilityError" title="Link to this definition"></a></dt>
+<dd><p>Raised when an operation requires a capability the backend does not have.</p>
+<p>Prefer feature-discovery — <code class="docutils literal notranslate"><span class="pre">isinstance(collection,</span> <span class="pre">SupportsHybrid)</span></code> — over
+catching this exception, but it is raised as a clear, typed fallback when an
+optional operation is called on a backend that does not implement it.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="vd.base.UnsupportedFilterError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">UnsupportedFilterError</span></span><a class="reference internal" href="../../_modules/vd/base.html#UnsupportedFilterError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.UnsupportedFilterError" title="Link to this definition"></a></dt>
+<dd><p>Raised when a metadata filter uses an operator a backend does not support.</p>
+<p>The canonical, backend-agnostic filter language is defined in
+<a class="reference internal" href="filters.html#module-vd.filters" title="vd.filters"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vd.filters</span></code></a> (a MongoDB-style JSON dialect). When a filter uses an
+operator outside a backend’s supported subset — or an operator that does
+not exist at all — this is raised so the caller can simplify the filter or
+drop to a backend-specific filter via the escape hatch (<code class="docutils literal notranslate"><span class="pre">collection.native</span></code>).</p>
 </dd></dl>
 
 </section>

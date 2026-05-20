@@ -11,6 +11,7 @@
    module_docs/vd/cli
    module_docs/vd/compare
    module_docs/vd/config
+   module_docs/vd/filters
    module_docs/vd/health
    module_docs/vd/io
    module_docs/vd/migration
