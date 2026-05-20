@@ -19,6 +19,7 @@ from typing import (
     Optional,
     Protocol,
     Union,
+    runtime_checkable,
 )
 
 # Type aliases
@@ -403,7 +404,18 @@ class BaseBackend(ABC):
         Function to generate embeddings from text
     **config
         Backend-specific configuration
+
+    Attributes
+    ----------
+    supports_incremental_writes : bool
+        Whether collections from this backend accept writes after creation.
+        Static-index backends (e.g. FAISS, Annoy) set this ``False`` and raise
+        :class:`StaticIndexError` on ``__setitem__`` / ``__delitem__``. Callers
+        can branch on this flag to avoid triggering the error.
     """
+
+    #: Whether collections of this backend accept incremental writes (see above).
+    supports_incremental_writes: bool = True
 
     def __init__(
         self,
@@ -423,6 +435,24 @@ class BaseBackend(ABC):
         """
         self.embedding_model = embedding_model
         self.config = config
+
+    @property
+    def client(self) -> Any:
+        """
+        The raw backend client — the escape hatch to backend-specific features.
+
+        This is a *supported, documented* part of the API: when the unified
+        facade does not expose a backend-specific feature, drop to the native
+        client rather than circumventing ``vd``. Returns ``None`` for backends
+        that have no external client (e.g. the in-memory backend).
+
+        Examples
+        --------
+        >>> client = vd.connect('chroma')          # doctest: +SKIP
+        >>> raw = client.client                    # doctest: +SKIP
+        >>> raw.heartbeat()                        # native ChromaDB call  # doctest: +SKIP
+        """
+        return getattr(self, "_client", None)
 
     @abstractmethod
     def create_collection(
@@ -458,6 +488,84 @@ class StaticIndexError(Exception):
     Some backends (like FAISS, Annoy) use static indexes that cannot be
     modified after they are built. This exception is raised when users
     attempt write operations on such backends.
+
+    See also the ``supports_incremental_writes`` flag on :class:`BaseBackend`,
+    which lets callers branch *before* triggering this error.
     """
 
     pass
+
+
+class UnsupportedFilterError(ValueError):
+    """
+    Raised when a metadata filter uses an operator a backend does not support.
+
+    The canonical, backend-agnostic filter language is defined in
+    :mod:`vd.filters` (a MongoDB-style JSON dialect). When a filter uses an
+    operator outside a backend's supported subset — or an operator that does
+    not exist at all — this is raised so the caller can simplify the filter or
+    drop to a backend-specific filter via the escape hatch (``collection.native``).
+    """
+
+    pass
+
+
+class UnsupportedCapabilityError(NotImplementedError):
+    """
+    Raised when an operation requires a capability the backend does not have.
+
+    Prefer feature-discovery — ``isinstance(collection, SupportsHybrid)`` — over
+    catching this exception, but it is raised as a clear, typed fallback when an
+    optional operation is called on a backend that does not implement it.
+    """
+
+    pass
+
+
+@runtime_checkable
+class SupportsBatch(Protocol):
+    """
+    Capability protocol: a collection that supports efficient batch operations.
+
+    Batch insertion (``add_documents``) and idempotent single upsert
+    (``upsert``) are *optional* — not part of the minimal ``Collection``
+    contract. Feature-discover support at runtime::
+
+        if isinstance(collection, SupportsBatch):
+            collection.add_documents(many_docs, batch_size=100)
+    """
+
+    def add_documents(
+        self, documents: Iterator[DocumentInput], *, batch_size: int = 100
+    ) -> None: ...
+
+    def upsert(self, document: "Document") -> None: ...
+
+
+@runtime_checkable
+class SupportsHybrid(Protocol):
+    """
+    Capability protocol: a collection that supports hybrid (dense + lexical) search.
+
+    Hybrid search has no syntactic convergence across vector databases, so it is
+    an *opt-in capability*, never part of the baseline contract. Feature-discover
+    before calling::
+
+        if isinstance(collection, SupportsHybrid):
+            hits = collection.hybrid_search(vec, "query text", alpha=0.5)
+
+    Backends without native hybrid do not implement this protocol; combine
+    separate dense + lexical result lists with :func:`vd.reciprocal_rank_fusion`
+    as a client-side fallback.
+    """
+
+    def hybrid_search(
+        self,
+        query: "Vector",
+        query_text: str,
+        *,
+        limit: int = 10,
+        filter: "Optional[Filter]" = None,
+        alpha: float = 0.5,
+        fusion: str = "rrf",
+    ) -> Iterator: ...

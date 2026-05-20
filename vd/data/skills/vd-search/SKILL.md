@@ -57,8 +57,22 @@ Supported operators:
 | `$eq` | equal (default when value is a scalar) |
 | `$ne` | not equal |
 | `$gt`, `$gte`, `$lt`, `$lte` | comparison |
-| `$in` | value is in list |
+| `$in` | value is in list (a list-valued field matches on overlap) |
+| `$nin` | value is *not* in list |
+| `$exists` | `{'field': {'$exists': True/False}}` — field is present / absent |
 | `$and`, `$or` | logical combinators (take a list of subfilters) |
+| `$not` | `{'$not': <subfilter>}` — negates a single subfilter |
+
+The full operator set is also available programmatically as
+`vd.SUPPORTED_FILTER_OPERATORS`. An **unknown** operator (e.g. a typo like
+`$gte` mistyped as `$get`) raises `vd.UnsupportedFilterError` — it never
+silently matches everything.
+
+Backend coverage differs: the `memory` backend supports every operator above
+(it evaluates filters in Python). `chroma` supports all except `$exists` and
+`$not`; using one of those on `chroma` raises `vd.UnsupportedFilterError` up
+front. When that happens, drop to a backend-specific filter via the escape
+hatch (`collection.native`) or restructure the query.
 
 A bare `{'field': value}` is sugar for `{'field': {'$eq': value}}`. Multiple
 top-level fields combine with implicit AND:

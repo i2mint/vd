@@ -18,6 +18,7 @@ from vd.base import (
     SearchResult,
     Vector,
 )
+from vd.filters import SUPPORTED_FILTER_OPERATORS, matches_filter
 from vd.util import (
     cosine_similarity,
     normalize_document_input,
@@ -40,11 +41,28 @@ class MemoryCollection(MutableMapping):
         Function to generate embeddings from text
     """
 
+    #: The in-memory backend accepts writes at any time.
+    supports_incremental_writes: bool = True
+
+    #: The in-memory backend evaluates filters in Python, so it supports the
+    #: full canonical ``vd`` filter language (see :mod:`vd.filters`).
+    supported_filter_operators = SUPPORTED_FILTER_OPERATORS
+
     def __init__(self, name: str, *, embedding_model: Callable[[str], Vector]):
         """Initialize the memory collection."""
         self.name = name
         self.embedding_model = embedding_model
         self._documents: dict[str, Document] = {}
+
+    @property
+    def native(self) -> dict[str, Document]:
+        """
+        The raw underlying store (escape hatch).
+
+        For the in-memory backend this is the ``dict[str, Document]`` that backs
+        the collection. A *supported, documented* part of the API.
+        """
+        return self._documents
 
     def __setitem__(self, key: str, value: Union[str, Document]) -> None:
         """Add or update a document."""
@@ -182,68 +200,24 @@ class MemoryCollection(MutableMapping):
         """
         Check if a document matches the filter.
 
-        This is a basic implementation supporting:
-        - Simple equality: {'key': value}
-        - $gte, $lte, $gt, $lt: {'key': {'$gte': value}}
-        - $in: {'key': {'$in': [value1, value2]}}
-        - $and: {'$and': [filter1, filter2]}
+        Delegates to :func:`vd.filters.matches_filter`, the single source of
+        truth for the canonical MongoDB-style filter language. Unknown
+        operators raise :class:`~vd.base.UnsupportedFilterError` rather than
+        silently matching.
 
         Parameters
         ----------
         doc : Document
             Document to check
         filter : dict
-            Filter specification
+            Filter specification (see :mod:`vd.filters` for the full syntax)
 
         Returns
         -------
         bool
-            True if document matches filter
+            True if the document's metadata matches the filter
         """
-        for key, condition in filter.items():
-            if key == "$and":
-                # Logical AND
-                if not all(self._matches_filter(doc, f) for f in condition):
-                    return False
-            elif key == "$or":
-                # Logical OR
-                if not any(self._matches_filter(doc, f) for f in condition):
-                    return False
-            elif isinstance(condition, dict):
-                # Operator-based filter
-                value = doc.metadata.get(key)
-                # If the field doesn't exist, the filter doesn't match
-                if value is None:
-                    return False
-                for op, op_value in condition.items():
-                    if op == "$gte" and not (value >= op_value):
-                        return False
-                    elif op == "$lte" and not (value <= op_value):
-                        return False
-                    elif op == "$gt" and not (value > op_value):
-                        return False
-                    elif op == "$lt" and not (value < op_value):
-                        return False
-                    elif op == "$eq" and not (value == op_value):
-                        return False
-                    elif op == "$ne" and not (value != op_value):
-                        return False
-                    elif op == "$in":
-                        # Handle both scalar and list values
-                        if isinstance(value, list):
-                            # If value is a list, check if any element is in op_value
-                            if not any(v in op_value for v in value):
-                                return False
-                        else:
-                            # If value is scalar, check if it's in op_value
-                            if value not in op_value:
-                                return False
-            else:
-                # Simple equality
-                if doc.metadata.get(key) != condition:
-                    return False
-
-        return True
+        return matches_filter(doc.metadata, filter)
 
 
 @register_backend("memory")

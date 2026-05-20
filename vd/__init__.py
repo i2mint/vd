@@ -60,7 +60,18 @@ from vd.base import (
     Filter,
     SearchResult,
     StaticIndexError,
+    SupportsBatch,
+    SupportsHybrid,
+    UnsupportedCapabilityError,
+    UnsupportedFilterError,
     Vector,
+)
+
+# Metadata-filter language
+from vd.filters import (
+    SUPPORTED_FILTER_OPERATORS,
+    matches_filter,
+    validate_filter,
 )
 from vd.util import (
     connect,
@@ -177,6 +188,15 @@ __all__ = [
     "SearchResult",
     # Exceptions
     "StaticIndexError",
+    "UnsupportedFilterError",
+    "UnsupportedCapabilityError",
+    # Capability protocols
+    "SupportsBatch",
+    "SupportsHybrid",
+    # Metadata-filter language
+    "matches_filter",
+    "validate_filter",
+    "SUPPORTED_FILTER_OPERATORS",
     # Backend discovery
     "list_backends",
     "list_available_backends",
