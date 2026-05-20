@@ -28,7 +28,14 @@ from vd.base import (
     SearchResult,
     Vector,
 )
+from vd.filters import validate_filter
 from vd.util import normalize_document_input, register_backend
+
+#: The subset of the canonical ``vd`` filter language ChromaDB's ``where``
+#: clause supports natively. ChromaDB has no ``$exists`` or ``$not``.
+CHROMA_FILTER_OPERATORS = frozenset(
+    {"$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$in", "$nin", "$and", "$or"}
+)
 
 
 class ChromaCollection(MutableMapping):
@@ -45,6 +52,12 @@ class ChromaCollection(MutableMapping):
         Function to generate embeddings from text
     """
 
+    #: ChromaDB collections accept writes at any time.
+    supports_incremental_writes: bool = True
+
+    #: The filter-operator subset ChromaDB supports natively (see above).
+    supported_filter_operators = CHROMA_FILTER_OPERATORS
+
     def __init__(
         self,
         chroma_collection,
@@ -55,6 +68,16 @@ class ChromaCollection(MutableMapping):
         self._collection = chroma_collection
         self.embedding_model = embedding_model
         self.name = chroma_collection.name
+
+    @property
+    def native(self):
+        """
+        The raw underlying ``chromadb.Collection`` (escape hatch).
+
+        A *supported, documented* part of the API: drop to the native ChromaDB
+        collection for features the unified facade does not expose.
+        """
+        return self._collection
 
     def __setitem__(self, key: str, value: Union[str, Document]) -> None:
         """Add or update a document."""
@@ -156,8 +179,11 @@ class ChromaCollection(MutableMapping):
             "include": ["documents", "metadatas", "distances"],
         }
 
-        # Add filter if provided
+        # Add filter if provided. Validate against ChromaDB's supported operator
+        # subset first, so the caller gets a clear vd UnsupportedFilterError
+        # instead of an opaque ChromaDB error.
         if filter:
+            validate_filter(filter, supported=self.supported_filter_operators)
             query_args["where"] = filter
 
         # Query ChromaDB
