@@ -1,0 +1,615 @@
+# vd provider registry
+# ============================================================================
+# Machine-usable metadata for every vector database vd knows about. Lifted from
+# the report "VectorDB Selection & Setup Guide" (misc/docs/11 -- ...). Loaded by
+# vd.providers; see that module for the query/recommend API.
+#
+# DESIGN RULE (from the report's section 10): hardcode only *structural* facts
+# that change on the order of years — pip package names, deployment archetype,
+# license, default ports, env-var names, filter-dialect family. Do NOT hardcode
+# prices or free-tier limits; they drift monthly. Store the *URL* to the live
+# pricing/limits page instead. The `as_of` date below says when this snapshot
+# was taken — re-verify volatile facts against the linked pages.
+as_of: "2026-05"
+
+providers:
+
+  # ----- vd's own in-process backend (not a third-party product) -----------
+  - name: memory
+    display_name: In-memory (vd built-in)
+    archetype: embedded
+    deployment: [embedded]
+    requires_server: false
+    embedded_mode: true
+    managed_free_tier: false
+    pip_packages: []
+    extras: null
+    license: vd (Apache-2.0)
+    hybrid_search: false
+    filter_dialect: vd canonical (full)
+    bulk_export: vd.export_collection
+    id_type: str
+    default_port: null
+    env_vars: []
+    scale: prototype
+    sweet_spot: "tests, notebooks, <100k vectors — zero setup, no persistence"
+    docs:
+      install: null
+      python_client: null
+      filtering: null
+      pricing: null
+    verify_command: "python -c 'import vd; vd.connect(\"memory\")'"
+    notes: "Brute-force cosine in pure Python. Always available. Not persistent."
+    adapter: memory
+
+  # ----- Embedded (pip-only, no server) ------------------------------------
+  - name: chroma
+    display_name: Chroma
+    archetype: embedded
+    deployment: [embedded, server, managed]
+    requires_server: false
+    embedded_mode: true
+    managed_free_tier: true
+    pip_packages: [chromadb]
+    extras: null
+    license: Apache-2.0
+    hybrid_search: partial
+    filter_dialect: mongo-ish ($eq, $in, $and, $or)
+    bulk_export: paginated collection.get to JSONL
+    id_type: str
+    default_port: 8000
+    env_vars: []
+    scale: medium
+    sweet_spot: "fastest path to a working RAG demo; local-first AI apps"
+    docs:
+      install: https://pypi.org/project/chromadb/
+      python_client: https://www.trychroma.com/products/chromadb
+      filtering: https://docs.trychroma.com/docs/querying-collections/metadata-filtering
+      pricing: https://www.trychroma.com/products/chromadb
+    verify_command: "python -c 'import chromadb; print(chromadb.Client().heartbeat())'"
+    notes: "Telemetry on by default — set ANONYMIZED_TELEMETRY=False. Default embedder is 384-dim."
+    adapter: chroma
+
+  - name: lancedb
+    display_name: LanceDB
+    archetype: embedded
+    deployment: [embedded, server, managed]
+    requires_server: false
+    embedded_mode: true
+    managed_free_tier: true
+    pip_packages: [lancedb]
+    extras: "[clip, embeddings]"
+    license: Apache-2.0
+    hybrid_search: true
+    filter_dialect: SQL WHERE
+    bulk_export: copy .lance directory / to_pandas / to Parquet
+    id_type: str
+    default_port: null
+    env_vars: []
+    scale: large
+    sweet_spot: "embedded + multimodal + cheap S3 store; schema evolution, versioning"
+    docs:
+      install: https://docs.lancedb.com/quickstart
+      python_client: https://lancedb.github.io/lancedb/
+      filtering: https://lancedb.github.io/lancedb/sql/
+      pricing: https://lancedb.com
+    verify_command: "python -c 'import lancedb; print(lancedb.connect(\"/tmp/_vd_lv\").table_names())'"
+    notes: "Single-writer per dataset. S3/GCS native via LANCE_* env vars."
+    adapter: lancedb
+
+  - name: sqlite_vec
+    display_name: sqlite-vec
+    archetype: embedded
+    deployment: [embedded]
+    requires_server: false
+    embedded_mode: true
+    managed_free_tier: false
+    pip_packages: [sqlite-vec]
+    extras: null
+    license: MIT-OR-Apache-2.0
+    hybrid_search: false
+    filter_dialect: SQL
+    bulk_export: sqlite .dump
+    id_type: int-or-str
+    default_port: null
+    env_vars: []
+    scale: medium
+    sweet_spot: "the app already uses SQLite; brute-force up to ~1M vectors"
+    docs:
+      install: https://alexgarcia.xyz/sqlite-vec/installation.html
+      python_client: https://alexgarcia.xyz/sqlite-vec/python.html
+      filtering: https://alexgarcia.xyz/sqlite-vec/
+      pricing: null
+    verify_command: "python -c 'import sqlite3,sqlite_vec; d=sqlite3.connect(\":memory:\"); d.enable_load_extension(True); sqlite_vec.load(d); print(d.execute(\"select vec_version()\").fetchone())'"
+    notes: "Needs SQLite >=3.41; macOS system python disables extensions — use brew python or pysqlite3-binary."
+    adapter: sqlite_vec
+
+  - name: duckdb
+    display_name: DuckDB-VSS
+    archetype: embedded
+    deployment: [embedded]
+    requires_server: false
+    embedded_mode: true
+    managed_free_tier: false
+    pip_packages: [duckdb]
+    extras: null
+    license: MIT
+    hybrid_search: false
+    filter_dialect: SQL
+    bulk_export: "COPY ... TO 'file.parquet'"
+    id_type: int-or-str
+    default_port: null
+    env_vars: []
+    scale: medium
+    sweet_spot: "analytics + ANN in the same SQL query"
+    docs:
+      install: https://duckdb.org/docs/stable/core_extensions/vss
+      python_client: https://duckdb.org/docs/stable/clients/python/overview
+      filtering: https://duckdb.org/docs/stable/sql/query_syntax/where
+      pricing: null
+    verify_command: "python -c 'import duckdb; c=duckdb.connect(); c.execute(\"INSTALL vss; LOAD vss;\"); print(\"ok\")'"
+    notes: "HNSW persistence is experimental — opt in with SET hnsw_enable_experimental_persistence=true."
+    adapter: duckdb
+
+  - name: faiss
+    display_name: FAISS
+    archetype: library
+    deployment: [embedded]
+    requires_server: false
+    embedded_mode: true
+    managed_free_tier: false
+    pip_packages: [faiss-cpu]
+    extras: "faiss-gpu (conda)"
+    license: MIT-AND-BSD-3-Clause
+    hybrid_search: false
+    filter_dialect: none (filter outside the index)
+    bulk_export: faiss.write_index + sidecar metadata
+    id_type: int-or-str
+    default_port: null
+    env_vars: []
+    scale: large
+    sweet_spot: "in-memory benchmark / recall@k baseline / a component inside a system"
+    docs:
+      install: https://github.com/facebookresearch/faiss/blob/main/INSTALL.md
+      python_client: https://github.com/facebookresearch/faiss/wiki/Python-interface
+      filtering: null
+      pricing: null
+    verify_command: "python -c 'import faiss; print(faiss.__version__)'"
+    notes: "A library, not a DB. No native metadata filtering — vd filters client-side. No server."
+    adapter: faiss
+
+  # ----- Self-hosted server (also managed) ---------------------------------
+  - name: qdrant
+    display_name: Qdrant
+    archetype: server
+    deployment: [embedded, server, managed]
+    requires_server: false
+    embedded_mode: true
+    managed_free_tier: true
+    pip_packages: [qdrant-client]
+    extras: "[fastembed]"
+    license: Apache-2.0
+    hybrid_search: true
+    filter_dialect: payload filters (must/should/must_not)
+    bulk_export: snapshot API + scroll
+    id_type: uuid-or-uint
+    default_port: 6333
+    env_vars: [QDRANT_URL, QDRANT_API_KEY]
+    scale: large
+    sweet_spot: "Rust-fast self-host with a clean Python SDK; same API embedded/Docker/cloud"
+    docs:
+      install: https://qdrant.tech/documentation/quickstart/
+      python_client: https://python-client.qdrant.tech/
+      filtering: https://qdrant.tech/documentation/concepts/filtering/
+      pricing: https://qdrant.tech/pricing/
+    verify_command: "curl -fsS http://localhost:6333/healthz"
+    notes: "Permanent free 0.5 vCPU/1 GB cloud cluster. Pin client major to server major."
+    adapter: qdrant
+
+  - name: weaviate
+    display_name: Weaviate
+    archetype: server
+    deployment: [embedded, server, managed]
+    requires_server: false
+    embedded_mode: true
+    managed_free_tier: false   # 14-day sandbox only
+    pip_packages: [weaviate-client]
+    extras: null
+    license: BSD-3-Clause
+    hybrid_search: true
+    filter_dialect: typed Filter builder / GraphQL
+    bulk_export: backup/restore API
+    id_type: uuid
+    default_port: 8080
+    env_vars: [WEAVIATE_URL, WEAVIATE_API_KEY]
+    scale: large
+    sweet_spot: "best-in-class native hybrid search + vectorizer modules"
+    docs:
+      install: https://docs.weaviate.io/weaviate/quickstart
+      python_client: https://docs.weaviate.io/weaviate/client-libraries/python
+      filtering: https://docs.weaviate.io/weaviate/api/graphql/filters
+      pricing: https://weaviate.io/pricing
+    verify_command: "python -c 'import weaviate; c=weaviate.connect_to_local(); print(c.is_ready()); c.close()'"
+    notes: "v3 client deprecated; v4.16+ renamed NamedVectors->Vectors. Oct 2025 pricing restructure (Flex $45/mo min)."
+    adapter: weaviate
+
+  - name: milvus
+    display_name: Milvus / Zilliz
+    archetype: server
+    deployment: [embedded, server, managed]
+    requires_server: false   # Milvus Lite is embedded
+    embedded_mode: true
+    managed_free_tier: true  # Zilliz free cluster
+    pip_packages: [pymilvus]
+    extras: "[milvus-lite]"
+    license: Apache-2.0
+    hybrid_search: true
+    filter_dialect: boolean expression language
+    bulk_export: milvus-backup tool
+    id_type: int-or-str
+    default_port: 19530
+    env_vars: [MILVUS_URI, MILVUS_TOKEN]
+    scale: billion
+    sweet_spot: "billion-vector scale; DiskANN keeps RAM bounded"
+    docs:
+      install: https://milvus.io/docs/install_standalone-docker.md
+      python_client: https://milvus.io/docs/install-pymilvus.md
+      filtering: https://milvus.io/docs/boolean.md
+      pricing: https://zilliz.com/pricing
+    verify_command: "curl -fsS http://localhost:9091/healthz"
+    notes: "Milvus Lite is Linux/macOS only — not native Windows (use WSL2)."
+    adapter: milvus
+
+  - name: redis
+    display_name: Redis 8 (Redis Query Engine)
+    archetype: server
+    deployment: [server, managed]
+    requires_server: true
+    embedded_mode: false
+    managed_free_tier: true
+    pip_packages: [redis, redisvl]
+    extras: null
+    license: AGPLv3-OR-SSPLv1-OR-RSALv2
+    hybrid_search: true
+    filter_dialect: RediSearch DSL
+    bulk_export: RDB dump + schema rebuild
+    id_type: str
+    default_port: 6379
+    env_vars: [REDIS_URL]
+    scale: large
+    sweet_spot: "you already run Redis, or need sub-ms KNN on a hot dataset"
+    docs:
+      install: https://redis.io/docs/latest/operate/oss_and_stack/install/
+      python_client: https://github.com/redis/redis-vl-python
+      filtering: https://redis.io/docs/latest/develop/ai/search-and-query/query/
+      pricing: https://redis.io/pricing/
+    verify_command: "redis-cli ping"
+    notes: "License changed May 2025 (Redis 8). HNSW index lives in RAM — size accordingly."
+    adapter: redis
+
+  - name: elasticsearch
+    display_name: Elasticsearch
+    archetype: server
+    deployment: [server, managed]
+    requires_server: true
+    embedded_mode: false
+    managed_free_tier: true   # Elastic Cloud trial
+    pip_packages: [elasticsearch]
+    extras: null
+    license: AGPLv3-OR-SSPLv1-OR-Elastic-2.0
+    hybrid_search: true
+    filter_dialect: ES query DSL
+    bulk_export: snapshot/restore, _reindex remote
+    id_type: str
+    default_port: 9200
+    env_vars: [ELASTICSEARCH_URL, ELASTIC_API_KEY]
+    scale: large
+    sweet_spot: "you already run Elastic and want kNN + BM25 hybrid"
+    docs:
+      install: https://www.elastic.co/docs/deploy-manage/deploy/self-managed
+      python_client: https://elasticsearch-py.readthedocs.io/
+      filtering: https://www.elastic.co/docs/solutions/search/vector/knn
+      pricing: https://www.elastic.co/pricing/
+    verify_command: "curl -fsS http://localhost:9200/"
+    notes: "AGPLv3 added Aug 2024. Default vector index bbq_hnsw for >=384-dim in 8.18+."
+    adapter: elasticsearch
+
+  - name: opensearch
+    display_name: OpenSearch
+    archetype: server
+    deployment: [server, managed]
+    requires_server: true
+    embedded_mode: false
+    managed_free_tier: true
+    pip_packages: [opensearch-py]
+    extras: null
+    license: Apache-2.0
+    hybrid_search: true
+    filter_dialect: ES-compatible query DSL
+    bulk_export: snapshot/restore, _reindex remote
+    id_type: str
+    default_port: 9200
+    env_vars: [OPENSEARCH_URL]
+    scale: large
+    sweet_spot: "AWS-native Elasticsearch fork, vector capable, Apache-2.0"
+    docs:
+      install: https://opensearch.org/downloads.html
+      python_client: https://opensearch.org/docs/latest/clients/python-low-level/
+      filtering: https://opensearch.org/docs/latest/search-plugins/knn/
+      pricing: https://aws.amazon.com/opensearch-service/pricing/
+    verify_command: "curl -fsS http://localhost:9200/"
+    notes: "ES-compatible. Use the elasticsearch adapter's escape hatch or a dedicated adapter."
+    adapter: null
+
+  - name: vespa
+    display_name: Vespa
+    archetype: server
+    deployment: [server, managed]
+    requires_server: true
+    embedded_mode: false
+    managed_free_tier: true   # $300 trial credit
+    pip_packages: [pyvespa]
+    extras: null
+    license: Apache-2.0
+    hybrid_search: true
+    filter_dialect: YQL + rank profiles
+    bulk_export: document API export
+    id_type: str
+    default_port: 8080
+    env_vars: []
+    scale: billion
+    sweet_spot: "billion-scale hybrid search with custom learning-to-rank"
+    docs:
+      install: https://docs.vespa.ai/en/vespa-quick-start.html
+      python_client: https://pyvespa.readthedocs.io/
+      filtering: https://docs.vespa.ai/en/query-language.html
+      pricing: https://cloud.vespa.ai/pricing
+    verify_command: "curl -fsS http://localhost:8080/state/v1/health"
+    notes: "Heavyweight; reach for it only at billion-scale with custom ranking."
+    adapter: null
+
+  # ----- Managed-first ------------------------------------------------------
+  - name: pinecone
+    display_name: Pinecone
+    archetype: managed
+    deployment: [managed]
+    requires_server: false
+    embedded_mode: false
+    managed_free_tier: true
+    pip_packages: [pinecone]        # NOT pinecone-client (deprecated)
+    extras: "[asyncio, grpc]"
+    license: Proprietary
+    hybrid_search: true
+    filter_dialect: mongo-ish ($eq, $in)
+    bulk_export: list ids + fetch in batches (no portable dump API)
+    id_type: str
+    default_port: null
+    env_vars: [PINECONE_API_KEY]
+    scale: billion
+    sweet_spot: "zero-ops managed canonical; polished UX, namespaces"
+    docs:
+      install: https://pypi.org/project/pinecone/
+      python_client: https://sdk.pinecone.io/python/
+      filtering: https://docs.pinecone.io/guides/data/filtering-with-metadata
+      pricing: https://www.pinecone.io/pricing/
+    verify_command: "python -c 'from pinecone import Pinecone; import os; print(Pinecone(api_key=os.environ[\"PINECONE_API_KEY\"]).list_indexes())'"
+    notes: "Package renamed pinecone-client->pinecone at v5.1.0; v9 needs Python >=3.10. Do not install both."
+    adapter: pinecone
+
+  - name: mongodb
+    display_name: MongoDB Atlas Vector Search
+    archetype: managed
+    deployment: [server, managed]
+    requires_server: true
+    embedded_mode: false
+    managed_free_tier: true   # M0 512 MB permanent
+    pip_packages: [pymongo]
+    extras: null
+    license: SSPLv1 (server)
+    hybrid_search: true
+    filter_dialect: MongoDB Query Language
+    bulk_export: mongodump
+    id_type: str
+    default_port: 27017
+    env_vars: [MONGODB_URI]
+    scale: large
+    sweet_spot: "you already have MongoDB; $vectorSearch in the aggregation pipeline"
+    docs:
+      install: https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-quick-start/
+      python_client: https://pymongo.readthedocs.io/
+      filtering: https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-stage/
+      pricing: https://www.mongodb.com/pricing
+    verify_command: "python -c 'import os; from pymongo import MongoClient; print(MongoClient(os.environ[\"MONGODB_URI\"]).admin.command(\"ping\"))'"
+    notes: "A vector search index must be created in the Atlas UI / API before querying. M0 supports one vector index."
+    adapter: mongodb
+
+  - name: turbopuffer
+    display_name: turbopuffer
+    archetype: managed
+    deployment: [managed]
+    requires_server: false
+    embedded_mode: false
+    managed_free_tier: false
+    pip_packages: [turbopuffer]
+    extras: null
+    license: Proprietary
+    hybrid_search: true
+    filter_dialect: typed attribute filters
+    bulk_export: list rows in pages
+    id_type: str
+    default_port: null
+    env_vars: [TURBOPUFFER_API_KEY]
+    scale: billion
+    sweet_spot: "10-100x cheaper, object-storage-backed; huge-but-bursty workloads"
+    docs:
+      install: https://pypi.org/project/turbopuffer/
+      python_client: https://turbopuffer.com/docs
+      filtering: https://turbopuffer.com/docs/query
+      pricing: https://turbopuffer.com/pricing
+    verify_command: "python -c 'import os; from turbopuffer import Turbopuffer; print(Turbopuffer(region=\"gcp-us-central1\", api_key=os.environ[\"TURBOPUFFER_API_KEY\"]).namespaces())'"
+    notes: "Region-pinned (e.g. gcp-us-central1). Stable v2.x."
+    adapter: turbopuffer
+
+  - name: vertex_ai
+    display_name: Vertex AI Vector Search
+    archetype: managed
+    deployment: [managed]
+    requires_server: false
+    embedded_mode: false
+    managed_free_tier: false   # $300 GCP credit for new accounts
+    pip_packages: [google-cloud-aiplatform]
+    extras: null
+    license: Proprietary
+    hybrid_search: true
+    filter_dialect: restrict + crowding tokens
+    bulk_export: scroll/list and re-upsert
+    id_type: str
+    default_port: null
+    env_vars: [GOOGLE_CLOUD_PROJECT, GOOGLE_APPLICATION_CREDENTIALS]
+    scale: billion
+    sweet_spot: "GCP-native ScaNN"
+    docs:
+      install: https://cloud.google.com/vertex-ai/docs/vector-search/overview
+      python_client: https://cloud.google.com/python/docs/reference/aiplatform/latest
+      filtering: https://cloud.google.com/vertex-ai/docs/vector-search/filtering
+      pricing: https://cloud.google.com/vertex-ai/pricing
+    verify_command: null
+    notes: "Per-node-hour billing for the deployed index endpoint (idle still costs)."
+    adapter: null
+
+  - name: azure_ai_search
+    display_name: Azure AI Search
+    archetype: managed
+    deployment: [managed]
+    requires_server: false
+    embedded_mode: false
+    managed_free_tier: true   # Free tier ~50 MB, one per subscription
+    pip_packages: [azure-search-documents]
+    extras: null
+    license: Proprietary
+    hybrid_search: true
+    filter_dialect: OData filter
+    bulk_export: scroll/list and re-upsert
+    id_type: str
+    default_port: null
+    env_vars: [AZURE_SEARCH_ENDPOINT, AZURE_SEARCH_API_KEY]
+    scale: large
+    sweet_spot: "Azure-native, integrated vectorization + semantic ranker"
+    docs:
+      install: https://learn.microsoft.com/en-us/azure/search/vector-search-overview
+      python_client: https://learn.microsoft.com/en-us/python/api/overview/azure/search-documents-readme
+      filtering: https://learn.microsoft.com/en-us/azure/search/search-filters
+      pricing: https://azure.microsoft.com/en-us/pricing/details/search/
+    verify_command: null
+    notes: "Vector capability included at all tiers including Free."
+    adapter: null
+
+  # ----- Postgres / SQL extensions -----------------------------------------
+  - name: pgvector
+    display_name: pgvector (Postgres extension)
+    archetype: server
+    deployment: [server]
+    requires_server: true
+    embedded_mode: false
+    managed_free_tier: false   # depends on the Postgres host
+    pip_packages: [pgvector, psycopg]
+    extras: "psycopg[binary]"
+    license: PostgreSQL-permissive
+    hybrid_search: false       # manual SQL hybrid
+    filter_dialect: SQL WHERE
+    bulk_export: pg_dump
+    id_type: int-or-str
+    default_port: 5432
+    env_vars: [DATABASE_URL, POSTGRES_DSN]
+    scale: large
+    sweet_spot: "you already run Postgres — no second DB, SQL joins with vectors for free"
+    docs:
+      install: https://github.com/pgvector/pgvector
+      python_client: https://github.com/pgvector/pgvector-python
+      filtering: https://github.com/pgvector/pgvector#querying
+      pricing: null
+    verify_command: "psql -c \"SELECT extversion FROM pg_extension WHERE extname='vector'\""
+    notes: "v0.8.2 (Feb 2026) fixes CVE-2026-3172 in parallel HNSW builds — upgrade. Cross to VectorChord at >10M."
+    adapter: pgvector
+
+  - name: vectorchord
+    display_name: VectorChord (vchord)
+    archetype: server
+    deployment: [server]
+    requires_server: true
+    embedded_mode: false
+    managed_free_tier: false
+    pip_packages: [psycopg]
+    extras: "psycopg[binary]"
+    license: AGPLv3-OR-TensorChord-Elastic-v1
+    hybrid_search: false
+    filter_dialect: SQL WHERE
+    bulk_export: pg_dump
+    id_type: int-or-str
+    default_port: 5432
+    env_vars: [DATABASE_URL]
+    scale: large
+    sweet_spot: "pgvector at 10-100M+ scale, cheaper RAM (RaBitQ + hierarchical k-means)"
+    docs:
+      install: https://github.com/tensorchord/VectorChord
+      python_client: https://github.com/pgvector/pgvector-python
+      filtering: https://github.com/tensorchord/VectorChord
+      pricing: null
+    verify_command: "psql -c \"SELECT extversion FROM pg_extension WHERE extname='vchord'\""
+    notes: "Successor to the deprecated pgvecto.rs. Wire-compatible enough for the pgvector adapter's escape hatch."
+    adapter: null
+
+  # ----- Kubernetes / specialized ------------------------------------------
+  - name: vald
+    display_name: Vald
+    archetype: server
+    deployment: [server]
+    requires_server: true
+    embedded_mode: false
+    managed_free_tier: false
+    pip_packages: [vald-client-python]
+    extras: null
+    license: Apache-2.0
+    hybrid_search: false
+    filter_dialect: gRPC
+    bulk_export: gRPC streaming export
+    id_type: str
+    default_port: 8081
+    env_vars: []
+    scale: billion
+    sweet_spot: "k8s-native NGT at scale — only if you already operate Kubernetes"
+    docs:
+      install: https://vald.vdaas.org/docs/tutorial/get-started/
+      python_client: https://github.com/vdaas/vald-client-python
+      filtering: null
+      pricing: null
+    verify_command: null
+    notes: "Kubernetes-only (Helm). Low release velocity."
+    adapter: null
+
+  - name: marqo
+    display_name: Marqo
+    archetype: managed
+    deployment: [managed]
+    requires_server: false
+    embedded_mode: false
+    managed_free_tier: true
+    pip_packages: [marqo]
+    extras: null
+    license: Apache-2.0 (OSS frozen)
+    hybrid_search: true
+    filter_dialect: own filter string
+    bulk_export: documents API
+    id_type: str
+    default_port: 8882
+    env_vars: [MARQO_URL]
+    scale: medium
+    sweet_spot: "ecommerce product search SaaS"
+    docs:
+      install: https://docs.marqo.ai/
+      python_client: https://github.com/marqo-ai/py-marqo
+      filtering: https://docs.marqo.ai/
+      pricing: https://www.marqo.ai/pricing
+    verify_command: null
+    notes: "OSS project is officially DEPRECATED — do not start a new project on Marqo OSS. Managed Cloud only."
+    adapter: null

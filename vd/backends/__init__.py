@@ -1,19 +1,42 @@
 """
-Backend implementations for various vector databases.
+Backend adapters for the vector databases ``vd`` supports.
 
-This module contains concrete implementations of the BaseBackend protocol
-for different vector database systems.
-
-Available backends are registered here and can be accessed via vd.connect().
+Importing this package registers every adapter whose client library is
+installed. Each adapter lives in its own module and registers itself with the
+:func:`~vd.util.register_backend` decorator; modules whose third-party client
+is not installed fail to import and are skipped silently — that backend simply
+will not appear in :func:`vd.list_backends`.
 """
 
-# Import backends to trigger registration
-from vd.backends.memory import MemoryBackend  # noqa: F401
+#: Every backend module vd ships. Each is imported defensively below.
+_BACKEND_MODULES = (
+    "memory",  # always available — no third-party dependency
+    "chroma",
+    "faiss",
+    "sqlite_vec",
+    "duckdb",
+    "lancedb",
+    "qdrant",
+    "pgvector",
+    "pinecone",
+    "weaviate",
+    "milvus",
+    "redis",
+    "elasticsearch",
+    "mongodb",
+    "turbopuffer",
+)
 
-# Optional backends - import only if dependencies are available
-try:
-    from vd.backends.chroma import ChromaBackend  # noqa: F401
-except ImportError:
-    pass  # ChromaDB not installed
 
-__all__ = ["MemoryBackend"]
+def _register_all() -> None:
+    """Import each backend module, skipping any whose client is not installed."""
+    import importlib
+
+    for name in _BACKEND_MODULES:
+        try:
+            importlib.import_module(f"vd.backends.{name}")
+        except ImportError:
+            pass  # third-party client not installed — backend unavailable
+
+
+_register_all()

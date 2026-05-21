@@ -1,274 +1,148 @@
 """
-In-memory vector database backend.
+In-memory backend — the reference adapter.
 
-This backend stores all documents and vectors in memory, making it suitable
-for prototyping, testing, and small datasets. It provides a simple reference
-implementation of the backend protocol.
+Stores documents in a plain ``dict`` and answers queries with brute-force
+similarity in pure Python. Always available (no third-party dependency), and
+the canonical example of how a backend implements the small set of raw
+primitives that :class:`~vd.base.AbstractCollection` builds on. Use it for
+tests, notebooks, and corpora small enough that an ANN index is overkill.
 """
 
-from collections.abc import MutableMapping
-from typing import Any, Callable, Iterator, Optional, Union
+from __future__ import annotations
+
+from typing import Callable, Iterable, Iterator, Optional
 
 from vd.base import (
-    BaseBackend,
-    Collection,
+    AbstractClient,
+    AbstractCollection,
     Document,
-    DocumentInput,
     Filter,
     SearchResult,
     Vector,
 )
-from vd.filters import SUPPORTED_FILTER_OPERATORS, matches_filter
-from vd.util import (
-    cosine_similarity,
-    normalize_document_input,
-    register_backend,
-)
+from vd.filters import matches_filter
+from vd.util import cosine_similarity, euclidean_distance, register_backend
 
 
-class MemoryCollection(MutableMapping):
-    """
-    In-memory collection implementation.
+def _similarity(a: Vector, b: Vector, metric: str) -> float:
+    """Higher-is-better similarity of two vectors under ``metric``."""
+    if metric == "dot":
+        return sum(x * y for x, y in zip(a, b))
+    if metric == "l2":
+        return 1.0 / (1.0 + euclidean_distance(a, b))
+    return cosine_similarity(a, b)
 
-    Stores documents in a dictionary and performs brute-force similarity
-    search. Suitable for small datasets and testing.
 
-    Parameters
-    ----------
-    name : str
-        Collection name
-    embedding_model : callable
-        Function to generate embeddings from text
-    """
+class MemoryCollection(AbstractCollection):
+    """A collection backed by an in-process ``dict[str, Document]``."""
 
-    #: The in-memory backend accepts writes at any time.
-    supports_incremental_writes: bool = True
-
-    #: The in-memory backend evaluates filters in Python, so it supports the
-    #: full canonical ``vd`` filter language (see :mod:`vd.filters`).
-    supported_filter_operators = SUPPORTED_FILTER_OPERATORS
-
-    def __init__(self, name: str, *, embedding_model: Callable[[str], Vector]):
-        """Initialize the memory collection."""
+    def __init__(
+        self,
+        name: str,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+    ):
         self.name = name
-        self.embedding_model = embedding_model
-        self._documents: dict[str, Document] = {}
+        self._embedder = embedder
+        self.dimension = dimension
+        self.metric = metric
+        self._docs: dict[str, Document] = {}
 
     @property
     def native(self) -> dict[str, Document]:
-        """
-        The raw underlying store (escape hatch).
+        """The raw ``dict[str, Document]`` backing this collection (escape hatch)."""
+        return self._docs
 
-        For the in-memory backend this is the ``dict[str, Document]`` that backs
-        the collection. A *supported, documented* part of the API.
-        """
-        return self._documents
+    # ----- raw primitives ------------------------------------------------- #
 
-    def __setitem__(self, key: str, value: Union[str, Document]) -> None:
-        """Add or update a document."""
-        if isinstance(value, str):
-            # Convert string to Document
-            doc = Document(id=key, text=value)
-        elif isinstance(value, tuple):
-            # Handle tuple formats
-            doc = normalize_document_input(value, auto_id=False)
-            doc.id = key  # Override with the provided key
-        else:
-            doc = value
+    def _write(self, doc: Document) -> None:
+        self._docs[doc.id] = doc
 
-        # Generate embedding if not provided
-        if doc.vector is None:
-            doc.vector = self.embedding_model(doc.text)
+    def _read(self, key: str) -> Document:
+        return self._docs[key]  # KeyError propagates naturally
 
-        self._documents[key] = doc
+    def _drop(self, key: str) -> None:
+        del self._docs[key]  # KeyError propagates naturally
 
-    def __getitem__(self, key: str) -> Document:
-        """Retrieve a document by ID."""
-        return self._documents[key]
+    def _keys(self) -> Iterator[str]:
+        return iter(self._docs)
 
-    def __delitem__(self, key: str) -> None:
-        """Delete a document."""
-        del self._documents[key]
+    def _count(self) -> int:
+        return len(self._docs)
 
-    def __iter__(self) -> Iterator[str]:
-        """Iterate over document IDs."""
-        return iter(self._documents)
-
-    def __len__(self) -> int:
-        """Get number of documents."""
-        return len(self._documents)
-
-    def search(
+    def _query(
         self,
-        query: Union[str, Vector],
+        vector: Vector,
         *,
-        limit: int = 10,
-        filter: Optional[Filter] = None,
-        egress: Optional[Callable[[SearchResult], Any]] = None,
+        limit: int,
+        filter: Optional[Filter],
         **kwargs,
-    ) -> Iterator[SearchResult]:
-        """
-        Search the collection using brute-force similarity.
-
-        Parameters
-        ----------
-        query : str or list of float
-            Query text or pre-computed vector
-        limit : int, default 10
-            Maximum number of results
-        filter : dict, optional
-            Metadata filter (basic support for equality filters)
-        egress : callable, optional
-            Transform function for results
-        **kwargs
-            Additional options (ignored by memory backend)
-
-        Yields
-        ------
-        dict or transformed result
-            Search results sorted by similarity score
-        """
-        # Get query vector
-        if isinstance(query, str):
-            query_vector = self.embedding_model(query)
-        else:
-            query_vector = query
-
-        # Compute similarities
-        results = []
-        for doc_id, doc in self._documents.items():
-            # Apply filter if provided
-            if filter and not self._matches_filter(doc, filter):
+    ) -> Iterable[SearchResult]:
+        scored: list[SearchResult] = []
+        for doc in self._docs.values():
+            if doc.vector is None:
                 continue
-
-            # Compute similarity
-            if doc.vector is not None:
-                score = cosine_similarity(query_vector, doc.vector)
-                results.append(
-                    {
-                        "id": doc.id,
-                        "text": doc.text,
-                        "score": score,
-                        "metadata": doc.metadata,
-                    }
-                )
-
-        # Sort by score (descending)
-        results.sort(key=lambda x: x["score"], reverse=True)
-
-        # Limit results
-        results = results[:limit]
-
-        # Apply egress if provided
-        if egress is not None:
-            results = [egress(r) for r in results]
-
-        yield from results
-
-    def add_documents(
-        self,
-        documents: Iterator[DocumentInput],
-        *,
-        batch_size: int = 100,
-    ) -> None:
-        """
-        Batch add documents.
-
-        Parameters
-        ----------
-        documents : iterable of DocumentInput
-            Documents to add
-        batch_size : int, default 100
-            Batch size (not used in memory backend, but kept for API consistency)
-        """
-        for doc_input in documents:
-            doc = normalize_document_input(doc_input, auto_id=True)
-            self[doc.id] = doc
-
-    def upsert(self, document: Document) -> None:
-        """
-        Insert or update a document (idempotent operation).
-
-        Parameters
-        ----------
-        document : Document
-            Document to insert or update
-        """
-        self[document.id] = document
-
-    def _matches_filter(self, doc: Document, filter: Filter) -> bool:
-        """
-        Check if a document matches the filter.
-
-        Delegates to :func:`vd.filters.matches_filter`, the single source of
-        truth for the canonical MongoDB-style filter language. Unknown
-        operators raise :class:`~vd.base.UnsupportedFilterError` rather than
-        silently matching.
-
-        Parameters
-        ----------
-        doc : Document
-            Document to check
-        filter : dict
-            Filter specification (see :mod:`vd.filters` for the full syntax)
-
-        Returns
-        -------
-        bool
-            True if the document's metadata matches the filter
-        """
-        return matches_filter(doc.metadata, filter)
+            if filter and not matches_filter(doc.metadata, filter):
+                continue
+            scored.append(
+                {
+                    "id": doc.id,
+                    "text": doc.text,
+                    "score": _similarity(vector, doc.vector, self.metric),
+                    "metadata": dict(doc.metadata),
+                }
+            )
+        scored.sort(key=lambda r: r["score"], reverse=True)
+        return scored[:limit]
 
 
 @register_backend("memory")
-class MemoryBackend(BaseBackend):
+class MemoryClient(AbstractClient):
     """
-    In-memory vector database backend.
-
-    Stores all collections and documents in memory. Perfect for testing,
-    prototyping, and small datasets.
+    In-memory vector database client.
 
     Examples
     --------
-    >>> import vd  # doctest: +SKIP
-    >>> client = vd.connect('memory')  # doctest: +SKIP
-    >>> collection = client.create_collection('test')  # doctest: +SKIP
-    >>> collection['doc1'] = "Hello world"  # doctest: +SKIP
-    >>> results = list(collection.search("hello"))  # doctest: +SKIP
+    >>> import vd
+    >>> client = vd.connect('memory')
+    >>> col = client.create_collection('docs')
+    >>> col['a'] = vd.Document(id='a', text='cat', vector=[1.0, 0.0])
+    >>> col['b'] = vd.Document(id='b', text='dog', vector=[0.0, 1.0])
+    >>> [r['id'] for r in col.search([0.9, 0.1], limit=1)]
+    ['a']
     """
 
-    def __init__(self, *, embedding_model: Callable[[str], Vector], **config):
-        """Initialize the memory backend."""
-        super().__init__(embedding_model=embedding_model, **config)
+    def __init__(self, *, embedder: Optional[Callable[[str], Vector]] = None, **config):
+        super().__init__(embedder=embedder, **config)
         self._collections: dict[str, MemoryCollection] = {}
 
     def create_collection(
         self,
         name: str,
         *,
-        schema: Optional[dict] = None,
-        **kwargs,
-    ) -> Collection:
-        """Create a new collection."""
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
+    ) -> MemoryCollection:
         if name in self._collections:
-            raise ValueError(f"Collection '{name}' already exists")
-
-        collection = MemoryCollection(name, embedding_model=self.embedding_model)
+            raise ValueError(f"Collection {name!r} already exists")
+        collection = MemoryCollection(
+            name, embedder=self._embedder, dimension=dimension, metric=metric
+        )
         self._collections[name] = collection
         return collection
 
-    def get_collection(self, name: str) -> Collection:
-        """Get an existing collection."""
+    def get_collection(self, name: str) -> MemoryCollection:
         if name not in self._collections:
-            raise KeyError(f"Collection '{name}' does not exist")
+            raise KeyError(f"Collection {name!r} does not exist")
         return self._collections[name]
 
-    def list_collections(self) -> Iterator[str]:
-        """List all collection names."""
-        return iter(self._collections.keys())
-
     def delete_collection(self, name: str) -> None:
-        """Delete a collection."""
         if name not in self._collections:
-            raise KeyError(f"Collection '{name}' does not exist")
+            raise KeyError(f"Collection {name!r} does not exist")
         del self._collections[name]
+
+    def list_collections(self) -> Iterator[str]:
+        return iter(self._collections)

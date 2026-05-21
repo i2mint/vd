@@ -1,200 +1,525 @@
 """
-Core protocols, base classes, and data models for the vd package.
+Core contracts, data model, and abstract bases for the ``vd`` vectorDB facade.
 
-This module defines the fundamental abstractions used throughout the vd package:
-- Document: Standardized representation of searchable documents
-- Client: Protocol for vector database connections
-- Collection: Protocol for document collections (MutableMapping-based)
-- BaseBackend: Abstract base class for backend implementations
+``vd`` is a facade over vector databases. This module is the single source of
+truth for the contract every backend adapter satisfies and that all of ``vd``'s
+higher-level tooling (search, io, migration, analytics, ...) is written against.
+
+The contract, smallest-first:
+
+- :class:`Document` — the unit stored in a collection: ``id``, ``text``,
+  ``vector``, ``metadata``.
+- :class:`Collection` — a ``MutableMapping[str, Document]`` *plus* a
+  :meth:`~Collection.search` method. This is the one retrieval extension.
+- :class:`Client` — a ``Mapping[str, Collection]``: a live connection to one
+  backend, through which collections are created, fetched, and dropped.
+- :class:`AbstractCollection` / :class:`AbstractClient` — adapter-author
+  conveniences. A backend implements a handful of *raw primitives*; these bases
+  supply everything users actually see (flexible inputs, optional text
+  embedding, ``egress`` transforms, batch helpers, dimension checks) uniformly.
+
+Embedding is deliberately **external**. ``vd`` stores and searches *vectors*;
+turning text into vectors is another package's job (e.g. ``ef``). A
+:class:`Client` may be handed an optional ``embedder`` callable purely as a
+convenience, so ``collection["k"] = "some text"`` and
+``collection.search("query text")`` work. With no embedder configured those
+text forms raise :class:`EmbeddingRequiredError`, and the caller must pass
+:class:`Document` objects (or pre-computed vectors) directly.
 """
 
-from abc import ABC, abstractmethod
+from __future__ import annotations
+
+from abc import abstractmethod
+from collections.abc import Mapping, MutableMapping
 from dataclasses import dataclass, field
 from typing import (
     Any,
     Callable,
+    Iterable,
     Iterator,
-    Mapping,
-    MutableMapping,
     Optional,
     Protocol,
     Union,
     runtime_checkable,
 )
 
+# --------------------------------------------------------------------------- #
 # Type aliases
+# --------------------------------------------------------------------------- #
+
 Text = str
-TextKey = str  # Document ID / URI
+TextKey = str  # Document ID / URI — the key in a collection
 Metadata = dict[str, Any]
 Vector = list[float]
 VectorMapping = Mapping[TextKey, Vector]
-SearchResult = dict[str, Any]  # {id, text, score, metadata, ...}
-Filter = dict[str, Any]  # MongoDB-style filter syntax
+SearchResult = dict[str, Any]  # {"id", "text", "score", "metadata", ...}
+Filter = dict[str, Any]  # canonical MongoDB-style filter (see vd.filters)
 
-# Document input can be specified in multiple flexible ways
+#: A document may be supplied to batch operations in several flexible shapes.
 DocumentInput = Union[
-    str,  # Just text (ID auto-generated)
-    tuple[str, str],  # (text, id)
-    tuple[str, Metadata],  # (text, metadata)
-    tuple[str, str, Metadata],  # (text, id, metadata)
-    "Document",  # Full document object
+    str,  # just text (id auto-generated)
+    tuple,  # (text, id) | (text, metadata) | (text, id, metadata)
+    "Document",  # a fully-formed Document
 ]
+
+#: Distance metrics the facade understands. Adapters map these to their own
+#: spellings (e.g. ``"l2"`` -> Qdrant ``Distance.EUCLID``).
+METRICS = frozenset({"cosine", "dot", "l2"})
+
+# Re-exported from vd.filters; imported lazily inside methods to avoid a cycle
+# (vd.filters imports UnsupportedFilterError from this module).
+
+
+# --------------------------------------------------------------------------- #
+# Exceptions
+# --------------------------------------------------------------------------- #
+
+
+class VdError(Exception):
+    """Base class for every error ``vd`` raises on its own behalf."""
+
+
+class StaticIndexError(VdError):
+    """
+    Raised on a write to a static (immutable) index.
+
+    Some backends — notably a plain FAISS flat index — build an index that
+    cannot accept incremental ``__setitem__`` / ``__delitem__`` after creation.
+    Such collections set :attr:`AbstractCollection.supports_incremental_writes`
+    to ``False`` and raise this on write. Callers branch on that flag *before*
+    triggering the error, and use the adapter's documented ``rebuild()`` path.
+    """
+
+
+class UnsupportedFilterError(VdError, ValueError):
+    """
+    Raised when a metadata filter uses an operator a backend cannot honor.
+
+    The canonical, backend-agnostic filter language lives in :mod:`vd.filters`
+    (a MongoDB-style JSON dialect). When a filter uses an operator outside a
+    backend's documented subset — or one that does not exist at all — this is
+    raised, so the caller can simplify the filter or drop to the backend's
+    native filter via the escape hatch (``collection.native``).
+    """
+
+
+class UnsupportedCapabilityError(VdError, NotImplementedError):
+    """
+    Raised when an operation needs a capability the backend lacks.
+
+    Prefer feature-discovery — ``isinstance(collection, SupportsHybrid)`` — over
+    catching this, but it is the clear, typed fallback when an optional
+    operation is called on a backend that does not implement it.
+    """
+
+
+class EmbeddingRequiredError(VdError, RuntimeError):
+    """
+    Raised when text is given but no embedder is configured.
+
+    ``vd`` operates on vectors. Passing raw text to ``collection[key] = text``
+    or ``collection.search(text)`` only works when the :class:`Client` was
+    created with an ``embedder``. Otherwise, pass a :class:`Document` with a
+    ``vector`` (or a pre-computed query vector) directly.
+    """
+
+
+class BackendNotInstalledError(VdError, ImportError):
+    """
+    Raised when a known backend's Python package is not installed.
+
+    Distinct from an *unknown* backend name (a plain ``ValueError``): the
+    backend exists in ``vd``'s provider registry, but its client library is
+    missing. The message carries the ``pip install`` command to fix it.
+    """
+
+
+# --------------------------------------------------------------------------- #
+# Document
+# --------------------------------------------------------------------------- #
 
 
 @dataclass
 class Document:
     """
-    Standardized document representation.
-
-    A Document represents a searchable text segment with its embedding vector
-    and associated metadata.
+    The unit stored in a :class:`Collection`.
 
     Parameters
     ----------
     id : str
-        Unique identifier (URI to source). Acts as the key in collections.
+        Unique identifier; the key under which the document lives in a
+        collection.
     text : str
-        The text content to be embedded and searched.
+        The text content. May be empty for vector-first use cases where no
+        text is associated with a vector.
     vector : list[float], optional
-        Embedding vector. If None, will be auto-generated using the collection's
-        embedding model.
-    metadata : dict[str, Any]
-        Associated metadata for filtering and retrieval.
+        The embedding. If ``None`` when written, the collection embeds
+        ``text`` with its client's ``embedder`` — or raises
+        :class:`EmbeddingRequiredError` if none is configured.
+    metadata : dict
+        Arbitrary metadata, used for filtering and carried through search
+        results.
 
     Examples
     --------
     >>> doc = Document(id="doc1", text="Hello world")
-    >>> doc.id
-    'doc1'
-    >>> doc.text
-    'Hello world'
-    >>> doc.metadata
-    {}
-
-    >>> doc_with_meta = Document(
-    ...     id="doc2",
-    ...     text="AI article",
-    ...     metadata={'category': 'tech', 'year': 2024}
-    ... )
-    >>> doc_with_meta.metadata['category']
-    'tech'
+    >>> doc.id, doc.text, doc.metadata
+    ('doc1', 'Hello world', {})
+    >>> Document(id="v1", vector=[0.1, 0.2]).text
+    ''
     """
 
     id: str
-    text: str
+    text: str = ""
     vector: Optional[Vector] = None
     metadata: Metadata = field(default_factory=dict)
 
 
+# --------------------------------------------------------------------------- #
+# Protocols — the contract clients code against
+# --------------------------------------------------------------------------- #
+
+
+@runtime_checkable
 class Collection(Protocol):
     """
-    Protocol for a collection of searchable documents.
+    A collection of documents: ``MutableMapping[str, Document]`` + ``search``.
 
-    A Collection follows the MutableMapping interface, storing Document objects
-    and enabling intuitive CRUD operations via dict-like syntax while providing
-    semantic search capabilities.
-
-    The collection automatically handles embedding generation when documents
-    are added without pre-computed vectors.
-
-    Examples
-    --------
-    >>> # Add documents (dict-like syntax)
-    >>> collection['doc1'] = "This is a test document"
-    >>> collection['doc2'] = Document(id='doc2', text='Another doc')
-    >>>
-    >>> # Retrieve documents
-    >>> doc = collection['doc1']
-    >>> doc.text
-    'This is a test document'
-    >>>
-    >>> # Delete documents
-    >>> del collection['doc1']
-    >>>
-    >>> # Iterate over document IDs
-    >>> list(collection)  # doctest: +SKIP
-    ['doc2']
-    >>>
-    >>> # Search the collection
-    >>> results = collection.search('test query', limit=5)  # doctest: +SKIP
-    >>> for result in results:  # doctest: +SKIP
-    ...     print(result['id'], result['score'])
+    The mapping half is storage; :meth:`search` is the single retrieval
+    extension. This minimal surface is everything ``vd``'s tooling depends on.
+    Batch insertion is an *optional* capability — see :class:`SupportsBatch`.
     """
 
-    # MutableMapping interface methods
-    def __setitem__(self, key: str, value: Union[str, Document]) -> None:
-        """
-        Add or update a document in the collection.
-
-        Parameters
-        ----------
-        key : str
-            Document ID
-        value : str or Document
-            Document content. If str, creates a Document with this text.
-        """
+    def __setitem__(self, key: str, value: Union[str, tuple, Document]) -> None:
+        """Insert or replace a document (idempotent upsert)."""
         ...
 
     def __getitem__(self, key: str) -> Document:
-        """
-        Retrieve a document by ID.
-
-        Parameters
-        ----------
-        key : str
-            Document ID
-
-        Returns
-        -------
-        Document
-            The document with the specified ID
-
-        Raises
-        ------
-        KeyError
-            If document ID not found
-        """
+        """Return the document for ``key``; raise ``KeyError`` if absent."""
         ...
 
     def __delitem__(self, key: str) -> None:
-        """
-        Delete a document from the collection.
-
-        Parameters
-        ----------
-        key : str
-            Document ID to delete
-
-        Raises
-        ------
-        KeyError
-            If document ID not found
-        """
+        """Delete a document; raise ``KeyError`` if absent."""
         ...
 
     def __iter__(self) -> Iterator[str]:
-        """
-        Iterate over document IDs.
-
-        Yields
-        ------
-        str
-            Document IDs in the collection
-        """
+        """Iterate document ids."""
         ...
 
     def __len__(self) -> int:
-        """
-        Get the number of documents in the collection.
-
-        Returns
-        -------
-        int
-            Number of documents
-        """
+        """Return the number of documents."""
         ...
 
-    # Search methods
+    def search(
+        self,
+        query: Union[str, Vector],
+        *,
+        limit: int = 10,
+        filter: Optional[Filter] = None,
+        egress: Optional[Callable[[SearchResult], Any]] = None,
+        **kwargs,
+    ) -> Iterator[SearchResult]:
+        """Return the ``limit`` documents most similar to ``query``."""
+        ...
+
+
+@runtime_checkable
+class Client(Protocol):
+    """
+    A live connection to one backend: ``Mapping[str, Collection]``.
+
+    Collections are created explicitly (so create-time parameters such as
+    ``dimension`` and ``metric`` can be supplied) and fetched either by
+    :meth:`get_collection` or by mapping access ``client[name]``.
+    """
+
+    def create_collection(
+        self,
+        name: str,
+        *,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
+    ) -> Collection:
+        """Create a new collection; raise ``ValueError`` if it exists."""
+        ...
+
+    def get_collection(self, name: str) -> Collection:
+        """Return an existing collection; raise ``KeyError`` if absent."""
+        ...
+
+    def delete_collection(self, name: str) -> None:
+        """Drop a collection; raise ``KeyError`` if absent."""
+        ...
+
+    def list_collections(self) -> Iterator[str]:
+        """Iterate collection names."""
+        ...
+
+
+# --------------------------------------------------------------------------- #
+# Capability protocols — opt-in, feature-discovered with isinstance
+# --------------------------------------------------------------------------- #
+
+
+@runtime_checkable
+class SupportsBatch(Protocol):
+    """
+    A collection that supports efficient batch insertion.
+
+    ``add_documents`` and ``upsert`` are *not* part of the minimal
+    :class:`Collection` contract. Every adapter built on
+    :class:`AbstractCollection` happens to provide them, but generic code
+    should still feature-discover::
+
+        if isinstance(collection, SupportsBatch):
+            collection.add_documents(many_docs, batch_size=256)
+    """
+
+    def add_documents(
+        self, documents: Iterable[DocumentInput], *, batch_size: int = 100
+    ) -> None: ...
+
+    def upsert(self, document: Document) -> None: ...
+
+
+@runtime_checkable
+class SupportsHybrid(Protocol):
+    """
+    A collection that supports native hybrid (dense + lexical) search.
+
+    Hybrid search has no syntactic convergence across vector databases, so it
+    is an opt-in capability, never baseline. Feature-discover before calling::
+
+        if isinstance(collection, SupportsHybrid):
+            hits = collection.hybrid_search(vec, "query text", alpha=0.5)
+
+    Backends without native hybrid do not implement this; combine separate
+    dense + lexical result lists with :func:`vd.reciprocal_rank_fusion`.
+    """
+
+    def hybrid_search(
+        self,
+        query: Vector,
+        query_text: str,
+        *,
+        limit: int = 10,
+        filter: Optional[Filter] = None,
+        alpha: float = 0.5,
+        fusion: str = "rrf",
+    ) -> Iterator[SearchResult]: ...
+
+
+# --------------------------------------------------------------------------- #
+# Helpers shared by the abstract bases
+# --------------------------------------------------------------------------- #
+
+
+def _to_float_list(vector: Any) -> Vector:
+    """
+    Coerce any vector-like (list, tuple, numpy array, ...) to ``list[float]``.
+
+    Examples
+    --------
+    >>> _to_float_list((1, 2, 3))
+    [1.0, 2.0, 3.0]
+    """
+    tolist = getattr(vector, "tolist", None)
+    if tolist is not None:  # numpy array / pandas Series
+        vector = tolist()
+    return [float(x) for x in vector]
+
+
+def _coerce_document(key: str, value: Union[str, tuple, Document]) -> Document:
+    """
+    Normalize a ``collection[key] = value`` assignment to a :class:`Document`.
+
+    ``value`` may be raw text, a ``(text, ...)`` tuple, or a ``Document``. The
+    resulting document's ``id`` is always ``key``.
+
+    Examples
+    --------
+    >>> _coerce_document("a", "hello").text
+    'hello'
+    >>> _coerce_document("a", ("hello", {"k": 1})).metadata
+    {'k': 1}
+    >>> d = _coerce_document("a", Document(id="ignored", text="t"))
+    >>> d.id
+    'a'
+    """
+    if isinstance(value, Document):
+        if value.id != key:
+            value = Document(
+                id=key, text=value.text, vector=value.vector, metadata=value.metadata
+            )
+        return value
+    if isinstance(value, str):
+        return Document(id=key, text=value)
+    if isinstance(value, tuple):
+        # (text, metadata) | (text, id) | (text, id, metadata) — id forced to key.
+        if len(value) == 2:
+            text, second = value
+            metadata = second if isinstance(second, dict) else {}
+            return Document(id=key, text=text, metadata=metadata)
+        if len(value) == 3:
+            text, _id, metadata = value
+            return Document(id=key, text=text, metadata=metadata or {})
+        if len(value) == 1:
+            return Document(id=key, text=value[0])
+    raise TypeError(
+        f"Cannot interpret {type(value).__name__} as a document. Pass text, a "
+        f"(text, metadata) tuple, or a vd.Document."
+    )
+
+
+# --------------------------------------------------------------------------- #
+# AbstractCollection — adapter-author base
+# --------------------------------------------------------------------------- #
+
+
+class AbstractCollection(MutableMapping):
+    """
+    Base class implementing the :class:`Collection` contract for adapters.
+
+    A backend subclasses this and implements the *raw primitives* below;
+    everything users see is provided here, once, uniformly:
+
+    - flexible ``__setitem__`` inputs (text / tuple / :class:`Document`),
+    - optional text embedding when a ``Document`` arrives without a vector,
+    - text-query embedding in :meth:`search`,
+    - central filter validation against :attr:`supported_filter_operators`,
+    - ``egress`` result transforms,
+    - batch helpers (:meth:`add_documents`, :meth:`upsert`),
+    - eager dimension-mismatch detection.
+
+    Subclass responsibilities (raw primitives)
+    ------------------------------------------
+    ``_write(doc)``
+        Upsert one document. Its ``vector`` is guaranteed non-``None`` and
+        dimension-checked.
+    ``_read(key) -> Document``
+        Fetch one document; raise ``KeyError`` if absent.
+    ``_drop(key)``
+        Delete one document; raise ``KeyError`` if absent.
+    ``_keys() -> Iterator[str]``
+        Iterate document ids.
+    ``_count() -> int``
+        Number of documents.
+    ``_query(vector, *, limit, filter, **kwargs) -> Iterable[SearchResult]``
+        Raw nearest-neighbor search. ``filter`` is the canonical AST — the
+        adapter translates it. Each result is a dict with at least ``id``,
+        ``text``, ``score``, ``metadata``.
+
+    Optional overrides
+    ------------------
+    ``_write_many(docs)``
+        Efficient bulk upsert. Defaults to a loop over ``_write``.
+    ``native`` (property)
+        The raw backend collection handle (escape hatch).
+    """
+
+    #: Filter operators this backend can honor. Default: the full language.
+    #: Adapters narrow this; :meth:`search` validates against it.
+    supported_filter_operators: frozenset = frozenset()  # set in __init_subclass__
+
+    #: Whether the backend accepts writes after creation. Static-index backends
+    #: set this ``False`` and raise :class:`StaticIndexError` on write.
+    supports_incremental_writes: bool = True
+
+    # Instance attributes adapters are expected to set in their __init__:
+    name: str = ""
+    dimension: Optional[int] = None
+    metric: str = "cosine"
+    _embedder: Optional[Callable[[str], Vector]] = None
+
+    def __init_subclass__(cls, **kwargs):
+        # Default an adapter's supported operators to the full language unless
+        # it declares its own narrower subset.
+        super().__init_subclass__(**kwargs)
+        if not cls.__dict__.get("supported_filter_operators"):
+            from vd.filters import SUPPORTED_FILTER_OPERATORS
+
+            cls.supported_filter_operators = SUPPORTED_FILTER_OPERATORS
+
+    # ----- embedding (optional convenience) -------------------------------- #
+
+    @property
+    def has_embedder(self) -> bool:
+        """Whether a text->vector embedder is configured on this collection."""
+        return self._embedder is not None
+
+    def embed(self, text: str) -> Vector:
+        """
+        Embed ``text`` to a vector, or raise :class:`EmbeddingRequiredError`.
+
+        This is the single place text becomes a vector inside ``vd``.
+        """
+        if self._embedder is None:
+            raise EmbeddingRequiredError(
+                f"Collection {self.name!r} has no embedder: cannot turn text "
+                f"into a vector. Either create the client with "
+                f"`vd.connect(backend, embedder=...)`, or pass a vd.Document "
+                f"with a `vector` (and a pre-computed query vector to search)."
+            )
+        return _to_float_list(self._embedder(text))
+
+    # ----- dimension bookkeeping ------------------------------------------ #
+
+    def _vet_vector(self, vector: Any) -> Vector:
+        """Coerce to ``list[float]`` and enforce/learn the collection dimension."""
+        vec = _to_float_list(vector)
+        if self.dimension is None:
+            self.dimension = len(vec)
+        elif len(vec) != self.dimension:
+            raise ValueError(
+                f"Vector dimension mismatch in collection {self.name!r}: got "
+                f"{len(vec)}, expected {self.dimension}. A collection's "
+                f"dimension is fixed once data is written; use a fresh "
+                f"collection for a different embedding model."
+            )
+        return vec
+
+    def _ensure_vector(self, doc: Document) -> Document:
+        """Return ``doc`` with a vetted vector, embedding its text if needed."""
+        vector = doc.vector if doc.vector is not None else self.embed(doc.text)
+        doc.vector = self._vet_vector(vector)
+        return doc
+
+    def _resolve_query(self, query: Union[str, Vector]) -> Vector:
+        """Turn a text-or-vector query into a vetted query vector."""
+        vector = self.embed(query) if isinstance(query, str) else query
+        return self._vet_vector(vector)
+
+    # ----- MutableMapping interface --------------------------------------- #
+
+    def __setitem__(self, key: str, value: Union[str, tuple, Document]) -> None:
+        if not self.supports_incremental_writes:
+            raise StaticIndexError(
+                f"Collection {self.name!r} uses a static index and cannot "
+                f"accept writes after creation. Rebuild it instead."
+            )
+        doc = self._ensure_vector(_coerce_document(key, value))
+        self._write(doc)
+
+    def __getitem__(self, key: str) -> Document:
+        return self._read(key)
+
+    def __delitem__(self, key: str) -> None:
+        if not self.supports_incremental_writes:
+            raise StaticIndexError(
+                f"Collection {self.name!r} uses a static index and cannot "
+                f"delete documents. Rebuild it instead."
+            )
+        self._drop(key)
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._keys())
+
+    def __len__(self) -> int:
+        return self._count()
+
+    # ----- search --------------------------------------------------------- #
+
     def search(
         self,
         query: Union[str, Vector],
@@ -205,118 +530,171 @@ class Collection(Protocol):
         **kwargs,
     ) -> Iterator[SearchResult]:
         """
-        Search the collection for similar documents.
+        Return the ``limit`` documents most similar to ``query``.
 
         Parameters
         ----------
-        query : str or list of float
-            Query text (will be embedded) or pre-computed query vector
-        limit : int, default 10
-            Maximum number of results to return
+        query : str or list[float]
+            Query text (embedded via the client's ``embedder``) or a
+            pre-computed query vector.
+        limit : int
+            Maximum number of results.
         filter : dict, optional
-            Metadata filter using unified filter syntax (MongoDB-style)
+            Metadata filter in the canonical ``vd`` dialect (see
+            :mod:`vd.filters`). Validated against this backend's
+            :attr:`supported_filter_operators` before the query runs, so an
+            unsupported operator fails with a clear :class:`UnsupportedFilterError`.
         egress : callable, optional
-            Function to transform results. If None, returns full result dict.
+            Transform applied to each result dict before it is yielded.
         **kwargs
-            Backend-specific options (e.g., alpha=0.5 for hybrid search)
+            Backend-specific search options, passed through to ``_query``.
 
         Yields
         ------
-        dict or transformed result
-            Search results with keys: 'id', 'text', 'score', 'metadata'
-            (or transformed by egress function)
-
-        Examples
-        --------
-        >>> # Basic search
-        >>> docs = collection.search("machine learning", limit=5)  # doctest: +SKIP
-        >>> for doc in docs:  # doctest: +SKIP
-        ...     print(doc['id'], doc['score'])
-        >>>
-        >>> # With metadata filter
-        >>> docs = collection.search(  # doctest: +SKIP
-        ...     "AI research",
-        ...     filter={'year': {'$gte': 2020}}
-        ... )
-        >>>
-        >>> # With custom egress to extract just text
-        >>> texts = collection.search(  # doctest: +SKIP
-        ...     "neural networks",
-        ...     egress=lambda r: r['text']
-        ... )
+        dict
+            ``{"id", "text", "score", "metadata"}`` — or whatever ``egress``
+            returns.
         """
-        ...
+        from vd.filters import validate_filter
 
-    # Batch operations
+        validate_filter(filter, supported=self.supported_filter_operators)
+        query_vector = self._resolve_query(query)
+        for result in self._query(query_vector, limit=limit, filter=filter, **kwargs):
+            yield egress(result) if egress is not None else result
+
+    # ----- batch convenience (also satisfies SupportsBatch) --------------- #
+
     def add_documents(
         self,
-        documents: Iterator[DocumentInput],
+        documents: Iterable[DocumentInput],
         *,
         batch_size: int = 100,
     ) -> None:
         """
-        Batch add documents to the collection.
+        Add many documents, embedding and writing them in batches.
 
-        This method efficiently adds multiple documents in batches, which is
-        typically faster than adding documents one at a time.
-
-        Parameters
-        ----------
-        documents : iterable of DocumentInput
-            Documents to add. Each can be:
-            - str: Just text (ID auto-generated)
-            - (text, id): Text with specific ID
-            - (text, metadata): Text with metadata (ID auto-generated)
-            - (text, id, metadata): Full specification
-            - Document: Full document object
-        batch_size : int, default 100
-            Number of documents to process in each batch
-
-        Examples
-        --------
-        >>> collection.add_documents([  # doctest: +SKIP
-        ...     "First article about AI",
-        ...     ("Second article", "doc2"),
-        ...     ("Third article", {'category': 'tech'})
-        ... ])
+        Each item may be a string, a ``(text, ...)`` tuple, or a
+        :class:`Document` (see :data:`DocumentInput`). Items without an ``id``
+        get a deterministic auto-generated one.
         """
-        ...
+        from vd.util import normalize_document_input
+
+        batch: list[Document] = []
+        for item in documents:
+            doc = normalize_document_input(item, auto_id=True)
+            self._ensure_vector(doc)
+            batch.append(doc)
+            if len(batch) >= batch_size:
+                self._write_many(batch)
+                batch = []
+        if batch:
+            self._write_many(batch)
 
     def upsert(self, document: Document) -> None:
-        """
-        Insert or update a document (idempotent operation).
-
-        This is equivalent to __setitem__ but takes a Document object.
-
-        Parameters
-        ----------
-        document : Document
-            Document to insert or update
-        """
+        """Insert or replace ``document`` (equivalent to ``self[doc.id] = doc``)."""
         self[document.id] = document
 
+    # ----- escape hatch --------------------------------------------------- #
 
-class Client(Protocol):
+    @property
+    def native(self) -> Any:
+        """
+        The raw backend collection handle — a supported, documented escape hatch.
+
+        Use it to reach backend-specific features the facade does not expose,
+        rather than circumventing ``vd``. Returns ``None`` if the adapter has
+        no distinct native object.
+        """
+        return getattr(self, "_native", None)
+
+    # ----- raw primitives — adapters MUST implement ----------------------- #
+
+    @abstractmethod
+    def _write(self, doc: Document) -> None:
+        """Upsert one document (its ``vector`` is set and dimension-checked)."""
+
+    @abstractmethod
+    def _read(self, key: str) -> Document:
+        """Fetch one document; raise ``KeyError`` if absent."""
+
+    @abstractmethod
+    def _drop(self, key: str) -> None:
+        """Delete one document; raise ``KeyError`` if absent."""
+
+    @abstractmethod
+    def _keys(self) -> Iterator[str]:
+        """Iterate document ids."""
+
+    @abstractmethod
+    def _count(self) -> int:
+        """Return the number of documents."""
+
+    @abstractmethod
+    def _query(
+        self,
+        vector: Vector,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> Iterable[SearchResult]:
+        """Raw nearest-neighbor search returning result dicts."""
+
+    # ----- raw primitives — adapters MAY override ------------------------- #
+
+    def _write_many(self, docs: list[Document]) -> None:
+        """Bulk upsert. Override for a backend with an efficient batch path."""
+        for doc in docs:
+            self._write(doc)
+
+
+# --------------------------------------------------------------------------- #
+# AbstractClient — adapter-author base
+# --------------------------------------------------------------------------- #
+
+
+class AbstractClient(Mapping):
     """
-    Protocol for vector database clients.
+    Base class implementing the :class:`Client` contract for adapters.
 
-    A Client manages connections to vector database backends and provides
-    methods to create, retrieve, and manage collections.
+    A :class:`Client` is a ``Mapping[str, Collection]``. A backend subclasses
+    this and implements :meth:`create_collection`, :meth:`get_collection`,
+    :meth:`delete_collection`, and :meth:`list_collections`; the mapping
+    behavior, the :meth:`get_or_create_collection` convenience, the ``client``
+    escape hatch, and context-manager support come for free.
 
-    Examples
-    --------
-    >>> import vd  # doctest: +SKIP
-    >>> client = vd.connect('memory')  # doctest: +SKIP
-    >>> collection = client.create_collection('my_docs')  # doctest: +SKIP
-    >>> collection['doc1'] = "Hello world"  # doctest: +SKIP
+    Parameters
+    ----------
+    embedder : callable, optional
+        A ``text -> vector`` function. Passed to every collection so text
+        inputs are accepted as a convenience. ``None`` (the default) makes the
+        client vector-only.
+    **config
+        Backend-specific connection configuration.
     """
 
+    #: The registry name of this backend (e.g. ``"chroma"``). Adapters set it.
+    backend_name: str = ""
+
+    def __init__(
+        self,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        **config,
+    ):
+        self._embedder = embedder
+        self.config = config
+
+    # ----- adapters MUST implement ---------------------------------------- #
+
+    @abstractmethod
     def create_collection(
         self,
         name: str,
         *,
-        schema: Optional[dict] = None,
-        **kwargs,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
     ) -> Collection:
         """
         Create a new collection.
@@ -324,248 +702,92 @@ class Client(Protocol):
         Parameters
         ----------
         name : str
-            Name of the collection
-        schema : dict, optional
-            Schema definition (backend-specific)
-        **kwargs
-            Additional backend-specific options
-
-        Returns
-        -------
-        Collection
-            The newly created collection
+            Collection name.
+        dimension : int, optional
+            Vector dimension. May be ``None`` for backends that can infer it
+            from the first written vector; required up front by backends that
+            cannot.
+        metric : str
+            Distance metric: ``"cosine"``, ``"dot"``, or ``"l2"``.
+        **index_config
+            Backend-specific index tuning (HNSW ``M``/``ef``, IVF ``nlist``, ...).
+            Documented per adapter; never abstracted into a common enum.
 
         Raises
         ------
         ValueError
-            If collection already exists
+            If a collection of that name already exists.
         """
-        ...
 
+    @abstractmethod
     def get_collection(self, name: str) -> Collection:
-        """
-        Get an existing collection.
+        """Return an existing collection; raise ``KeyError`` if absent."""
 
-        Parameters
-        ----------
-        name : str
-            Name of the collection
-
-        Returns
-        -------
-        Collection
-            The requested collection
-
-        Raises
-        ------
-        KeyError
-            If collection does not exist
-        """
-        ...
-
-    def list_collections(self) -> Iterator[str]:
-        """
-        List all collection names.
-
-        Yields
-        ------
-        str
-            Collection names
-        """
-        ...
-
+    @abstractmethod
     def delete_collection(self, name: str) -> None:
-        """
-        Delete a collection.
+        """Drop a collection; raise ``KeyError`` if absent."""
 
-        Parameters
-        ----------
-        name : str
-            Name of the collection to delete
+    @abstractmethod
+    def list_collections(self) -> Iterator[str]:
+        """Iterate collection names."""
 
-        Raises
-        ------
-        KeyError
-            If collection does not exist
-        """
-        ...
+    # ----- provided: Mapping interface ------------------------------------ #
 
+    def __getitem__(self, name: str) -> Collection:
+        return self.get_collection(name)
 
-class BaseBackend(ABC):
-    """
-    Abstract base class for vector database backends.
+    def __iter__(self) -> Iterator[str]:
+        return iter(self.list_collections())
 
-    Backend implementations should inherit from this class and implement
-    all abstract methods.
+    def __len__(self) -> int:
+        return sum(1 for _ in self.list_collections())
 
-    Parameters
-    ----------
-    embedding_model : callable
-        Function to generate embeddings from text
-    **config
-        Backend-specific configuration
+    def __contains__(self, name: object) -> bool:
+        try:
+            self.get_collection(name)  # type: ignore[arg-type]
+            return True
+        except (KeyError, TypeError):
+            return False
 
-    Attributes
-    ----------
-    supports_incremental_writes : bool
-        Whether collections from this backend accept writes after creation.
-        Static-index backends (e.g. FAISS, Annoy) set this ``False`` and raise
-        :class:`StaticIndexError` on ``__setitem__`` / ``__delitem__``. Callers
-        can branch on this flag to avoid triggering the error.
-    """
+    # ----- provided: conveniences ----------------------------------------- #
 
-    #: Whether collections of this backend accept incremental writes (see above).
-    supports_incremental_writes: bool = True
-
-    def __init__(
+    def get_or_create_collection(
         self,
+        name: str,
         *,
-        embedding_model: Callable[[str], Vector],
-        **config,
-    ):
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
+    ) -> Collection:
         """
-        Initialize the backend.
+        Return the collection ``name``, creating it if it does not exist.
 
-        Parameters
-        ----------
-        embedding_model : callable
-            Function that takes text and returns an embedding vector
-        **config
-            Backend-specific configuration options
+        The common idiom that every consumer otherwise re-implements as a
+        ``try get_collection / except KeyError: create_collection``.
         """
-        self.embedding_model = embedding_model
-        self.config = config
+        try:
+            return self.get_collection(name)
+        except KeyError:
+            return self.create_collection(
+                name, dimension=dimension, metric=metric, **index_config
+            )
 
     @property
     def client(self) -> Any:
         """
-        The raw backend client — the escape hatch to backend-specific features.
+        The raw backend client — a supported, documented escape hatch.
 
-        This is a *supported, documented* part of the API: when the unified
-        facade does not expose a backend-specific feature, drop to the native
-        client rather than circumventing ``vd``. Returns ``None`` for backends
-        that have no external client (e.g. the in-memory backend).
-
-        Examples
-        --------
-        >>> client = vd.connect('chroma')          # doctest: +SKIP
-        >>> raw = client.client                    # doctest: +SKIP
-        >>> raw.heartbeat()                        # native ChromaDB call  # doctest: +SKIP
+        Drop to it for backend-specific operations the facade does not expose.
+        Returns ``None`` for backends with no external client object (e.g. the
+        in-memory backend).
         """
         return getattr(self, "_client", None)
 
-    @abstractmethod
-    def create_collection(
-        self,
-        name: str,
-        *,
-        schema: Optional[dict] = None,
-        **kwargs,
-    ) -> Collection:
-        """Create a new collection."""
-        ...
+    def close(self) -> None:
+        """Release backend resources. Default no-op; adapters override as needed."""
 
-    @abstractmethod
-    def get_collection(self, name: str) -> Collection:
-        """Get an existing collection."""
-        ...
+    def __enter__(self) -> "AbstractClient":
+        return self
 
-    @abstractmethod
-    def list_collections(self) -> Iterator[str]:
-        """List all collection names."""
-        ...
-
-    @abstractmethod
-    def delete_collection(self, name: str) -> None:
-        """Delete a collection."""
-        ...
-
-
-class StaticIndexError(Exception):
-    """
-    Raised when attempting write operations on a static index.
-
-    Some backends (like FAISS, Annoy) use static indexes that cannot be
-    modified after they are built. This exception is raised when users
-    attempt write operations on such backends.
-
-    See also the ``supports_incremental_writes`` flag on :class:`BaseBackend`,
-    which lets callers branch *before* triggering this error.
-    """
-
-    pass
-
-
-class UnsupportedFilterError(ValueError):
-    """
-    Raised when a metadata filter uses an operator a backend does not support.
-
-    The canonical, backend-agnostic filter language is defined in
-    :mod:`vd.filters` (a MongoDB-style JSON dialect). When a filter uses an
-    operator outside a backend's supported subset — or an operator that does
-    not exist at all — this is raised so the caller can simplify the filter or
-    drop to a backend-specific filter via the escape hatch (``collection.native``).
-    """
-
-    pass
-
-
-class UnsupportedCapabilityError(NotImplementedError):
-    """
-    Raised when an operation requires a capability the backend does not have.
-
-    Prefer feature-discovery — ``isinstance(collection, SupportsHybrid)`` — over
-    catching this exception, but it is raised as a clear, typed fallback when an
-    optional operation is called on a backend that does not implement it.
-    """
-
-    pass
-
-
-@runtime_checkable
-class SupportsBatch(Protocol):
-    """
-    Capability protocol: a collection that supports efficient batch operations.
-
-    Batch insertion (``add_documents``) and idempotent single upsert
-    (``upsert``) are *optional* — not part of the minimal ``Collection``
-    contract. Feature-discover support at runtime::
-
-        if isinstance(collection, SupportsBatch):
-            collection.add_documents(many_docs, batch_size=100)
-    """
-
-    def add_documents(
-        self, documents: Iterator[DocumentInput], *, batch_size: int = 100
-    ) -> None: ...
-
-    def upsert(self, document: "Document") -> None: ...
-
-
-@runtime_checkable
-class SupportsHybrid(Protocol):
-    """
-    Capability protocol: a collection that supports hybrid (dense + lexical) search.
-
-    Hybrid search has no syntactic convergence across vector databases, so it is
-    an *opt-in capability*, never part of the baseline contract. Feature-discover
-    before calling::
-
-        if isinstance(collection, SupportsHybrid):
-            hits = collection.hybrid_search(vec, "query text", alpha=0.5)
-
-    Backends without native hybrid do not implement this protocol; combine
-    separate dense + lexical result lists with :func:`vd.reciprocal_rank_fusion`
-    as a client-side fallback.
-    """
-
-    def hybrid_search(
-        self,
-        query: "Vector",
-        query_text: str,
-        *,
-        limit: int = 10,
-        filter: "Optional[Filter]" = None,
-        alpha: float = 0.5,
-        fusion: str = "rrf",
-    ) -> Iterator: ...
+    def __exit__(self, *exc) -> None:
+        self.close()

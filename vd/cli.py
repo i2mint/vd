@@ -16,10 +16,7 @@ def cmd_backends(args):
     """List available backends."""
     import vd
 
-    if args.planned:
-        vd.print_backends_table(include_planned=True)
-    else:
-        vd.print_backends_table(include_planned=False)
+    vd.print_backends_table()
 
 
 def cmd_install_info(args):
