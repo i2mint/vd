@@ -205,8 +205,7 @@ take `<backend>` as the first positional and read backend config from env vars
 or `--persist-directory` flags as needed:
 
 ```bash
-vd backends                          # list registered & available backends
-vd backends --planned                # include planned backends in the list
+vd backends                          # every vector database vd knows about
 vd install chroma                    # print install instructions for chroma
 vd health <backend>                  # health check
 vd stats <backend> <collection>      # stats (-v for verbose)
