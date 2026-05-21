@@ -24,25 +24,38 @@ A **facade over vector databases**. Goals, in priority order:
 own embedding (that is `ef`'s job — see §6). Primary research reference:
 `research/semantic_search/03 -- Vector Storage and Retrieval`.
 
-## 2. Current state (2026-05)
+## 2. Current state (2026-05, after the v0.2 core redesign)
 
-Already substantial — `vd` is the more mature of the `ef`/`vd` pair:
+`vd` was redesigned to v0.2: embedding decoupled from the facade core, two
+mapping levels, shared abstract bases, a full provider registry, and 15
+backends.
 
-- `base.py` — `Document` dataclass; `Client` / `Collection` Protocols;
-  `BaseBackend` ABC; `StaticIndexError`; type aliases (`Vector`, `Filter`,
-  `SearchResult`).
-- `backends/` — `memory`, `chroma`. (`pinecone`/`weaviate`/`qdrant`/`milvus`/
-  `faiss` are *planned* — in `_backend_metadata`, not implemented.)
-- Modules: `analytics`, `compare`, `config`, `health`, `io`, `migration`,
-  `search`, `text`, `time_indexed`, `util`, `cli`.
-- 5 **user-facing** skills bundled in `vd/data/skills/`: `vd-quickstart`,
-  `vd-backend-choose`, `vd-ingest`, `vd-search`, `vd-ops`. (Dev-facing skills
-  for working *on* vd live in `.claude/skills/`.)
-- MongoDB-style metadata filter; `egress` result transforms; CLI.
+- `base.py` — `Document` dataclass; `Client` / `Collection` `Protocol`s;
+  **`AbstractClient`** (`Mapping[str, Collection]`) and **`AbstractCollection`**
+  (`MutableMapping[str, Document]` + `search`) — the adapter-author bases that
+  implement everything users see over a few raw primitives; exceptions
+  (`VdError`, `StaticIndexError`, `UnsupportedFilterError`,
+  `UnsupportedCapabilityError`, `EmbeddingRequiredError`,
+  `BackendNotInstalledError`); capability protocols.
+- `backends/` — 15 adapters: `memory`, `chroma`, `faiss`, `sqlite_vec`,
+  `duckdb`, `lancedb`, `qdrant` (all tested here) and `pgvector`, `pinecone`,
+  `weaviate`, `milvus`, `redis`, `elasticsearch`, `mongodb`, `turbopuffer`
+  (correct-by-construction; need a server/account to exercise).
+- `providers.py` + `data/providers.yaml` — the ~21-provider registry +
+  `recommend_backend` decision framework. `requirements.py` —
+  `check_requirements` / `setup_guide` / `install_backend`.
+- Modules: `analytics`, `config`, `health`, `io`, `migration`, `search`,
+  `text`, `time_indexed`, `util`, `cli`. (`compare.py` was folded into
+  `providers.py`.)
+- 5 user-facing skills in `vd/data/skills/`; `vd-add-backend` dev skill in
+  `.claude/skills/`.
 
-**The research validates vd's existing design** (`Client`→`Collection`,
-`Document`, `StaticIndexError`, MongoDB-style filter). The refactor is mostly
-**hardening + filling gaps**, not a rewrite. See §4.
+**Embedding is external.** The core operates on vectors; an `embedder` passed
+to `connect` is an optional convenience. `vd` has **no `dol`/`imbed`
+dependency** — the core is stdlib + `pyyaml` only.
+
+The first consumer, `ef`, was adapted on its `adapt-to-vd-0.2` branch (it
+dropped its dummy-embedder workaround); merge that only after vd 0.2 publishes.
 
 ## 3. Core contracts (the design the refactor should converge on)
 

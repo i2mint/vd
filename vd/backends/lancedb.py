@@ -25,7 +25,11 @@ except ImportError as e:  # pragma: no cover
         "Install it with: pip install lancedb"
     ) from e
 
-from vd.backends._helpers import apply_client_filter, overfetch_limit, score_from_distance
+from vd.backends._helpers import (
+    apply_client_filter,
+    overfetch_limit,
+    score_from_distance,
+)
 from vd.base import (
     AbstractClient,
     AbstractCollection,
@@ -161,7 +165,9 @@ class LanceDBCollection(AbstractCollection):
                 {
                     "id": doc.id,
                     "text": doc.text,
-                    "score": score_from_distance(hit.get("_distance", 0.0), self.metric),
+                    "score": score_from_distance(
+                        hit.get("_distance", 0.0), self.metric
+                    ),
                     "metadata": doc.metadata,
                 }
             )
@@ -216,8 +222,11 @@ class LanceDBClient(AbstractClient):
             raise ValueError(f"Collection {name!r} already exists")
         self._metrics[name] = metric
         return LanceDBCollection(
-            name, self._client, embedder=self._embedder,
-            dimension=dimension, metric=metric,
+            name,
+            self._client,
+            embedder=self._embedder,
+            dimension=dimension,
+            metric=metric,
         )
 
     def get_collection(self, name: str) -> LanceDBCollection:
@@ -226,7 +235,9 @@ class LanceDBClient(AbstractClient):
         if name not in set(_table_names(self._client)) and name not in self._metrics:
             raise KeyError(f"Collection {name!r} does not exist")
         return LanceDBCollection(
-            name, self._client, embedder=self._embedder,
+            name,
+            self._client,
+            embedder=self._embedder,
             metric=self._metrics.get(name, "cosine"),
         )
 

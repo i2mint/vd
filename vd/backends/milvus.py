@@ -56,7 +56,11 @@ except ImportError as e:  # pragma: no cover
         "Install with: pip install -U pymilvus"
     ) from e
 
-from vd.backends._helpers import apply_client_filter, overfetch_limit, score_from_distance
+from vd.backends._helpers import (
+    apply_client_filter,
+    overfetch_limit,
+    score_from_distance,
+)
 from vd.base import (
     AbstractClient,
     AbstractCollection,
@@ -113,9 +117,7 @@ def _milvus_metric(metric: str) -> str:
         return _METRIC_MAP[metric]
     except KeyError:
         valid = ", ".join(sorted(_METRIC_MAP))
-        raise ValueError(
-            f"Unknown metric {metric!r}. Valid values are: {valid}."
-        )
+        raise ValueError(f"Unknown metric {metric!r}. Valid values are: {valid}.")
 
 
 def _build_schema(dimension: int) -> Any:
@@ -454,9 +456,7 @@ class MilvusCollection(AbstractCollection):
         )
         # raw is a list of one hit-list (one per query vector).
         hits = raw[0] if raw else []
-        results: list[SearchResult] = [
-            _hit_to_result(hit, self.metric) for hit in hits
-        ]
+        results: list[SearchResult] = [_hit_to_result(hit, self.metric) for hit in hits]
         return apply_client_filter(results, filter, limit=limit)
 
 

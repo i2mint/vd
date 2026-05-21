@@ -48,7 +48,11 @@ except ImportError as e:  # pragma: no cover
         "Install with: pip install turbopuffer"
     ) from e
 
-from vd.backends._helpers import apply_client_filter, overfetch_limit, score_from_distance
+from vd.backends._helpers import (
+    apply_client_filter,
+    overfetch_limit,
+    score_from_distance,
+)
 from vd.base import (
     AbstractClient,
     AbstractCollection,
@@ -401,7 +405,9 @@ class TurbopufferCollection(AbstractCollection):
             **kwargs,
         )
         rows = list(response) if response is not None else []
-        raw_results = [_result_to_search_result(row, metric=self.metric) for row in rows]
+        raw_results = [
+            _result_to_search_result(row, metric=self.metric) for row in rows
+        ]
         return apply_client_filter(raw_results, filter, limit=limit)
 
 

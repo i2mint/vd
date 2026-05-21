@@ -21,9 +21,22 @@ from vd.providers import (
 def test_registry_loads_and_covers_the_landscape():
     names = provider_names()
     # The report's recommended six plus the embedded set must all be present.
-    for expected in ("chroma", "qdrant", "pgvector", "lancedb", "pinecone",
-                     "faiss", "sqlite_vec", "duckdb", "weaviate", "milvus",
-                     "redis", "elasticsearch", "mongodb", "turbopuffer"):
+    for expected in (
+        "chroma",
+        "qdrant",
+        "pgvector",
+        "lancedb",
+        "pinecone",
+        "faiss",
+        "sqlite_vec",
+        "duckdb",
+        "weaviate",
+        "milvus",
+        "redis",
+        "elasticsearch",
+        "mongodb",
+        "turbopuffer",
+    ):
         assert expected in names, expected
 
 

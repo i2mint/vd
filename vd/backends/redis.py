@@ -56,7 +56,11 @@ except ImportError as e:  # pragma: no cover
         "Install with: pip install redis numpy"
     ) from e
 
-from vd.backends._helpers import apply_client_filter, overfetch_limit, score_from_distance
+from vd.backends._helpers import (
+    apply_client_filter,
+    overfetch_limit,
+    score_from_distance,
+)
 from vd.base import (
     AbstractClient,
     AbstractCollection,
@@ -105,7 +109,7 @@ def _doc_key(collection_name: str, doc_id: str) -> str:
 def _strip_prefix(raw_key: bytes, prefix: str) -> str:
     """Decode a raw Redis key and strip the collection prefix to get the doc id."""
     decoded = raw_key.decode() if isinstance(raw_key, bytes) else raw_key
-    return decoded[len(prefix):]
+    return decoded[len(prefix) :]
 
 
 def _to_float32_bytes(vector: Any) -> bytes:
@@ -266,8 +270,7 @@ class RedisCollection(AbstractCollection):
         """Iterate over all document ids in this collection."""
         prefix = self._key_prefix
         return (
-            _strip_prefix(k, prefix)
-            for k in self._redis.scan_iter(match=f"{prefix}*")
+            _strip_prefix(k, prefix) for k in self._redis.scan_iter(match=f"{prefix}*")
         )
 
     def _count(self) -> int:
@@ -395,7 +398,11 @@ def _raw_to_document(raw: dict) -> Document:
     raw_embedding = _key("embedding")
     vector: Optional[list] = None
     if raw_embedding:
-        blob = raw_embedding if isinstance(raw_embedding, bytes) else raw_embedding.encode("latin-1")
+        blob = (
+            raw_embedding
+            if isinstance(raw_embedding, bytes)
+            else raw_embedding.encode("latin-1")
+        )
         vector = _from_float32_bytes(blob)
 
     return Document(id=doc_id, text=text, vector=vector, metadata=metadata)
@@ -609,7 +616,9 @@ def _read_index_params(
             if isinstance(identifier, bytes):
                 identifier = identifier.decode()
             if identifier == "embedding":
-                dim_val = pairs.get("DIM") or pairs.get(b"DIM") or pairs.get("dim") or None
+                dim_val = (
+                    pairs.get("DIM") or pairs.get(b"DIM") or pairs.get("dim") or None
+                )
                 dist_val = (
                     pairs.get("DISTANCE_METRIC")
                     or pairs.get(b"DISTANCE_METRIC")
@@ -617,7 +626,9 @@ def _read_index_params(
                     or b"COSINE"
                 )
                 dimension = int(dim_val) if dim_val is not None else None
-                dist_str = dist_val.decode() if isinstance(dist_val, bytes) else dist_val
+                dist_str = (
+                    dist_val.decode() if isinstance(dist_val, bytes) else dist_val
+                )
                 metric = _METRIC_REVERSE.get(dist_str.upper(), "cosine")
                 return dimension, metric
     except Exception:

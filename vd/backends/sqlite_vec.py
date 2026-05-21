@@ -28,7 +28,11 @@ except ImportError as e:  # pragma: no cover
         "Install it with: pip install sqlite-vec"
     ) from e
 
-from vd.backends._helpers import apply_client_filter, overfetch_limit, score_from_distance
+from vd.backends._helpers import (
+    apply_client_filter,
+    overfetch_limit,
+    score_from_distance,
+)
 from vd.base import (
     AbstractClient,
     AbstractCollection,
@@ -132,7 +136,10 @@ class SqliteVecCollection(AbstractCollection):
         ).fetchone()
         vector = json.loads(vec_row[0]) if vec_row else None
         return Document(
-            id=key, text=text or "", vector=vector, metadata=json.loads(metadata or "{}")
+            id=key,
+            text=text or "",
+            vector=vector,
+            metadata=json.loads(metadata or "{}"),
         )
 
     def _drop(self, key: str) -> None:
@@ -147,9 +154,7 @@ class SqliteVecCollection(AbstractCollection):
 
     def _keys(self) -> Iterator[str]:
         try:
-            rows = self._conn.execute(
-                f"SELECT doc_id FROM {self._docs_tbl}"
-            ).fetchall()
+            rows = self._conn.execute(f"SELECT doc_id FROM {self._docs_tbl}").fetchall()
         except sqlite3.OperationalError:
             return iter(())  # tables not created yet (empty collection)
         return iter(r[0] for r in rows)
@@ -237,8 +242,11 @@ class SqliteVecClient(AbstractClient):
         )
         self._client.commit()
         return SqliteVecCollection(
-            name, self._client, embedder=self._embedder,
-            dimension=dimension, metric=metric,
+            name,
+            self._client,
+            embedder=self._embedder,
+            dimension=dimension,
+            metric=metric,
         )
 
     def get_collection(self, name: str) -> SqliteVecCollection:
@@ -246,8 +254,11 @@ class SqliteVecClient(AbstractClient):
         if row is None:
             raise KeyError(f"Collection {name!r} does not exist")
         return SqliteVecCollection(
-            name, self._client, embedder=self._embedder,
-            dimension=row[0], metric=row[1] or "cosine",
+            name,
+            self._client,
+            embedder=self._embedder,
+            dimension=row[0],
+            metric=row[1] or "cosine",
         )
 
     def delete_collection(self, name: str) -> None:

@@ -54,7 +54,11 @@ except ImportError as e:  # pragma: no cover
         "Install with: pip install -U weaviate-client"
     ) from e
 
-from vd.backends._helpers import apply_client_filter, overfetch_limit, score_from_distance
+from vd.backends._helpers import (
+    apply_client_filter,
+    overfetch_limit,
+    score_from_distance,
+)
 from vd.base import (
     AbstractClient,
     AbstractCollection,
@@ -379,8 +383,7 @@ class WeaviateCollection(AbstractCollection):
             **kwargs,
         )
         raw_results = [
-            _result_from_object(obj, metric=self.metric)
-            for obj in response.objects
+            _result_from_object(obj, metric=self.metric) for obj in response.objects
         ]
         return apply_client_filter(raw_results, filter, limit=limit)
 

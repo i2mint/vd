@@ -123,7 +123,9 @@ class ChromaCollection(AbstractCollection):
         return Document(
             id=got["ids"][0],
             text=(got["documents"] or [""])[0] or "",
-            vector=list(embeddings[0]) if embeddings is not None and len(embeddings) else None,
+            vector=list(embeddings[0])
+            if embeddings is not None and len(embeddings)
+            else None,
             metadata=(got["metadatas"] or [{}])[0] or {},
         )
 

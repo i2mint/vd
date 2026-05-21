@@ -198,9 +198,7 @@ def get_backend_characteristics() -> dict[str, dict[str, Any]]:
         "scale",
         "sweet_spot",
     )
-    return {
-        name: {k: meta.get(k) for k in keys} for name, meta in _registry().items()
-    }
+    return {name: {k: meta.get(k) for k in keys} for name, meta in _registry().items()}
 
 
 def get_install_instructions(name: str) -> str:
@@ -381,18 +379,40 @@ def recommend_backend(
     # Q6 — already running a database? Don't add a second one.
     if existing_db:
         mapping = {
-            "postgres": ("pgvector", "vectorchord", "Postgres already runs — "
-                         "pgvector adds vectors with no second database."),
-            "redis": ("redis", "qdrant", "Redis already runs — use its native "
-                      "vector index (mind the AGPL/RSAL license change)."),
-            "elastic": ("elasticsearch", "opensearch", "Elastic already runs — "
-                        "use kNN + RRF in place."),
-            "mongo": ("mongodb", "qdrant", "MongoDB already runs — use Atlas "
-                      "$vectorSearch."),
-            "sqlite": ("sqlite_vec", "duckdb", "SQLite already in the app — "
-                       "sqlite-vec embeds vector search in the same file."),
-            "duckdb": ("duckdb", "lancedb", "DuckDB already in use — the VSS "
-                       "extension does ANN in the same SQL engine."),
+            "postgres": (
+                "pgvector",
+                "vectorchord",
+                "Postgres already runs — "
+                "pgvector adds vectors with no second database.",
+            ),
+            "redis": (
+                "redis",
+                "qdrant",
+                "Redis already runs — use its native "
+                "vector index (mind the AGPL/RSAL license change).",
+            ),
+            "elastic": (
+                "elasticsearch",
+                "opensearch",
+                "Elastic already runs — use kNN + RRF in place.",
+            ),
+            "mongo": (
+                "mongodb",
+                "qdrant",
+                "MongoDB already runs — use Atlas $vectorSearch.",
+            ),
+            "sqlite": (
+                "sqlite_vec",
+                "duckdb",
+                "SQLite already in the app — "
+                "sqlite-vec embeds vector search in the same file.",
+            ),
+            "duckdb": (
+                "duckdb",
+                "lancedb",
+                "DuckDB already in use — the VSS "
+                "extension does ANN in the same SQL engine.",
+            ),
         }
         if existing_db in mapping:
             primary, runner, why = mapping[existing_db]
@@ -419,14 +439,14 @@ def recommend_backend(
         )
         if corpus_size in ("large", "huge"):
             return _result("milvus", "qdrant", reasoning, ["weaviate", "pgvector"])
-        return _result("qdrant", "chroma", reasoning,
-                       ["milvus", "weaviate", "lancedb"])
+        return _result("qdrant", "chroma", reasoning, ["milvus", "weaviate", "lancedb"])
 
     # Q7 — native hybrid wanted.
     if needs_hybrid:
         reasoning.append("Native hybrid (keyword + vector) wanted in one query.")
-        return _result("weaviate", "elasticsearch", reasoning,
-                       ["qdrant", "redis", "pinecone"])
+        return _result(
+            "weaviate", "elasticsearch", reasoning, ["qdrant", "redis", "pinecone"]
+        )
 
     # Q1 — huge scale.
     if corpus_size == "huge":

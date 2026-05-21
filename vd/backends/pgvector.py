@@ -43,7 +43,11 @@ except ImportError as e:  # pragma: no cover
         "Install with: pip install pgvector 'psycopg[binary]'"
     ) from e
 
-from vd.backends._helpers import apply_client_filter, overfetch_limit, score_from_distance
+from vd.backends._helpers import (
+    apply_client_filter,
+    overfetch_limit,
+    score_from_distance,
+)
 from vd.base import (
     AbstractClient,
     AbstractCollection,
@@ -100,7 +104,9 @@ def _resolve_dsn(
     ValueError
         If no DSN can be determined from arguments or environment.
     """
-    resolved = dsn or url or os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_DSN")
+    resolved = (
+        dsn or url or os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_DSN")
+    )
     if not resolved:
         raise ValueError(
             "No Postgres DSN found. Pass dsn=..., url=..., or set "
@@ -267,10 +273,7 @@ class PgvectorCollection(AbstractCollection):
             f"text = EXCLUDED.text, "
             f"metadata = EXCLUDED.metadata, "
             f"embedding = EXCLUDED.embedding",
-            [
-                [d.id, d.text, json.dumps(d.metadata or {}), d.vector]
-                for d in docs
-            ],
+            [[d.id, d.text, json.dumps(d.metadata or {}), d.vector] for d in docs],
         )
         self._conn.commit()
 
@@ -288,7 +291,9 @@ class PgvectorCollection(AbstractCollection):
             id=key,
             text=text or "",
             vector=list(embedding) if embedding is not None else None,
-            metadata=metadata if isinstance(metadata, dict) else json.loads(metadata or "{}"),
+            metadata=metadata
+            if isinstance(metadata, dict)
+            else json.loads(metadata or "{}"),
         )
 
     def _drop(self, key: str) -> None:
@@ -340,7 +345,8 @@ class PgvectorCollection(AbstractCollection):
                 "text": text or "",
                 "score": score_from_distance(dist, self.metric),
                 "metadata": (
-                    metadata if isinstance(metadata, dict)
+                    metadata
+                    if isinstance(metadata, dict)
                     else json.loads(metadata or "{}")
                 ),
             }
@@ -499,9 +505,7 @@ class PgvectorClient(AbstractClient):
         if self._meta_row(name) is None:
             raise KeyError(f"Collection {name!r} does not exist")
         self._client.execute(f"DROP TABLE IF EXISTS {_quoted(name)}")
-        self._client.execute(
-            "DELETE FROM _vd_collections WHERE name = %s", [name]
-        )
+        self._client.execute("DELETE FROM _vd_collections WHERE name = %s", [name])
         self._client.commit()
 
     def list_collections(self) -> Iterator[str]:

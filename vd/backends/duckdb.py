@@ -25,7 +25,11 @@ except ImportError as e:  # pragma: no cover
         "Install it with: pip install duckdb"
     ) from e
 
-from vd.backends._helpers import apply_client_filter, overfetch_limit, score_from_distance
+from vd.backends._helpers import (
+    apply_client_filter,
+    overfetch_limit,
+    score_from_distance,
+)
 from vd.base import (
     AbstractClient,
     AbstractCollection,
@@ -122,10 +126,14 @@ class DuckDBCollection(AbstractCollection):
         )
 
     def _read(self, key: str) -> Document:
-        row = self._conn.execute(
-            f"SELECT text, metadata, embedding FROM {self._tbl} WHERE doc_id=?",
-            [key],
-        ).fetchone() if self._created else None
+        row = (
+            self._conn.execute(
+                f"SELECT text, metadata, embedding FROM {self._tbl} WHERE doc_id=?",
+                [key],
+            ).fetchone()
+            if self._created
+            else None
+        )
         if row is None:
             raise KeyError(key)
         text, metadata, embedding = row
@@ -229,8 +237,11 @@ class DuckDBClient(AbstractClient):
             "INSERT INTO _vd_collections VALUES (?,?,?)", [name, dimension, metric]
         )
         return DuckDBCollection(
-            name, self._client, embedder=self._embedder,
-            dimension=dimension, metric=metric,
+            name,
+            self._client,
+            embedder=self._embedder,
+            dimension=dimension,
+            metric=metric,
         )
 
     def get_collection(self, name: str) -> DuckDBCollection:
@@ -238,8 +249,11 @@ class DuckDBClient(AbstractClient):
         if row is None:
             raise KeyError(f"Collection {name!r} does not exist")
         return DuckDBCollection(
-            name, self._client, embedder=self._embedder,
-            dimension=row[0], metric=row[1] or "cosine",
+            name,
+            self._client,
+            embedder=self._embedder,
+            dimension=row[0],
+            metric=row[1] or "cosine",
         )
 
     def delete_collection(self, name: str) -> None:

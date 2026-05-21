@@ -127,10 +127,7 @@ def _pinecone_metric(vd_metric: str) -> str:
         return _METRIC_MAP[vd_metric]
     except KeyError:
         known = ", ".join(sorted(_METRIC_MAP))
-        raise ValueError(
-            f"Unknown metric {vd_metric!r}. "
-            f"Pinecone supports: {known}."
-        )
+        raise ValueError(f"Unknown metric {vd_metric!r}. Pinecone supports: {known}.")
 
 
 def _pack_metadata(text: str, metadata: dict) -> dict:
@@ -747,9 +744,7 @@ class PineconeClient(AbstractClient):
             If no index with that name exists in the account.
         """
         if name not in self._existing_index_names():
-            raise KeyError(
-                f"Collection {name!r} does not exist and cannot be deleted."
-            )
+            raise KeyError(f"Collection {name!r} does not exist and cannot be deleted.")
         self._client.delete_index(name)
 
     def list_collections(self) -> Iterator[str]:

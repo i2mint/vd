@@ -191,7 +191,9 @@ def test_query_window_with_filter(populated):
     )
     ids = [
         d.id
-        for d in populated.query_window("2025-03-13", "2025-03-14", filt={"kind": "M&A"})
+        for d in populated.query_window(
+            "2025-03-13", "2025-03-14", filt={"kind": "M&A"}
+        )
     ]
     assert ids == ["d"]
 
@@ -243,7 +245,9 @@ def test_window_iter_explicit_bounds(populated):
 
 def test_search_window_filters_by_time(populated):
     # Search for "earnings"-ish text; restrict to the 13th
-    results = list(populated.search_window("Earnings", start="2025-03-13", end="2025-03-14"))
+    results = list(
+        populated.search_window("Earnings", start="2025-03-13", end="2025-03-14")
+    )
     ids = [r["id"] for r in results]
     # All results should have ts < 2025-03-14
     assert "c" not in ids

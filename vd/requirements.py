@@ -268,9 +268,7 @@ def check_requirements(backend: str, *, verbose: bool = True) -> dict[str, Any]:
     return result
 
 
-def _next_step(
-    backend: str, meta: dict, checks: list[dict], ok: bool
-) -> str:
+def _next_step(backend: str, meta: dict, checks: list[dict], ok: bool) -> str:
     """Compute the single highest-leverage next action."""
     if ok:
         return f"Ready. Connect with: vd.connect({backend!r}, ...)"
@@ -338,7 +336,11 @@ def setup_guide(backend: str) -> str:
     lines.append(f"   {install_command(backend)}")
 
     if backend in _DOCKER_COMMANDS:
-        lines += ["", "2. Start the server (Docker one-liner):", f"   {_DOCKER_COMMANDS[backend]}"]
+        lines += [
+            "",
+            "2. Start the server (Docker one-liner):",
+            f"   {_DOCKER_COMMANDS[backend]}",
+        ]
 
     env_vars = meta.get("env_vars") or []
     if env_vars and meta.get("archetype") == "managed":
@@ -385,7 +387,5 @@ def install_backend(backend: str, *, run: bool = False) -> str:
         import subprocess
 
         packages = cmd.removeprefix("pip install ").split()
-        subprocess.run(
-            [sys.executable, "-m", "pip", "install", *packages], check=True
-        )
+        subprocess.run([sys.executable, "-m", "pip", "install", *packages], check=True)
     return cmd

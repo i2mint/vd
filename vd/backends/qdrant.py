@@ -312,8 +312,11 @@ class QdrantClientAdapter(AbstractClient):
             raise ValueError(f"Collection {name!r} already exists")
         self._metrics[name] = metric
         collection = QdrantCollection(
-            name, self._client, embedder=self._embedder,
-            dimension=dimension, metric=metric,
+            name,
+            self._client,
+            embedder=self._embedder,
+            dimension=dimension,
+            metric=metric,
         )
         if dimension is not None:  # eager create when the dimension is known
             collection._ensure_collection()
@@ -323,7 +326,9 @@ class QdrantClientAdapter(AbstractClient):
         if not self._client.collection_exists(name) and name not in self._metrics:
             raise KeyError(f"Collection {name!r} does not exist")
         return QdrantCollection(
-            name, self._client, embedder=self._embedder,
+            name,
+            self._client,
+            embedder=self._embedder,
             metric=self._metrics.get(name, "cosine"),
         )
 

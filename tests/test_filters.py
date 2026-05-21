@@ -135,8 +135,18 @@ def test_unknown_logical_operator_raises():
 
 def test_supported_operators_constant_is_complete():
     expected = {
-        "$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$in", "$nin", "$exists",
-        "$and", "$or", "$not",
+        "$eq",
+        "$ne",
+        "$gt",
+        "$gte",
+        "$lt",
+        "$lte",
+        "$in",
+        "$nin",
+        "$exists",
+        "$and",
+        "$or",
+        "$not",
     }
     assert SUPPORTED_FILTER_OPERATORS == expected
 

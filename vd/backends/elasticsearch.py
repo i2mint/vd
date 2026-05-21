@@ -525,9 +525,7 @@ class ElasticsearchClient(AbstractClient):
         are internal to Elasticsearch and not managed by ``vd``.
         """
         all_indices: dict = self._client.indices.get(index="*")
-        return iter(
-            sorted(name for name in all_indices if not name.startswith("."))
-        )
+        return iter(sorted(name for name in all_indices if not name.startswith(".")))
 
     @property
     def native(self) -> Elasticsearch:
