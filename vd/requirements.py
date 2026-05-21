@@ -93,7 +93,10 @@ def _module_importable(pip_package: str) -> bool:
     """Return whether the module a pip package provides can be found."""
     from vd.providers import _import_name
 
-    return importlib.util.find_spec(_import_name(pip_package)) is not None
+    try:
+        return importlib.util.find_spec(_import_name(pip_package)) is not None
+    except (ImportError, ValueError):
+        return False
 
 
 # --------------------------------------------------------------------------- #

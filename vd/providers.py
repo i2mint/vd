@@ -106,8 +106,12 @@ def is_installed(name: str) -> bool:
     packages = meta.get("pip_packages") or []
     if not packages:
         return True
-    # The first package is the primary client library.
-    return importlib.util.find_spec(_import_name(packages[0])) is not None
+    # The first package is the primary client library. find_spec can raise
+    # ModuleNotFoundError for a dotted name whose parent package is absent.
+    try:
+        return importlib.util.find_spec(_import_name(packages[0])) is not None
+    except (ImportError, ValueError):
+        return False
 
 
 def has_adapter(name: str) -> bool:

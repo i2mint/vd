@@ -45,6 +45,13 @@ def _sql_str(value: str) -> str:
     return "'" + value.replace("'", "''") + "'"
 
 
+def _table_names(db) -> list[str]:
+    """Return the table names of a LanceDB connection, across client versions."""
+    listed = db.list_tables() if hasattr(db, "list_tables") else db.table_names()
+    # Newer clients return a response object with a ``.tables`` attribute.
+    return list(getattr(listed, "tables", listed))
+
+
 class LanceDBCollection(AbstractCollection):
     """A collection backed by one Lance table."""
 
@@ -205,7 +212,7 @@ class LanceDBClient(AbstractClient):
         metric: str = "cosine",
         **index_config,
     ) -> LanceDBCollection:
-        if name in set(self._client.table_names()):
+        if name in set(_table_names(self._client)) or name in self._metrics:
             raise ValueError(f"Collection {name!r} already exists")
         self._metrics[name] = metric
         return LanceDBCollection(
@@ -216,7 +223,7 @@ class LanceDBClient(AbstractClient):
     def get_collection(self, name: str) -> LanceDBCollection:
         # A collection exists either as a created Lance table or as one that
         # was create_collection'd but not yet written to.
-        if name not in set(self._client.table_names()) and name not in self._metrics:
+        if name not in set(_table_names(self._client)) and name not in self._metrics:
             raise KeyError(f"Collection {name!r} does not exist")
         return LanceDBCollection(
             name, self._client, embedder=self._embedder,
@@ -224,12 +231,12 @@ class LanceDBClient(AbstractClient):
         )
 
     def delete_collection(self, name: str) -> None:
-        if name not in set(self._client.table_names()) and name not in self._metrics:
+        if name not in set(_table_names(self._client)) and name not in self._metrics:
             raise KeyError(f"Collection {name!r} does not exist")
-        if name in set(self._client.table_names()):
+        if name in set(_table_names(self._client)):
             self._client.drop_table(name)
         self._metrics.pop(name, None)
 
     def list_collections(self) -> Iterator[str]:
-        names = set(self._client.table_names()) | set(self._metrics)
+        names = set(_table_names(self._client)) | set(self._metrics)
         return iter(sorted(names))
