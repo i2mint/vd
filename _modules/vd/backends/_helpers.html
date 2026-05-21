@@ -1,0 +1,230 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vd.backends._helpers &mdash; vd 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            vd
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd.html">vd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/_helpers.html">vd.backends._helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/duckdb.html">vd.backends.duckdb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/elasticsearch.html">vd.backends.elasticsearch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/faiss.html">vd.backends.faiss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/lancedb.html">vd.backends.lancedb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/milvus.html">vd.backends.milvus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/mongodb.html">vd.backends.mongodb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/pgvector.html">vd.backends.pgvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/pinecone.html">vd.backends.pinecone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/qdrant.html">vd.backends.qdrant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/redis.html">vd.backends.redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/sqlite_vec.html">vd.backends.sqlite_vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/turbopuffer.html">vd.backends.turbopuffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/weaviate.html">vd.backends.weaviate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/base.html">vd.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/cli.html">vd.cli</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/filters.html">vd.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/health.html">vd.health</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/io.html">vd.io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/providers.html">vd.providers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/requirements.html">vd.requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/search.html">vd.search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/text.html">vd.text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/time_indexed.html">vd.time_indexed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/util.html">vd.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">vd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../vd.html">vd</a></li>
+      <li class="breadcrumb-item active">vd.backends._helpers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vd.backends._helpers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Shared helpers for backend adapters.</span>
+
+<span class="sd">Small, adapter-agnostic utilities used across several backends: turning a raw</span>
+<span class="sd">distance into a &quot;higher-is-better&quot; score, and applying the canonical metadata</span>
+<span class="sd">filter client-side for backends whose native filtering is absent or weaker</span>
+<span class="sd">than ``vd``&#39;s filter language.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Filter</span><span class="p">,</span> <span class="n">SearchResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">matches_filter</span>
+
+<span class="c1">#: When a backend must filter client-side, fetch this many times ``limit``</span>
+<span class="c1">#: candidates from the index first, so post-filtering still returns a full page.</span>
+<span class="n">OVERFETCH_FACTOR</span> <span class="o">=</span> <span class="mi">10</span>
+
+
+<div class="viewcode-block" id="score_from_distance">
+<a class="viewcode-back" href="../../../module_docs/vd/backends/_helpers.html#vd.backends._helpers.score_from_distance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">score_from_distance</span><span class="p">(</span><span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a raw backend distance to a higher-is-better similarity score.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    distance : float</span>
+<span class="sd">        The backend&#39;s raw distance (lower = closer).</span>
+<span class="sd">    metric : str</span>
+<span class="sd">        ``&quot;cosine&quot;``, ``&quot;dot&quot;``, or ``&quot;l2&quot;``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; score_from_distance(0.0, &#39;cosine&#39;)</span>
+<span class="sd">    1.0</span>
+<span class="sd">    &gt;&gt;&gt; round(score_from_distance(1.0, &#39;l2&#39;), 3)</span>
+<span class="sd">    0.5</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;cosine&quot;</span><span class="p">:</span>
+        <span class="c1"># Cosine distance is in [0, 2]; similarity = 1 - distance.</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">distance</span>
+    <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;dot&quot;</span><span class="p">:</span>
+        <span class="c1"># Many backends report negative inner product as the &quot;distance&quot;.</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">distance</span>
+    <span class="c1"># l2 (and any unknown): squash a non-negative distance into (0, 1].</span>
+    <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">distance</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overfetch_limit">
+<a class="viewcode-back" href="../../../module_docs/vd/backends/_helpers.html#vd.backends._helpers.overfetch_limit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">overfetch_limit</span><span class="p">(</span><span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Filter</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return how many candidates to fetch: ``limit``, or more if filtering.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">limit</span> <span class="o">*</span> <span class="n">OVERFETCH_FACTOR</span> <span class="k">if</span> <span class="nb">filter</span> <span class="k">else</span> <span class="n">limit</span></div>
+
+
+
+<div class="viewcode-block" id="apply_client_filter">
+<a class="viewcode-back" href="../../../module_docs/vd/backends/_helpers.html#vd.backends._helpers.apply_client_filter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_client_filter</span><span class="p">(</span>
+    <span class="n">results</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">],</span>
+    <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Filter</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Keep the first ``limit`` results whose metadata satisfies ``filter``.</span>
+
+<span class="sd">    For backends that cannot filter natively (FAISS) or whose native filtering</span>
+<span class="sd">    does not cover the full ``vd`` filter language: over-fetch, then filter</span>
+<span class="sd">    here against the canonical evaluator so semantics match every other backend.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">out</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">filter</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">matches_filter</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{},</span> <span class="nb">filter</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">limit</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="coerce_metadata">
+<a class="viewcode-back" href="../../../module_docs/vd/backends/_helpers.html#vd.backends._helpers.coerce_metadata">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">coerce_metadata</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a plain ``dict`` for storage, treating ``None`` as ``{}``.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span> <span class="k">if</span> <span class="n">metadata</span> <span class="k">else</span> <span class="p">{}</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

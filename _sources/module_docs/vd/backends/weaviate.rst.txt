@@ -1,0 +1,4 @@
+vd.backends.weaviate
+====================
+.. automodule:: vd.backends.weaviate
+   :members:

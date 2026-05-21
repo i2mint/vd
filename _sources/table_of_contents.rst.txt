@@ -5,16 +5,31 @@
    module_docs/vd
    module_docs/vd/analytics
    module_docs/vd/backends
+   module_docs/vd/backends/_helpers
    module_docs/vd/backends/chroma
+   module_docs/vd/backends/duckdb
+   module_docs/vd/backends/elasticsearch
+   module_docs/vd/backends/faiss
+   module_docs/vd/backends/lancedb
    module_docs/vd/backends/memory
+   module_docs/vd/backends/milvus
+   module_docs/vd/backends/mongodb
+   module_docs/vd/backends/pgvector
+   module_docs/vd/backends/pinecone
+   module_docs/vd/backends/qdrant
+   module_docs/vd/backends/redis
+   module_docs/vd/backends/sqlite_vec
+   module_docs/vd/backends/turbopuffer
+   module_docs/vd/backends/weaviate
    module_docs/vd/base
    module_docs/vd/cli
-   module_docs/vd/compare
    module_docs/vd/config
    module_docs/vd/filters
    module_docs/vd/health
    module_docs/vd/io
    module_docs/vd/migration
+   module_docs/vd/providers
+   module_docs/vd/requirements
    module_docs/vd/search
    module_docs/vd/text
    module_docs/vd/time_indexed

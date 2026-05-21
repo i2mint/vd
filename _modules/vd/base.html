@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.base &mdash; vd 0.1.5 documentation</title>
+  <title>vd.base &mdash; vd 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=59fadc99"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -49,16 +49,31 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd.html">vd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/analytics.html">vd.analytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/_helpers.html">vd.backends._helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/duckdb.html">vd.backends.duckdb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/elasticsearch.html">vd.backends.elasticsearch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/faiss.html">vd.backends.faiss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/lancedb.html">vd.backends.lancedb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/milvus.html">vd.backends.milvus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/mongodb.html">vd.backends.mongodb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/pgvector.html">vd.backends.pgvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/pinecone.html">vd.backends.pinecone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/qdrant.html">vd.backends.qdrant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/redis.html">vd.backends.redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/sqlite_vec.html">vd.backends.sqlite_vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/turbopuffer.html">vd.backends.turbopuffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/weaviate.html">vd.backends.weaviate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/base.html">vd.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/cli.html">vd.cli</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/compare.html">vd.compare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/config.html">vd.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/filters.html">vd.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/health.html">vd.health</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/io.html">vd.io</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/providers.html">vd.providers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/requirements.html">vd.requirements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/search.html">vd.search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/text.html">vd.text</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/time_indexed.html">vd.time_indexed</a></li>
@@ -92,46 +107,162 @@
              
   <h1>Source code for vd.base</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Core protocols, base classes, and data models for the vd package.</span>
+<span class="sd">Core contracts, data model, and abstract bases for the ``vd`` vectorDB facade.</span>
 
-<span class="sd">This module defines the fundamental abstractions used throughout the vd package:</span>
-<span class="sd">- Document: Standardized representation of searchable documents</span>
-<span class="sd">- Client: Protocol for vector database connections</span>
-<span class="sd">- Collection: Protocol for document collections (MutableMapping-based)</span>
-<span class="sd">- BaseBackend: Abstract base class for backend implementations</span>
+<span class="sd">``vd`` is a facade over vector databases. This module is the single source of</span>
+<span class="sd">truth for the contract every backend adapter satisfies and that all of ``vd``&#39;s</span>
+<span class="sd">higher-level tooling (search, io, migration, analytics, ...) is written against.</span>
+
+<span class="sd">The contract, smallest-first:</span>
+
+<span class="sd">- :class:`Document` — the unit stored in a collection: ``id``, ``text``,</span>
+<span class="sd">  ``vector``, ``metadata``.</span>
+<span class="sd">- :class:`Collection` — a ``MutableMapping[str, Document]`` *plus* a</span>
+<span class="sd">  :meth:`~Collection.search` method. This is the one retrieval extension.</span>
+<span class="sd">- :class:`Client` — a ``Mapping[str, Collection]``: a live connection to one</span>
+<span class="sd">  backend, through which collections are created, fetched, and dropped.</span>
+<span class="sd">- :class:`AbstractCollection` / :class:`AbstractClient` — adapter-author</span>
+<span class="sd">  conveniences. A backend implements a handful of *raw primitives*; these bases</span>
+<span class="sd">  supply everything users actually see (flexible inputs, optional text</span>
+<span class="sd">  embedding, ``egress`` transforms, batch helpers, dimension checks) uniformly.</span>
+
+<span class="sd">Embedding is deliberately **external**. ``vd`` stores and searches *vectors*;</span>
+<span class="sd">turning text into vectors is another package&#39;s job (e.g. ``ef``). A</span>
+<span class="sd">:class:`Client` may be handed an optional ``embedder`` callable purely as a</span>
+<span class="sd">convenience, so ``collection[&quot;k&quot;] = &quot;some text&quot;`` and</span>
+<span class="sd">``collection.search(&quot;query text&quot;)`` work. With no embedder configured those</span>
+<span class="sd">text forms raise :class:`EmbeddingRequiredError`, and the caller must pass</span>
+<span class="sd">:class:`Document` objects (or pre-computed vectors) directly.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">MutableMapping</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Iterable</span><span class="p">,</span>
     <span class="n">Iterator</span><span class="p">,</span>
-    <span class="n">Mapping</span><span class="p">,</span>
-    <span class="n">MutableMapping</span><span class="p">,</span>
     <span class="n">Optional</span><span class="p">,</span>
     <span class="n">Protocol</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
     <span class="n">runtime_checkable</span><span class="p">,</span>
 <span class="p">)</span>
 
+<span class="c1"># --------------------------------------------------------------------------- #</span>
 <span class="c1"># Type aliases</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
 <span class="n">Text</span> <span class="o">=</span> <span class="nb">str</span>
-<span class="n">TextKey</span> <span class="o">=</span> <span class="nb">str</span>  <span class="c1"># Document ID / URI</span>
+<span class="n">TextKey</span> <span class="o">=</span> <span class="nb">str</span>  <span class="c1"># Document ID / URI — the key in a collection</span>
 <span class="n">Metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
 <span class="n">Vector</span> <span class="o">=</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
 <span class="n">VectorMapping</span> <span class="o">=</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TextKey</span><span class="p">,</span> <span class="n">Vector</span><span class="p">]</span>
-<span class="n">SearchResult</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>  <span class="c1"># {id, text, score, metadata, ...}</span>
-<span class="n">Filter</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>  <span class="c1"># MongoDB-style filter syntax</span>
+<span class="n">SearchResult</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>  <span class="c1"># {&quot;id&quot;, &quot;text&quot;, &quot;score&quot;, &quot;metadata&quot;, ...}</span>
+<span class="n">Filter</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>  <span class="c1"># canonical MongoDB-style filter (see vd.filters)</span>
 
-<span class="c1"># Document input can be specified in multiple flexible ways</span>
+<span class="c1">#: A document may be supplied to batch operations in several flexible shapes.</span>
 <span class="n">DocumentInput</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
-    <span class="nb">str</span><span class="p">,</span>  <span class="c1"># Just text (ID auto-generated)</span>
-    <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>  <span class="c1"># (text, id)</span>
-    <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metadata</span><span class="p">],</span>  <span class="c1"># (text, metadata)</span>
-    <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Metadata</span><span class="p">],</span>  <span class="c1"># (text, id, metadata)</span>
-    <span class="s2">&quot;Document&quot;</span><span class="p">,</span>  <span class="c1"># Full document object</span>
+    <span class="nb">str</span><span class="p">,</span>  <span class="c1"># just text (id auto-generated)</span>
+    <span class="nb">tuple</span><span class="p">,</span>  <span class="c1"># (text, id) | (text, metadata) | (text, id, metadata)</span>
+    <span class="s2">&quot;Document&quot;</span><span class="p">,</span>  <span class="c1"># a fully-formed Document</span>
 <span class="p">]</span>
+
+<span class="c1">#: Distance metrics the facade understands. Adapters map these to their own</span>
+<span class="c1">#: spellings (e.g. ``&quot;l2&quot;`` -&gt; Qdrant ``Distance.EUCLID``).</span>
+<span class="n">METRICS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span> <span class="s2">&quot;dot&quot;</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">})</span>
+
+<span class="c1"># Re-exported from vd.filters; imported lazily inside methods to avoid a cycle</span>
+<span class="c1"># (vd.filters imports UnsupportedFilterError from this module).</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Exceptions</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+
+<div class="viewcode-block" id="VdError">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.VdError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VdError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for every error ``vd`` raises on its own behalf.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="StaticIndexError">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.StaticIndexError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StaticIndexError</span><span class="p">(</span><span class="n">VdError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised on a write to a static (immutable) index.</span>
+
+<span class="sd">    Some backends — notably a plain FAISS flat index — build an index that</span>
+<span class="sd">    cannot accept incremental ``__setitem__`` / ``__delitem__`` after creation.</span>
+<span class="sd">    Such collections set :attr:`AbstractCollection.supports_incremental_writes`</span>
+<span class="sd">    to ``False`` and raise this on write. Callers branch on that flag *before*</span>
+<span class="sd">    triggering the error, and use the adapter&#39;s documented ``rebuild()`` path.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="UnsupportedFilterError">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.UnsupportedFilterError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnsupportedFilterError</span><span class="p">(</span><span class="n">VdError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when a metadata filter uses an operator a backend cannot honor.</span>
+
+<span class="sd">    The canonical, backend-agnostic filter language lives in :mod:`vd.filters`</span>
+<span class="sd">    (a MongoDB-style JSON dialect). When a filter uses an operator outside a</span>
+<span class="sd">    backend&#39;s documented subset — or one that does not exist at all — this is</span>
+<span class="sd">    raised, so the caller can simplify the filter or drop to the backend&#39;s</span>
+<span class="sd">    native filter via the escape hatch (``collection.native``).</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="UnsupportedCapabilityError">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.UnsupportedCapabilityError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnsupportedCapabilityError</span><span class="p">(</span><span class="n">VdError</span><span class="p">,</span> <span class="ne">NotImplementedError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when an operation needs a capability the backend lacks.</span>
+
+<span class="sd">    Prefer feature-discovery — ``isinstance(collection, SupportsHybrid)`` — over</span>
+<span class="sd">    catching this, but it is the clear, typed fallback when an optional</span>
+<span class="sd">    operation is called on a backend that does not implement it.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="EmbeddingRequiredError">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.EmbeddingRequiredError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmbeddingRequiredError</span><span class="p">(</span><span class="n">VdError</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when text is given but no embedder is configured.</span>
+
+<span class="sd">    ``vd`` operates on vectors. Passing raw text to ``collection[key] = text``</span>
+<span class="sd">    or ``collection.search(text)`` only works when the :class:`Client` was</span>
+<span class="sd">    created with an ``embedder``. Otherwise, pass a :class:`Document` with a</span>
+<span class="sd">    ``vector`` (or a pre-computed query vector) directly.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="BackendNotInstalledError">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.BackendNotInstalledError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BackendNotInstalledError</span><span class="p">(</span><span class="n">VdError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when a known backend&#39;s Python package is not installed.</span>
+
+<span class="sd">    Distinct from an *unknown* backend name (a plain ``ValueError``): the</span>
+<span class="sd">    backend exists in ``vd``&#39;s provider registry, but its client library is</span>
+<span class="sd">    missing. The message carries the ``pip install`` command to fix it.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Document</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
 
 
 <div class="viewcode-block" id="Document">
@@ -139,160 +270,77 @@
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Document</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Standardized document representation.</span>
-
-<span class="sd">    A Document represents a searchable text segment with its embedding vector</span>
-<span class="sd">    and associated metadata.</span>
+<span class="sd">    The unit stored in a :class:`Collection`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    id : str</span>
-<span class="sd">        Unique identifier (URI to source). Acts as the key in collections.</span>
+<span class="sd">        Unique identifier; the key under which the document lives in a</span>
+<span class="sd">        collection.</span>
 <span class="sd">    text : str</span>
-<span class="sd">        The text content to be embedded and searched.</span>
+<span class="sd">        The text content. May be empty for vector-first use cases where no</span>
+<span class="sd">        text is associated with a vector.</span>
 <span class="sd">    vector : list[float], optional</span>
-<span class="sd">        Embedding vector. If None, will be auto-generated using the collection&#39;s</span>
-<span class="sd">        embedding model.</span>
-<span class="sd">    metadata : dict[str, Any]</span>
-<span class="sd">        Associated metadata for filtering and retrieval.</span>
+<span class="sd">        The embedding. If ``None`` when written, the collection embeds</span>
+<span class="sd">        ``text`` with its client&#39;s ``embedder`` — or raises</span>
+<span class="sd">        :class:`EmbeddingRequiredError` if none is configured.</span>
+<span class="sd">    metadata : dict</span>
+<span class="sd">        Arbitrary metadata, used for filtering and carried through search</span>
+<span class="sd">        results.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; doc = Document(id=&quot;doc1&quot;, text=&quot;Hello world&quot;)</span>
-<span class="sd">    &gt;&gt;&gt; doc.id</span>
-<span class="sd">    &#39;doc1&#39;</span>
-<span class="sd">    &gt;&gt;&gt; doc.text</span>
-<span class="sd">    &#39;Hello world&#39;</span>
-<span class="sd">    &gt;&gt;&gt; doc.metadata</span>
-<span class="sd">    {}</span>
-
-<span class="sd">    &gt;&gt;&gt; doc_with_meta = Document(</span>
-<span class="sd">    ...     id=&quot;doc2&quot;,</span>
-<span class="sd">    ...     text=&quot;AI article&quot;,</span>
-<span class="sd">    ...     metadata={&#39;category&#39;: &#39;tech&#39;, &#39;year&#39;: 2024}</span>
-<span class="sd">    ... )</span>
-<span class="sd">    &gt;&gt;&gt; doc_with_meta.metadata[&#39;category&#39;]</span>
-<span class="sd">    &#39;tech&#39;</span>
+<span class="sd">    &gt;&gt;&gt; doc.id, doc.text, doc.metadata</span>
+<span class="sd">    (&#39;doc1&#39;, &#39;Hello world&#39;, {})</span>
+<span class="sd">    &gt;&gt;&gt; Document(id=&quot;v1&quot;, vector=[0.1, 0.2]).text</span>
+<span class="sd">    &#39;&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="n">vector</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Vector</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">metadata</span><span class="p">:</span> <span class="n">Metadata</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
 
 
 
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Protocols — the contract clients code against</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+
 <div class="viewcode-block" id="Collection">
 <a class="viewcode-back" href="../../module_docs/vd/base.html#vd.Collection">[docs]</a>
+<span class="nd">@runtime_checkable</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Collection</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Protocol for a collection of searchable documents.</span>
+<span class="sd">    A collection of documents: ``MutableMapping[str, Document]`` + ``search``.</span>
 
-<span class="sd">    A Collection follows the MutableMapping interface, storing Document objects</span>
-<span class="sd">    and enabling intuitive CRUD operations via dict-like syntax while providing</span>
-<span class="sd">    semantic search capabilities.</span>
-
-<span class="sd">    The collection automatically handles embedding generation when documents</span>
-<span class="sd">    are added without pre-computed vectors.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; # Add documents (dict-like syntax)</span>
-<span class="sd">    &gt;&gt;&gt; collection[&#39;doc1&#39;] = &quot;This is a test document&quot;</span>
-<span class="sd">    &gt;&gt;&gt; collection[&#39;doc2&#39;] = Document(id=&#39;doc2&#39;, text=&#39;Another doc&#39;)</span>
-<span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; # Retrieve documents</span>
-<span class="sd">    &gt;&gt;&gt; doc = collection[&#39;doc1&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; doc.text</span>
-<span class="sd">    &#39;This is a test document&#39;</span>
-<span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; # Delete documents</span>
-<span class="sd">    &gt;&gt;&gt; del collection[&#39;doc1&#39;]</span>
-<span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; # Iterate over document IDs</span>
-<span class="sd">    &gt;&gt;&gt; list(collection)  # doctest: +SKIP</span>
-<span class="sd">    [&#39;doc2&#39;]</span>
-<span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; # Search the collection</span>
-<span class="sd">    &gt;&gt;&gt; results = collection.search(&#39;test query&#39;, limit=5)  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; for result in results:  # doctest: +SKIP</span>
-<span class="sd">    ...     print(result[&#39;id&#39;], result[&#39;score&#39;])</span>
+<span class="sd">    The mapping half is storage; :meth:`search` is the single retrieval</span>
+<span class="sd">    extension. This minimal surface is everything ``vd``&#39;s tooling depends on.</span>
+<span class="sd">    Batch insertion is an *optional* capability — see :class:`SupportsBatch`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># MutableMapping interface methods</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add or update a document in the collection.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        key : str</span>
-<span class="sd">            Document ID</span>
-<span class="sd">        value : str or Document</span>
-<span class="sd">            Document content. If str, creates a Document with this text.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Insert or replace a document (idempotent upsert).&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Document</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieve a document by ID.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        key : str</span>
-<span class="sd">            Document ID</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Document</span>
-<span class="sd">            The document with the specified ID</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        KeyError</span>
-<span class="sd">            If document ID not found</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the document for ``key``; raise ``KeyError`` if absent.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete a document from the collection.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        key : str</span>
-<span class="sd">            Document ID to delete</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        KeyError</span>
-<span class="sd">            If document ID not found</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a document; raise ``KeyError`` if absent.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Iterate over document IDs.</span>
-
-<span class="sd">        Yields</span>
-<span class="sd">        ------</span>
-<span class="sd">        str</span>
-<span class="sd">            Document IDs in the collection</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate document ids.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the number of documents in the collection.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        int</span>
-<span class="sd">            Number of documents</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of documents.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
-    <span class="c1"># Search methods</span>
 <div class="viewcode-block" id="Collection.search">
 <a class="viewcode-back" href="../../module_docs/vd/base.html#vd.Collection.search">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span>
@@ -304,121 +352,22 @@
         <span class="n">egress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">SearchResult</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Search the collection for similar documents.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        query : str or list of float</span>
-<span class="sd">            Query text (will be embedded) or pre-computed query vector</span>
-<span class="sd">        limit : int, default 10</span>
-<span class="sd">            Maximum number of results to return</span>
-<span class="sd">        filter : dict, optional</span>
-<span class="sd">            Metadata filter using unified filter syntax (MongoDB-style)</span>
-<span class="sd">        egress : callable, optional</span>
-<span class="sd">            Function to transform results. If None, returns full result dict.</span>
-<span class="sd">        **kwargs</span>
-<span class="sd">            Backend-specific options (e.g., alpha=0.5 for hybrid search)</span>
-
-<span class="sd">        Yields</span>
-<span class="sd">        ------</span>
-<span class="sd">        dict or transformed result</span>
-<span class="sd">            Search results with keys: &#39;id&#39;, &#39;text&#39;, &#39;score&#39;, &#39;metadata&#39;</span>
-<span class="sd">            (or transformed by egress function)</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; # Basic search</span>
-<span class="sd">        &gt;&gt;&gt; docs = collection.search(&quot;machine learning&quot;, limit=5)  # doctest: +SKIP</span>
-<span class="sd">        &gt;&gt;&gt; for doc in docs:  # doctest: +SKIP</span>
-<span class="sd">        ...     print(doc[&#39;id&#39;], doc[&#39;score&#39;])</span>
-<span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; # With metadata filter</span>
-<span class="sd">        &gt;&gt;&gt; docs = collection.search(  # doctest: +SKIP</span>
-<span class="sd">        ...     &quot;AI research&quot;,</span>
-<span class="sd">        ...     filter={&#39;year&#39;: {&#39;$gte&#39;: 2020}}</span>
-<span class="sd">        ... )</span>
-<span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; # With custom egress to extract just text</span>
-<span class="sd">        &gt;&gt;&gt; texts = collection.search(  # doctest: +SKIP</span>
-<span class="sd">        ...     &quot;neural networks&quot;,</span>
-<span class="sd">        ...     egress=lambda r: r[&#39;text&#39;]</span>
-<span class="sd">        ... )</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the ``limit`` documents most similar to ``query``.&quot;&quot;&quot;</span>
         <span class="o">...</span></div>
-
-
-    <span class="c1"># Batch operations</span>
-<div class="viewcode-block" id="Collection.add_documents">
-<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.Collection.add_documents">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">add_documents</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">documents</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DocumentInput</span><span class="p">],</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Batch add documents to the collection.</span>
-
-<span class="sd">        This method efficiently adds multiple documents in batches, which is</span>
-<span class="sd">        typically faster than adding documents one at a time.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        documents : iterable of DocumentInput</span>
-<span class="sd">            Documents to add. Each can be:</span>
-<span class="sd">            - str: Just text (ID auto-generated)</span>
-<span class="sd">            - (text, id): Text with specific ID</span>
-<span class="sd">            - (text, metadata): Text with metadata (ID auto-generated)</span>
-<span class="sd">            - (text, id, metadata): Full specification</span>
-<span class="sd">            - Document: Full document object</span>
-<span class="sd">        batch_size : int, default 100</span>
-<span class="sd">            Number of documents to process in each batch</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; collection.add_documents([  # doctest: +SKIP</span>
-<span class="sd">        ...     &quot;First article about AI&quot;,</span>
-<span class="sd">        ...     (&quot;Second article&quot;, &quot;doc2&quot;),</span>
-<span class="sd">        ...     (&quot;Third article&quot;, {&#39;category&#39;: &#39;tech&#39;})</span>
-<span class="sd">        ... ])</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span></div>
-
-
-<div class="viewcode-block" id="Collection.upsert">
-<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.Collection.upsert">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">upsert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">:</span> <span class="n">Document</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Insert or update a document (idempotent operation).</span>
-
-<span class="sd">        This is equivalent to __setitem__ but takes a Document object.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        document : Document</span>
-<span class="sd">            Document to insert or update</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="p">[</span><span class="n">document</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">document</span></div>
 </div>
 
 
 
 <div class="viewcode-block" id="Client">
 <a class="viewcode-back" href="../../module_docs/vd/base.html#vd.Client">[docs]</a>
+<span class="nd">@runtime_checkable</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Client</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Protocol for vector database clients.</span>
+<span class="sd">    A live connection to one backend: ``Mapping[str, Collection]``.</span>
 
-<span class="sd">    A Client manages connections to vector database backends and provides</span>
-<span class="sd">    methods to create, retrieve, and manage collections.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import vd  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; collection = client.create_collection(&#39;my_docs&#39;)  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; collection[&#39;doc1&#39;] = &quot;Hello world&quot;  # doctest: +SKIP</span>
+<span class="sd">    Collections are created explicitly (so create-time parameters such as</span>
+<span class="sd">    ``dimension`` and ``metric`` can be supplied) and fetched either by</span>
+<span class="sd">    :meth:`get_collection` or by mapping access ``client[name]``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Client.create_collection">
@@ -427,246 +376,40 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">schema</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="n">dimension</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">index_config</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Collection</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create a new collection.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        name : str</span>
-<span class="sd">            Name of the collection</span>
-<span class="sd">        schema : dict, optional</span>
-<span class="sd">            Schema definition (backend-specific)</span>
-<span class="sd">        **kwargs</span>
-<span class="sd">            Additional backend-specific options</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Collection</span>
-<span class="sd">            The newly created collection</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If collection already exists</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new collection; raise ``ValueError`` if it exists.&quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
 
 <div class="viewcode-block" id="Client.get_collection">
 <a class="viewcode-back" href="../../module_docs/vd/base.html#vd.Client.get_collection">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Collection</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get an existing collection.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        name : str</span>
-<span class="sd">            Name of the collection</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Collection</span>
-<span class="sd">            The requested collection</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        KeyError</span>
-<span class="sd">            If collection does not exist</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span></div>
-
-
-<div class="viewcode-block" id="Client.list_collections">
-<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.Client.list_collections">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">list_collections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        List all collection names.</span>
-
-<span class="sd">        Yields</span>
-<span class="sd">        ------</span>
-<span class="sd">        str</span>
-<span class="sd">            Collection names</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an existing collection; raise ``KeyError`` if absent.&quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
 
 <div class="viewcode-block" id="Client.delete_collection">
 <a class="viewcode-back" href="../../module_docs/vd/base.html#vd.Client.delete_collection">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete a collection.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        name : str</span>
-<span class="sd">            Name of the collection to delete</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        KeyError</span>
-<span class="sd">            If collection does not exist</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span></div>
-</div>
-
-
-
-<div class="viewcode-block" id="BaseBackend">
-<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.BaseBackend">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">BaseBackend</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Abstract base class for vector database backends.</span>
-
-<span class="sd">    Backend implementations should inherit from this class and implement</span>
-<span class="sd">    all abstract methods.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    embedding_model : callable</span>
-<span class="sd">        Function to generate embeddings from text</span>
-<span class="sd">    **config</span>
-<span class="sd">        Backend-specific configuration</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    supports_incremental_writes : bool</span>
-<span class="sd">        Whether collections from this backend accept writes after creation.</span>
-<span class="sd">        Static-index backends (e.g. FAISS, Annoy) set this ``False`` and raise</span>
-<span class="sd">        :class:`StaticIndexError` on ``__setitem__`` / ``__delitem__``. Callers</span>
-<span class="sd">        can branch on this flag to avoid triggering the error.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1">#: Whether collections of this backend accept incremental writes (see above).</span>
-    <span class="n">supports_incremental_writes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">],</span>
-        <span class="o">**</span><span class="n">config</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize the backend.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        embedding_model : callable</span>
-<span class="sd">            Function that takes text and returns an embedding vector</span>
-<span class="sd">        **config</span>
-<span class="sd">            Backend-specific configuration options</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span> <span class="o">=</span> <span class="n">embedding_model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The raw backend client — the escape hatch to backend-specific features.</span>
-
-<span class="sd">        This is a *supported, documented* part of the API: when the unified</span>
-<span class="sd">        facade does not expose a backend-specific feature, drop to the native</span>
-<span class="sd">        client rather than circumventing ``vd``. Returns ``None`` for backends</span>
-<span class="sd">        that have no external client (e.g. the in-memory backend).</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; client = vd.connect(&#39;chroma&#39;)          # doctest: +SKIP</span>
-<span class="sd">        &gt;&gt;&gt; raw = client.client                    # doctest: +SKIP</span>
-<span class="sd">        &gt;&gt;&gt; raw.heartbeat()                        # native ChromaDB call  # doctest: +SKIP</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_client&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-
-<div class="viewcode-block" id="BaseBackend.create_collection">
-<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.BaseBackend.create_collection">[docs]</a>
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">create_collection</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">schema</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Collection</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new collection.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Drop a collection; raise ``KeyError`` if absent.&quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
 
-<div class="viewcode-block" id="BaseBackend.get_collection">
-<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.BaseBackend.get_collection">[docs]</a>
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Collection</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get an existing collection.&quot;&quot;&quot;</span>
-        <span class="o">...</span></div>
-
-
-<div class="viewcode-block" id="BaseBackend.list_collections">
-<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.BaseBackend.list_collections">[docs]</a>
-    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Client.list_collections">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.Client.list_collections">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">list_collections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;List all collection names.&quot;&quot;&quot;</span>
-        <span class="o">...</span></div>
-
-
-<div class="viewcode-block" id="BaseBackend.delete_collection">
-<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.BaseBackend.delete_collection">[docs]</a>
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">delete_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a collection.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate collection names.&quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 </div>
 
 
 
-<div class="viewcode-block" id="StaticIndexError">
-<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.StaticIndexError">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">StaticIndexError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Raised when attempting write operations on a static index.</span>
-
-<span class="sd">    Some backends (like FAISS, Annoy) use static indexes that cannot be</span>
-<span class="sd">    modified after they are built. This exception is raised when users</span>
-<span class="sd">    attempt write operations on such backends.</span>
-
-<span class="sd">    See also the ``supports_incremental_writes`` flag on :class:`BaseBackend`,</span>
-<span class="sd">    which lets callers branch *before* triggering this error.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">pass</span></div>
-
-
-
-<div class="viewcode-block" id="UnsupportedFilterError">
-<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.UnsupportedFilterError">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">UnsupportedFilterError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Raised when a metadata filter uses an operator a backend does not support.</span>
-
-<span class="sd">    The canonical, backend-agnostic filter language is defined in</span>
-<span class="sd">    :mod:`vd.filters` (a MongoDB-style JSON dialect). When a filter uses an</span>
-<span class="sd">    operator outside a backend&#39;s supported subset — or an operator that does</span>
-<span class="sd">    not exist at all — this is raised so the caller can simplify the filter or</span>
-<span class="sd">    drop to a backend-specific filter via the escape hatch (``collection.native``).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">pass</span></div>
-
-
-
-<div class="viewcode-block" id="UnsupportedCapabilityError">
-<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.UnsupportedCapabilityError">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">UnsupportedCapabilityError</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Raised when an operation requires a capability the backend does not have.</span>
-
-<span class="sd">    Prefer feature-discovery — ``isinstance(collection, SupportsHybrid)`` — over</span>
-<span class="sd">    catching this exception, but it is raised as a clear, typed fallback when an</span>
-<span class="sd">    optional operation is called on a backend that does not implement it.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">pass</span></div>
-
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Capability protocols — opt-in, feature-discovered with isinstance</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
 
 
 <div class="viewcode-block" id="SupportsBatch">
@@ -674,21 +417,22 @@
 <span class="nd">@runtime_checkable</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SupportsBatch</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Capability protocol: a collection that supports efficient batch operations.</span>
+<span class="sd">    A collection that supports efficient batch insertion.</span>
 
-<span class="sd">    Batch insertion (``add_documents``) and idempotent single upsert</span>
-<span class="sd">    (``upsert``) are *optional* — not part of the minimal ``Collection``</span>
-<span class="sd">    contract. Feature-discover support at runtime::</span>
+<span class="sd">    ``add_documents`` and ``upsert`` are *not* part of the minimal</span>
+<span class="sd">    :class:`Collection` contract. Every adapter built on</span>
+<span class="sd">    :class:`AbstractCollection` happens to provide them, but generic code</span>
+<span class="sd">    should still feature-discover::</span>
 
 <span class="sd">        if isinstance(collection, SupportsBatch):</span>
-<span class="sd">            collection.add_documents(many_docs, batch_size=100)</span>
+<span class="sd">            collection.add_documents(many_docs, batch_size=256)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add_documents</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DocumentInput</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">DocumentInput</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">upsert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">:</span> <span class="s2">&quot;Document&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">upsert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">:</span> <span class="n">Document</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span></div>
 
 
 
@@ -697,30 +441,547 @@
 <span class="nd">@runtime_checkable</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SupportsHybrid</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Capability protocol: a collection that supports hybrid (dense + lexical) search.</span>
+<span class="sd">    A collection that supports native hybrid (dense + lexical) search.</span>
 
-<span class="sd">    Hybrid search has no syntactic convergence across vector databases, so it is</span>
-<span class="sd">    an *opt-in capability*, never part of the baseline contract. Feature-discover</span>
-<span class="sd">    before calling::</span>
+<span class="sd">    Hybrid search has no syntactic convergence across vector databases, so it</span>
+<span class="sd">    is an opt-in capability, never baseline. Feature-discover before calling::</span>
 
 <span class="sd">        if isinstance(collection, SupportsHybrid):</span>
 <span class="sd">            hits = collection.hybrid_search(vec, &quot;query text&quot;, alpha=0.5)</span>
 
-<span class="sd">    Backends without native hybrid do not implement this protocol; combine</span>
-<span class="sd">    separate dense + lexical result lists with :func:`vd.reciprocal_rank_fusion`</span>
-<span class="sd">    as a client-side fallback.</span>
+<span class="sd">    Backends without native hybrid do not implement this; combine separate</span>
+<span class="sd">    dense + lexical result lists with :func:`vd.reciprocal_rank_fusion`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">hybrid_search</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">query</span><span class="p">:</span> <span class="s2">&quot;Vector&quot;</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span>
         <span class="n">query_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="nb">filter</span><span class="p">:</span> <span class="s2">&quot;Optional[Filter]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Filter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
         <span class="n">fusion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rrf&quot;</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">:</span> <span class="o">...</span></div>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span> <span class="o">...</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Helpers shared by the abstract bases</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_to_float_list</span><span class="p">(</span><span class="n">vector</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vector</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Coerce any vector-like (list, tuple, numpy array, ...) to ``list[float]``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; _to_float_list((1, 2, 3))</span>
+<span class="sd">    [1.0, 2.0, 3.0]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tolist</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="s2">&quot;tolist&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tolist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># numpy array / pandas Series</span>
+        <span class="n">vector</span> <span class="o">=</span> <span class="n">tolist</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">vector</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_coerce_document</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Document</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalize a ``collection[key] = value`` assignment to a :class:`Document`.</span>
+
+<span class="sd">    ``value`` may be raw text, a ``(text, ...)`` tuple, or a ``Document``. The</span>
+<span class="sd">    resulting document&#39;s ``id`` is always ``key``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; _coerce_document(&quot;a&quot;, &quot;hello&quot;).text</span>
+<span class="sd">    &#39;hello&#39;</span>
+<span class="sd">    &gt;&gt;&gt; _coerce_document(&quot;a&quot;, (&quot;hello&quot;, {&quot;k&quot;: 1})).metadata</span>
+<span class="sd">    {&#39;k&#39;: 1}</span>
+<span class="sd">    &gt;&gt;&gt; d = _coerce_document(&quot;a&quot;, Document(id=&quot;ignored&quot;, text=&quot;t&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; d.id</span>
+<span class="sd">    &#39;a&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Document</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">key</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">metadata</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="c1"># (text, metadata) | (text, id) | (text, id, metadata) — id forced to key.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">text</span><span class="p">,</span> <span class="n">second</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">second</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">second</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+            <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">text</span><span class="p">,</span> <span class="n">_id</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Cannot interpret </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> as a document. Pass text, a &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;(text, metadata) tuple, or a vd.Document.&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># AbstractCollection — adapter-author base</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+
+<div class="viewcode-block" id="AbstractCollection">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.AbstractCollection">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AbstractCollection</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class implementing the :class:`Collection` contract for adapters.</span>
+
+<span class="sd">    A backend subclasses this and implements the *raw primitives* below;</span>
+<span class="sd">    everything users see is provided here, once, uniformly:</span>
+
+<span class="sd">    - flexible ``__setitem__`` inputs (text / tuple / :class:`Document`),</span>
+<span class="sd">    - optional text embedding when a ``Document`` arrives without a vector,</span>
+<span class="sd">    - text-query embedding in :meth:`search`,</span>
+<span class="sd">    - central filter validation against :attr:`supported_filter_operators`,</span>
+<span class="sd">    - ``egress`` result transforms,</span>
+<span class="sd">    - batch helpers (:meth:`add_documents`, :meth:`upsert`),</span>
+<span class="sd">    - eager dimension-mismatch detection.</span>
+
+<span class="sd">    Subclass responsibilities (raw primitives)</span>
+<span class="sd">    ------------------------------------------</span>
+<span class="sd">    ``_write(doc)``</span>
+<span class="sd">        Upsert one document. Its ``vector`` is guaranteed non-``None`` and</span>
+<span class="sd">        dimension-checked.</span>
+<span class="sd">    ``_read(key) -&gt; Document``</span>
+<span class="sd">        Fetch one document; raise ``KeyError`` if absent.</span>
+<span class="sd">    ``_drop(key)``</span>
+<span class="sd">        Delete one document; raise ``KeyError`` if absent.</span>
+<span class="sd">    ``_keys() -&gt; Iterator[str]``</span>
+<span class="sd">        Iterate document ids.</span>
+<span class="sd">    ``_count() -&gt; int``</span>
+<span class="sd">        Number of documents.</span>
+<span class="sd">    ``_query(vector, *, limit, filter, **kwargs) -&gt; Iterable[SearchResult]``</span>
+<span class="sd">        Raw nearest-neighbor search. ``filter`` is the canonical AST — the</span>
+<span class="sd">        adapter translates it. Each result is a dict with at least ``id``,</span>
+<span class="sd">        ``text``, ``score``, ``metadata``.</span>
+
+<span class="sd">    Optional overrides</span>
+<span class="sd">    ------------------</span>
+<span class="sd">    ``_write_many(docs)``</span>
+<span class="sd">        Efficient bulk upsert. Defaults to a loop over ``_write``.</span>
+<span class="sd">    ``native`` (property)</span>
+<span class="sd">        The raw backend collection handle (escape hatch).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#: Filter operators this backend can honor. Default: the full language.</span>
+    <span class="c1">#: Adapters narrow this; :meth:`search` validates against it.</span>
+    <span class="n">supported_filter_operators</span><span class="p">:</span> <span class="nb">frozenset</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">()</span>  <span class="c1"># set in __init_subclass__</span>
+
+    <span class="c1">#: Whether the backend accepts writes after creation. Static-index backends</span>
+    <span class="c1">#: set this ``False`` and raise :class:`StaticIndexError` on write.</span>
+    <span class="n">supports_incremental_writes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Instance attributes adapters are expected to set in their __init__:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">dimension</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cosine&quot;</span>
+    <span class="n">_embedder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Default an adapter&#39;s supported operators to the full language unless</span>
+        <span class="c1"># it declares its own narrower subset.</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;supported_filter_operators&quot;</span><span class="p">):</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">vd.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">SUPPORTED_FILTER_OPERATORS</span>
+
+            <span class="bp">cls</span><span class="o">.</span><span class="n">supported_filter_operators</span> <span class="o">=</span> <span class="n">SUPPORTED_FILTER_OPERATORS</span>
+
+    <span class="c1"># ----- embedding (optional convenience) -------------------------------- #</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_embedder</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether a text-&gt;vector embedder is configured on this collection.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_embedder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="AbstractCollection.embed">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.AbstractCollection.embed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">embed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vector</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Embed ``text`` to a vector, or raise :class:`EmbeddingRequiredError`.</span>
+
+<span class="sd">        This is the single place text becomes a vector inside ``vd``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_embedder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">EmbeddingRequiredError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Collection </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> has no embedder: cannot turn text &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;into a vector. Either create the client with &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;`vd.connect(backend, embedder=...)`, or pass a vd.Document &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;with a `vector` (and a pre-computed query vector to search).&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">_to_float_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_embedder</span><span class="p">(</span><span class="n">text</span><span class="p">))</span></div>
+
+
+    <span class="c1"># ----- dimension bookkeeping ------------------------------------------ #</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_vet_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vector</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Coerce to ``list[float]`` and enforce/learn the collection dimension.&quot;&quot;&quot;</span>
+        <span class="n">vec</span> <span class="o">=</span> <span class="n">_to_float_list</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vec</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">vec</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Vector dimension mismatch in collection </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">: got &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">vec</span><span class="p">)</span><span class="si">}</span><span class="s2">, expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="si">}</span><span class="s2">. A collection&#39;s &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;dimension is fixed once data is written; use a fresh &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;collection for a different embedding model.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">vec</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ensure_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="n">Document</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Document</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return ``doc`` with a vetted vector, embedding its text if needed.&quot;&quot;&quot;</span>
+        <span class="n">vector</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span> <span class="k">if</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">embed</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">doc</span><span class="o">.</span><span class="n">vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vet_vector</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">doc</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Vector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Vector</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Turn a text-or-vector query into a vetted query vector.&quot;&quot;&quot;</span>
+        <span class="n">vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embed</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">query</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vet_vector</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
+
+    <span class="c1"># ----- MutableMapping interface --------------------------------------- #</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">supports_incremental_writes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">StaticIndexError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Collection </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> uses a static index and cannot &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;accept writes after creation. Rebuild it instead.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_vector</span><span class="p">(</span><span class="n">_coerce_document</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Document</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">supports_incremental_writes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">StaticIndexError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Collection </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> uses a static index and cannot &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;delete documents. Rebuild it instead.&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count</span><span class="p">()</span>
+
+    <span class="c1"># ----- search --------------------------------------------------------- #</span>
+
+<div class="viewcode-block" id="AbstractCollection.search">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.AbstractCollection.search">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Vector</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Filter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">egress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">SearchResult</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the ``limit`` documents most similar to ``query``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query : str or list[float]</span>
+<span class="sd">            Query text (embedded via the client&#39;s ``embedder``) or a</span>
+<span class="sd">            pre-computed query vector.</span>
+<span class="sd">        limit : int</span>
+<span class="sd">            Maximum number of results.</span>
+<span class="sd">        filter : dict, optional</span>
+<span class="sd">            Metadata filter in the canonical ``vd`` dialect (see</span>
+<span class="sd">            :mod:`vd.filters`). Validated against this backend&#39;s</span>
+<span class="sd">            :attr:`supported_filter_operators` before the query runs, so an</span>
+<span class="sd">            unsupported operator fails with a clear :class:`UnsupportedFilterError`.</span>
+<span class="sd">        egress : callable, optional</span>
+<span class="sd">            Transform applied to each result dict before it is yielded.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Backend-specific search options, passed through to ``_query``.</span>
+
+<span class="sd">        Yields</span>
+<span class="sd">        ------</span>
+<span class="sd">        dict</span>
+<span class="sd">            ``{&quot;id&quot;, &quot;text&quot;, &quot;score&quot;, &quot;metadata&quot;}`` — or whatever ``egress``</span>
+<span class="sd">            returns.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">vd.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_filter</span>
+
+        <span class="n">validate_filter</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">supported</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">supported_filter_operators</span><span class="p">)</span>
+        <span class="n">query_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="n">query_vector</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">egress</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="k">if</span> <span class="n">egress</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">result</span></div>
+
+
+    <span class="c1"># ----- batch convenience (also satisfies SupportsBatch) --------------- #</span>
+
+<div class="viewcode-block" id="AbstractCollection.add_documents">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.AbstractCollection.add_documents">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_documents</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">documents</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">DocumentInput</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add many documents, embedding and writing them in batches.</span>
+
+<span class="sd">        Each item may be a string, a ``(text, ...)`` tuple, or a</span>
+<span class="sd">        :class:`Document` (see :data:`DocumentInput`). Items without an ``id``</span>
+<span class="sd">        get a deterministic auto-generated one.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">vd.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_document_input</span>
+
+        <span class="n">batch</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Document</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">normalize_document_input</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">auto_id</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_vector</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+            <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">batch_size</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_write_many</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">batch</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write_many</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AbstractCollection.upsert">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.AbstractCollection.upsert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">upsert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">:</span> <span class="n">Document</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Insert or replace ``document`` (equivalent to ``self[doc.id] = doc``).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="n">document</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">document</span></div>
+
+
+    <span class="c1"># ----- escape hatch --------------------------------------------------- #</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">native</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The raw backend collection handle — a supported, documented escape hatch.</span>
+
+<span class="sd">        Use it to reach backend-specific features the facade does not expose,</span>
+<span class="sd">        rather than circumventing ``vd``. Returns ``None`` if the adapter has</span>
+<span class="sd">        no distinct native object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_native&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># ----- raw primitives — adapters MUST implement ----------------------- #</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="n">Document</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Upsert one document (its ``vector`` is set and dimension-checked).&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Document</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetch one document; raise ``KeyError`` if absent.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_drop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete one document; raise ``KeyError`` if absent.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate document ids.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of documents.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_query</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">vector</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Filter</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raw nearest-neighbor search returning result dicts.&quot;&quot;&quot;</span>
+
+    <span class="c1"># ----- raw primitives — adapters MAY override ------------------------- #</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_many</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">docs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Bulk upsert. Override for a backend with an efficient batch path.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># AbstractClient — adapter-author base</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+
+<div class="viewcode-block" id="AbstractClient">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.AbstractClient">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AbstractClient</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class implementing the :class:`Client` contract for adapters.</span>
+
+<span class="sd">    A :class:`Client` is a ``Mapping[str, Collection]``. A backend subclasses</span>
+<span class="sd">    this and implements :meth:`create_collection`, :meth:`get_collection`,</span>
+<span class="sd">    :meth:`delete_collection`, and :meth:`list_collections`; the mapping</span>
+<span class="sd">    behavior, the :meth:`get_or_create_collection` convenience, the ``client``</span>
+<span class="sd">    escape hatch, and context-manager support come for free.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    embedder : callable, optional</span>
+<span class="sd">        A ``text -&gt; vector`` function. Passed to every collection so text</span>
+<span class="sd">        inputs are accepted as a convenience. ``None`` (the default) makes the</span>
+<span class="sd">        client vector-only.</span>
+<span class="sd">    **config</span>
+<span class="sd">        Backend-specific connection configuration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#: The registry name of this backend (e.g. ``&quot;chroma&quot;``). Adapters set it.</span>
+    <span class="n">backend_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">embedder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">config</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_embedder</span> <span class="o">=</span> <span class="n">embedder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+
+    <span class="c1"># ----- adapters MUST implement ---------------------------------------- #</span>
+
+<div class="viewcode-block" id="AbstractClient.create_collection">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.AbstractClient.create_collection">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_collection</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">dimension</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">index_config</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Collection</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new collection.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Collection name.</span>
+<span class="sd">        dimension : int, optional</span>
+<span class="sd">            Vector dimension. May be ``None`` for backends that can infer it</span>
+<span class="sd">            from the first written vector; required up front by backends that</span>
+<span class="sd">            cannot.</span>
+<span class="sd">        metric : str</span>
+<span class="sd">            Distance metric: ``&quot;cosine&quot;``, ``&quot;dot&quot;``, or ``&quot;l2&quot;``.</span>
+<span class="sd">        **index_config</span>
+<span class="sd">            Backend-specific index tuning (HNSW ``M``/``ef``, IVF ``nlist``, ...).</span>
+<span class="sd">            Documented per adapter; never abstracted into a common enum.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If a collection of that name already exists.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="AbstractClient.get_collection">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.AbstractClient.get_collection">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Collection</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an existing collection; raise ``KeyError`` if absent.&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="AbstractClient.delete_collection">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.AbstractClient.delete_collection">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Drop a collection; raise ``KeyError`` if absent.&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="AbstractClient.list_collections">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.AbstractClient.list_collections">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">list_collections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate collection names.&quot;&quot;&quot;</span></div>
+
+
+    <span class="c1"># ----- provided: Mapping interface ------------------------------------ #</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Collection</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_collections</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_collections</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># ----- provided: conveniences ----------------------------------------- #</span>
+
+<div class="viewcode-block" id="AbstractClient.get_or_create_collection">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.AbstractClient.get_or_create_collection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_or_create_collection</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">dimension</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">index_config</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Collection</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the collection ``name``, creating it if it does not exist.</span>
+
+<span class="sd">        The common idiom that every consumer otherwise re-implements as a</span>
+<span class="sd">        ``try get_collection / except KeyError: create_collection``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="n">dimension</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="o">**</span><span class="n">index_config</span>
+            <span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The raw backend client — a supported, documented escape hatch.</span>
+
+<span class="sd">        Drop to it for backend-specific operations the facade does not expose.</span>
+<span class="sd">        Returns ``None`` for backends with no external client object (e.g. the</span>
+<span class="sd">        in-memory backend).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_client&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AbstractClient.close">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.AbstractClient.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Release backend resources. Default no-op; adapters override as needed.&quot;&quot;&quot;</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AbstractClient&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 </pre></div>
 

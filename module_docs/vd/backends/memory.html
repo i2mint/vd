@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.backends.memory &mdash; vd 0.1.5 documentation</title>
+  <title>vd.backends.memory &mdash; vd 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=59fadc99"></script>
+      <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -24,8 +24,8 @@
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="vd.base" href="../base.html" />
-    <link rel="prev" title="vd.backends.chroma" href="chroma.html" /> 
+    <link rel="next" title="vd.backends.milvus" href="milvus.html" />
+    <link rel="prev" title="vd.backends.lancedb" href="lancedb.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -52,34 +52,46 @@
 <li class="toctree-l1"><a class="reference internal" href="../../vd.html">vd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analytics.html">vd.analytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_helpers.html">vd.backends._helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="duckdb.html">vd.backends.duckdb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elasticsearch.html">vd.backends.elasticsearch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faiss.html">vd.backends.faiss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lancedb.html">vd.backends.lancedb</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">vd.backends.memory</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#vd.backends.memory.MemoryBackend"><code class="docutils literal notranslate"><span class="pre">MemoryBackend</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryBackend.create_collection"><code class="docutils literal notranslate"><span class="pre">MemoryBackend.create_collection()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryBackend.delete_collection"><code class="docutils literal notranslate"><span class="pre">MemoryBackend.delete_collection()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryBackend.get_collection"><code class="docutils literal notranslate"><span class="pre">MemoryBackend.get_collection()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryBackend.list_collections"><code class="docutils literal notranslate"><span class="pre">MemoryBackend.list_collections()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.backends.memory.MemoryClient"><code class="docutils literal notranslate"><span class="pre">MemoryClient</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryClient.backend_name"><code class="docutils literal notranslate"><span class="pre">MemoryClient.backend_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryClient.create_collection"><code class="docutils literal notranslate"><span class="pre">MemoryClient.create_collection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryClient.delete_collection"><code class="docutils literal notranslate"><span class="pre">MemoryClient.delete_collection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryClient.get_collection"><code class="docutils literal notranslate"><span class="pre">MemoryClient.get_collection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryClient.list_collections"><code class="docutils literal notranslate"><span class="pre">MemoryClient.list_collections()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.backends.memory.MemoryCollection"><code class="docutils literal notranslate"><span class="pre">MemoryCollection</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryCollection.add_documents"><code class="docutils literal notranslate"><span class="pre">MemoryCollection.add_documents()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryCollection.native"><code class="docutils literal notranslate"><span class="pre">MemoryCollection.native</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryCollection.search"><code class="docutils literal notranslate"><span class="pre">MemoryCollection.search()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryCollection.supported_filter_operators"><code class="docutils literal notranslate"><span class="pre">MemoryCollection.supported_filter_operators</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryCollection.supports_incremental_writes"><code class="docutils literal notranslate"><span class="pre">MemoryCollection.supports_incremental_writes</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.backends.memory.MemoryCollection.upsert"><code class="docutils literal notranslate"><span class="pre">MemoryCollection.upsert()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="milvus.html">vd.backends.milvus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mongodb.html">vd.backends.mongodb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pgvector.html">vd.backends.pgvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pinecone.html">vd.backends.pinecone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qdrant.html">vd.backends.qdrant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="redis.html">vd.backends.redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sqlite_vec.html">vd.backends.sqlite_vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="turbopuffer.html">vd.backends.turbopuffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weaviate.html">vd.backends.weaviate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../base.html">vd.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cli.html">vd.cli</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../compare.html">vd.compare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../config.html">vd.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../filters.html">vd.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../health.html">vd.health</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../io.html">vd.io</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../providers.html">vd.providers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirements.html">vd.requirements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../search.html">vd.search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../text.html">vd.text</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../time_indexed.html">vd.time_indexed</a></li>
@@ -112,126 +124,92 @@
              
   <section id="module-vd.backends.memory">
 <span id="vd-backends-memory"></span><h1>vd.backends.memory<a class="headerlink" href="#module-vd.backends.memory" title="Link to this heading"></a></h1>
-<p>In-memory vector database backend.</p>
-<p>This backend stores all documents and vectors in memory, making it suitable
-for prototyping, testing, and small datasets. It provides a simple reference
-implementation of the backend protocol.</p>
+<p>In-memory backend — the reference adapter.</p>
+<p>Stores documents in a plain <code class="docutils literal notranslate"><span class="pre">dict</span></code> and answers queries with brute-force
+similarity in pure Python. Always available (no third-party dependency), and
+the canonical example of how a backend implements the small set of raw
+primitives that <a class="reference internal" href="../base.html#vd.base.AbstractCollection" title="vd.base.AbstractCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractCollection</span></code></a> builds on. Use it for
+tests, notebooks, and corpora small enough that an ANN index is overkill.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="vd.backends.memory.MemoryBackend">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.backends.memory.</span></span><span class="sig-name descname"><span class="pre">MemoryBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryBackend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryBackend" title="Link to this definition"></a></dt>
-<dd><p>In-memory vector database backend.</p>
-<p>Stores all collections and documents in memory. Perfect for testing,
-prototyping, and small datasets.</p>
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryClient">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.backends.memory.</span></span><span class="sig-name descname"><span class="pre">MemoryClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryClient" title="Link to this definition"></a></dt>
+<dd><p>In-memory vector database client.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span><span class="p">[</span><span class="s1">&#39;doc1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Hello world&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">collection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">col</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s1">&#39;docs&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">col</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;cat&#39;</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">col</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;dog&#39;</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">col</span><span class="o">.</span><span class="n">search</span><span class="p">([</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+<span class="go">[&#39;a&#39;]</span>
 </pre></div>
 </div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryClient.backend_name">
+<span class="sig-name descname"><span class="pre">backend_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'memory'</span></span><a class="headerlink" href="#vd.backends.memory.MemoryClient.backend_name" title="Link to this definition"></a></dt>
+<dd><p>The registry name of this backend (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;chroma&quot;</span></code>). Adapters set it.</p>
+</dd></dl>
+
 <dl class="py method">
-<dt class="sig sig-object py" id="vd.backends.memory.MemoryBackend.create_collection">
-<span class="sig-name descname"><span class="pre">create_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../base.html#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryBackend.create_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryBackend.create_collection" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryClient.create_collection">
+<span class="sig-name descname"><span class="pre">create_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cosine'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">index_config</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#vd.backends.memory.MemoryCollection" title="vd.backends.memory.MemoryCollection"><span class="pre">MemoryCollection</span></a></span></span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryClient.create_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryClient.create_collection" title="Link to this definition"></a></dt>
 <dd><p>Create a new collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Collection name.</p></li>
+<li><p><strong>dimension</strong> (<em>int</em><em>, </em><em>optional</em>) – Vector dimension. May be <code class="docutils literal notranslate"><span class="pre">None</span></code> for backends that can infer it
+from the first written vector; required up front by backends that
+cannot.</p></li>
+<li><p><strong>metric</strong> (<em>str</em>) – Distance metric: <code class="docutils literal notranslate"><span class="pre">&quot;cosine&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dot&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;l2&quot;</span></code>.</p></li>
+<li><p><strong>**index_config</strong> – Backend-specific index tuning (HNSW <code class="docutils literal notranslate"><span class="pre">M</span></code>/<code class="docutils literal notranslate"><span class="pre">ef</span></code>, IVF <code class="docutils literal notranslate"><span class="pre">nlist</span></code>, …).
+Documented per adapter; never abstracted into a common enum.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If a collection of that name already exists.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="vd.backends.memory.MemoryBackend.delete_collection">
-<span class="sig-name descname"><span class="pre">delete_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryBackend.delete_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryBackend.delete_collection" title="Link to this definition"></a></dt>
-<dd><p>Delete a collection.</p>
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryClient.delete_collection">
+<span class="sig-name descname"><span class="pre">delete_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryClient.delete_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryClient.delete_collection" title="Link to this definition"></a></dt>
+<dd><p>Drop a collection; raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="vd.backends.memory.MemoryBackend.get_collection">
-<span class="sig-name descname"><span class="pre">get_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../base.html#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryBackend.get_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryBackend.get_collection" title="Link to this definition"></a></dt>
-<dd><p>Get an existing collection.</p>
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryClient.get_collection">
+<span class="sig-name descname"><span class="pre">get_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#vd.backends.memory.MemoryCollection" title="vd.backends.memory.MemoryCollection"><span class="pre">MemoryCollection</span></a></span></span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryClient.get_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryClient.get_collection" title="Link to this definition"></a></dt>
+<dd><p>Return an existing collection; raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="vd.backends.memory.MemoryBackend.list_collections">
-<span class="sig-name descname"><span class="pre">list_collections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryBackend.list_collections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryBackend.list_collections" title="Link to this definition"></a></dt>
-<dd><p>List all collection names.</p>
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryClient.list_collections">
+<span class="sig-name descname"><span class="pre">list_collections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryClient.list_collections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryClient.list_collections" title="Link to this definition"></a></dt>
+<dd><p>Iterate collection names.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.backends.memory.</span></span><span class="sig-name descname"><span class="pre">MemoryCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryCollection" title="Link to this definition"></a></dt>
-<dd><p>In-memory collection implementation.</p>
-<p>Stores documents in a dictionary and performs brute-force similarity
-search. Suitable for small datasets and testing.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – Collection name</p></li>
-<li><p><strong>embedding_model</strong> (<em>callable</em>) – Function to generate embeddings from text</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection.add_documents">
-<span class="sig-name descname"><span class="pre">add_documents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">documents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryCollection.add_documents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryCollection.add_documents" title="Link to this definition"></a></dt>
-<dd><p>Batch add documents.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>documents</strong> (<em>iterable</em><em> of </em><em>DocumentInput</em>) – Documents to add</p></li>
-<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>default 100</em>) – Batch size (not used in memory backend, but kept for API consistency)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.backends.memory.</span></span><span class="sig-name descname"><span class="pre">MemoryCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cosine'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryCollection" title="Link to this definition"></a></dt>
+<dd><p>A collection backed by an in-process <code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">Document]</span></code>.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection.native">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">native</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#vd.backends.memory.MemoryCollection.native" title="Link to this definition"></a></dt>
-<dd><p>The raw underlying store (escape hatch).</p>
-<p>For the in-memory backend this is the <code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">Document]</span></code> that backs
-the collection. A <em>supported, documented</em> part of the API.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection.search">
-<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryCollection.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryCollection.search" title="Link to this definition"></a></dt>
-<dd><p>Search the collection using brute-force similarity.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>query</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>float</em>) – Query text or pre-computed vector</p></li>
-<li><p><strong>limit</strong> (<em>int</em><em>, </em><em>default 10</em>) – Maximum number of results</p></li>
-<li><p><strong>filter</strong> (<em>dict</em><em>, </em><em>optional</em>) – Metadata filter (basic support for equality filters)</p></li>
-<li><p><strong>egress</strong> (<em>callable</em><em>, </em><em>optional</em>) – Transform function for results</p></li>
-<li><p><strong>**kwargs</strong> – Additional options (ignored by memory backend)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Yields<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>dict or transformed result</em> – Search results sorted by similarity score</p>
-</dd>
-</dl>
+<dd><p>The raw <code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">Document]</span></code> backing this collection (escape hatch).</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection.supported_filter_operators">
-<span class="sig-name descname"><span class="pre">supported_filter_operators</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or'})</span></span><a class="headerlink" href="#vd.backends.memory.MemoryCollection.supported_filter_operators" title="Link to this definition"></a></dt>
-<dd><p>The in-memory backend evaluates filters in Python, so it supports the
-full canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> filter language (see <a class="reference internal" href="../filters.html#module-vd.filters" title="vd.filters"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vd.filters</span></code></a>).</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection.supports_incremental_writes">
-<span class="sig-name descname"><span class="pre">supports_incremental_writes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#vd.backends.memory.MemoryCollection.supports_incremental_writes" title="Link to this definition"></a></dt>
-<dd><p>The in-memory backend accepts writes at any time.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection.upsert">
-<span class="sig-name descname"><span class="pre">upsert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/vd/backends/memory.html#MemoryCollection.upsert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryCollection.upsert" title="Link to this definition"></a></dt>
-<dd><p>Insert or update a document (idempotent operation).</p>
+<span class="sig-name descname"><span class="pre">supported_filter_operators</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">frozenset</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or'})</span></span><a class="headerlink" href="#vd.backends.memory.MemoryCollection.supported_filter_operators" title="Link to this definition"></a></dt>
+<dd><p>the full language.
+Adapters narrow this; <code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code> validates against it.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>document</strong> (<a class="reference internal" href="../../vd.html#vd.Document" title="vd.Document"><em>Document</em></a>) – Document to insert or update</p>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Filter operators this backend can honor. Default</p>
 </dd>
 </dl>
 </dd></dl>
@@ -244,8 +222,8 @@ full canonical <code class="docutils literal notranslate"><span class="pre">vd</
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="chroma.html" class="btn btn-neutral float-left" title="vd.backends.chroma" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../base.html" class="btn btn-neutral float-right" title="vd.base" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="lancedb.html" class="btn btn-neutral float-left" title="vd.backends.lancedb" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="milvus.html" class="btn btn-neutral float-right" title="vd.backends.milvus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

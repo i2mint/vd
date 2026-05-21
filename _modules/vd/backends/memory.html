@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.backends.memory &mdash; vd 0.1.5 documentation</title>
+  <title>vd.backends.memory &mdash; vd 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=59fadc99"></script>
+      <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -49,16 +49,31 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd.html">vd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/analytics.html">vd.analytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/_helpers.html">vd.backends._helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/duckdb.html">vd.backends.duckdb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/elasticsearch.html">vd.backends.elasticsearch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/faiss.html">vd.backends.faiss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/lancedb.html">vd.backends.lancedb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/milvus.html">vd.backends.milvus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/mongodb.html">vd.backends.mongodb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/pgvector.html">vd.backends.pgvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/pinecone.html">vd.backends.pinecone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/qdrant.html">vd.backends.qdrant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/redis.html">vd.backends.redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/sqlite_vec.html">vd.backends.sqlite_vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/turbopuffer.html">vd.backends.turbopuffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/backends/weaviate.html">vd.backends.weaviate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/base.html">vd.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/cli.html">vd.cli</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/compare.html">vd.compare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/config.html">vd.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/filters.html">vd.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/health.html">vd.health</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/io.html">vd.io</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/providers.html">vd.providers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/requirements.html">vd.requirements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/search.html">vd.search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/text.html">vd.text</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/vd/time_indexed.html">vd.time_indexed</a></li>
@@ -92,304 +107,169 @@
              
   <h1>Source code for vd.backends.memory</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">In-memory vector database backend.</span>
+<span class="sd">In-memory backend — the reference adapter.</span>
 
-<span class="sd">This backend stores all documents and vectors in memory, making it suitable</span>
-<span class="sd">for prototyping, testing, and small datasets. It provides a simple reference</span>
-<span class="sd">implementation of the backend protocol.</span>
+<span class="sd">Stores documents in a plain ``dict`` and answers queries with brute-force</span>
+<span class="sd">similarity in pure Python. Always available (no third-party dependency), and</span>
+<span class="sd">the canonical example of how a backend implements the small set of raw</span>
+<span class="sd">primitives that :class:`~vd.base.AbstractCollection` builds on. Use it for</span>
+<span class="sd">tests, notebooks, and corpora small enough that an ANN index is overkill.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">MutableMapping</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">BaseBackend</span><span class="p">,</span>
-    <span class="n">Collection</span><span class="p">,</span>
+    <span class="n">AbstractClient</span><span class="p">,</span>
+    <span class="n">AbstractCollection</span><span class="p">,</span>
     <span class="n">Document</span><span class="p">,</span>
-    <span class="n">DocumentInput</span><span class="p">,</span>
     <span class="n">Filter</span><span class="p">,</span>
     <span class="n">SearchResult</span><span class="p">,</span>
     <span class="n">Vector</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">vd.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">SUPPORTED_FILTER_OPERATORS</span><span class="p">,</span> <span class="n">matches_filter</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">vd.util</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">cosine_similarity</span><span class="p">,</span>
-    <span class="n">normalize_document_input</span><span class="p">,</span>
-    <span class="n">register_backend</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">matches_filter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">cosine_similarity</span><span class="p">,</span> <span class="n">euclidean_distance</span><span class="p">,</span> <span class="n">register_backend</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_similarity</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Higher-is-better similarity of two vectors under ``metric``.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;dot&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;l2&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">euclidean_distance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="MemoryCollection">
-<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.MemoryCollection">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">MemoryCollection</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    In-memory collection implementation.</span>
+<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MemoryCollection</span><span class="p">(</span><span class="n">AbstractCollection</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A collection backed by an in-process ``dict[str, Document]``.&quot;&quot;&quot;</span>
 
-<span class="sd">    Stores documents in a dictionary and performs brute-force similarity</span>
-<span class="sd">    search. Suitable for small datasets and testing.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    name : str</span>
-<span class="sd">        Collection name</span>
-<span class="sd">    embedding_model : callable</span>
-<span class="sd">        Function to generate embeddings from text</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1">#: The in-memory backend accepts writes at any time.</span>
-    <span class="n">supports_incremental_writes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="c1">#: The in-memory backend evaluates filters in Python, so it supports the</span>
-    <span class="c1">#: full canonical ``vd`` filter language (see :mod:`vd.filters`).</span>
-    <span class="n">supported_filter_operators</span> <span class="o">=</span> <span class="n">SUPPORTED_FILTER_OPERATORS</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the memory collection.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">embedder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dimension</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span> <span class="o">=</span> <span class="n">embedding_model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_documents</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Document</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_embedder</span> <span class="o">=</span> <span class="n">embedder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="n">dimension</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_docs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Document</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">native</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Document</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The raw underlying store (escape hatch).</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The raw ``dict[str, Document]`` backing this collection (escape hatch).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docs</span>
 
-<span class="sd">        For the in-memory backend this is the ``dict[str, Document]`` that backs</span>
-<span class="sd">        the collection. A *supported, documented* part of the API.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_documents</span>
+    <span class="c1"># ----- raw primitives ------------------------------------------------- #</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add or update a document.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="c1"># Convert string to Document</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="c1"># Handle tuple formats</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">normalize_document_input</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">auto_id</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="n">doc</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">key</span>  <span class="c1"># Override with the provided key</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="n">Document</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_docs</span><span class="p">[</span><span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span>
 
-        <span class="c1"># Generate embedding if not provided</span>
-        <span class="k">if</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">doc</span><span class="o">.</span><span class="n">vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Document</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>  <span class="c1"># KeyError propagates naturally</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_documents</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_drop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>  <span class="c1"># KeyError propagates naturally</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Document</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a document by ID.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_documents</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_docs</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a document.&quot;&quot;&quot;</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_documents</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_docs</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over document IDs.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_documents</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get number of documents.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_documents</span><span class="p">)</span>
-
-<div class="viewcode-block" id="MemoryCollection.search">
-<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.MemoryCollection.search">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_query</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">query</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Vector</span><span class="p">],</span>
+        <span class="n">vector</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Filter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">egress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">SearchResult</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Filter</span><span class="p">],</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Search the collection using brute-force similarity.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        query : str or list of float</span>
-<span class="sd">            Query text or pre-computed vector</span>
-<span class="sd">        limit : int, default 10</span>
-<span class="sd">            Maximum number of results</span>
-<span class="sd">        filter : dict, optional</span>
-<span class="sd">            Metadata filter (basic support for equality filters)</span>
-<span class="sd">        egress : callable, optional</span>
-<span class="sd">            Transform function for results</span>
-<span class="sd">        **kwargs</span>
-<span class="sd">            Additional options (ignored by memory backend)</span>
-
-<span class="sd">        Yields</span>
-<span class="sd">        ------</span>
-<span class="sd">        dict or transformed result</span>
-<span class="sd">            Search results sorted by similarity score</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Get query vector</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">query_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">query_vector</span> <span class="o">=</span> <span class="n">query</span>
-
-        <span class="c1"># Compute similarities</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">doc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_documents</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="c1"># Apply filter if provided</span>
-            <span class="k">if</span> <span class="nb">filter</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matches_filter</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="nb">filter</span><span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
+        <span class="n">scored</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
-
-            <span class="c1"># Compute similarity</span>
-            <span class="k">if</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">score</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">query_vector</span><span class="p">,</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="p">{</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-                        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
-                        <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span>
-                        <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
-                    <span class="p">}</span>
-                <span class="p">)</span>
-
-        <span class="c1"># Sort by score (descending)</span>
-        <span class="n">results</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="c1"># Limit results</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="p">[:</span><span class="n">limit</span><span class="p">]</span>
-
-        <span class="c1"># Apply egress if provided</span>
-        <span class="k">if</span> <span class="n">egress</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">egress</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
-
-        <span class="k">yield from</span> <span class="n">results</span></div>
-
-
-<div class="viewcode-block" id="MemoryCollection.add_documents">
-<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.MemoryCollection.add_documents">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">add_documents</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">documents</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DocumentInput</span><span class="p">],</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Batch add documents.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        documents : iterable of DocumentInput</span>
-<span class="sd">            Documents to add</span>
-<span class="sd">        batch_size : int, default 100</span>
-<span class="sd">            Batch size (not used in memory backend, but kept for API consistency)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">doc_input</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">:</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">normalize_document_input</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="n">auto_id</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="p">[</span><span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span></div>
-
-
-<div class="viewcode-block" id="MemoryCollection.upsert">
-<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.MemoryCollection.upsert">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">upsert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">:</span> <span class="n">Document</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Insert or update a document (idempotent operation).</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        document : Document</span>
-<span class="sd">            Document to insert or update</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="p">[</span><span class="n">document</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">document</span></div>
-
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_matches_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="n">Document</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Filter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check if a document matches the filter.</span>
-
-<span class="sd">        Delegates to :func:`vd.filters.matches_filter`, the single source of</span>
-<span class="sd">        truth for the canonical MongoDB-style filter language. Unknown</span>
-<span class="sd">        operators raise :class:`~vd.base.UnsupportedFilterError` rather than</span>
-<span class="sd">        silently matching.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        doc : Document</span>
-<span class="sd">            Document to check</span>
-<span class="sd">        filter : dict</span>
-<span class="sd">            Filter specification (see :mod:`vd.filters` for the full syntax)</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        bool</span>
-<span class="sd">            True if the document&#39;s metadata matches the filter</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">matches_filter</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="nb">filter</span><span class="p">)</span></div>
+            <span class="k">if</span> <span class="nb">filter</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">matches_filter</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="nb">filter</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">scored</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                    <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                    <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">_similarity</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">),</span>
+                    <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="n">scored</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">scored</span><span class="p">[:</span><span class="n">limit</span><span class="p">]</span></div>
 
 
 
-<div class="viewcode-block" id="MemoryBackend">
-<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.MemoryBackend">[docs]</a>
+<div class="viewcode-block" id="MemoryClient">
+<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient">[docs]</a>
 <span class="nd">@register_backend</span><span class="p">(</span><span class="s2">&quot;memory&quot;</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">MemoryBackend</span><span class="p">(</span><span class="n">BaseBackend</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MemoryClient</span><span class="p">(</span><span class="n">AbstractClient</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    In-memory vector database backend.</span>
-
-<span class="sd">    Stores all collections and documents in memory. Perfect for testing,</span>
-<span class="sd">    prototyping, and small datasets.</span>
+<span class="sd">    In-memory vector database client.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import vd  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; collection = client.create_collection(&#39;test&#39;)  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; collection[&#39;doc1&#39;] = &quot;Hello world&quot;  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; results = list(collection.search(&quot;hello&quot;))  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; import vd</span>
+<span class="sd">    &gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; col = client.create_collection(&#39;docs&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; col[&#39;a&#39;] = vd.Document(id=&#39;a&#39;, text=&#39;cat&#39;, vector=[1.0, 0.0])</span>
+<span class="sd">    &gt;&gt;&gt; col[&#39;b&#39;] = vd.Document(id=&#39;b&#39;, text=&#39;dog&#39;, vector=[0.0, 1.0])</span>
+<span class="sd">    &gt;&gt;&gt; [r[&#39;id&#39;] for r in col.search([0.9, 0.1], limit=1)]</span>
+<span class="sd">    [&#39;a&#39;]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">],</span> <span class="o">**</span><span class="n">config</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the memory backend.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">embedding_model</span><span class="o">=</span><span class="n">embedding_model</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">embedder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">embedder</span><span class="o">=</span><span class="n">embedder</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_collections</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MemoryCollection</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="MemoryBackend.create_collection">
-<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.MemoryBackend.create_collection">[docs]</a>
+<div class="viewcode-block" id="MemoryClient.create_collection">
+<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient.create_collection">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_collection</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">schema</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Collection</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new collection.&quot;&quot;&quot;</span>
+        <span class="n">dimension</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">index_config</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MemoryCollection</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collections</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Collection &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; already exists&quot;</span><span class="p">)</span>
-
-        <span class="n">collection</span> <span class="o">=</span> <span class="n">MemoryCollection</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">embedding_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Collection </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> already exists&quot;</span><span class="p">)</span>
+        <span class="n">collection</span> <span class="o">=</span> <span class="n">MemoryCollection</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">embedder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_embedder</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="n">dimension</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_collections</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">collection</span>
         <span class="k">return</span> <span class="n">collection</span></div>
 
 
-<div class="viewcode-block" id="MemoryBackend.get_collection">
-<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.MemoryBackend.get_collection">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Collection</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get an existing collection.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="MemoryClient.get_collection">
+<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient.get_collection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MemoryCollection</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collections</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Collection &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; does not exist&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Collection </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collections</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="MemoryBackend.list_collections">
-<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.MemoryBackend.list_collections">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">list_collections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;List all collection names.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collections</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
-
-
-<div class="viewcode-block" id="MemoryBackend.delete_collection">
-<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.MemoryBackend.delete_collection">[docs]</a>
+<div class="viewcode-block" id="MemoryClient.delete_collection">
+<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient.delete_collection">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a collection.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collections</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Collection &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; does not exist&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Collection </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collections</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="MemoryClient.list_collections">
+<a class="viewcode-back" href="../../../module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient.list_collections">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">list_collections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collections</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

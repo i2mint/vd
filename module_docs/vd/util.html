@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.util &mdash; vd 0.1.5 documentation</title>
+  <title>vd.util &mdash; vd 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=59fadc99"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -51,16 +51,31 @@
 <li class="toctree-l1"><a class="reference internal" href="../vd.html">vd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="analytics.html">vd.analytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/_helpers.html">vd.backends._helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/duckdb.html">vd.backends.duckdb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/elasticsearch.html">vd.backends.elasticsearch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/faiss.html">vd.backends.faiss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/lancedb.html">vd.backends.lancedb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/milvus.html">vd.backends.milvus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/mongodb.html">vd.backends.mongodb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/pgvector.html">vd.backends.pgvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/pinecone.html">vd.backends.pinecone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/qdrant.html">vd.backends.qdrant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/redis.html">vd.backends.redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/sqlite_vec.html">vd.backends.sqlite_vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/turbopuffer.html">vd.backends.turbopuffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/weaviate.html">vd.backends.weaviate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="base.html">vd.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">vd.cli</a></li>
-<li class="toctree-l1"><a class="reference internal" href="compare.html">vd.compare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config.html">vd.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">vd.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="health.html">vd.health</a></li>
 <li class="toctree-l1"><a class="reference internal" href="io.html">vd.io</a></li>
 <li class="toctree-l1"><a class="reference internal" href="migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="providers.html">vd.providers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">vd.requirements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="search.html">vd.search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="text.html">vd.text</a></li>
 <li class="toctree-l1"><a class="reference internal" href="time_indexed.html">vd.time_indexed</a></li>
@@ -69,16 +84,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#vd.util.cosine_similarity"><code class="docutils literal notranslate"><span class="pre">cosine_similarity()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.util.euclidean_distance"><code class="docutils literal notranslate"><span class="pre">euclidean_distance()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.util.get_backend"><code class="docutils literal notranslate"><span class="pre">get_backend()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#vd.util.get_backend_info"><code class="docutils literal notranslate"><span class="pre">get_backend_info()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#vd.util.get_install_instructions"><code class="docutils literal notranslate"><span class="pre">get_install_instructions()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.util.id_and_score"><code class="docutils literal notranslate"><span class="pre">id_and_score()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.util.id_only"><code class="docutils literal notranslate"><span class="pre">id_only()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.util.id_text_score"><code class="docutils literal notranslate"><span class="pre">id_text_score()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#vd.util.list_all_backends"><code class="docutils literal notranslate"><span class="pre">list_all_backends()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#vd.util.list_available_backends"><code class="docutils literal notranslate"><span class="pre">list_available_backends()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.util.list_backends"><code class="docutils literal notranslate"><span class="pre">list_backends()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.util.mean_vector"><code class="docutils literal notranslate"><span class="pre">mean_vector()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.util.normalize_document_input"><code class="docutils literal notranslate"><span class="pre">normalize_document_input()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#vd.util.print_backends_table"><code class="docutils literal notranslate"><span class="pre">print_backends_table()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.util.register_backend"><code class="docutils literal notranslate"><span class="pre">register_backend()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.util.text_only"><code class="docutils literal notranslate"><span class="pre">text_only()</span></code></a></li>
 </ul>
@@ -111,52 +122,51 @@
              
   <section id="module-vd.util">
 <span id="vd-util"></span><h1>vd.util<a class="headerlink" href="#module-vd.util" title="Link to this heading"></a></h1>
-<p>Utility functions and facades for the vd package.</p>
-<p>This module provides:
-- Backend registration system
-- Connection factory function
-- Utility functions for common operations
-- Egress functions for search result transformation</p>
+<p>The backend registry, the <a class="reference internal" href="#vd.util.connect" title="vd.util.connect"><code class="xref py py-func docutils literal notranslate"><span class="pre">connect()</span></code></a> factory, and small shared utilities.</p>
+<p>This module is intentionally thin. It owns three things:</p>
+<ul class="simple">
+<li><p>the <strong>registry</strong> mapping a backend name (<code class="docutils literal notranslate"><span class="pre">&quot;chroma&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;qdrant&quot;</span></code>, …) to
+its adapter <a class="reference internal" href="base.html#vd.base.Client" title="vd.base.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> class, via the <a class="reference internal" href="#vd.util.register_backend" title="vd.util.register_backend"><code class="xref py py-func docutils literal notranslate"><span class="pre">register_backend()</span></code></a>
+decorator;</p></li>
+<li><p><a class="reference internal" href="#vd.util.connect" title="vd.util.connect"><code class="xref py py-func docutils literal notranslate"><span class="pre">connect()</span></code></a>, the one entry point users call to get a client;</p></li>
+<li><p>backend-agnostic helpers: document-input normalization, search-result
+<code class="docutils literal notranslate"><span class="pre">egress</span></code> functions, and vector math.</p></li>
+</ul>
+<p>Everything <em>descriptive</em> about a backend (pip package, license, docs URLs,
+deployment archetype, setup checks) lives in <a class="reference internal" href="providers.html#module-vd.providers" title="vd.providers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vd.providers</span></code></a> and its
+data file, not here.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.connect">
-<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">backend_kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#vd.base.Client" title="vd.base.Client"><span class="pre">Client</span></a></span></span><a class="reference internal" href="../../_modules/vd/util.html#connect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.connect" title="Link to this definition"></a></dt>
-<dd><p>Connect to a vector database backend.</p>
-<p>This is the main entry point for creating a client to interact with
-vector databases. It uses a factory pattern to instantiate the appropriate
-backend based on the backend name.</p>
+<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">backend_kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#vd.base.Client" title="vd.base.Client"><span class="pre">Client</span></a></span></span><a class="reference internal" href="../../_modules/vd/util.html#connect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.connect" title="Link to this definition"></a></dt>
+<dd><p>Connect to a vector database backend and return its <a class="reference internal" href="base.html#vd.base.Client" title="vd.base.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a>.</p>
+<p>This is the single entry point of <code class="docutils literal notranslate"><span class="pre">vd</span></code>. Switching vector databases is a
+one-argument change here.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>backend</strong> (<em>str</em>) – Backend identifier (‘memory’, ‘chroma’, ‘pinecone’, etc.)</p></li>
-<li><p><strong>embedding_model</strong> (<em>str</em><em> or </em><em>callable</em><em>, </em><em>optional</em>) – Embedding model specification. Can be:
-- Model name string (e.g., ‘text-embedding-3-small’)
-- Callable that takes text and returns a vector
-- None to use the default from imbed</p></li>
-<li><p><strong>**backend_kwargs</strong> – Backend-specific configuration (API keys, URLs, persist_directory, etc.)</p></li>
+<li><p><strong>backend</strong> (<em>str</em>) – Backend name: <code class="docutils literal notranslate"><span class="pre">&quot;memory&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;chroma&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;qdrant&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;faiss&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;lancedb&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;sqlite_vec&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;duckdb&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;pgvector&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;pinecone&quot;</span></code>, … Run <a class="reference internal" href="../vd.html#vd.list_backends" title="vd.list_backends"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.list_backends()</span></code></a> for what is installed.</p></li>
+<li><p><strong>embedder</strong> (<em>callable</em><em>, </em><em>optional</em>) – A <code class="docutils literal notranslate"><span class="pre">text</span> <span class="pre">-&gt;</span> <span class="pre">vector</span></code> function. Supply it only if you want the
+<em>convenience</em> of passing raw text to <code class="docutils literal notranslate"><span class="pre">collection[key]</span> <span class="pre">=</span> <span class="pre">&quot;text&quot;</span></code> and
+<code class="docutils literal notranslate"><span class="pre">collection.search(&quot;query</span> <span class="pre">text&quot;)</span></code>. <code class="docutils literal notranslate"><span class="pre">vd</span></code> never embeds on its own —
+with no embedder, pass <a class="reference internal" href="base.html#vd.base.Document" title="vd.base.Document"><code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code></a> objects with vectors
+and pre-computed query vectors.</p></li>
+<li><p><strong>**backend_kwargs</strong> – Backend-specific connection options (<code class="docutils literal notranslate"><span class="pre">persist_directory</span></code>, <code class="docutils literal notranslate"><span class="pre">url</span></code>,
+<code class="docutils literal notranslate"><span class="pre">api_key</span></code>, <code class="docutils literal notranslate"><span class="pre">path</span></code>, …). See each adapter’s docstring.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A client instance for the specified backend</p>
+<dd class="field-even"><p>A connected client — a <code class="docutils literal notranslate"><span class="pre">Mapping</span></code> of collection name to collection.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../vd.html#vd.Client" title="vd.Client">Client</a></p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If backend is not registered</p>
-</dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Connect to in-memory backend</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Connect to ChromaDB with persistence</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;chroma&#39;</span><span class="p">,</span> <span class="n">persist_directory</span><span class="o">=</span><span class="s1">&#39;./data&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Connect with custom embedding model</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="s1">&#39;memory&#39;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">embedding_model</span><span class="o">=</span><span class="s1">&#39;text-embedding-3-large&#39;</span>
-<span class="gp">... </span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;chroma&#39;</span><span class="p">,</span> <span class="n">persist_directory</span><span class="o">=</span><span class="s1">&#39;./db&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="s1">&#39;qdrant&#39;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s1">&#39;http://localhost:6333&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -164,28 +174,11 @@ backend based on the backend name.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.cosine_similarity">
 <span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">cosine_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vec2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/vd/util.html#cosine_similarity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.cosine_similarity" title="Link to this definition"></a></dt>
-<dd><p>Compute cosine similarity between two vectors.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vec1</strong> (<em>list</em><em> of </em><em>float</em>) – First vector</p></li>
-<li><p><strong>vec2</strong> (<em>list</em><em> of </em><em>float</em>) – Second vector</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Cosine similarity (1.0 = identical, 0.0 = orthogonal, -1.0 = opposite)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
+<dd><p>Cosine similarity of two vectors (1.0 identical, 0.0 orthogonal).</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v1</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cosine_similarity</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cosine_similarity</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
 <span class="go">1.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v3</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cosine_similarity</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cosine_similarity</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
 <span class="go">0.0</span>
 </pre></div>
 </div>
@@ -194,330 +187,97 @@ backend based on the backend name.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.euclidean_distance">
 <span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">euclidean_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vec2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/vd/util.html#euclidean_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.euclidean_distance" title="Link to this definition"></a></dt>
-<dd><p>Compute Euclidean distance between two vectors.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vec1</strong> (<em>list</em><em> of </em><em>float</em>) – First vector</p></li>
-<li><p><strong>vec2</strong> (<em>list</em><em> of </em><em>float</em>) – Second vector</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Euclidean distance (0.0 = identical, larger = more different)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
+<dd><p>Euclidean (L2) distance between two vectors.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v1</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">euclidean_distance</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">euclidean_distance</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v3</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">euclidean_distance</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v3</span><span class="p">)</span>
-<span class="go">1.414...</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.get_backend">
-<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">get_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="base.html#vd.base.BaseBackend" title="vd.base.BaseBackend"><span class="pre">BaseBackend</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/util.html#get_backend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.get_backend" title="Link to this definition"></a></dt>
-<dd><p>Get a registered backend class by name.</p>
+<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">get_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">type</span></span></span><a class="reference internal" href="../../_modules/vd/util.html#get_backend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.get_backend" title="Link to this definition"></a></dt>
+<dd><p>Return the adapter <a class="reference internal" href="base.html#vd.base.Client" title="vd.base.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> class registered under <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Backend identifier</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The backend class</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>type[<a class="reference internal" href="base.html#vd.base.BaseBackend" title="vd.base.BaseBackend">BaseBackend</a>]</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If backend is not registered</p>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="../vd.html#vd.BackendNotInstalledError" title="vd.BackendNotInstalledError"><strong>BackendNotInstalledError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">name</span></code> is a known backend whose client library is not installed.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">name</span></code> is not a known backend at all.</p></li>
+</ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="vd.util.get_backend_info">
-<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">get_backend_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/util.html#get_backend_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.get_backend_info" title="Link to this definition"></a></dt>
-<dd><p>Get detailed information about a specific backend.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Backend name</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Backend metadata including installation instructions and status</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If backend name is unknown</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="n">get_backend_info</span><span class="p">(</span><span class="s1">&#39;chroma&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">])</span>
-<span class="go">&#39;Open-source embedding database with persistence support.&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;pip_install&#39;</span><span class="p">])</span>
-<span class="go">&#39;pip install vd[chromadb]&#39;</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="vd.util.get_install_instructions">
-<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">get_install_instructions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/vd/util.html#get_install_instructions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.get_install_instructions" title="Link to this definition"></a></dt>
-<dd><p>Get installation instructions for a backend.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Backend name</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Installation instructions</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If backend name is unknown</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">get_install_instructions</span><span class="p">(</span><span class="s1">&#39;chroma&#39;</span><span class="p">))</span>
-<span class="go">To use the &#39;chroma&#39; backend (ChromaDB):</span>
-</pre></div>
-</div>
-<dl class="simple">
-<dt>Installation:</dt><dd><p>pip install vd[chromadb]</p>
-</dd>
-<dt>Description:</dt><dd><p>Open-source embedding database with persistence support.</p>
-</dd>
-</dl>
-<p>…</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.id_and_score">
 <span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">id_and_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/util.html#id_and_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.id_and_score" title="Link to this definition"></a></dt>
-<dd><p>Extract ID and score from a search result.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>result</strong> (<em>dict</em>) – Search result dictionary</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Document ID and similarity score</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple of (str, float)</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;doc1&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">id_and_score</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<span class="go">(&#39;doc1&#39;, 0.9)</span>
-</pre></div>
-</div>
+<dd><p>Egress: keep <code class="docutils literal notranslate"><span class="pre">(id,</span> <span class="pre">score)</span></code>.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.id_only">
 <span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">id_only</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/vd/util.html#id_only"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.id_only" title="Link to this definition"></a></dt>
-<dd><p>Extract only the ID from a search result.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>result</strong> (<em>dict</em>) – Search result dictionary</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The document ID</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;doc1&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">id_only</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<span class="go">&#39;doc1&#39;</span>
-</pre></div>
-</div>
+<dd><p>Egress: keep only the document id.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.id_text_score">
 <span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">id_text_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/util.html#id_text_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.id_text_score" title="Link to this definition"></a></dt>
-<dd><p>Extract ID, text, and score from a search result.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>result</strong> (<em>dict</em>) – Search result dictionary</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Document ID, text, and similarity score</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple of (str, str, float)</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;doc1&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">id_text_score</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<span class="go">(&#39;doc1&#39;, &#39;Hello&#39;, 0.9)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="vd.util.list_all_backends">
-<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">list_all_backends</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_planned</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/util.html#list_all_backends"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.list_all_backends" title="Link to this definition"></a></dt>
-<dd><p>List all possible backends with their status and information.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>include_planned</strong> (<em>bool</em><em>, </em><em>default False</em>) – If True, include backends that are planned but not yet implemented</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dictionary mapping backend names to their metadata, with ‘available’ status added</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">all_backends</span> <span class="o">=</span> <span class="n">list_all_backends</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">all_backends</span><span class="p">[</span><span class="s1">&#39;chroma&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
-<span class="go">&#39;ChromaDB&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">all_backends</span><span class="p">[</span><span class="s1">&#39;chroma&#39;</span><span class="p">][</span><span class="s1">&#39;available&#39;</span><span class="p">])</span>
-<span class="go">True  # or False if not installed</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="vd.util.list_available_backends">
-<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">list_available_backends</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/util.html#list_available_backends"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.list_available_backends" title="Link to this definition"></a></dt>
-<dd><p>List backends that are currently available (installed).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Names of backends that can be used right now</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of str</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">available</span> <span class="o">=</span> <span class="n">list_available_backends</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;memory&#39;</span> <span class="ow">in</span> <span class="n">available</span>
-<span class="go">True</span>
-</pre></div>
-</div>
+<dd><p>Egress: keep <code class="docutils literal notranslate"><span class="pre">(id,</span> <span class="pre">text,</span> <span class="pre">score)</span></code>.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.list_backends">
 <span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">list_backends</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/util.html#list_backends"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.list_backends" title="Link to this definition"></a></dt>
-<dd><p>List all registered backend names.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Names of all registered backends</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of str</p>
-</dd>
-</dl>
+<dd><p>Return the names of all backends with a registered (importable) adapter.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.util.mean_vector">
+<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">mean_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vectors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/util.html#mean_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.mean_vector" title="Link to this definition"></a></dt>
+<dd><p>Component-wise mean of a non-empty iterable of equal-length vectors.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">backends</span> <span class="o">=</span> <span class="n">list_backends</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;memory&#39;</span> <span class="ow">in</span> <span class="n">backends</span>
-<span class="go">True</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mean_vector</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]])</span>
+<span class="go">[1.0, 3.0]</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.normalize_document_input">
-<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">normalize_document_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a></span></span><a class="reference internal" href="../../_modules/vd/util.html#normalize_document_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.normalize_document_input" title="Link to this definition"></a></dt>
-<dd><p>Normalize various document input formats to a Document object.</p>
+<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">normalize_document_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a></span></span><a class="reference internal" href="../../_modules/vd/util.html#normalize_document_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.normalize_document_input" title="Link to this definition"></a></dt>
+<dd><p>Normalize a flexible document input to a <a class="reference internal" href="base.html#vd.base.Document" title="vd.base.Document"><code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code></a>.</p>
+<p>Accepted shapes: a <a class="reference internal" href="base.html#vd.base.Document" title="vd.base.Document"><code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code></a>; a <code class="docutils literal notranslate"><span class="pre">str</span></code> (just text); a
+tuple <code class="docutils literal notranslate"><span class="pre">(text,</span> <span class="pre">id)</span></code>, <code class="docutils literal notranslate"><span class="pre">(text,</span> <span class="pre">metadata)</span></code>, or <code class="docutils literal notranslate"><span class="pre">(text,</span> <span class="pre">id,</span> <span class="pre">metadata)</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>doc_input</strong> (<em>DocumentInput</em>) – Input in one of the supported formats:
-- str: Just text
-- (text, id): Text with ID
-- (text, metadata): Text with metadata
-- (text, id, metadata): Full specification
-- Document: Already a Document object</p></li>
-<li><p><strong>auto_id</strong> (<em>bool</em><em>, </em><em>default True</em>) – If True, auto-generate ID when not provided</p></li>
+<li><p><strong>doc_input</strong> (<a class="reference internal" href="base.html#vd.base.DocumentInput" title="vd.base.DocumentInput"><em>DocumentInput</em></a>) – The input to normalize.</p></li>
+<li><p><strong>auto_id</strong> (<em>bool</em>) – When the input carries no id, generate one (vs. leaving it empty).</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Normalized Document object</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="../vd.html#vd.Document" title="vd.Document">Document</a></p>
-</dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span> <span class="o">=</span> <span class="n">normalize_document_input</span><span class="p">(</span><span class="s2">&quot;Hello world&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="o">.</span><span class="n">text</span>
-<span class="go">&#39;Hello world&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="o">.</span><span class="n">id</span>
-<span class="go">&#39;...&#39;  # Auto-generated ID</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span> <span class="o">=</span> <span class="n">normalize_document_input</span><span class="p">((</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="s2">&quot;doc1&quot;</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="o">.</span><span class="n">id</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">normalize_document_input</span><span class="p">((</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="s2">&quot;doc1&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">id</span>
 <span class="go">&#39;doc1&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="o">.</span><span class="n">text</span>
-<span class="go">&#39;Hello&#39;</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span> <span class="o">=</span> <span class="n">normalize_document_input</span><span class="p">((</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;category&#39;</span><span class="p">:</span> <span class="s1">&#39;test&#39;</span><span class="p">}))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span>
-<span class="go">{&#39;category&#39;: &#39;test&#39;}</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="vd.util.print_backends_table">
-<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">print_backends_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_planned</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/util.html#print_backends_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.print_backends_table" title="Link to this definition"></a></dt>
-<dd><p>Print a formatted table of all backends with their status.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>include_planned</strong> (<em>bool</em><em>, </em><em>default False</em>) – If True, include backends that are planned but not yet implemented</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">print_backends_table</span><span class="p">()</span>
-<span class="go">Backend Status:</span>
-<span class="go">===============</span>
-<span class="go">✓ memory     - Memory (In-Memory)</span>
-<span class="go">  chroma     - ChromaDB (install: pip install vd[chromadb])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normalize_document_input</span><span class="p">((</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="s2">&quot;v&quot;</span><span class="p">}))</span><span class="o">.</span><span class="n">metadata</span>
+<span class="go">{&#39;k&#39;: &#39;v&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normalize_document_input</span><span class="p">(</span><span class="s2">&quot;Hello world&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;doc_&#39;</span><span class="p">)</span>
+<span class="go">True</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.register_backend">
-<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">register_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/util.html#register_backend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.register_backend" title="Link to this definition"></a></dt>
-<dd><p>Decorator to register a backend implementation.</p>
-<p>This allows backends to be dynamically registered and accessed via the
-connect() function.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name identifier for the backend (e.g., ‘memory’, ‘chroma’, ‘pinecone’)</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Decorator function</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>callable</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">register_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/util.html#register_backend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.register_backend" title="Link to this definition"></a></dt>
+<dd><p>Class decorator: register an adapter <a class="reference internal" href="base.html#vd.base.Client" title="vd.base.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> under <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@register_backend</span><span class="p">(</span><span class="s1">&#39;custom&#39;</span><span class="p">)</span>
-<span class="gp">... </span><span class="k">class</span><span class="w"> </span><span class="nc">CustomBackend</span><span class="p">(</span><span class="n">BaseBackend</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">pass</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractClient</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@register_backend</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">class</span><span class="w"> </span><span class="nc">ExampleClient</span><span class="p">(</span><span class="n">AbstractClient</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="o">...</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -525,24 +285,7 @@ connect() function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.util.text_only">
 <span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">text_only</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/vd/util.html#text_only"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.text_only" title="Link to this definition"></a></dt>
-<dd><p>Extract only the text from a search result.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>result</strong> (<em>dict</em>) – Search result dictionary</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The text content</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;doc1&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">text_only</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<span class="go">&#39;Hello&#39;</span>
-</pre></div>
-</div>
+<dd><p>Egress: keep only the text. <code class="docutils literal notranslate"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">text_only({'text':</span> <span class="pre">'hi'})</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">'hi'</span></code>.</p>
 </dd></dl>
 
 </section>

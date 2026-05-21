@@ -1,0 +1,206 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vd.backends._helpers &mdash; vd 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="vd.backends.chroma" href="chroma.html" />
+    <link rel="prev" title="vd.backends" href="../backends.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            vd
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../vd.html">vd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backends.html">vd.backends</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">vd.backends._helpers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vd.backends._helpers.OVERFETCH_FACTOR"><code class="docutils literal notranslate"><span class="pre">OVERFETCH_FACTOR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.backends._helpers.apply_client_filter"><code class="docutils literal notranslate"><span class="pre">apply_client_filter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.backends._helpers.coerce_metadata"><code class="docutils literal notranslate"><span class="pre">coerce_metadata()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.backends._helpers.overfetch_limit"><code class="docutils literal notranslate"><span class="pre">overfetch_limit()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.backends._helpers.score_from_distance"><code class="docutils literal notranslate"><span class="pre">score_from_distance()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="duckdb.html">vd.backends.duckdb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elasticsearch.html">vd.backends.elasticsearch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faiss.html">vd.backends.faiss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lancedb.html">vd.backends.lancedb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="milvus.html">vd.backends.milvus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mongodb.html">vd.backends.mongodb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pgvector.html">vd.backends.pgvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pinecone.html">vd.backends.pinecone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qdrant.html">vd.backends.qdrant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="redis.html">vd.backends.redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sqlite_vec.html">vd.backends.sqlite_vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="turbopuffer.html">vd.backends.turbopuffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weaviate.html">vd.backends.weaviate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../base.html">vd.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">vd.cli</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filters.html">vd.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../health.html">vd.health</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../io.html">vd.io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../providers.html">vd.providers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirements.html">vd.requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../search.html">vd.search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../text.html">vd.text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../time_indexed.html">vd.time_indexed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../util.html">vd.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">vd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">vd.backends._helpers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/module_docs/vd/backends/_helpers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-vd.backends._helpers">
+<span id="vd-backends-helpers"></span><h1>vd.backends._helpers<a class="headerlink" href="#module-vd.backends._helpers" title="Link to this heading"></a></h1>
+<p>Shared helpers for backend adapters.</p>
+<p>Small, adapter-agnostic utilities used across several backends: turning a raw
+distance into a “higher-is-better” score, and applying the canonical metadata
+filter client-side for backends whose native filtering is absent or weaker
+than <code class="docutils literal notranslate"><span class="pre">vd</span></code>’s filter language.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="vd.backends._helpers.OVERFETCH_FACTOR">
+<span class="sig-prename descclassname"><span class="pre">vd.backends._helpers.</span></span><span class="sig-name descname"><span class="pre">OVERFETCH_FACTOR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></span><a class="headerlink" href="#vd.backends._helpers.OVERFETCH_FACTOR" title="Link to this definition"></a></dt>
+<dd><p>When a backend must filter client-side, fetch this many times <code class="docutils literal notranslate"><span class="pre">limit</span></code>
+candidates from the index first, so post-filtering still returns a full page.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.backends._helpers.apply_client_filter">
+<span class="sig-prename descclassname"><span class="pre">vd.backends._helpers.</span></span><span class="sig-name descname"><span class="pre">apply_client_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/vd/backends/_helpers.html#apply_client_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends._helpers.apply_client_filter" title="Link to this definition"></a></dt>
+<dd><p>Keep the first <code class="docutils literal notranslate"><span class="pre">limit</span></code> results whose metadata satisfies <code class="docutils literal notranslate"><span class="pre">filter</span></code>.</p>
+<p>For backends that cannot filter natively (FAISS) or whose native filtering
+does not cover the full <code class="docutils literal notranslate"><span class="pre">vd</span></code> filter language: over-fetch, then filter
+here against the canonical evaluator so semantics match every other backend.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.backends._helpers.coerce_metadata">
+<span class="sig-prename descclassname"><span class="pre">vd.backends._helpers.</span></span><span class="sig-name descname"><span class="pre">coerce_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../../_modules/vd/backends/_helpers.html#coerce_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends._helpers.coerce_metadata" title="Link to this definition"></a></dt>
+<dd><p>Return a plain <code class="docutils literal notranslate"><span class="pre">dict</span></code> for storage, treating <code class="docutils literal notranslate"><span class="pre">None</span></code> as <code class="docutils literal notranslate"><span class="pre">{}</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.backends._helpers.overfetch_limit">
+<span class="sig-prename descclassname"><span class="pre">vd.backends._helpers.</span></span><span class="sig-name descname"><span class="pre">overfetch_limit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/vd/backends/_helpers.html#overfetch_limit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends._helpers.overfetch_limit" title="Link to this definition"></a></dt>
+<dd><p>Return how many candidates to fetch: <code class="docutils literal notranslate"><span class="pre">limit</span></code>, or more if filtering.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.backends._helpers.score_from_distance">
+<span class="sig-prename descclassname"><span class="pre">vd.backends._helpers.</span></span><span class="sig-name descname"><span class="pre">score_from_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/vd/backends/_helpers.html#score_from_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends._helpers.score_from_distance" title="Link to this definition"></a></dt>
+<dd><p>Convert a raw backend distance to a higher-is-better similarity score.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distance</strong> (<em>float</em>) – The backend’s raw distance (lower = closer).</p></li>
+<li><p><strong>metric</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">&quot;cosine&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dot&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;l2&quot;</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">score_from_distance</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;cosine&#39;</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">score_from_distance</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;l2&#39;</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">0.5</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../backends.html" class="btn btn-neutral float-left" title="vd.backends" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="chroma.html" class="btn btn-neutral float-right" title="vd.backends.chroma" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

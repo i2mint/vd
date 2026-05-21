@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vd.providers &mdash; vd 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="vd.requirements" href="requirements.html" />
+    <link rel="prev" title="vd.migration" href="migration.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            vd
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../vd.html">vd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/_helpers.html">vd.backends._helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/duckdb.html">vd.backends.duckdb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/elasticsearch.html">vd.backends.elasticsearch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/faiss.html">vd.backends.faiss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/lancedb.html">vd.backends.lancedb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/milvus.html">vd.backends.milvus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/mongodb.html">vd.backends.mongodb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/pgvector.html">vd.backends.pgvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/pinecone.html">vd.backends.pinecone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/qdrant.html">vd.backends.qdrant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/redis.html">vd.backends.redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/sqlite_vec.html">vd.backends.sqlite_vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/turbopuffer.html">vd.backends.turbopuffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/weaviate.html">vd.backends.weaviate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">vd.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">vd.cli</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filters.html">vd.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="health.html">vd.health</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">vd.io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html">vd.migration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">vd.providers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.compare_backends"><code class="docutils literal notranslate"><span class="pre">compare_backends()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.get_backend_characteristics"><code class="docutils literal notranslate"><span class="pre">get_backend_characteristics()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.get_backend_info"><code class="docutils literal notranslate"><span class="pre">get_backend_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.get_install_instructions"><code class="docutils literal notranslate"><span class="pre">get_install_instructions()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.has_adapter"><code class="docutils literal notranslate"><span class="pre">has_adapter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.install_command"><code class="docutils literal notranslate"><span class="pre">install_command()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.is_installed"><code class="docutils literal notranslate"><span class="pre">is_installed()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.list_all_backends"><code class="docutils literal notranslate"><span class="pre">list_all_backends()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.list_available_backends"><code class="docutils literal notranslate"><span class="pre">list_available_backends()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.print_backends_table"><code class="docutils literal notranslate"><span class="pre">print_backends_table()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.print_comparison"><code class="docutils literal notranslate"><span class="pre">print_comparison()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.print_recommendation"><code class="docutils literal notranslate"><span class="pre">print_recommendation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.provider"><code class="docutils literal notranslate"><span class="pre">provider()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.provider_names"><code class="docutils literal notranslate"><span class="pre">provider_names()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.providers"><code class="docutils literal notranslate"><span class="pre">providers()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.recommend_backend"><code class="docutils literal notranslate"><span class="pre">recommend_backend()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.providers.registry_as_of"><code class="docutils literal notranslate"><span class="pre">registry_as_of()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">vd.requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="search.html">vd.search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="text.html">vd.text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="time_indexed.html">vd.time_indexed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">vd.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">vd.providers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/vd/providers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-vd.providers">
+<span id="vd-providers"></span><h1>vd.providers<a class="headerlink" href="#module-vd.providers" title="Link to this heading"></a></h1>
+<p>The provider registry: choosing and learning about vector databases.</p>
+<p>Where <a class="reference internal" href="util.html#module-vd.util" title="vd.util"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vd.util</span></code></a> holds the <em>runtime</em> registry (name -&gt; adapter class),
+this module holds the <em>descriptive</em> registry: for every vector database <code class="docutils literal notranslate"><span class="pre">vd</span></code>
+knows about — whether or not an adapter is installed — its deployment
+archetype, license, pip package, docs URLs, setup notes, and the structural
+facts a developer needs to <em>choose</em> one.</p>
+<p>The data lives in <code class="docutils literal notranslate"><span class="pre">vd/data/providers.yaml</span></code> (lifted from the report
+“VectorDB Selection &amp; Setup Guide”). This module loads it and exposes:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#vd.providers.providers" title="vd.providers.providers"><code class="xref py py-func docutils literal notranslate"><span class="pre">providers()</span></code></a>, <a class="reference internal" href="#vd.providers.provider" title="vd.providers.provider"><code class="xref py py-func docutils literal notranslate"><span class="pre">provider()</span></code></a> — raw lookup;</p></li>
+<li><p><a class="reference internal" href="#vd.providers.recommend_backend" title="vd.providers.recommend_backend"><code class="xref py py-func docutils literal notranslate"><span class="pre">recommend_backend()</span></code></a> — a decision-framework recommender (report §4);</p></li>
+<li><p><a class="reference internal" href="#vd.providers.compare_backends" title="vd.providers.compare_backends"><code class="xref py py-func docutils literal notranslate"><span class="pre">compare_backends()</span></code></a>, <a class="reference internal" href="#vd.providers.print_comparison" title="vd.providers.print_comparison"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_comparison()</span></code></a> — side-by-side tables;</p></li>
+<li><p><a class="reference internal" href="#vd.providers.list_all_backends" title="vd.providers.list_all_backends"><code class="xref py py-func docutils literal notranslate"><span class="pre">list_all_backends()</span></code></a>, <a class="reference internal" href="#vd.providers.print_backends_table" title="vd.providers.print_backends_table"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_backends_table()</span></code></a> — inventory;</p></li>
+<li><p><a class="reference internal" href="#vd.providers.get_install_instructions" title="vd.providers.get_install_instructions"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_install_instructions()</span></code></a>, <a class="reference internal" href="#vd.providers.install_command" title="vd.providers.install_command"><code class="xref py py-func docutils literal notranslate"><span class="pre">install_command()</span></code></a> — setup pointers.</p></li>
+</ul>
+<p>The companion <a class="reference internal" href="requirements.html#module-vd.requirements" title="vd.requirements"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vd.requirements</span></code></a> turns this metadata into actionable
+<code class="docutils literal notranslate"><span class="pre">check_requirements(backend)</span></code> diagnostics.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.compare_backends">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">compare_backends</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">characteristics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#compare_backends"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.compare_backends" title="Link to this definition"></a></dt>
+<dd><p>Return a <code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">{characteristic:</span> <span class="pre">value}}</span></code> table for the given providers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.get_backend_characteristics">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">get_backend_characteristics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#get_backend_characteristics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.get_backend_characteristics" title="Link to this definition"></a></dt>
+<dd><p>Return a compact <code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">characteristics}</span></code> map for comparison tooling.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.get_backend_info">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">get_backend_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#get_backend_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.get_backend_info" title="Link to this definition"></a></dt>
+<dd><p>Return one provider’s metadata with <code class="docutils literal notranslate"><span class="pre">installed</span></code>/<code class="docutils literal notranslate"><span class="pre">has_adapter</span></code> flags.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.get_install_instructions">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">get_install_instructions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#get_install_instructions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.get_install_instructions" title="Link to this definition"></a></dt>
+<dd><p>Return a human-readable setup blurb for one provider.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.has_adapter">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">has_adapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#has_adapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.has_adapter" title="Link to this definition"></a></dt>
+<dd><p>Return whether <code class="docutils literal notranslate"><span class="pre">vd</span></code> ships a facade adapter for this provider.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.install_command">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">install_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#install_command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.install_command" title="Link to this definition"></a></dt>
+<dd><p>Return the <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> command that makes <code class="docutils literal notranslate"><span class="pre">name</span></code> usable.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">install_command</span><span class="p">(</span><span class="s1">&#39;qdrant&#39;</span><span class="p">)</span>
+<span class="go">&#39;pip install qdrant-client&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">install_command</span><span class="p">(</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span>
+<span class="go">&#39;memory needs no installation (built into vd)&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.is_installed">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">is_installed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#is_installed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.is_installed" title="Link to this definition"></a></dt>
+<dd><p>Return whether a provider’s client library is importable right now.</p>
+<p>A provider with no pip packages (<code class="docutils literal notranslate"><span class="pre">memory</span></code>) is always installed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.list_all_backends">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">list_all_backends</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#list_all_backends"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.list_all_backends" title="Link to this definition"></a></dt>
+<dd><p>Return every provider with live <code class="docutils literal notranslate"><span class="pre">installed</span></code> / <code class="docutils literal notranslate"><span class="pre">has_adapter</span></code> flags added.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.list_available_backends">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">list_available_backends</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#list_available_backends"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.list_available_backends" title="Link to this definition"></a></dt>
+<dd><p>Return providers <code class="docutils literal notranslate"><span class="pre">vd</span></code> can <a class="reference internal" href="../vd.html#vd.connect" title="vd.connect"><code class="xref py py-func docutils literal notranslate"><span class="pre">connect()</span></code></a> <em>right now</em>.</p>
+<p>A backend is available iff its adapter module imported successfully — which
+happens only when its client library is installed. This is exactly the set
+of registered backends.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.print_backends_table">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">print_backends_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#print_backends_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.print_backends_table" title="Link to this definition"></a></dt>
+<dd><p>Print every known vector database, grouped by deployment archetype.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.print_comparison">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">print_comparison</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#print_comparison"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.print_comparison" title="Link to this definition"></a></dt>
+<dd><p>Print a side-by-side comparison table of the given providers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.print_recommendation">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">print_recommendation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#print_recommendation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.print_recommendation" title="Link to this definition"></a></dt>
+<dd><p>Run <a class="reference internal" href="#vd.providers.recommend_backend" title="vd.providers.recommend_backend"><code class="xref py py-func docutils literal notranslate"><span class="pre">recommend_backend()</span></code></a> and print the recommendation readably.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.provider">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">provider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#provider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.provider" title="Link to this definition"></a></dt>
+<dd><p>Return one provider’s metadata, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if <code class="docutils literal notranslate"><span class="pre">name</span></code> is unknown.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.provider_names">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">provider_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#provider_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.provider_names" title="Link to this definition"></a></dt>
+<dd><p>Return every provider name <code class="docutils literal notranslate"><span class="pre">vd</span></code> knows about, sorted.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.providers">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">providers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#providers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.providers" title="Link to this definition"></a></dt>
+<dd><p>Return the full provider registry as <code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">metadata}</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.recommend_backend">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">recommend_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">corpus_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'medium'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">persistence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">can_run_docker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cloud_ok</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">budget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'free'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">existing_db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">needs_hybrid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">air_gapped</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#recommend_backend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.recommend_backend" title="Link to this definition"></a></dt>
+<dd><p>Recommend a vector database from a few yes/no facts about the situation.</p>
+<p>A direct encoding of the decision framework in the report’s §4. Returns a
+primary pick, a runner-up, and the reasoning trail.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>corpus_size</strong> (<em>{'tiny'</em><em>, </em><em>'small'</em><em>, </em><em>'medium'</em><em>, </em><em>'large'</em><em>, </em><em>'huge'}</em>) – Rough vector count: tiny &lt;100k, small &lt;10M, medium ~10M, large &lt;100M,
+huge &gt;100M.</p></li>
+<li><p><strong>persistence</strong> (<em>bool</em>) – Must data survive a process restart?</p></li>
+<li><p><strong>can_run_docker</strong> (<em>bool</em>) – Can the user run Docker / operate a server process?</p></li>
+<li><p><strong>cloud_ok</strong> (<em>bool</em>) – Is a managed cloud service acceptable (vs. on-prem only)?</p></li>
+<li><p><strong>budget</strong> (<em>{'free'</em><em>, </em><em>'paid'}</em>) – Free-tier-only, or is paid acceptable?</p></li>
+<li><p><strong>existing_db</strong> (<em>{'postgres'</em><em>, </em><em>'redis'</em><em>, </em><em>'elastic'</em><em>, </em><em>'mongo'</em><em>, </em><em>'sqlite'</em><em>, </em><em>'duckdb'</em><em>, </em><em>None}</em>) – A database the user already operates — strongly biases the pick.</p></li>
+<li><p><strong>needs_hybrid</strong> (<em>bool</em>) – Need keyword + vector ranking fused in one query?</p></li>
+<li><p><strong>air_gapped</strong> (<em>bool</em>) – Must run with zero network / zero telemetry?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">{&quot;primary&quot;,</span> <span class="pre">&quot;runner_up&quot;,</span> <span class="pre">&quot;reasoning&quot;,</span> <span class="pre">&quot;alternatives&quot;}</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rec</span> <span class="o">=</span> <span class="n">recommend_backend</span><span class="p">(</span><span class="n">corpus_size</span><span class="o">=</span><span class="s1">&#39;tiny&#39;</span><span class="p">,</span> <span class="n">persistence</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span>
+<span class="go">&#39;memory&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rec</span> <span class="o">=</span> <span class="n">recommend_backend</span><span class="p">(</span><span class="n">existing_db</span><span class="o">=</span><span class="s1">&#39;postgres&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;primary&#39;</span><span class="p">]</span>
+<span class="go">&#39;pgvector&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.providers.registry_as_of">
+<span class="sig-prename descclassname"><span class="pre">vd.providers.</span></span><span class="sig-name descname"><span class="pre">registry_as_of</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/vd/providers.html#registry_as_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.providers.registry_as_of" title="Link to this definition"></a></dt>
+<dd><p>Return the <code class="docutils literal notranslate"><span class="pre">as_of</span></code> date stamp of the provider registry snapshot.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="migration.html" class="btn btn-neutral float-left" title="vd.migration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="requirements.html" class="btn btn-neutral float-right" title="vd.requirements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

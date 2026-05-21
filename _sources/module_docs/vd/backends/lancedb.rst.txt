@@ -1,0 +1,4 @@
+vd.backends.lancedb
+===================
+.. automodule:: vd.backends.lancedb
+   :members:

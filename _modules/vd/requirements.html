@@ -1,0 +1,538 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vd.requirements &mdash; vd 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            vd
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd.html">vd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/_helpers.html">vd.backends._helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/duckdb.html">vd.backends.duckdb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/elasticsearch.html">vd.backends.elasticsearch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/faiss.html">vd.backends.faiss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/lancedb.html">vd.backends.lancedb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/milvus.html">vd.backends.milvus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/mongodb.html">vd.backends.mongodb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/pgvector.html">vd.backends.pgvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/pinecone.html">vd.backends.pinecone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/qdrant.html">vd.backends.qdrant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/redis.html">vd.backends.redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/sqlite_vec.html">vd.backends.sqlite_vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/turbopuffer.html">vd.backends.turbopuffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/weaviate.html">vd.backends.weaviate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/base.html">vd.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/cli.html">vd.cli</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/filters.html">vd.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/health.html">vd.health</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/io.html">vd.io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/providers.html">vd.providers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/requirements.html">vd.requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/search.html">vd.search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/text.html">vd.text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/time_indexed.html">vd.time_indexed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/util.html">vd.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../vd.html">vd</a></li>
+      <li class="breadcrumb-item active">vd.requirements</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vd.requirements</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Setup assistance: turning provider metadata into actionable diagnostics.</span>
+
+<span class="sd">Choosing a vector database (:mod:`vd.providers`) is half the job; *getting it</span>
+<span class="sd">running* is the other half, and the effort is dominated by the deployment</span>
+<span class="sd">archetype, not the algorithm. This module implements the report&#39;s §10</span>
+<span class="sd">``check_requirements`` scope:</span>
+
+<span class="sd">- **embedded** backends — is the pip package importable? platform/version</span>
+<span class="sd">  quirks (Milvus Lite is not native-Windows; sqlite-vec needs SQLite &gt;= 3.41)?</span>
+<span class="sd">- **server** backends — is the client installed, and is something answering on</span>
+<span class="sd">  the expected port?</span>
+<span class="sd">- **managed** backends — is the client installed, and are the required</span>
+<span class="sd">  environment variables set?</span>
+
+<span class="sd">Every check ends with the single highest-leverage output: the *next step* —</span>
+<span class="sd">the exact command or action that moves the user forward.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib.util</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.providers</span><span class="w"> </span><span class="kn">import</span> <span class="n">install_command</span><span class="p">,</span> <span class="n">provider</span>
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># One-liner server bring-up commands (report §5). Structural — change yearly.</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+<span class="n">_DOCKER_COMMANDS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;qdrant&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;docker run -p 6333:6333 -p 6334:6334 &quot;</span>
+        <span class="s2">&quot;-v $(pwd)/qdrant_storage:/qdrant/storage:z qdrant/qdrant&quot;</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;weaviate&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;docker run -p 8080:8080 -p 50051:50051 &quot;</span>
+        <span class="s2">&quot;-e AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true &quot;</span>
+        <span class="s2">&quot;cr.weaviate.io/semitechnologies/weaviate:latest&quot;</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;milvus&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;curl -sfL https://raw.githubusercontent.com/milvus-io/milvus/master/&quot;</span>
+        <span class="s2">&quot;scripts/standalone_embed.sh -o standalone_embed.sh &quot;</span>
+        <span class="s2">&quot;&amp;&amp; bash standalone_embed.sh start&quot;</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;redis&quot;</span><span class="p">:</span> <span class="s2">&quot;docker run -p 6379:6379 redis:8&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;elasticsearch&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;docker run -p 9200:9200 -e discovery.type=single-node &quot;</span>
+        <span class="s2">&quot;-e xpack.security.enabled=false &quot;</span>
+        <span class="s2">&quot;docker.elastic.co/elasticsearch/elasticsearch:8.18.0&quot;</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;opensearch&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;docker run -p 9200:9200 -e discovery.type=single-node &quot;</span>
+        <span class="s2">&quot;-e plugins.security.disabled=true &quot;</span>
+        <span class="s2">&quot;opensearchproject/opensearch:latest&quot;</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;pgvector&quot;</span><span class="p">:</span> <span class="s2">&quot;docker run -p 5432:5432 -e POSTGRES_PASSWORD=pw pgvector/pgvector:pg17&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;vespa&quot;</span><span class="p">:</span> <span class="s2">&quot;docker run -p 8080:8080 -p 19071:19071 vespaengine/vespa&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Low-level checks</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_check</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ok</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">detail</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one check record.</span>
+
+<span class="sd">    An ``optional`` check is reported but does not gate overall readiness — used</span>
+<span class="sd">    for things like &quot;a server is running&quot; on a backend that also runs embedded.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="n">ok</span><span class="p">,</span> <span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="n">detail</span><span class="p">,</span> <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="n">optional</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_port_open</span><span class="p">(</span><span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether a TCP connection to ``host:port`` succeeds quickly.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">socket</span><span class="o">.</span><span class="n">create_connection</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">),</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_module_importable</span><span class="p">(</span><span class="n">pip_package</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether the module a pip package provides can be found.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">vd.providers</span><span class="w"> </span><span class="kn">import</span> <span class="n">_import_name</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="n">_import_name</span><span class="p">(</span><span class="n">pip_package</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Archetype-specific requirement checks</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_embedded_checks</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks for an embedded / library backend.&quot;&quot;&quot;</span>
+    <span class="n">checks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;sqlite_vec&quot;</span><span class="p">:</span>
+        <span class="n">major_minor</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">sqlite_version</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[:</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">checks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">_check</span><span class="p">(</span>
+                <span class="s2">&quot;sqlite version&quot;</span><span class="p">,</span>
+                <span class="n">major_minor</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">41</span><span class="p">),</span>
+                <span class="sa">f</span><span class="s2">&quot;SQLite </span><span class="si">{</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">sqlite_version</span><span class="si">}</span><span class="s2"> (sqlite-vec wants &gt;= 3.41)&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">probe</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;:memory:&quot;</span><span class="p">)</span>
+        <span class="n">can_load</span> <span class="o">=</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">probe</span><span class="p">,</span> <span class="s2">&quot;enable_load_extension&quot;</span><span class="p">)</span>
+        <span class="n">probe</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">checks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">_check</span><span class="p">(</span>
+                <span class="s2">&quot;extension loading&quot;</span><span class="p">,</span>
+                <span class="n">can_load</span><span class="p">,</span>
+                <span class="s2">&quot;sqlite3 supports enable_load_extension&quot;</span>
+                <span class="k">if</span> <span class="n">can_load</span>
+                <span class="k">else</span> <span class="s2">&quot;this Python&#39;s sqlite3 has extension loading disabled &quot;</span>
+                <span class="s2">&quot;(use Homebrew Python or pysqlite3-binary)&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;milvus&quot;</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;win&quot;</span><span class="p">):</span>
+        <span class="n">checks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">_check</span><span class="p">(</span>
+                <span class="s2">&quot;platform&quot;</span><span class="p">,</span>
+                <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">&quot;Milvus Lite is not available on native Windows — use WSL2&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">checks</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_server_checks</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks for a self-hosted server backend.</span>
+
+<span class="sd">    When the backend also has an embedded mode (Qdrant, Milvus, Weaviate), the</span>
+<span class="sd">    server-reachable check is *optional*: ``vd.connect`` works embedded without</span>
+<span class="sd">    any server, so a missing server should not report the backend &quot;not ready&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;default_port&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">port</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">reachable</span> <span class="o">=</span> <span class="n">_port_open</span><span class="p">(</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">))</span>
+    <span class="n">embedded</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;embedded_mode&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">reachable</span><span class="p">:</span>
+        <span class="n">detail</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;a server is answering on localhost:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">elif</span> <span class="n">embedded</span><span class="p">:</span>
+        <span class="n">detail</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;no server on localhost:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2"> — fine for embedded mode; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;start one only for server mode&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">detail</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;nothing is answering on localhost:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">_check</span><span class="p">(</span><span class="s2">&quot;server reachable&quot;</span><span class="p">,</span> <span class="n">reachable</span><span class="p">,</span> <span class="n">detail</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="n">embedded</span><span class="p">)]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_managed_checks</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks for a managed cloud backend.&quot;&quot;&quot;</span>
+    <span class="n">checks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;env_vars&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]:</span>
+        <span class="n">present</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="p">))</span>
+        <span class="n">checks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">_check</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;env var </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">present</span><span class="p">,</span>
+                <span class="s2">&quot;set&quot;</span> <span class="k">if</span> <span class="n">present</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2"> is not set&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">checks</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># The entry point</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+
+<div class="viewcode-block" id="check_requirements">
+<a class="viewcode-back" href="../../module_docs/vd/requirements.html#vd.check_requirements">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_requirements</span><span class="p">(</span><span class="n">backend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Diagnose whether ``backend`` is ready to use, and say what to do if not.</span>
+
+<span class="sd">    Runs an installed-check plus archetype-specific checks (embedded / server /</span>
+<span class="sd">    managed), then computes the single most useful *next step*.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    backend : str</span>
+<span class="sd">        A provider name (see :func:`vd.list_all_backends`).</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Print a human-readable report (in addition to returning the dict).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        ``{&quot;backend&quot;, &quot;archetype&quot;, &quot;ok&quot;, &quot;checks&quot;, &quot;next_step&quot;}`` where</span>
+<span class="sd">        ``checks`` is a list of ``{&quot;name&quot;, &quot;ok&quot;, &quot;detail&quot;}`` records.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; report = check_requirements(&#39;memory&#39;, verbose=False)</span>
+<span class="sd">    &gt;&gt;&gt; report[&#39;ok&#39;]</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">provider</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">meta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;backend&quot;</span><span class="p">:</span> <span class="n">backend</span><span class="p">,</span>
+            <span class="s2">&quot;archetype&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;checks&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">_check</span><span class="p">(</span><span class="s2">&quot;known backend&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">backend</span><span class="si">!r}</span><span class="s2"> is unknown&quot;</span><span class="p">)],</span>
+            <span class="s2">&quot;next_step&quot;</span><span class="p">:</span> <span class="s2">&quot;Run vd.print_backends_table() to see valid names.&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">_print_report</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="n">archetype</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;archetype&quot;</span><span class="p">)</span>
+    <span class="n">checks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># 1. Client library installed?</span>
+    <span class="n">packages</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pip_packages&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="n">installed</span> <span class="o">=</span> <span class="p">(</span><span class="ow">not</span> <span class="n">packages</span><span class="p">)</span> <span class="ow">or</span> <span class="n">_module_importable</span><span class="p">(</span><span class="n">packages</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">checks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">_check</span><span class="p">(</span>
+            <span class="s2">&quot;client installed&quot;</span><span class="p">,</span>
+            <span class="n">installed</span><span class="p">,</span>
+            <span class="s2">&quot;client library is importable&quot;</span>
+            <span class="k">if</span> <span class="n">installed</span>
+            <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;client library is missing (</span><span class="si">{</span><span class="n">install_command</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 2. Archetype-specific checks (only meaningful once installed).</span>
+    <span class="k">if</span> <span class="n">installed</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">archetype</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;embedded&quot;</span><span class="p">,</span> <span class="s2">&quot;library&quot;</span><span class="p">):</span>
+            <span class="n">checks</span> <span class="o">+=</span> <span class="n">_embedded_checks</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">archetype</span> <span class="o">==</span> <span class="s2">&quot;server&quot;</span><span class="p">:</span>
+            <span class="n">checks</span> <span class="o">+=</span> <span class="n">_server_checks</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">archetype</span> <span class="o">==</span> <span class="s2">&quot;managed&quot;</span><span class="p">:</span>
+            <span class="n">checks</span> <span class="o">+=</span> <span class="n">_managed_checks</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
+
+    <span class="c1"># Optional checks are reported but do not gate overall readiness.</span>
+    <span class="n">ok</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s2">&quot;ok&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">checks</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;optional&quot;</span><span class="p">))</span>
+    <span class="n">next_step</span> <span class="o">=</span> <span class="n">_next_step</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">checks</span><span class="p">,</span> <span class="n">ok</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;backend&quot;</span><span class="p">:</span> <span class="n">backend</span><span class="p">,</span>
+        <span class="s2">&quot;archetype&quot;</span><span class="p">:</span> <span class="n">archetype</span><span class="p">,</span>
+        <span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="n">ok</span><span class="p">,</span>
+        <span class="s2">&quot;checks&quot;</span><span class="p">:</span> <span class="n">checks</span><span class="p">,</span>
+        <span class="s2">&quot;next_step&quot;</span><span class="p">:</span> <span class="n">next_step</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">_print_report</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_next_step</span><span class="p">(</span><span class="n">backend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">checks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">ok</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the single highest-leverage next action.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Ready. Connect with: vd.connect(</span><span class="si">{</span><span class="n">backend</span><span class="si">!r}</span><span class="s2">, ...)&quot;</span>
+
+    <span class="n">by_name</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]:</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">checks</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">by_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;client installed&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">install_command</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">by_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;server reachable&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ok&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="n">docker</span> <span class="o">=</span> <span class="n">_DOCKER_COMMANDS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">docker</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Start the server:</span><span class="se">\n</span><span class="s2">  </span><span class="si">{</span><span class="n">docker</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Start the </span><span class="si">{</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> server and retry.&quot;</span>
+
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">checks</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;env var&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;ok&quot;</span><span class="p">]:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s2">&quot;env var &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">docs</span> <span class="o">=</span> <span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;docs&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Set the </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2"> environment variable&quot;</span> <span class="o">+</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot; (see </span><span class="si">{</span><span class="n">docs</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="k">if</span> <span class="n">docs</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Any other failing check — surface its detail.</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">checks</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;ok&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;detail&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="s2">&quot;Unknown issue — see the checks above.&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_print_report</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print a :func:`check_requirements` result readably.&quot;&quot;&quot;</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;READY&quot;</span> <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;ok&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="s2">&quot;NOT READY&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">check_requirements(</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;backend&#39;</span><span class="p">]</span><span class="si">!r}</span><span class="s2">) — </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;checks&quot;</span><span class="p">]:</span>
+        <span class="n">mark</span> <span class="o">=</span> <span class="s2">&quot;OK  &quot;</span> <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="s2">&quot;ok&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="s2">&quot;FAIL&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">mark</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;detail&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  NEXT STEP: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;next_step&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Setup guide &amp; optional installer</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+
+<div class="viewcode-block" id="setup_guide">
+<a class="viewcode-back" href="../../module_docs/vd/requirements.html#vd.setup_guide">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_guide</span><span class="p">(</span><span class="n">backend</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a full, copy-pasteable setup playbook for ``backend``.</span>
+
+<span class="sd">    Covers: the pip install, a Docker one-liner for server backends, the</span>
+<span class="sd">    environment variables for managed backends, a verify command, and the</span>
+<span class="sd">    relevant documentation links.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">provider</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">meta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown backend </span><span class="si">{</span><span class="n">backend</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Setting up: </span><span class="si">{</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">backend</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">]</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Archetype: </span><span class="si">{</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;archetype&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">   License: </span><span class="si">{</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;license&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;1. Install the client:&quot;</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   </span><span class="si">{</span><span class="n">install_command</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">backend</span> <span class="ow">in</span> <span class="n">_DOCKER_COMMANDS</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;2. Start the server (Docker one-liner):&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;   </span><span class="si">{</span><span class="n">_DOCKER_COMMANDS</span><span class="p">[</span><span class="n">backend</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+    <span class="n">env_vars</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;env_vars&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">env_vars</span> <span class="ow">and</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;archetype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;managed&quot;</span><span class="p">:</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">backend</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_DOCKER_COMMANDS</span> <span class="k">else</span> <span class="mi">3</span>
+        <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">. Set credentials (never commit these):&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">env_vars</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   export </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">=...&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;verify_command&quot;</span><span class="p">):</span>
+        <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Verify:&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;   </span><span class="si">{</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;verify_command&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+    <span class="n">docs</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;docs&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">docs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;install&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">docs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;python_client&quot;</span><span class="p">):</span>
+        <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Docs:&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;python_client&quot;</span><span class="p">,</span> <span class="s2">&quot;filtering&quot;</span><span class="p">,</span> <span class="s2">&quot;pricing&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">docs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">label</span><span class="p">):</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   </span><span class="si">{</span><span class="n">label</span><span class="si">:</span><span class="s2">14</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">docs</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;notes&quot;</span><span class="p">):</span>
+        <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Note: </span><span class="si">{</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;notes&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="install_backend">
+<a class="viewcode-back" href="../../module_docs/vd/requirements.html#vd.install_backend">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">install_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return (and optionally run) the ``pip install`` command for ``backend``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    backend : str</span>
+<span class="sd">        Provider name.</span>
+<span class="sd">    run : bool</span>
+<span class="sd">        If ``True``, actually invoke pip in the current interpreter. If</span>
+<span class="sd">        ``False`` (the default), only return the command — the caller decides.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The pip command (or a note that nothing is needed).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">install_command</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">run</span> <span class="ow">and</span> <span class="n">cmd</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;pip install &quot;</span><span class="p">):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+
+        <span class="n">packages</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s2">&quot;pip install &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">packages</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cmd</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

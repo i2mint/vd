@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; vd 0.1.5 documentation</title>
+  <title>Index &mdash; vd 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=59fadc99"></script>
+      <script src="_static/documentation_options.js?v=938c9ccc"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -49,16 +49,31 @@
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd.html">vd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/analytics.html">vd.analytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/_helpers.html">vd.backends._helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/duckdb.html">vd.backends.duckdb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/elasticsearch.html">vd.backends.elasticsearch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/faiss.html">vd.backends.faiss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/lancedb.html">vd.backends.lancedb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/milvus.html">vd.backends.milvus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/mongodb.html">vd.backends.mongodb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/pgvector.html">vd.backends.pgvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/pinecone.html">vd.backends.pinecone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/qdrant.html">vd.backends.qdrant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/redis.html">vd.backends.redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/sqlite_vec.html">vd.backends.sqlite_vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/turbopuffer.html">vd.backends.turbopuffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/weaviate.html">vd.backends.weaviate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/base.html">vd.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/cli.html">vd.cli</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/compare.html">vd.compare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/config.html">vd.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/filters.html">vd.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/health.html">vd.health</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/io.html">vd.io</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/providers.html">vd.providers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/requirements.html">vd.requirements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/search.html">vd.search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/text.html">vd.text</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/time_indexed.html">vd.time_indexed</a></li>
@@ -104,6 +119,7 @@
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#Q"><strong>Q</strong></a>
  | <a href="#R"><strong>R</strong></a>
@@ -117,16 +133,28 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection.add_documents">add_documents() (vd.backends.memory.MemoryCollection method)</a>
+      <li><a href="module_docs/vd.html#vd.AbstractClient">AbstractClient (class in vd)</a>
 
       <ul>
-        <li><a href="module_docs/vd/base.html#vd.base.Collection.add_documents">(vd.base.Collection method)</a>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractClient">(class in vd.base)</a>
 </li>
-        <li><a href="module_docs/vd.html#vd.Collection.add_documents">(vd.Collection method)</a>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.AbstractCollection">AbstractCollection (class in vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractCollection">(class in vd.base)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd.html#vd.AbstractCollection.add_documents">add_documents() (vd.AbstractCollection method)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractCollection.add_documents">(vd.base.AbstractCollection method)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd/backends/_helpers.html#vd.backends._helpers.apply_client_filter">apply_client_filter() (in module vd.backends._helpers)</a>
+</li>
       <li><a href="module_docs/vd/config.html#vd.config.apply_env_overrides">apply_env_overrides() (in module vd.config)</a>
 </li>
   </ul></td>
@@ -135,14 +163,22 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd.html#vd.AbstractClient.backend_name">backend_name (vd.AbstractClient attribute)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient.backend_name">(vd.backends.memory.MemoryClient attribute)</a>
+</li>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.backend_name">(vd.base.AbstractClient attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.BackendNotInstalledError">BackendNotInstalledError</a>, <a href="module_docs/vd/base.html#vd.base.BackendNotInstalledError">[1]</a>
+</li>
       <li><a href="module_docs/vd/time_indexed.html#vd.time_indexed.TimeIndexedCollection.base">base (vd.time_indexed.TimeIndexedCollection property)</a>
 
       <ul>
         <li><a href="module_docs/vd.html#vd.TimeIndexedCollection.base">(vd.TimeIndexedCollection property)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/vd/base.html#vd.base.BaseBackend">BaseBackend (class in vd.base)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd.html#vd.benchmark_insert">benchmark_insert() (in module vd)</a>
@@ -163,6 +199,12 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd.html#vd.check_requirements">check_requirements() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/requirements.html#vd.requirements.check_requirements">(in module vd.requirements)</a>
+</li>
+      </ul></li>
       <li><a href="module_docs/vd.html#vd.chunk_documents">chunk_documents() (in module vd)</a>
 
       <ul>
@@ -187,8 +229,18 @@
         <li><a href="module_docs/vd/base.html#vd.base.Client">(class in vd.base)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/vd/base.html#vd.base.BaseBackend.client">client (vd.base.BaseBackend property)</a>
+      <li><a href="module_docs/vd.html#vd.AbstractClient.client">client (vd.AbstractClient property)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.client">(vd.base.AbstractClient property)</a>
 </li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.AbstractClient.close">close() (vd.AbstractClient method)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.close">(vd.base.AbstractClient method)</a>
+</li>
+      </ul></li>
       <li><a href="module_docs/vd/cli.html#vd.cli.cmd_backends">cmd_backends() (in module vd.cli)</a>
 </li>
       <li><a href="module_docs/vd/cli.html#vd.cli.cmd_benchmark">cmd_benchmark() (in module vd.cli)</a>
@@ -207,14 +259,16 @@
 </li>
       <li><a href="module_docs/vd/cli.html#vd.cli.cmd_validate">cmd_validate() (in module vd.cli)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd/backends/_helpers.html#vd.backends._helpers.coerce_metadata">coerce_metadata() (in module vd.backends._helpers)</a>
+</li>
       <li><a href="module_docs/vd.html#vd.Collection">Collection (class in vd)</a>
 
       <ul>
         <li><a href="module_docs/vd/base.html#vd.base.Collection">(class in vd.base)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd.html#vd.collection_stats">collection_stats() (in module vd)</a>
 
       <ul>
@@ -224,7 +278,7 @@
       <li><a href="module_docs/vd.html#vd.compare_backends">compare_backends() (in module vd)</a>
 
       <ul>
-        <li><a href="module_docs/vd/compare.html#vd.compare.compare_backends">(in module vd.compare)</a>
+        <li><a href="module_docs/vd/providers.html#vd.providers.compare_backends">(in module vd.providers)</a>
 </li>
       </ul></li>
       <li><a href="module_docs/vd.html#vd.connect">connect() (in module vd)</a>
@@ -245,20 +299,24 @@
         <li><a href="module_docs/vd/migration.html#vd.migration.copy_collection">(in module vd.migration)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/vd/util.html#vd.util.cosine_similarity">cosine_similarity() (in module vd.util)</a>
+      <li><a href="module_docs/vd.html#vd.cosine_similarity">cosine_similarity() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/util.html#vd.util.cosine_similarity">(in module vd.util)</a>
 </li>
+      </ul></li>
       <li><a href="module_docs/vd.html#vd.count_docs">count_docs() (in module vd)</a>
 
       <ul>
         <li><a href="module_docs/vd/time_indexed.html#vd.time_indexed.count_docs">(in module vd.time_indexed)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryBackend.create_collection">create_collection() (vd.backends.memory.MemoryBackend method)</a>
+      <li><a href="module_docs/vd.html#vd.AbstractClient.create_collection">create_collection() (vd.AbstractClient method)</a>
 
       <ul>
-        <li><a href="module_docs/vd/backends.html#vd.backends.MemoryBackend.create_collection">(vd.backends.MemoryBackend method)</a>
+        <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient.create_collection">(vd.backends.memory.MemoryClient method)</a>
 </li>
-        <li><a href="module_docs/vd/base.html#vd.base.BaseBackend.create_collection">(vd.base.BaseBackend method)</a>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.create_collection">(vd.base.AbstractClient method)</a>
 </li>
         <li><a href="module_docs/vd/base.html#vd.base.Client.create_collection">(vd.base.Client method)</a>
 </li>
@@ -283,12 +341,12 @@
         <li><a href="module_docs/vd/search.html#vd.search.deduplicate_results">(in module vd.search)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryBackend.delete_collection">delete_collection() (vd.backends.memory.MemoryBackend method)</a>
+      <li><a href="module_docs/vd.html#vd.AbstractClient.delete_collection">delete_collection() (vd.AbstractClient method)</a>
 
       <ul>
-        <li><a href="module_docs/vd/backends.html#vd.backends.MemoryBackend.delete_collection">(vd.backends.MemoryBackend method)</a>
+        <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient.delete_collection">(vd.backends.memory.MemoryClient method)</a>
 </li>
-        <li><a href="module_docs/vd/base.html#vd.base.BaseBackend.delete_collection">(vd.base.BaseBackend method)</a>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.delete_collection">(vd.base.AbstractClient method)</a>
 </li>
         <li><a href="module_docs/vd/base.html#vd.base.Client.delete_collection">(vd.base.Client method)</a>
 </li>
@@ -303,28 +361,42 @@
         <li><a href="module_docs/vd/base.html#vd.base.Document">(class in vd.base)</a>
 </li>
       </ul></li>
+      <li><a href="module_docs/vd/base.html#vd.base.DocumentInput">DocumentInput (in module vd.base)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/vd/util.html#vd.util.euclidean_distance">euclidean_distance() (in module vd.util)</a>
+      <li><a href="module_docs/vd.html#vd.AbstractCollection.embed">embed() (vd.AbstractCollection method)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractCollection.embed">(vd.base.AbstractCollection method)</a>
 </li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.EmbeddingRequiredError">EmbeddingRequiredError</a>, <a href="module_docs/vd/base.html#vd.base.EmbeddingRequiredError">[1]</a>
+</li>
+      <li><a href="module_docs/vd.html#vd.euclidean_distance">euclidean_distance() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/util.html#vd.util.euclidean_distance">(in module vd.util)</a>
+</li>
+      </ul></li>
       <li><a href="module_docs/vd.html#vd.export_collection">export_collection() (in module vd)</a>
 
       <ul>
         <li><a href="module_docs/vd/io.html#vd.io.export_collection">(in module vd.io)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd.html#vd.export_to_directory">export_to_directory() (in module vd)</a>
 
       <ul>
         <li><a href="module_docs/vd/io.html#vd.io.export_to_directory">(in module vd.io)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd.html#vd.export_to_json">export_to_json() (in module vd)</a>
 
       <ul>
@@ -376,21 +448,21 @@
       <li><a href="module_docs/vd.html#vd.get_backend_characteristics">get_backend_characteristics() (in module vd)</a>
 
       <ul>
-        <li><a href="module_docs/vd/compare.html#vd.compare.get_backend_characteristics">(in module vd.compare)</a>
+        <li><a href="module_docs/vd/providers.html#vd.providers.get_backend_characteristics">(in module vd.providers)</a>
 </li>
       </ul></li>
       <li><a href="module_docs/vd.html#vd.get_backend_info">get_backend_info() (in module vd)</a>
 
       <ul>
-        <li><a href="module_docs/vd/util.html#vd.util.get_backend_info">(in module vd.util)</a>
+        <li><a href="module_docs/vd/providers.html#vd.providers.get_backend_info">(in module vd.providers)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryBackend.get_collection">get_collection() (vd.backends.memory.MemoryBackend method)</a>
+      <li><a href="module_docs/vd.html#vd.AbstractClient.get_collection">get_collection() (vd.AbstractClient method)</a>
 
       <ul>
-        <li><a href="module_docs/vd/backends.html#vd.backends.MemoryBackend.get_collection">(vd.backends.MemoryBackend method)</a>
+        <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient.get_collection">(vd.backends.memory.MemoryClient method)</a>
 </li>
-        <li><a href="module_docs/vd/base.html#vd.base.BaseBackend.get_collection">(vd.base.BaseBackend method)</a>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.get_collection">(vd.base.AbstractClient method)</a>
 </li>
         <li><a href="module_docs/vd/base.html#vd.base.Client.get_collection">(vd.base.Client method)</a>
 </li>
@@ -402,7 +474,13 @@
       <li><a href="module_docs/vd.html#vd.get_install_instructions">get_install_instructions() (in module vd)</a>
 
       <ul>
-        <li><a href="module_docs/vd/util.html#vd.util.get_install_instructions">(in module vd.util)</a>
+        <li><a href="module_docs/vd/providers.html#vd.providers.get_install_instructions">(in module vd.providers)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.AbstractClient.get_or_create_collection">get_or_create_collection() (vd.AbstractClient method)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.get_or_create_collection">(vd.base.AbstractClient method)</a>
 </li>
       </ul></li>
       <li><a href="module_docs/vd/config.html#vd.config.get_profile">get_profile() (in module vd.config)</a>
@@ -413,14 +491,22 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd/providers.html#vd.providers.has_adapter">has_adapter() (in module vd.providers)</a>
+</li>
+      <li><a href="module_docs/vd.html#vd.AbstractCollection.has_embedder">has_embedder (vd.AbstractCollection property)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractCollection.has_embedder">(vd.base.AbstractCollection property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd.html#vd.health_check_backend">health_check_backend() (in module vd)</a>
 
       <ul>
         <li><a href="module_docs/vd/health.html#vd.health.health_check_backend">(in module vd.health)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd.html#vd.health_check_collection">health_check_collection() (in module vd)</a>
 
       <ul>
@@ -457,14 +543,14 @@
         <li><a href="module_docs/vd/io.html#vd.io.import_collection">(in module vd.io)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd.html#vd.import_from_directory">import_from_directory() (in module vd)</a>
 
       <ul>
         <li><a href="module_docs/vd/io.html#vd.io.import_from_directory">(in module vd.io)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd.html#vd.import_from_json">import_from_json() (in module vd)</a>
 
       <ul>
@@ -477,6 +563,20 @@
         <li><a href="module_docs/vd/io.html#vd.io.import_from_jsonl">(in module vd.io)</a>
 </li>
       </ul></li>
+      <li><a href="module_docs/vd.html#vd.install_backend">install_backend() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/requirements.html#vd.requirements.install_backend">(in module vd.requirements)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.install_command">install_command() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/providers.html#vd.providers.install_command">(in module vd.providers)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd/providers.html#vd.providers.is_installed">is_installed() (in module vd.providers)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -486,13 +586,13 @@
       <li><a href="module_docs/vd.html#vd.list_all_backends">list_all_backends() (in module vd)</a>
 
       <ul>
-        <li><a href="module_docs/vd/util.html#vd.util.list_all_backends">(in module vd.util)</a>
+        <li><a href="module_docs/vd/providers.html#vd.providers.list_all_backends">(in module vd.providers)</a>
 </li>
       </ul></li>
       <li><a href="module_docs/vd.html#vd.list_available_backends">list_available_backends() (in module vd)</a>
 
       <ul>
-        <li><a href="module_docs/vd/util.html#vd.util.list_available_backends">(in module vd.util)</a>
+        <li><a href="module_docs/vd/providers.html#vd.providers.list_available_backends">(in module vd.providers)</a>
 </li>
       </ul></li>
       <li><a href="module_docs/vd.html#vd.list_backends">list_backends() (in module vd)</a>
@@ -501,12 +601,12 @@
         <li><a href="module_docs/vd/util.html#vd.util.list_backends">(in module vd.util)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryBackend.list_collections">list_collections() (vd.backends.memory.MemoryBackend method)</a>
+      <li><a href="module_docs/vd.html#vd.AbstractClient.list_collections">list_collections() (vd.AbstractClient method)</a>
 
       <ul>
-        <li><a href="module_docs/vd/backends.html#vd.backends.MemoryBackend.list_collections">(vd.backends.MemoryBackend method)</a>
+        <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient.list_collections">(vd.backends.memory.MemoryClient method)</a>
 </li>
-        <li><a href="module_docs/vd/base.html#vd.base.BaseBackend.list_collections">(vd.base.BaseBackend method)</a>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.list_collections">(vd.base.AbstractClient method)</a>
 </li>
         <li><a href="module_docs/vd/base.html#vd.base.Client.list_collections">(vd.base.Client method)</a>
 </li>
@@ -546,13 +646,11 @@
       <ul>
         <li><a href="module_docs/vd/time_indexed.html#vd.time_indexed.mean_vector">(in module vd.time_indexed)</a>
 </li>
-      </ul></li>
-      <li><a href="module_docs/vd/backends.html#vd.backends.MemoryBackend">MemoryBackend (class in vd.backends)</a>
-
-      <ul>
-        <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryBackend">(class in vd.backends.memory)</a>
+        <li><a href="module_docs/vd/util.html#vd.util.mean_vector">(in module vd.util)</a>
 </li>
       </ul></li>
+      <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient">MemoryClient (class in vd.backends.memory)</a>
+</li>
       <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection">MemoryCollection (class in vd.backends.memory)</a>
 </li>
       <li><a href="module_docs/vd.html#vd.metadata_distribution">metadata_distribution() (in module vd)</a>
@@ -561,6 +659,8 @@
         <li><a href="module_docs/vd/analytics.html#vd.analytics.metadata_distribution">(in module vd.analytics)</a>
 </li>
       </ul></li>
+      <li><a href="module_docs/vd/base.html#vd.base.METRICS">METRICS (in module vd.base)</a>
+</li>
       <li><a href="module_docs/vd.html#vd.migrate_client">migrate_client() (in module vd)</a>
 
       <ul>
@@ -583,13 +683,13 @@
 </li>
         <li><a href="module_docs/vd/backends.html#module-vd.backends">vd.backends</a>
 </li>
+        <li><a href="module_docs/vd/backends/_helpers.html#module-vd.backends._helpers">vd.backends._helpers</a>
+</li>
         <li><a href="module_docs/vd/backends/memory.html#module-vd.backends.memory">vd.backends.memory</a>
 </li>
         <li><a href="module_docs/vd/base.html#module-vd.base">vd.base</a>
 </li>
         <li><a href="module_docs/vd/cli.html#module-vd.cli">vd.cli</a>
-</li>
-        <li><a href="module_docs/vd/compare.html#module-vd.compare">vd.compare</a>
 </li>
         <li><a href="module_docs/vd/config.html#module-vd.config">vd.config</a>
 </li>
@@ -600,6 +700,10 @@
         <li><a href="module_docs/vd/io.html#module-vd.io">vd.io</a>
 </li>
         <li><a href="module_docs/vd/migration.html#module-vd.migration">vd.migration</a>
+</li>
+        <li><a href="module_docs/vd/providers.html#module-vd.providers">vd.providers</a>
+</li>
+        <li><a href="module_docs/vd/requirements.html#module-vd.requirements">vd.requirements</a>
 </li>
         <li><a href="module_docs/vd/search.html#module-vd.search">vd.search</a>
 </li>
@@ -624,18 +728,40 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection.native">native (vd.backends.memory.MemoryCollection property)</a>
+      <li><a href="module_docs/vd.html#vd.AbstractCollection.native">native (vd.AbstractCollection property)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection.native">(vd.backends.memory.MemoryCollection property)</a>
 </li>
-      <li><a href="module_docs/vd/util.html#vd.util.normalize_document_input">normalize_document_input() (in module vd.util)</a>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractCollection.native">(vd.base.AbstractCollection property)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd.html#vd.normalize_document_input">normalize_document_input() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/util.html#vd.util.normalize_document_input">(in module vd.util)</a>
+</li>
+      </ul></li>
       <li><a href="module_docs/vd.html#vd.normalize_whitespace">normalize_whitespace() (in module vd)</a>
 
       <ul>
         <li><a href="module_docs/vd/text.html#vd.text.normalize_whitespace">(in module vd.text)</a>
 </li>
       </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd/backends/_helpers.html#vd.backends._helpers.OVERFETCH_FACTOR">OVERFETCH_FACTOR (in module vd.backends._helpers)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd/backends/_helpers.html#vd.backends._helpers.overfetch_limit">overfetch_limit() (in module vd.backends._helpers)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -651,21 +777,35 @@
       <li><a href="module_docs/vd.html#vd.print_backends_table">print_backends_table() (in module vd)</a>
 
       <ul>
-        <li><a href="module_docs/vd/util.html#vd.util.print_backends_table">(in module vd.util)</a>
+        <li><a href="module_docs/vd/providers.html#vd.providers.print_backends_table">(in module vd.providers)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.print_comparison">print_comparison() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/providers.html#vd.providers.print_comparison">(in module vd.providers)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/vd.html#vd.print_comparison">print_comparison() (in module vd)</a>
-
-      <ul>
-        <li><a href="module_docs/vd/compare.html#vd.compare.print_comparison">(in module vd.compare)</a>
-</li>
-      </ul></li>
       <li><a href="module_docs/vd.html#vd.print_recommendation">print_recommendation() (in module vd)</a>
 
       <ul>
-        <li><a href="module_docs/vd/compare.html#vd.compare.print_recommendation">(in module vd.compare)</a>
+        <li><a href="module_docs/vd/providers.html#vd.providers.print_recommendation">(in module vd.providers)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.provider">provider() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/providers.html#vd.providers.provider">(in module vd.providers)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd/providers.html#vd.providers.provider_names">provider_names() (in module vd.providers)</a>
+</li>
+      <li><a href="module_docs/vd.html#vd.providers">providers() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/providers.html#vd.providers.providers">(in module vd.providers)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -695,12 +835,18 @@
       <li><a href="module_docs/vd.html#vd.recommend_backend">recommend_backend() (in module vd)</a>
 
       <ul>
-        <li><a href="module_docs/vd/compare.html#vd.compare.recommend_backend">(in module vd.compare)</a>
+        <li><a href="module_docs/vd/providers.html#vd.providers.recommend_backend">(in module vd.providers)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/vd/util.html#vd.util.register_backend">register_backend() (in module vd.util)</a>
+      <li><a href="module_docs/vd.html#vd.register_backend">register_backend() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/util.html#vd.util.register_backend">(in module vd.util)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd/providers.html#vd.providers.registry_as_of">registry_as_of() (in module vd.providers)</a>
 </li>
       <li><a href="module_docs/vd/time_indexed.html#vd.time_indexed.TimeIndexedCollection.reindex">reindex() (vd.time_indexed.TimeIndexedCollection method)</a>
 
@@ -726,9 +872,13 @@
         <li><a href="module_docs/vd/config.html#vd.config.save_config">(in module vd.config)</a>
 </li>
       </ul></li>
-      <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection.search">search() (vd.backends.memory.MemoryCollection method)</a>
+      <li><a href="module_docs/vd/backends/_helpers.html#vd.backends._helpers.score_from_distance">score_from_distance() (in module vd.backends._helpers)</a>
+</li>
+      <li><a href="module_docs/vd.html#vd.AbstractCollection.search">search() (vd.AbstractCollection method)</a>
 
       <ul>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractCollection.search">(vd.base.AbstractCollection method)</a>
+</li>
         <li><a href="module_docs/vd/base.html#vd.base.Collection.search">(vd.base.Collection method)</a>
 </li>
         <li><a href="module_docs/vd.html#vd.Collection.search">(vd.Collection method)</a>
@@ -746,22 +896,34 @@
         <li><a href="module_docs/vd.html#vd.TimeIndexedCollection.search_window">(vd.TimeIndexedCollection method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd/search.html#vd.search.search_with_feedback">search_with_feedback() (in module vd.search)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd.html#vd.setup_guide">setup_guide() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/requirements.html#vd.requirements.setup_guide">(in module vd.requirements)</a>
+</li>
+      </ul></li>
       <li><a href="module_docs/vd.html#vd.skills_dir">skills_dir() (in module vd)</a>
 </li>
       <li><a href="module_docs/vd.html#vd.StaticIndexError">StaticIndexError</a>, <a href="module_docs/vd/base.html#vd.base.StaticIndexError">[1]</a>
 </li>
       <li><a href="module_docs/vd/filters.html#vd.filters.SUPPORTED_FILTER_OPERATORS">SUPPORTED_FILTER_OPERATORS (in module vd.filters)</a>
 </li>
-      <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection.supported_filter_operators">supported_filter_operators (vd.backends.memory.MemoryCollection attribute)</a>
-</li>
-      <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection.supports_incremental_writes">supports_incremental_writes (vd.backends.memory.MemoryCollection attribute)</a>
+      <li><a href="module_docs/vd.html#vd.AbstractCollection.supported_filter_operators">supported_filter_operators (vd.AbstractCollection attribute)</a>
 
       <ul>
-        <li><a href="module_docs/vd/base.html#id0">(vd.base.BaseBackend attribute)</a>, <a href="module_docs/vd/base.html#vd.base.BaseBackend.supports_incremental_writes">[1]</a>
+        <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection.supported_filter_operators">(vd.backends.memory.MemoryCollection attribute)</a>
+</li>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractCollection.supported_filter_operators">(vd.base.AbstractCollection attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.AbstractCollection.supports_incremental_writes">supports_incremental_writes (vd.AbstractCollection attribute)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractCollection.supports_incremental_writes">(vd.base.AbstractCollection attribute)</a>
 </li>
       </ul></li>
       <li><a href="module_docs/vd.html#vd.SupportsBatch">SupportsBatch (class in vd)</a>
@@ -832,12 +994,10 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection.upsert">upsert() (vd.backends.memory.MemoryCollection method)</a>
+      <li><a href="module_docs/vd.html#vd.AbstractCollection.upsert">upsert() (vd.AbstractCollection method)</a>
 
       <ul>
-        <li><a href="module_docs/vd/base.html#vd.base.Collection.upsert">(vd.base.Collection method)</a>
-</li>
-        <li><a href="module_docs/vd.html#vd.Collection.upsert">(vd.Collection method)</a>
+        <li><a href="module_docs/vd/base.html#vd.base.AbstractCollection.upsert">(vd.base.AbstractCollection method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -880,6 +1040,13 @@
 </li>
       </ul></li>
       <li>
+    vd.backends._helpers
+
+      <ul>
+        <li><a href="module_docs/vd/backends/_helpers.html#module-vd.backends._helpers">module</a>
+</li>
+      </ul></li>
+      <li>
     vd.backends.memory
 
       <ul>
@@ -901,21 +1068,14 @@
 </li>
       </ul></li>
       <li>
-    vd.compare
-
-      <ul>
-        <li><a href="module_docs/vd/compare.html#module-vd.compare">module</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
     vd.config
 
       <ul>
         <li><a href="module_docs/vd/config.html#module-vd.config">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     vd.filters
 
@@ -942,6 +1102,20 @@
 
       <ul>
         <li><a href="module_docs/vd/migration.html#module-vd.migration">module</a>
+</li>
+      </ul></li>
+      <li>
+    vd.providers
+
+      <ul>
+        <li><a href="module_docs/vd/providers.html#module-vd.providers">module</a>
+</li>
+      </ul></li>
+      <li>
+    vd.requirements
+
+      <ul>
+        <li><a href="module_docs/vd/requirements.html#module-vd.requirements">module</a>
 </li>
       </ul></li>
       <li>
@@ -972,6 +1146,8 @@
         <li><a href="module_docs/vd/util.html#module-vd.util">module</a>
 </li>
       </ul></li>
+      <li><a href="module_docs/vd.html#vd.VdError">VdError</a>, <a href="module_docs/vd/base.html#vd.base.VdError">[1]</a>
+</li>
   </ul></td>
 </tr></table>
 

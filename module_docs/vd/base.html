@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.base &mdash; vd 0.1.5 documentation</title>
+  <title>vd.base &mdash; vd 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=59fadc99"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="vd.cli" href="cli.html" />
-    <link rel="prev" title="vd.backends.memory" href="backends/memory.html" /> 
+    <link rel="prev" title="vd.backends.weaviate" href="backends/weaviate.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -52,19 +52,46 @@
 <li class="toctree-l1"><a class="reference internal" href="../vd.html">vd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="analytics.html">vd.analytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/_helpers.html">vd.backends._helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/duckdb.html">vd.backends.duckdb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/elasticsearch.html">vd.backends.elasticsearch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/faiss.html">vd.backends.faiss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/lancedb.html">vd.backends.lancedb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/milvus.html">vd.backends.milvus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/mongodb.html">vd.backends.mongodb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/pgvector.html">vd.backends.pgvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/pinecone.html">vd.backends.pinecone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/qdrant.html">vd.backends.qdrant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/redis.html">vd.backends.redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/sqlite_vec.html">vd.backends.sqlite_vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/turbopuffer.html">vd.backends.turbopuffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/weaviate.html">vd.backends.weaviate</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">vd.base</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#vd.base.BaseBackend"><code class="docutils literal notranslate"><span class="pre">BaseBackend</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#vd.base.BaseBackend.supports_incremental_writes"><code class="docutils literal notranslate"><span class="pre">BaseBackend.supports_incremental_writes</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.base.BaseBackend.client"><code class="docutils literal notranslate"><span class="pre">BaseBackend.client</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.base.BaseBackend.create_collection"><code class="docutils literal notranslate"><span class="pre">BaseBackend.create_collection()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.base.BaseBackend.delete_collection"><code class="docutils literal notranslate"><span class="pre">BaseBackend.delete_collection()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.base.BaseBackend.get_collection"><code class="docutils literal notranslate"><span class="pre">BaseBackend.get_collection()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.base.BaseBackend.list_collections"><code class="docutils literal notranslate"><span class="pre">BaseBackend.list_collections()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">BaseBackend.supports_incremental_writes</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.base.AbstractClient"><code class="docutils literal notranslate"><span class="pre">AbstractClient</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractClient.backend_name"><code class="docutils literal notranslate"><span class="pre">AbstractClient.backend_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractClient.client"><code class="docutils literal notranslate"><span class="pre">AbstractClient.client</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractClient.close"><code class="docutils literal notranslate"><span class="pre">AbstractClient.close()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractClient.create_collection"><code class="docutils literal notranslate"><span class="pre">AbstractClient.create_collection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractClient.delete_collection"><code class="docutils literal notranslate"><span class="pre">AbstractClient.delete_collection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractClient.get_collection"><code class="docutils literal notranslate"><span class="pre">AbstractClient.get_collection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractClient.get_or_create_collection"><code class="docutils literal notranslate"><span class="pre">AbstractClient.get_or_create_collection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractClient.list_collections"><code class="docutils literal notranslate"><span class="pre">AbstractClient.list_collections()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.base.AbstractCollection"><code class="docutils literal notranslate"><span class="pre">AbstractCollection</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractCollection.add_documents"><code class="docutils literal notranslate"><span class="pre">AbstractCollection.add_documents()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractCollection.embed"><code class="docutils literal notranslate"><span class="pre">AbstractCollection.embed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractCollection.has_embedder"><code class="docutils literal notranslate"><span class="pre">AbstractCollection.has_embedder</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractCollection.native"><code class="docutils literal notranslate"><span class="pre">AbstractCollection.native</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractCollection.search"><code class="docutils literal notranslate"><span class="pre">AbstractCollection.search()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractCollection.supported_filter_operators"><code class="docutils literal notranslate"><span class="pre">AbstractCollection.supported_filter_operators</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractCollection.supports_incremental_writes"><code class="docutils literal notranslate"><span class="pre">AbstractCollection.supports_incremental_writes</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractCollection.upsert"><code class="docutils literal notranslate"><span class="pre">AbstractCollection.upsert()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.base.BackendNotInstalledError"><code class="docutils literal notranslate"><span class="pre">BackendNotInstalledError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.Client"><code class="docutils literal notranslate"><span class="pre">Client</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#vd.base.Client.create_collection"><code class="docutils literal notranslate"><span class="pre">Client.create_collection()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#vd.base.Client.delete_collection"><code class="docutils literal notranslate"><span class="pre">Client.delete_collection()</span></code></a></li>
@@ -73,26 +100,29 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.Collection"><code class="docutils literal notranslate"><span class="pre">Collection</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#vd.base.Collection.add_documents"><code class="docutils literal notranslate"><span class="pre">Collection.add_documents()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#vd.base.Collection.search"><code class="docutils literal notranslate"><span class="pre">Collection.search()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.base.Collection.upsert"><code class="docutils literal notranslate"><span class="pre">Collection.upsert()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.Document"><code class="docutils literal notranslate"><span class="pre">Document</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.base.DocumentInput"><code class="docutils literal notranslate"><span class="pre">DocumentInput</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.base.EmbeddingRequiredError"><code class="docutils literal notranslate"><span class="pre">EmbeddingRequiredError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.base.METRICS"><code class="docutils literal notranslate"><span class="pre">METRICS</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.StaticIndexError"><code class="docutils literal notranslate"><span class="pre">StaticIndexError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.SupportsBatch"><code class="docutils literal notranslate"><span class="pre">SupportsBatch</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.SupportsHybrid"><code class="docutils literal notranslate"><span class="pre">SupportsHybrid</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.UnsupportedCapabilityError"><code class="docutils literal notranslate"><span class="pre">UnsupportedCapabilityError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.UnsupportedFilterError"><code class="docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.base.VdError"><code class="docutils literal notranslate"><span class="pre">VdError</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">vd.cli</a></li>
-<li class="toctree-l1"><a class="reference internal" href="compare.html">vd.compare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config.html">vd.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">vd.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="health.html">vd.health</a></li>
 <li class="toctree-l1"><a class="reference internal" href="io.html">vd.io</a></li>
 <li class="toctree-l1"><a class="reference internal" href="migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="providers.html">vd.providers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">vd.requirements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="search.html">vd.search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="text.html">vd.text</a></li>
 <li class="toctree-l1"><a class="reference internal" href="time_indexed.html">vd.time_indexed</a></li>
@@ -125,168 +155,285 @@
              
   <section id="module-vd.base">
 <span id="vd-base"></span><h1>vd.base<a class="headerlink" href="#module-vd.base" title="Link to this heading"></a></h1>
-<p>Core protocols, base classes, and data models for the vd package.</p>
-<p>This module defines the fundamental abstractions used throughout the vd package:
-- Document: Standardized representation of searchable documents
-- Client: Protocol for vector database connections
-- Collection: Protocol for document collections (MutableMapping-based)
-- BaseBackend: Abstract base class for backend implementations</p>
+<p>Core contracts, data model, and abstract bases for the <code class="docutils literal notranslate"><span class="pre">vd</span></code> vectorDB facade.</p>
+<p><code class="docutils literal notranslate"><span class="pre">vd</span></code> is a facade over vector databases. This module is the single source of
+truth for the contract every backend adapter satisfies and that all of <code class="docutils literal notranslate"><span class="pre">vd</span></code>’s
+higher-level tooling (search, io, migration, analytics, …) is written against.</p>
+<p>The contract, smallest-first:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#vd.base.Document" title="vd.base.Document"><code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code></a> — the unit stored in a collection: <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">text</span></code>,
+<code class="docutils literal notranslate"><span class="pre">vector</span></code>, <code class="docutils literal notranslate"><span class="pre">metadata</span></code>.</p></li>
+<li><p><a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code></a> — a <code class="docutils literal notranslate"><span class="pre">MutableMapping[str,</span> <span class="pre">Document]</span></code> <em>plus</em> a
+<a class="reference internal" href="#vd.base.Collection.search" title="vd.base.Collection.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a> method. This is the one retrieval extension.</p></li>
+<li><p><a class="reference internal" href="#vd.base.Client" title="vd.base.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> — a <code class="docutils literal notranslate"><span class="pre">Mapping[str,</span> <span class="pre">Collection]</span></code>: a live connection to one
+backend, through which collections are created, fetched, and dropped.</p></li>
+<li><p><a class="reference internal" href="#vd.base.AbstractCollection" title="vd.base.AbstractCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractCollection</span></code></a> / <a class="reference internal" href="#vd.base.AbstractClient" title="vd.base.AbstractClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractClient</span></code></a> — adapter-author
+conveniences. A backend implements a handful of <em>raw primitives</em>; these bases
+supply everything users actually see (flexible inputs, optional text
+embedding, <code class="docutils literal notranslate"><span class="pre">egress</span></code> transforms, batch helpers, dimension checks) uniformly.</p></li>
+</ul>
+<p>Embedding is deliberately <strong>external</strong>. <code class="docutils literal notranslate"><span class="pre">vd</span></code> stores and searches <em>vectors</em>;
+turning text into vectors is another package’s job (e.g. <code class="docutils literal notranslate"><span class="pre">ef</span></code>). A
+<a class="reference internal" href="#vd.base.Client" title="vd.base.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> may be handed an optional <code class="docutils literal notranslate"><span class="pre">embedder</span></code> callable purely as a
+convenience, so <code class="docutils literal notranslate"><span class="pre">collection[&quot;k&quot;]</span> <span class="pre">=</span> <span class="pre">&quot;some</span> <span class="pre">text&quot;</span></code> and
+<code class="docutils literal notranslate"><span class="pre">collection.search(&quot;query</span> <span class="pre">text&quot;)</span></code> work. With no embedder configured those
+text forms raise <a class="reference internal" href="#vd.base.EmbeddingRequiredError" title="vd.base.EmbeddingRequiredError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmbeddingRequiredError</span></code></a>, and the caller must pass
+<a class="reference internal" href="#vd.base.Document" title="vd.base.Document"><code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code></a> objects (or pre-computed vectors) directly.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="vd.base.BaseBackend">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">BaseBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/base.html#BaseBackend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.BaseBackend" title="Link to this definition"></a></dt>
-<dd><p>Abstract base class for vector database backends.</p>
-<p>Backend implementations should inherit from this class and implement
-all abstract methods.</p>
+<dt class="sig sig-object py" id="vd.base.AbstractClient">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">AbstractClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/base.html#AbstractClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.AbstractClient" title="Link to this definition"></a></dt>
+<dd><p>Base class implementing the <a class="reference internal" href="#vd.base.Client" title="vd.base.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> contract for adapters.</p>
+<p>A <a class="reference internal" href="#vd.base.Client" title="vd.base.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> is a <code class="docutils literal notranslate"><span class="pre">Mapping[str,</span> <span class="pre">Collection]</span></code>. A backend subclasses
+this and implements <a class="reference internal" href="#vd.base.AbstractClient.create_collection" title="vd.base.AbstractClient.create_collection"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_collection()</span></code></a>, <a class="reference internal" href="#vd.base.AbstractClient.get_collection" title="vd.base.AbstractClient.get_collection"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_collection()</span></code></a>,
+<a class="reference internal" href="#vd.base.AbstractClient.delete_collection" title="vd.base.AbstractClient.delete_collection"><code class="xref py py-meth docutils literal notranslate"><span class="pre">delete_collection()</span></code></a>, and <a class="reference internal" href="#vd.base.AbstractClient.list_collections" title="vd.base.AbstractClient.list_collections"><code class="xref py py-meth docutils literal notranslate"><span class="pre">list_collections()</span></code></a>; the mapping
+behavior, the <a class="reference internal" href="#vd.base.AbstractClient.get_or_create_collection" title="vd.base.AbstractClient.get_or_create_collection"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_or_create_collection()</span></code></a> convenience, the <code class="docutils literal notranslate"><span class="pre">client</span></code>
+escape hatch, and context-manager support come for free.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>embedding_model</strong> (<em>callable</em>) – Function to generate embeddings from text</p></li>
-<li><p><strong>**config</strong> – Backend-specific configuration</p></li>
+<li><p><strong>embedder</strong> (<em>callable</em><em>, </em><em>optional</em>) – A <code class="docutils literal notranslate"><span class="pre">text</span> <span class="pre">-&gt;</span> <span class="pre">vector</span></code> function. Passed to every collection so text
+inputs are accepted as a convenience. <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default) makes the
+client vector-only.</p></li>
+<li><p><strong>**config</strong> – Backend-specific connection configuration.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="vd.base.BaseBackend.supports_incremental_writes">
-<span class="sig-name descname"><span class="pre">supports_incremental_writes</span></span><a class="headerlink" href="#vd.base.BaseBackend.supports_incremental_writes" title="Link to this definition"></a></dt>
-<dd><p>Whether collections from this backend accept writes after creation.
-Static-index backends (e.g. FAISS, Annoy) set this <code class="docutils literal notranslate"><span class="pre">False</span></code> and raise
-<a class="reference internal" href="#vd.base.StaticIndexError" title="vd.base.StaticIndexError"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaticIndexError</span></code></a> on <code class="docutils literal notranslate"><span class="pre">__setitem__</span></code> / <code class="docutils literal notranslate"><span class="pre">__delitem__</span></code>. Callers
-can branch on this flag to avoid triggering the error.</p>
+<dt class="sig sig-object py" id="vd.base.AbstractClient.backend_name">
+<span class="sig-name descname"><span class="pre">backend_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></span><a class="headerlink" href="#vd.base.AbstractClient.backend_name" title="Link to this definition"></a></dt>
+<dd><p>The registry name of this backend (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;chroma&quot;</span></code>). Adapters set it.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vd.base.AbstractClient.client">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">client</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></span><a class="headerlink" href="#vd.base.AbstractClient.client" title="Link to this definition"></a></dt>
+<dd><p>The raw backend client — a supported, documented escape hatch.</p>
+<p>Drop to it for backend-specific operations the facade does not expose.
+Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> for backends with no external client object (e.g. the
+in-memory backend).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.base.AbstractClient.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/base.html#AbstractClient.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.AbstractClient.close" title="Link to this definition"></a></dt>
+<dd><p>Release backend resources. Default no-op; adapters override as needed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.base.AbstractClient.create_collection">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cosine'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">index_config</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></span><a class="reference internal" href="../../_modules/vd/base.html#AbstractClient.create_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.AbstractClient.create_collection" title="Link to this definition"></a></dt>
+<dd><p>Create a new collection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Collection name.</p></li>
+<li><p><strong>dimension</strong> (<em>int</em><em>, </em><em>optional</em>) – Vector dimension. May be <code class="docutils literal notranslate"><span class="pre">None</span></code> for backends that can infer it
+from the first written vector; required up front by backends that
+cannot.</p></li>
+<li><p><strong>metric</strong> (<em>str</em>) – Distance metric: <code class="docutils literal notranslate"><span class="pre">&quot;cosine&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dot&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;l2&quot;</span></code>.</p></li>
+<li><p><strong>**index_config</strong> – Backend-specific index tuning (HNSW <code class="docutils literal notranslate"><span class="pre">M</span></code>/<code class="docutils literal notranslate"><span class="pre">ef</span></code>, IVF <code class="docutils literal notranslate"><span class="pre">nlist</span></code>, …).
+Documented per adapter; never abstracted into a common enum.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If a collection of that name already exists.</p>
 </dd>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.base.AbstractClient.delete_collection">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">delete_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/base.html#AbstractClient.delete_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.AbstractClient.delete_collection" title="Link to this definition"></a></dt>
+<dd><p>Drop a collection; raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.base.AbstractClient.get_collection">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></span><a class="reference internal" href="../../_modules/vd/base.html#AbstractClient.get_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.AbstractClient.get_collection" title="Link to this definition"></a></dt>
+<dd><p>Return an existing collection; raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.base.AbstractClient.get_or_create_collection">
+<span class="sig-name descname"><span class="pre">get_or_create_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cosine'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">index_config</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></span><a class="reference internal" href="../../_modules/vd/base.html#AbstractClient.get_or_create_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.AbstractClient.get_or_create_collection" title="Link to this definition"></a></dt>
+<dd><p>Return the collection <code class="docutils literal notranslate"><span class="pre">name</span></code>, creating it if it does not exist.</p>
+<p>The common idiom that every consumer otherwise re-implements as a
+<code class="docutils literal notranslate"><span class="pre">try</span> <span class="pre">get_collection</span> <span class="pre">/</span> <span class="pre">except</span> <span class="pre">KeyError:</span> <span class="pre">create_collection</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.base.AbstractClient.list_collections">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_collections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/base.html#AbstractClient.list_collections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.AbstractClient.list_collections" title="Link to this definition"></a></dt>
+<dd><p>Iterate collection names.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="vd.base.AbstractCollection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">AbstractCollection</span></span><a class="reference internal" href="../../_modules/vd/base.html#AbstractCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.AbstractCollection" title="Link to this definition"></a></dt>
+<dd><p>Base class implementing the <a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code></a> contract for adapters.</p>
+<p>A backend subclasses this and implements the <em>raw primitives</em> below;
+everything users see is provided here, once, uniformly:</p>
+<ul class="simple">
+<li><p>flexible <code class="docutils literal notranslate"><span class="pre">__setitem__</span></code> inputs (text / tuple / <a class="reference internal" href="#vd.base.Document" title="vd.base.Document"><code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code></a>),</p></li>
+<li><p>optional text embedding when a <code class="docutils literal notranslate"><span class="pre">Document</span></code> arrives without a vector,</p></li>
+<li><p>text-query embedding in <a class="reference internal" href="#vd.base.AbstractCollection.search" title="vd.base.AbstractCollection.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a>,</p></li>
+<li><p>central filter validation against <a class="reference internal" href="#vd.base.AbstractCollection.supported_filter_operators" title="vd.base.AbstractCollection.supported_filter_operators"><code class="xref py py-attr docutils literal notranslate"><span class="pre">supported_filter_operators</span></code></a>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">egress</span></code> result transforms,</p></li>
+<li><p>batch helpers (<a class="reference internal" href="#vd.base.AbstractCollection.add_documents" title="vd.base.AbstractCollection.add_documents"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_documents()</span></code></a>, <a class="reference internal" href="#vd.base.AbstractCollection.upsert" title="vd.base.AbstractCollection.upsert"><code class="xref py py-meth docutils literal notranslate"><span class="pre">upsert()</span></code></a>),</p></li>
+<li><p>eager dimension-mismatch detection.</p></li>
+</ul>
+<section id="subclass-responsibilities-raw-primitives">
+<h2>Subclass responsibilities (raw primitives)<a class="headerlink" href="#subclass-responsibilities-raw-primitives" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">_write(doc)</span></code></dt><dd><p>Upsert one document. Its <code class="docutils literal notranslate"><span class="pre">vector</span></code> is guaranteed non-<code class="docutils literal notranslate"><span class="pre">None</span></code> and
+dimension-checked.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">_read(key)</span> <span class="pre">-&gt;</span> <span class="pre">Document</span></code></dt><dd><p>Fetch one document; raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">_drop(key)</span></code></dt><dd><p>Delete one document; raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">_keys()</span> <span class="pre">-&gt;</span> <span class="pre">Iterator[str]</span></code></dt><dd><p>Iterate document ids.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">_count()</span> <span class="pre">-&gt;</span> <span class="pre">int</span></code></dt><dd><p>Number of documents.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">_query(vector,</span> <span class="pre">*,</span> <span class="pre">limit,</span> <span class="pre">filter,</span> <span class="pre">**kwargs)</span> <span class="pre">-&gt;</span> <span class="pre">Iterable[SearchResult]</span></code></dt><dd><p>Raw nearest-neighbor search. <code class="docutils literal notranslate"><span class="pre">filter</span></code> is the canonical AST — the
+adapter translates it. Each result is a dict with at least <code class="docutils literal notranslate"><span class="pre">id</span></code>,
+<code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">score</span></code>, <code class="docutils literal notranslate"><span class="pre">metadata</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="optional-overrides">
+<h2>Optional overrides<a class="headerlink" href="#optional-overrides" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">_write_many(docs)</span></code></dt><dd><p>Efficient bulk upsert. Defaults to a loop over <code class="docutils literal notranslate"><span class="pre">_write</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">native</span></code> (property)</dt><dd><p>The raw backend collection handle (escape hatch).</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.base.AbstractCollection.add_documents">
+<span class="sig-name descname"><span class="pre">add_documents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">documents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/base.html#AbstractCollection.add_documents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.AbstractCollection.add_documents" title="Link to this definition"></a></dt>
+<dd><p>Add many documents, embedding and writing them in batches.</p>
+<p>Each item may be a string, a <code class="docutils literal notranslate"><span class="pre">(text,</span> <span class="pre">...)</span></code> tuple, or a
+<a class="reference internal" href="#vd.base.Document" title="vd.base.Document"><code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code></a> (see <a class="reference internal" href="#vd.base.DocumentInput" title="vd.base.DocumentInput"><code class="xref py py-data docutils literal notranslate"><span class="pre">DocumentInput</span></code></a>). Items without an <code class="docutils literal notranslate"><span class="pre">id</span></code>
+get a deterministic auto-generated one.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.base.AbstractCollection.embed">
+<span class="sig-name descname"><span class="pre">embed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/base.html#AbstractCollection.embed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.AbstractCollection.embed" title="Link to this definition"></a></dt>
+<dd><p>Embed <code class="docutils literal notranslate"><span class="pre">text</span></code> to a vector, or raise <a class="reference internal" href="#vd.base.EmbeddingRequiredError" title="vd.base.EmbeddingRequiredError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmbeddingRequiredError</span></code></a>.</p>
+<p>This is the single place text becomes a vector inside <code class="docutils literal notranslate"><span class="pre">vd</span></code>.</p>
+</dd></dl>
+
 <dl class="py property">
-<dt class="sig sig-object py" id="vd.base.BaseBackend.client">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">client</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></span><a class="headerlink" href="#vd.base.BaseBackend.client" title="Link to this definition"></a></dt>
-<dd><p>The raw backend client — the escape hatch to backend-specific features.</p>
-<p>This is a <em>supported, documented</em> part of the API: when the unified
-facade does not expose a backend-specific feature, drop to the native
-client rather than circumventing <code class="docutils literal notranslate"><span class="pre">vd</span></code>. Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> for backends
-that have no external client (e.g. the in-memory backend).</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;chroma&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">raw</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">client</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">raw</span><span class="o">.</span><span class="n">heartbeat</span><span class="p">()</span>                        <span class="c1"># native ChromaDB call</span>
-</pre></div>
-</div>
+<dt class="sig sig-object py" id="vd.base.AbstractCollection.has_embedder">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">has_embedder</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#vd.base.AbstractCollection.has_embedder" title="Link to this definition"></a></dt>
+<dd><p>Whether a text-&gt;vector embedder is configured on this collection.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vd.base.AbstractCollection.native">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">native</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></span><a class="headerlink" href="#vd.base.AbstractCollection.native" title="Link to this definition"></a></dt>
+<dd><p>The raw backend collection handle — a supported, documented escape hatch.</p>
+<p>Use it to reach backend-specific features the facade does not expose,
+rather than circumventing <code class="docutils literal notranslate"><span class="pre">vd</span></code>. Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> if the adapter has
+no distinct native object.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="vd.base.BaseBackend.create_collection">
-<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></span><a class="reference internal" href="../../_modules/vd/base.html#BaseBackend.create_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.BaseBackend.create_collection" title="Link to this definition"></a></dt>
-<dd><p>Create a new collection.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="vd.base.BaseBackend.delete_collection">
-<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">delete_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/base.html#BaseBackend.delete_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.BaseBackend.delete_collection" title="Link to this definition"></a></dt>
-<dd><p>Delete a collection.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="vd.base.BaseBackend.get_collection">
-<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></span><a class="reference internal" href="../../_modules/vd/base.html#BaseBackend.get_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.BaseBackend.get_collection" title="Link to this definition"></a></dt>
-<dd><p>Get an existing collection.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="vd.base.BaseBackend.list_collections">
-<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">list_collections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/base.html#BaseBackend.list_collections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.BaseBackend.list_collections" title="Link to this definition"></a></dt>
-<dd><p>List all collection names.</p>
+<dt class="sig sig-object py" id="vd.base.AbstractCollection.search">
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/base.html#AbstractCollection.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.AbstractCollection.search" title="Link to this definition"></a></dt>
+<dd><p>Return the <code class="docutils literal notranslate"><span class="pre">limit</span></code> documents most similar to <code class="docutils literal notranslate"><span class="pre">query</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>str</em><em> or </em><em>list</em><em>[</em><em>float</em><em>]</em>) – Query text (embedded via the client’s <code class="docutils literal notranslate"><span class="pre">embedder</span></code>) or a
+pre-computed query vector.</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – Maximum number of results.</p></li>
+<li><p><strong>filter</strong> (<em>dict</em><em>, </em><em>optional</em>) – Metadata filter in the canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> dialect (see
+<a class="reference internal" href="filters.html#module-vd.filters" title="vd.filters"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vd.filters</span></code></a>). Validated against this backend’s
+<a class="reference internal" href="#vd.base.AbstractCollection.supported_filter_operators" title="vd.base.AbstractCollection.supported_filter_operators"><code class="xref py py-attr docutils literal notranslate"><span class="pre">supported_filter_operators</span></code></a> before the query runs, so an
+unsupported operator fails with a clear <a class="reference internal" href="#vd.base.UnsupportedFilterError" title="vd.base.UnsupportedFilterError"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a>.</p></li>
+<li><p><strong>egress</strong> (<em>callable</em><em>, </em><em>optional</em>) – Transform applied to each result dict before it is yielded.</p></li>
+<li><p><strong>**kwargs</strong> – Backend-specific search options, passed through to <code class="docutils literal notranslate"><span class="pre">_query</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – <code class="docutils literal notranslate"><span class="pre">{&quot;id&quot;,</span> <span class="pre">&quot;text&quot;,</span> <span class="pre">&quot;score&quot;,</span> <span class="pre">&quot;metadata&quot;}</span></code> — or whatever <code class="docutils literal notranslate"><span class="pre">egress</span></code>
+returns.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">supports_incremental_writes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
-<dd><p>Whether collections of this backend accept incremental writes (see above).</p>
+<dt class="sig sig-object py" id="vd.base.AbstractCollection.supported_filter_operators">
+<span class="sig-name descname"><span class="pre">supported_filter_operators</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">frozenset</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({})</span></span><a class="headerlink" href="#vd.base.AbstractCollection.supported_filter_operators" title="Link to this definition"></a></dt>
+<dd><p>the full language.
+Adapters narrow this; <a class="reference internal" href="#vd.base.AbstractCollection.search" title="vd.base.AbstractCollection.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a> validates against it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Filter operators this backend can honor. Default</p>
+</dd>
+</dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vd.base.AbstractCollection.supports_incremental_writes">
+<span class="sig-name descname"><span class="pre">supports_incremental_writes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#vd.base.AbstractCollection.supports_incremental_writes" title="Link to this definition"></a></dt>
+<dd><p>Whether the backend accepts writes after creation. Static-index backends
+set this <code class="docutils literal notranslate"><span class="pre">False</span></code> and raise <a class="reference internal" href="#vd.base.StaticIndexError" title="vd.base.StaticIndexError"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaticIndexError</span></code></a> on write.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.base.AbstractCollection.upsert">
+<span class="sig-name descname"><span class="pre">upsert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/base.html#AbstractCollection.upsert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.AbstractCollection.upsert" title="Link to this definition"></a></dt>
+<dd><p>Insert or replace <code class="docutils literal notranslate"><span class="pre">document</span></code> (equivalent to <code class="docutils literal notranslate"><span class="pre">self[doc.id]</span> <span class="pre">=</span> <span class="pre">doc</span></code>).</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="vd.base.BackendNotInstalledError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">BackendNotInstalledError</span></span><a class="reference internal" href="../../_modules/vd/base.html#BackendNotInstalledError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.BackendNotInstalledError" title="Link to this definition"></a></dt>
+<dd><p>Raised when a known backend’s Python package is not installed.</p>
+<p>Distinct from an <em>unknown</em> backend name (a plain <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>): the
+backend exists in <code class="docutils literal notranslate"><span class="pre">vd</span></code>’s provider registry, but its client library is
+missing. The message carries the <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> command to fix it.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="vd.base.Client">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">Client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/base.html#Client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.Client" title="Link to this definition"></a></dt>
-<dd><p>Protocol for vector database clients.</p>
-<p>A Client manages connections to vector database backends and provides
-methods to create, retrieve, and manage collections.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s1">&#39;my_docs&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span><span class="p">[</span><span class="s1">&#39;doc1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Hello world&quot;</span>
-</pre></div>
-</div>
+<dd><p>A live connection to one backend: <code class="docutils literal notranslate"><span class="pre">Mapping[str,</span> <span class="pre">Collection]</span></code>.</p>
+<p>Collections are created explicitly (so create-time parameters such as
+<code class="docutils literal notranslate"><span class="pre">dimension</span></code> and <code class="docutils literal notranslate"><span class="pre">metric</span></code> can be supplied) and fetched either by
+<a class="reference internal" href="#vd.base.Client.get_collection" title="vd.base.Client.get_collection"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_collection()</span></code></a> or by mapping access <code class="docutils literal notranslate"><span class="pre">client[name]</span></code>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="vd.base.Client.create_collection">
-<span class="sig-name descname"><span class="pre">create_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></span><a class="reference internal" href="../../_modules/vd/base.html#Client.create_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.Client.create_collection" title="Link to this definition"></a></dt>
-<dd><p>Create a new collection.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – Name of the collection</p></li>
-<li><p><strong>schema</strong> (<em>dict</em><em>, </em><em>optional</em>) – Schema definition (backend-specific)</p></li>
-<li><p><strong>**kwargs</strong> – Additional backend-specific options</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The newly created collection</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection">Collection</a></p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If collection already exists</p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">create_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cosine'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">index_config</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></span><a class="reference internal" href="../../_modules/vd/base.html#Client.create_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.Client.create_collection" title="Link to this definition"></a></dt>
+<dd><p>Create a new collection; raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if it exists.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vd.base.Client.delete_collection">
 <span class="sig-name descname"><span class="pre">delete_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/base.html#Client.delete_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.Client.delete_collection" title="Link to this definition"></a></dt>
-<dd><p>Delete a collection.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name of the collection to delete</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>KeyError</strong> – If collection does not exist</p>
-</dd>
-</dl>
+<dd><p>Drop a collection; raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vd.base.Client.get_collection">
 <span class="sig-name descname"><span class="pre">get_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></span><a class="reference internal" href="../../_modules/vd/base.html#Client.get_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.Client.get_collection" title="Link to this definition"></a></dt>
-<dd><p>Get an existing collection.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name of the collection</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The requested collection</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection">Collection</a></p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>KeyError</strong> – If collection does not exist</p>
-</dd>
-</dl>
+<dd><p>Return an existing collection; raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vd.base.Client.list_collections">
 <span class="sig-name descname"><span class="pre">list_collections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/base.html#Client.list_collections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.Client.list_collections" title="Link to this definition"></a></dt>
-<dd><p>List all collection names.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Yields<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>str</em> – Collection names</p>
-</dd>
-</dl>
+<dd><p>Iterate collection names.</p>
 </dd></dl>
 
 </dd></dl>
@@ -294,176 +441,92 @@ methods to create, retrieve, and manage collections.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="vd.base.Collection">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">Collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/base.html#Collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.Collection" title="Link to this definition"></a></dt>
-<dd><p>Protocol for a collection of searchable documents.</p>
-<p>A Collection follows the MutableMapping interface, storing Document objects
-and enabling intuitive CRUD operations via dict-like syntax while providing
-semantic search capabilities.</p>
-<p>The collection automatically handles embedding generation when documents
-are added without pre-computed vectors.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add documents (dict-like syntax)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span><span class="p">[</span><span class="s1">&#39;doc1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;This is a test document&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span><span class="p">[</span><span class="s1">&#39;doc2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;doc2&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Another doc&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Retrieve documents</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="s1">&#39;doc1&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="o">.</span><span class="n">text</span>
-<span class="go">&#39;This is a test document&#39;</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Delete documents</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">collection</span><span class="p">[</span><span class="s1">&#39;doc1&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Iterate over document IDs</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
-<span class="go">[&#39;doc2&#39;]</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Search the collection</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;test query&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">])</span>
-</pre></div>
-</div>
-<dl class="py method">
-<dt class="sig sig-object py" id="vd.base.Collection.add_documents">
-<span class="sig-name descname"><span class="pre">add_documents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">documents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/base.html#Collection.add_documents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.Collection.add_documents" title="Link to this definition"></a></dt>
-<dd><p>Batch add documents to the collection.</p>
-<p>This method efficiently adds multiple documents in batches, which is
-typically faster than adding documents one at a time.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>documents</strong> (<em>iterable</em><em> of </em><em>DocumentInput</em>) – Documents to add. Each can be:
-- str: Just text (ID auto-generated)
-- (text, id): Text with specific ID
-- (text, metadata): Text with metadata (ID auto-generated)
-- (text, id, metadata): Full specification
-- Document: Full document object</p></li>
-<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>default 100</em>) – Number of documents to process in each batch</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">([</span>
-<span class="gp">... </span>    <span class="s2">&quot;First article about AI&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="p">(</span><span class="s2">&quot;Second article&quot;</span><span class="p">,</span> <span class="s2">&quot;doc2&quot;</span><span class="p">),</span>
-<span class="gp">... </span>    <span class="p">(</span><span class="s2">&quot;Third article&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;category&#39;</span><span class="p">:</span> <span class="s1">&#39;tech&#39;</span><span class="p">})</span>
-<span class="gp">... </span><span class="p">])</span>
-</pre></div>
-</div>
-</dd></dl>
-
+<dd><p>A collection of documents: <code class="docutils literal notranslate"><span class="pre">MutableMapping[str,</span> <span class="pre">Document]</span></code> + <code class="docutils literal notranslate"><span class="pre">search</span></code>.</p>
+<p>The mapping half is storage; <a class="reference internal" href="#vd.base.Collection.search" title="vd.base.Collection.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a> is the single retrieval
+extension. This minimal surface is everything <code class="docutils literal notranslate"><span class="pre">vd</span></code>’s tooling depends on.
+Batch insertion is an <em>optional</em> capability — see <a class="reference internal" href="#vd.base.SupportsBatch" title="vd.base.SupportsBatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBatch</span></code></a>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="vd.base.Collection.search">
 <span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/base.html#Collection.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.Collection.search" title="Link to this definition"></a></dt>
-<dd><p>Search the collection for similar documents.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>query</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>float</em>) – Query text (will be embedded) or pre-computed query vector</p></li>
-<li><p><strong>limit</strong> (<em>int</em><em>, </em><em>default 10</em>) – Maximum number of results to return</p></li>
-<li><p><strong>filter</strong> (<em>dict</em><em>, </em><em>optional</em>) – Metadata filter using unified filter syntax (MongoDB-style)</p></li>
-<li><p><strong>egress</strong> (<em>callable</em><em>, </em><em>optional</em>) – Function to transform results. If None, returns full result dict.</p></li>
-<li><p><strong>**kwargs</strong> – Backend-specific options (e.g., alpha=0.5 for hybrid search)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Yields<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>dict or transformed result</em> – Search results with keys: ‘id’, ‘text’, ‘score’, ‘metadata’
-(or transformed by egress function)</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Basic search</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">docs</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;machine learning&quot;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">doc</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">doc</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># With metadata filter</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">docs</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="s2">&quot;AI research&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$gte&#39;</span><span class="p">:</span> <span class="mi">2020</span><span class="p">}}</span>
-<span class="gp">... </span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># With custom egress to extract just text</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">texts</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="s2">&quot;neural networks&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">egress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span>
-<span class="gp">... </span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="vd.base.Collection.upsert">
-<span class="sig-name descname"><span class="pre">upsert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/base.html#Collection.upsert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.Collection.upsert" title="Link to this definition"></a></dt>
-<dd><p>Insert or update a document (idempotent operation).</p>
-<p>This is equivalent to __setitem__ but takes a Document object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>document</strong> (<a class="reference internal" href="#vd.base.Document" title="vd.base.Document"><em>Document</em></a>) – Document to insert or update</p>
-</dd>
-</dl>
+<dd><p>Return the <code class="docutils literal notranslate"><span class="pre">limit</span></code> documents most similar to <code class="docutils literal notranslate"><span class="pre">query</span></code>.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="vd.base.Document">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">Document</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~typing.Any]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/base.html#Document"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.Document" title="Link to this definition"></a></dt>
-<dd><p>Standardized document representation.</p>
-<p>A Document represents a searchable text segment with its embedding vector
-and associated metadata.</p>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">Document</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~typing.Any]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/base.html#Document"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.Document" title="Link to this definition"></a></dt>
+<dd><p>The unit stored in a <a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>id</strong> (<em>str</em>) – Unique identifier (URI to source). Acts as the key in collections.</p></li>
-<li><p><strong>text</strong> (<em>str</em>) – The text content to be embedded and searched.</p></li>
-<li><p><strong>vector</strong> (<em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Embedding vector. If None, will be auto-generated using the collection’s
-embedding model.</p></li>
-<li><p><strong>metadata</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Associated metadata for filtering and retrieval.</p></li>
+<li><p><strong>id</strong> (<em>str</em>) – Unique identifier; the key under which the document lives in a
+collection.</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – The text content. May be empty for vector-first use cases where no
+text is associated with a vector.</p></li>
+<li><p><strong>vector</strong> (<em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>optional</em>) – The embedding. If <code class="docutils literal notranslate"><span class="pre">None</span></code> when written, the collection embeds
+<code class="docutils literal notranslate"><span class="pre">text</span></code> with its client’s <code class="docutils literal notranslate"><span class="pre">embedder</span></code> — or raises
+<a class="reference internal" href="#vd.base.EmbeddingRequiredError" title="vd.base.EmbeddingRequiredError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmbeddingRequiredError</span></code></a> if none is configured.</p></li>
+<li><p><strong>metadata</strong> (<em>dict</em>) – Arbitrary metadata, used for filtering and carried through search
+results.</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;doc1&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Hello world&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="o">.</span><span class="n">id</span>
-<span class="go">&#39;doc1&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="o">.</span><span class="n">text</span>
-<span class="go">&#39;Hello world&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span>
-<span class="go">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span>
+<span class="go">(&#39;doc1&#39;, &#39;Hello world&#39;, {})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;v1&quot;</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span><span class="o">.</span><span class="n">text</span>
+<span class="go">&#39;&#39;</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">doc_with_meta</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;doc2&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;AI article&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;category&#39;</span><span class="p">:</span> <span class="s1">&#39;tech&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">}</span>
-<span class="gp">... </span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">doc_with_meta</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">]</span>
-<span class="go">&#39;tech&#39;</span>
-</pre></div>
-</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="vd.base.DocumentInput">
+<span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">DocumentInput</span></span><a class="headerlink" href="#vd.base.DocumentInput" title="Link to this definition"></a></dt>
+<dd><p>A document may be supplied to batch operations in several flexible shapes.</p>
+<p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code> | <a class="reference internal" href="#vd.base.Document" title="vd.base.Document"><code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code></a></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="vd.base.EmbeddingRequiredError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">EmbeddingRequiredError</span></span><a class="reference internal" href="../../_modules/vd/base.html#EmbeddingRequiredError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.EmbeddingRequiredError" title="Link to this definition"></a></dt>
+<dd><p>Raised when text is given but no embedder is configured.</p>
+<p><code class="docutils literal notranslate"><span class="pre">vd</span></code> operates on vectors. Passing raw text to <code class="docutils literal notranslate"><span class="pre">collection[key]</span> <span class="pre">=</span> <span class="pre">text</span></code>
+or <code class="docutils literal notranslate"><span class="pre">collection.search(text)</span></code> only works when the <a class="reference internal" href="#vd.base.Client" title="vd.base.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> was
+created with an <code class="docutils literal notranslate"><span class="pre">embedder</span></code>. Otherwise, pass a <a class="reference internal" href="#vd.base.Document" title="vd.base.Document"><code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code></a> with a
+<code class="docutils literal notranslate"><span class="pre">vector</span></code> (or a pre-computed query vector) directly.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="vd.base.METRICS">
+<span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">METRICS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'cosine',</span> <span class="pre">'dot',</span> <span class="pre">'l2'})</span></span><a class="headerlink" href="#vd.base.METRICS" title="Link to this definition"></a></dt>
+<dd><p>Distance metrics the facade understands. Adapters map these to their own
+spellings (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;l2&quot;</span></code> -&gt; Qdrant <code class="docutils literal notranslate"><span class="pre">Distance.EUCLID</span></code>).</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="vd.base.StaticIndexError">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">StaticIndexError</span></span><a class="reference internal" href="../../_modules/vd/base.html#StaticIndexError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.StaticIndexError" title="Link to this definition"></a></dt>
-<dd><p>Raised when attempting write operations on a static index.</p>
-<p>Some backends (like FAISS, Annoy) use static indexes that cannot be
-modified after they are built. This exception is raised when users
-attempt write operations on such backends.</p>
-<p>See also the <code class="docutils literal notranslate"><span class="pre">supports_incremental_writes</span></code> flag on <a class="reference internal" href="#vd.base.BaseBackend" title="vd.base.BaseBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBackend</span></code></a>,
-which lets callers branch <em>before</em> triggering this error.</p>
+<dd><p>Raised on a write to a static (immutable) index.</p>
+<p>Some backends — notably a plain FAISS flat index — build an index that
+cannot accept incremental <code class="docutils literal notranslate"><span class="pre">__setitem__</span></code> / <code class="docutils literal notranslate"><span class="pre">__delitem__</span></code> after creation.
+Such collections set <a class="reference internal" href="#vd.base.AbstractCollection.supports_incremental_writes" title="vd.base.AbstractCollection.supports_incremental_writes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">AbstractCollection.supports_incremental_writes</span></code></a>
+to <code class="docutils literal notranslate"><span class="pre">False</span></code> and raise this on write. Callers branch on that flag <em>before</em>
+triggering the error, and use the adapter’s documented <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code> path.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="vd.base.SupportsBatch">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">SupportsBatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/base.html#SupportsBatch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.SupportsBatch" title="Link to this definition"></a></dt>
-<dd><p>Capability protocol: a collection that supports efficient batch operations.</p>
-<p>Batch insertion (<code class="docutils literal notranslate"><span class="pre">add_documents</span></code>) and idempotent single upsert
-(<code class="docutils literal notranslate"><span class="pre">upsert</span></code>) are <em>optional</em> — not part of the minimal <code class="docutils literal notranslate"><span class="pre">Collection</span></code>
-contract. Feature-discover support at runtime:</p>
+<dd><p>A collection that supports efficient batch insertion.</p>
+<p><code class="docutils literal notranslate"><span class="pre">add_documents</span></code> and <code class="docutils literal notranslate"><span class="pre">upsert</span></code> are <em>not</em> part of the minimal
+<a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code></a> contract. Every adapter built on
+<a class="reference internal" href="#vd.base.AbstractCollection" title="vd.base.AbstractCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractCollection</span></code></a> happens to provide them, but generic code
+should still feature-discover:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">SupportsBatch</span><span class="p">):</span>
-    <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">many_docs</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">many_docs</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -471,37 +534,41 @@ contract. Feature-discover support at runtime:</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="vd.base.SupportsHybrid">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">SupportsHybrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/base.html#SupportsHybrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.SupportsHybrid" title="Link to this definition"></a></dt>
-<dd><p>Capability protocol: a collection that supports hybrid (dense + lexical) search.</p>
-<p>Hybrid search has no syntactic convergence across vector databases, so it is
-an <em>opt-in capability</em>, never part of the baseline contract. Feature-discover
-before calling:</p>
+<dd><p>A collection that supports native hybrid (dense + lexical) search.</p>
+<p>Hybrid search has no syntactic convergence across vector databases, so it
+is an opt-in capability, never baseline. Feature-discover before calling:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">SupportsHybrid</span><span class="p">):</span>
     <span class="n">hits</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">hybrid_search</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="s2">&quot;query text&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Backends without native hybrid do not implement this protocol; combine
-separate dense + lexical result lists with <a class="reference internal" href="../vd.html#vd.reciprocal_rank_fusion" title="vd.reciprocal_rank_fusion"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.reciprocal_rank_fusion()</span></code></a>
-as a client-side fallback.</p>
+<p>Backends without native hybrid do not implement this; combine separate
+dense + lexical result lists with <a class="reference internal" href="../vd.html#vd.reciprocal_rank_fusion" title="vd.reciprocal_rank_fusion"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.reciprocal_rank_fusion()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="vd.base.UnsupportedCapabilityError">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">UnsupportedCapabilityError</span></span><a class="reference internal" href="../../_modules/vd/base.html#UnsupportedCapabilityError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.UnsupportedCapabilityError" title="Link to this definition"></a></dt>
-<dd><p>Raised when an operation requires a capability the backend does not have.</p>
+<dd><p>Raised when an operation needs a capability the backend lacks.</p>
 <p>Prefer feature-discovery — <code class="docutils literal notranslate"><span class="pre">isinstance(collection,</span> <span class="pre">SupportsHybrid)</span></code> — over
-catching this exception, but it is raised as a clear, typed fallback when an
-optional operation is called on a backend that does not implement it.</p>
+catching this, but it is the clear, typed fallback when an optional
+operation is called on a backend that does not implement it.</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="vd.base.UnsupportedFilterError">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">UnsupportedFilterError</span></span><a class="reference internal" href="../../_modules/vd/base.html#UnsupportedFilterError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.UnsupportedFilterError" title="Link to this definition"></a></dt>
-<dd><p>Raised when a metadata filter uses an operator a backend does not support.</p>
-<p>The canonical, backend-agnostic filter language is defined in
-<a class="reference internal" href="filters.html#module-vd.filters" title="vd.filters"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vd.filters</span></code></a> (a MongoDB-style JSON dialect). When a filter uses an
-operator outside a backend’s supported subset — or an operator that does
-not exist at all — this is raised so the caller can simplify the filter or
-drop to a backend-specific filter via the escape hatch (<code class="docutils literal notranslate"><span class="pre">collection.native</span></code>).</p>
+<dd><p>Raised when a metadata filter uses an operator a backend cannot honor.</p>
+<p>The canonical, backend-agnostic filter language lives in <a class="reference internal" href="filters.html#module-vd.filters" title="vd.filters"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vd.filters</span></code></a>
+(a MongoDB-style JSON dialect). When a filter uses an operator outside a
+backend’s documented subset — or one that does not exist at all — this is
+raised, so the caller can simplify the filter or drop to the backend’s
+native filter via the escape hatch (<code class="docutils literal notranslate"><span class="pre">collection.native</span></code>).</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="vd.base.VdError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">VdError</span></span><a class="reference internal" href="../../_modules/vd/base.html#VdError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.VdError" title="Link to this definition"></a></dt>
+<dd><p>Base class for every error <code class="docutils literal notranslate"><span class="pre">vd</span></code> raises on its own behalf.</p>
 </dd></dl>
 
 </section>
@@ -510,7 +577,7 @@ drop to a backend-specific filter via the escape hatch (<code class="docutils li
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="backends/memory.html" class="btn btn-neutral float-left" title="vd.backends.memory" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="backends/weaviate.html" class="btn btn-neutral float-left" title="vd.backends.weaviate" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="cli.html" class="btn btn-neutral float-right" title="vd.cli" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

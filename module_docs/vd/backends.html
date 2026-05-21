@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.backends &mdash; vd 0.1.5 documentation</title>
+  <title>vd.backends &mdash; vd 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=59fadc99"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -24,7 +24,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="vd.backends.chroma" href="backends/chroma.html" />
+    <link rel="next" title="vd.backends._helpers" href="backends/_helpers.html" />
     <link rel="prev" title="vd.analytics" href="analytics.html" /> 
 </head>
 
@@ -51,26 +51,32 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../vd.html">vd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="analytics.html">vd.analytics</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">vd.backends</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#vd.backends.MemoryBackend"><code class="docutils literal notranslate"><span class="pre">MemoryBackend</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#vd.backends.MemoryBackend.create_collection"><code class="docutils literal notranslate"><span class="pre">MemoryBackend.create_collection()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.backends.MemoryBackend.delete_collection"><code class="docutils literal notranslate"><span class="pre">MemoryBackend.delete_collection()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.backends.MemoryBackend.get_collection"><code class="docutils literal notranslate"><span class="pre">MemoryBackend.get_collection()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vd.backends.MemoryBackend.list_collections"><code class="docutils literal notranslate"><span class="pre">MemoryBackend.list_collections()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/_helpers.html">vd.backends._helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/duckdb.html">vd.backends.duckdb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/elasticsearch.html">vd.backends.elasticsearch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/faiss.html">vd.backends.faiss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/lancedb.html">vd.backends.lancedb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/milvus.html">vd.backends.milvus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/mongodb.html">vd.backends.mongodb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/pgvector.html">vd.backends.pgvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/pinecone.html">vd.backends.pinecone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/qdrant.html">vd.backends.qdrant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/redis.html">vd.backends.redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/sqlite_vec.html">vd.backends.sqlite_vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/turbopuffer.html">vd.backends.turbopuffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends/weaviate.html">vd.backends.weaviate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="base.html">vd.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">vd.cli</a></li>
-<li class="toctree-l1"><a class="reference internal" href="compare.html">vd.compare</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config.html">vd.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">vd.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="health.html">vd.health</a></li>
 <li class="toctree-l1"><a class="reference internal" href="io.html">vd.io</a></li>
 <li class="toctree-l1"><a class="reference internal" href="migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="providers.html">vd.providers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">vd.requirements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="search.html">vd.search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="text.html">vd.text</a></li>
 <li class="toctree-l1"><a class="reference internal" href="time_indexed.html">vd.time_indexed</a></li>
@@ -103,50 +109,12 @@
              
   <section id="module-vd.backends">
 <span id="vd-backends"></span><h1>vd.backends<a class="headerlink" href="#module-vd.backends" title="Link to this heading"></a></h1>
-<p>Backend implementations for various vector databases.</p>
-<p>This module contains concrete implementations of the BaseBackend protocol
-for different vector database systems.</p>
-<p>Available backends are registered here and can be accessed via vd.connect().</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="vd.backends.MemoryBackend">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.backends.</span></span><span class="sig-name descname"><span class="pre">MemoryBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/backends/memory.html#MemoryBackend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.MemoryBackend" title="Link to this definition"></a></dt>
-<dd><p>In-memory vector database backend.</p>
-<p>Stores all collections and documents in memory. Perfect for testing,
-prototyping, and small datasets.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span><span class="p">[</span><span class="s1">&#39;doc1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Hello world&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">collection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">))</span>
-</pre></div>
-</div>
-<dl class="py method">
-<dt class="sig sig-object py" id="vd.backends.MemoryBackend.create_collection">
-<span class="sig-name descname"><span class="pre">create_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></span><a class="reference internal" href="../../_modules/vd/backends/memory.html#MemoryBackend.create_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.MemoryBackend.create_collection" title="Link to this definition"></a></dt>
-<dd><p>Create a new collection.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="vd.backends.MemoryBackend.delete_collection">
-<span class="sig-name descname"><span class="pre">delete_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/vd/backends/memory.html#MemoryBackend.delete_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.MemoryBackend.delete_collection" title="Link to this definition"></a></dt>
-<dd><p>Delete a collection.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="vd.backends.MemoryBackend.get_collection">
-<span class="sig-name descname"><span class="pre">get_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="base.html#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></span><a class="reference internal" href="../../_modules/vd/backends/memory.html#MemoryBackend.get_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.MemoryBackend.get_collection" title="Link to this definition"></a></dt>
-<dd><p>Get an existing collection.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="vd.backends.MemoryBackend.list_collections">
-<span class="sig-name descname"><span class="pre">list_collections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/backends/memory.html#MemoryBackend.list_collections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.MemoryBackend.list_collections" title="Link to this definition"></a></dt>
-<dd><p>List all collection names.</p>
-</dd></dl>
-
-</dd></dl>
-
+<p>Backend adapters for the vector databases <code class="docutils literal notranslate"><span class="pre">vd</span></code> supports.</p>
+<p>Importing this package registers every adapter whose client library is
+installed. Each adapter lives in its own module and registers itself with the
+<a class="reference internal" href="util.html#vd.util.register_backend" title="vd.util.register_backend"><code class="xref py py-func docutils literal notranslate"><span class="pre">register_backend()</span></code></a> decorator; modules whose third-party client
+is not installed fail to import and are skipped silently — that backend simply
+will not appear in <a class="reference internal" href="../vd.html#vd.list_backends" title="vd.list_backends"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.list_backends()</span></code></a>.</p>
 </section>
 
 
@@ -154,7 +122,7 @@ prototyping, and small datasets.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="analytics.html" class="btn btn-neutral float-left" title="vd.analytics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="backends/chroma.html" class="btn btn-neutral float-right" title="vd.backends.chroma" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="backends/_helpers.html" class="btn btn-neutral float-right" title="vd.backends._helpers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

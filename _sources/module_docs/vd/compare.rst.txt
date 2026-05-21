@@ -1,4 +1,0 @@
-vd.compare
-==========
-.. automodule:: vd.compare
-   :members:
