@@ -251,10 +251,6 @@ def apply_env_overrides(config: dict) -> dict:
     if "VD_BACKEND" in os.environ:
         config["backend"] = os.environ["VD_BACKEND"]
 
-    # Override embedding model
-    if "VD_EMBEDDING_MODEL" in os.environ:
-        config["embedding_model"] = os.environ["VD_EMBEDDING_MODEL"]
-
     return config
 
 
@@ -263,7 +259,7 @@ def connect_from_config(
     *,
     profile: Optional[str] = None,
     apply_env: bool = True,
-    embedding_model: Optional[Callable[[str], Vector]] = None,
+    embedder: Optional[Callable[[str], Vector]] = None,
     **overrides,
 ) -> Client:
     """
@@ -279,8 +275,10 @@ def connect_from_config(
         the VD_PROFILE environment variable.
     apply_env : bool, default True
         Whether to apply environment variable overrides
-    embedding_model : callable, optional
-        Embedding model to use. Overrides config file setting.
+    embedder : callable, optional
+        Optional ``text -> vector`` convenience embedder, passed to
+        :func:`vd.connect`. A vd config file describes the *backend
+        connection*, not embedding — embedding stays the caller's concern.
     **overrides
         Additional keyword arguments to override configuration values
 
@@ -318,15 +316,13 @@ def connect_from_config(
     # Apply explicit overrides
     config.update(overrides)
 
-    # Use provided embedding model if given
-    if embedding_model is not None:
-        config["embedding_model"] = embedding_model
-
-    # Extract backend name
+    # Extract backend name; embedding (if any) stays out of the config file.
     backend_name = config.pop("backend", "memory")
+    config.pop("embedding_model", None)  # tolerate (ignore) legacy config keys
+    config.pop("embedder", None)
 
     # Connect
-    return vd.connect(backend_name, **config)
+    return vd.connect(backend_name, embedder=embedder, **config)
 
 
 def save_config(
@@ -422,25 +418,19 @@ def create_example_config(format: str = "yaml") -> str:
     >>> print(yaml_config)  # doctest: +SKIP
     >>> toml_config = create_example_config('toml')  # doctest: +SKIP
     """
+    # A vd config file describes the *backend connection* only. Embedding is
+    # the caller's concern — it is never configured here.
     example_config = {
         "profiles": {
-            "default": {
-                "backend": "memory",
-                "embedding_model": "text-embedding-3-small",
-            },
-            "dev": {
-                "backend": "memory",
-                "embedding_model": "text-embedding-3-small",
-            },
+            "default": {"backend": "memory"},
+            "dev": {"backend": "memory"},
             "prod": {
                 "backend": "chroma",
                 "persist_directory": "./vector_db",
-                "embedding_model": "text-embedding-3-large",
             },
-            "local_chroma": {
-                "backend": "chroma",
-                "persist_directory": "./chroma_data",
-                "embedding_model": "text-embedding-3-small",
+            "qdrant_cloud": {
+                "backend": "qdrant",
+                "url": "https://YOUR-CLUSTER.qdrant.io",
             },
         }
     }

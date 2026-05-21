@@ -1,19 +1,28 @@
 """
-Utility functions and facades for the vd package.
+The backend registry, the :func:`connect` factory, and small shared utilities.
 
-This module provides:
-- Backend registration system
-- Connection factory function
-- Utility functions for common operations
-- Egress functions for search result transformation
+This module is intentionally thin. It owns three things:
+
+- the **registry** mapping a backend name (``"chroma"``, ``"qdrant"``, ...) to
+  its adapter :class:`~vd.base.Client` class, via the :func:`register_backend`
+  decorator;
+- :func:`connect`, the one entry point users call to get a client;
+- backend-agnostic helpers: document-input normalization, search-result
+  ``egress`` functions, and vector math.
+
+Everything *descriptive* about a backend (pip package, license, docs URLs,
+deployment archetype, setup checks) lives in :mod:`vd.providers` and its
+data file, not here.
 """
+
+from __future__ import annotations
 
 import hashlib
 import uuid
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Iterable, Optional
 
 from vd.base import (
-    BaseBackend,
+    BackendNotInstalledError,
     Client,
     Document,
     DocumentInput,
@@ -21,590 +30,147 @@ from vd.base import (
     Vector,
 )
 
+# --------------------------------------------------------------------------- #
 # Backend registry
-_backends: dict[str, type[BaseBackend]] = {}
+# --------------------------------------------------------------------------- #
 
-# Backend metadata - information about all possible backends
-_backend_metadata = {
-    "memory": {
-        "name": "Memory (In-Memory)",
-        "description": "In-memory storage for testing and prototyping. No persistence.",
-        "pip_install": None,  # Always available
-        "optional_group": None,
-        "module_check": None,  # No import needed
-        "features": ["Always available", "Fast", "No persistence"],
-        "limitations": ["Not persistent", "Limited to RAM", "No distributed support"],
-    },
-    "chroma": {
-        "name": "ChromaDB",
-        "description": "Open-source embedding database with persistence support.",
-        "pip_install": "pip install vd[chromadb]",
-        "optional_group": "chromadb",
-        "module_check": "chromadb",
-        "features": [
-            "Persistent storage",
-            "Local or client/server",
-            "Active development",
-        ],
-        "limitations": ["Primarily for local use", "Limited production features"],
-    },
-    "pinecone": {
-        "name": "Pinecone",
-        "description": "Managed vector database with serverless and pod-based options.",
-        "pip_install": "pip install pinecone-client",
-        "optional_group": None,
-        "module_check": "pinecone",
-        "features": [
-            "Fully managed",
-            "Serverless option",
-            "High performance",
-            "Production-ready",
-        ],
-        "limitations": ["Requires API key", "Cloud-only", "Costs money"],
-        "status": "planned",
-    },
-    "weaviate": {
-        "name": "Weaviate",
-        "description": "Open-source vector database with GraphQL API and hybrid search.",
-        "pip_install": "pip install weaviate-client",
-        "optional_group": None,
-        "module_check": "weaviate",
-        "features": [
-            "Hybrid search",
-            "GraphQL API",
-            "Self-hosted or cloud",
-            "Schema-first",
-        ],
-        "limitations": ["Requires server", "More complex setup"],
-        "status": "planned",
-    },
-    "qdrant": {
-        "name": "Qdrant",
-        "description": "High-performance vector database written in Rust.",
-        "pip_install": "pip install qdrant-client",
-        "optional_group": None,
-        "module_check": "qdrant_client",
-        "features": [
-            "High performance",
-            "Rich filtering",
-            "Self-hosted or cloud",
-            "gRPC API",
-        ],
-        "limitations": ["Requires server for persistence"],
-        "status": "planned",
-    },
-    "milvus": {
-        "name": "Milvus",
-        "description": "Cloud-native vector database built for scalable similarity search.",
-        "pip_install": "pip install pymilvus",
-        "optional_group": None,
-        "module_check": "pymilvus",
-        "features": [
-            "Highly scalable",
-            "Cloud-native",
-            "Multiple index types",
-            "Production-ready",
-        ],
-        "limitations": ["Complex setup", "Resource intensive"],
-        "status": "planned",
-    },
-    "faiss": {
-        "name": "FAISS",
-        "description": "Facebook AI Similarity Search - library for efficient similarity search.",
-        "pip_install": "pip install faiss-cpu  # or faiss-gpu",
-        "optional_group": None,
-        "module_check": "faiss",
-        "features": [
-            "Very fast",
-            "Multiple index types",
-            "GPU support",
-            "No server needed",
-        ],
-        "limitations": [
-            "Static index (rebuild to update)",
-            "In-memory only",
-            "No metadata filtering",
-        ],
-        "status": "planned",
-    },
-}
-
-_backend_metadata: dict[str, dict[str, Any]] = _backend_metadata
+#: name -> adapter Client class. Populated by the @register_backend decorator
+#: as each backend module is imported (see vd/backends/__init__.py).
+_backends: dict[str, type] = {}
 
 
-def register_backend(name: str):
+def register_backend(name: str) -> Callable[[type], type]:
     """
-    Decorator to register a backend implementation.
-
-    This allows backends to be dynamically registered and accessed via the
-    connect() function.
-
-    Parameters
-    ----------
-    name : str
-        Name identifier for the backend (e.g., 'memory', 'chroma', 'pinecone')
-
-    Returns
-    -------
-    callable
-        Decorator function
+    Class decorator: register an adapter :class:`~vd.base.Client` under ``name``.
 
     Examples
     --------
-    >>> @register_backend('custom')  # doctest: +SKIP
-    ... class CustomBackend(BaseBackend):
-    ...     pass
+    >>> from vd.base import AbstractClient
+    >>> @register_backend('example')           # doctest: +SKIP
+    ... class ExampleClient(AbstractClient):
+    ...     ...
     """
 
-    def decorator(backend_class: type[BaseBackend]):
-        _backends[name] = backend_class
-        return backend_class
+    def decorator(client_class: type) -> type:
+        client_class.backend_name = name
+        _backends[name] = client_class
+        return client_class
 
     return decorator
 
 
-def get_backend(name: str) -> type[BaseBackend]:
+def get_backend(name: str) -> type:
     """
-    Get a registered backend class by name.
-
-    Parameters
-    ----------
-    name : str
-        Backend identifier
-
-    Returns
-    -------
-    type[BaseBackend]
-        The backend class
+    Return the adapter :class:`~vd.base.Client` class registered under ``name``.
 
     Raises
     ------
+    BackendNotInstalledError
+        If ``name`` is a known backend whose client library is not installed.
     ValueError
-        If backend is not registered
+        If ``name`` is not a known backend at all.
     """
-    if name not in _backends:
-        # Check if it's a known backend that's just not installed
-        if name in _backend_metadata:
-            info = _backend_metadata[name]
-            msg = f"Backend '{name}' is not available.\n\n"
+    if name in _backends:
+        return _backends[name]
 
-            if info.get("status") == "planned":
-                msg += f"This backend is planned but not yet implemented.\n"
-            elif info.get("pip_install"):
-                msg += f"To install it:\n  {info['pip_install']}\n\n"
-                msg += (
-                    f"Or run: vd.get_install_instructions('{name}') for more details."
-                )
+    # Not registered: distinguish "known but unavailable" from "unknown".
+    try:
+        from vd.providers import install_command, provider
 
-            raise ValueError(msg)
+        meta = provider(name)
+    except Exception:  # pragma: no cover - providers data missing
+        meta = None
 
-        # Unknown backend entirely
-        available = ", ".join(_backends.keys()) or "none"
-        raise ValueError(
-            f"Unknown backend '{name}'. "
-            f"Available backends: {available}\n"
-            f"Run vd.print_backends_table() to see all options."
+    if meta is not None:
+        cmd = ""
+        try:
+            cmd = install_command(name)
+        except Exception:  # pragma: no cover
+            cmd = f"pip install vd[{name}]"
+        raise BackendNotInstalledError(
+            f"Backend {name!r} ({meta.get('display_name', name)}) is not "
+            f"available — its client library is probably not installed.\n"
+            f"  {cmd}\n"
+            f"Then retry. Run  vd.check_requirements({name!r})  for full "
+            f"setup guidance."
         )
-    return _backends[name]
+
+    registered = ", ".join(sorted(_backends)) or "none"
+    raise ValueError(
+        f"Unknown backend {name!r}. Registered backends: {registered}. "
+        f"Run  vd.print_backends_table()  to see every backend vd knows about."
+    )
 
 
 def list_backends() -> list[str]:
-    """
-    List all registered backend names.
-
-    Returns
-    -------
-    list of str
-        Names of all registered backends
-
-    Examples
-    --------
-    >>> backends = list_backends()  # doctest: +SKIP
-    >>> 'memory' in backends  # doctest: +SKIP
-    True
-    """
-    return list(_backends.keys())
+    """Return the names of all backends with a registered (importable) adapter."""
+    return sorted(_backends)
 
 
-def _check_backend_available(name: str) -> bool:
-    """
-    Check if a backend is available (installed and importable).
-
-    Parameters
-    ----------
-    name : str
-        Backend name
-
-    Returns
-    -------
-    bool
-        True if backend is available
-    """
-    if name not in _backend_metadata:
-        return False
-
-    metadata = _backend_metadata[name]
-    module_check = metadata.get("module_check")
-
-    # Memory backend is always available
-    if module_check is None:
-        return True
-
-    # Try to import the required module
-    try:
-        __import__(module_check)
-        return True
-    except ImportError:
-        return False
-
-
-def list_available_backends() -> list[str]:
-    """
-    List backends that are currently available (installed).
-
-    Returns
-    -------
-    list of str
-        Names of backends that can be used right now
-
-    Examples
-    --------
-    >>> available = list_available_backends()  # doctest: +SKIP
-    >>> 'memory' in available  # doctest: +SKIP
-    True
-    """
-    return [name for name in _backend_metadata.keys() if _check_backend_available(name)]
-
-
-def list_all_backends(*, include_planned: bool = False) -> dict[str, dict[str, Any]]:
-    """
-    List all possible backends with their status and information.
-
-    Parameters
-    ----------
-    include_planned : bool, default False
-        If True, include backends that are planned but not yet implemented
-
-    Returns
-    -------
-    dict
-        Dictionary mapping backend names to their metadata, with 'available' status added
-
-    Examples
-    --------
-    >>> all_backends = list_all_backends()  # doctest: +SKIP
-    >>> print(all_backends['chroma']['name'])  # doctest: +SKIP
-    'ChromaDB'
-    >>> print(all_backends['chroma']['available'])  # doctest: +SKIP
-    True  # or False if not installed
-    """
-    result = {}
-    for name, metadata in _backend_metadata.items():
-        # Skip planned backends if not requested
-        if not include_planned and metadata.get("status") == "planned":
-            continue
-
-        # Add availability status
-        info = metadata.copy()
-        info["available"] = _check_backend_available(name)
-        info["registered"] = name in _backends
-        result[name] = info
-
-    return result
-
-
-def get_backend_info(name: str) -> dict[str, Any]:
-    """
-    Get detailed information about a specific backend.
-
-    Parameters
-    ----------
-    name : str
-        Backend name
-
-    Returns
-    -------
-    dict
-        Backend metadata including installation instructions and status
-
-    Raises
-    ------
-    ValueError
-        If backend name is unknown
-
-    Examples
-    --------
-    >>> info = get_backend_info('chroma')  # doctest: +SKIP
-    >>> print(info['description'])  # doctest: +SKIP
-    'Open-source embedding database with persistence support.'
-    >>> print(info['pip_install'])  # doctest: +SKIP
-    'pip install vd[chromadb]'
-    """
-    if name not in _backend_metadata:
-        available = ", ".join(_backend_metadata.keys())
-        raise ValueError(f"Unknown backend '{name}'. Known backends: {available}")
-
-    info = _backend_metadata[name].copy()
-    info["available"] = _check_backend_available(name)
-    info["registered"] = name in _backends
-
-    return info
-
-
-def print_backends_table(*, include_planned: bool = False) -> None:
-    """
-    Print a formatted table of all backends with their status.
-
-    Parameters
-    ----------
-    include_planned : bool, default False
-        If True, include backends that are planned but not yet implemented
-
-    Examples
-    --------
-    >>> print_backends_table()  # doctest: +SKIP
-    Backend Status:
-    ===============
-    ✓ memory     - Memory (In-Memory)
-      chroma     - ChromaDB (install: pip install vd[chromadb])
-    """
-    import sys
-
-    backends = list_all_backends(include_planned=include_planned)
-
-    if not backends:
-        print("No backends available.")
-        return
-
-    print("\nVector Database Backends:")
-    print("=" * 80)
-    print()
-
-    # Group by availability
-    available = {k: v for k, v in backends.items() if v["available"]}
-    unavailable = {k: v for k, v in backends.items() if not v["available"]}
-
-    if available:
-        print("✓ AVAILABLE (Ready to use):")
-        print("-" * 80)
-        for name, info in available.items():
-            status = " [PLANNED]" if info.get("status") == "planned" else ""
-            print(f"  • {name:12} - {info['name']}{status}")
-            print(f"    {info['description']}")
-            if info["features"]:
-                print(f"    Features: {', '.join(info['features'][:3])}")
-            print()
-
-    if unavailable:
-        print("✗ NOT INSTALLED (Installation required):")
-        print("-" * 80)
-        for name, info in unavailable.items():
-            status = (
-                " [PLANNED - Not yet implemented]"
-                if info.get("status") == "planned"
-                else ""
-            )
-            print(f"  • {name:12} - {info['name']}{status}")
-            print(f"    {info['description']}")
-            if info["pip_install"]:
-                print(f"    Install: {info['pip_install']}")
-            if info["features"]:
-                print(f"    Features: {', '.join(info['features'][:3])}")
-            print()
-
-    print("=" * 80)
-    print(f"Total: {len(available)} available, {len(unavailable)} not installed")
-    print()
-
-
-def get_install_instructions(name: str) -> str:
-    """
-    Get installation instructions for a backend.
-
-    Parameters
-    ----------
-    name : str
-        Backend name
-
-    Returns
-    -------
-    str
-        Installation instructions
-
-    Raises
-    ------
-    ValueError
-        If backend name is unknown
-
-    Examples
-    --------
-    >>> print(get_install_instructions('chroma'))  # doctest: +SKIP
-    To use the 'chroma' backend (ChromaDB):
-
-    Installation:
-      pip install vd[chromadb]
-
-    Description:
-      Open-source embedding database with persistence support.
-    ...
-    """
-    info = get_backend_info(name)
-
-    if info["available"]:
-        return f"Backend '{name}' is already installed and ready to use!"
-
-    lines = [
-        f"To use the '{name}' backend ({info['name']}):",
-        "",
-    ]
-
-    if info.get("status") == "planned":
-        lines.extend(
-            [
-                "Status: PLANNED - Not yet implemented",
-                "",
-                f"This backend is planned for future development.",
-                f"Description: {info['description']}",
-                "",
-                "Once implemented, installation will be:",
-            ]
-        )
-
-    if info["pip_install"]:
-        lines.extend(
-            [
-                "Installation:",
-                f"  {info['pip_install']}",
-                "",
-            ]
-        )
-
-    lines.extend(
-        [
-            "Description:",
-            f"  {info['description']}",
-            "",
-        ]
-    )
-
-    if info.get("features"):
-        lines.extend(
-            [
-                "Features:",
-            ]
-        )
-        for feature in info["features"]:
-            lines.append(f"  • {feature}")
-        lines.append("")
-
-    if info.get("limitations"):
-        lines.extend(
-            [
-                "Limitations:",
-            ]
-        )
-        for limitation in info["limitations"]:
-            lines.append(f"  • {limitation}")
-        lines.append("")
-
-    return "\n".join(lines)
+# --------------------------------------------------------------------------- #
+# connect — the entry point
+# --------------------------------------------------------------------------- #
 
 
 def connect(
     backend: str,
     *,
-    embedding_model: Optional[str | Callable] = None,
+    embedder: Optional[Callable[[str], Vector]] = None,
     **backend_kwargs,
 ) -> Client:
     """
-    Connect to a vector database backend.
+    Connect to a vector database backend and return its :class:`~vd.base.Client`.
 
-    This is the main entry point for creating a client to interact with
-    vector databases. It uses a factory pattern to instantiate the appropriate
-    backend based on the backend name.
+    This is the single entry point of ``vd``. Switching vector databases is a
+    one-argument change here.
 
     Parameters
     ----------
     backend : str
-        Backend identifier ('memory', 'chroma', 'pinecone', etc.)
-    embedding_model : str or callable, optional
-        Embedding model specification. Can be:
-        - Model name string (e.g., 'text-embedding-3-small')
-        - Callable that takes text and returns a vector
-        - None to use the default from imbed
+        Backend name: ``"memory"``, ``"chroma"``, ``"qdrant"``, ``"faiss"``,
+        ``"lancedb"``, ``"sqlite_vec"``, ``"duckdb"``, ``"pgvector"``,
+        ``"pinecone"``, ... Run :func:`vd.list_backends` for what is installed.
+    embedder : callable, optional
+        A ``text -> vector`` function. Supply it only if you want the
+        *convenience* of passing raw text to ``collection[key] = "text"`` and
+        ``collection.search("query text")``. ``vd`` never embeds on its own —
+        with no embedder, pass :class:`~vd.base.Document` objects with vectors
+        and pre-computed query vectors.
     **backend_kwargs
-        Backend-specific configuration (API keys, URLs, persist_directory, etc.)
+        Backend-specific connection options (``persist_directory``, ``url``,
+        ``api_key``, ``path``, ...). See each adapter's docstring.
 
     Returns
     -------
     Client
-        A client instance for the specified backend
-
-    Raises
-    ------
-    ValueError
-        If backend is not registered
+        A connected client — a ``Mapping`` of collection name to collection.
 
     Examples
     --------
-    >>> # Connect to in-memory backend
-    >>> client = connect('memory')  # doctest: +SKIP
-    >>>
-    >>> # Connect to ChromaDB with persistence
-    >>> client = connect('chroma', persist_directory='./data')  # doctest: +SKIP
-    >>>
-    >>> # Connect with custom embedding model
-    >>> client = connect(  # doctest: +SKIP
-    ...     'memory',
-    ...     embedding_model='text-embedding-3-large'
-    ... )
+    >>> client = connect('memory')                                  # doctest: +SKIP
+    >>> client = connect('chroma', persist_directory='./db')        # doctest: +SKIP
+    >>> client = connect('qdrant', url='http://localhost:6333')     # doctest: +SKIP
     """
-    backend_class = get_backend(backend)
-
-    # Get embedding function
-    embed_func = _get_embedding_function(embedding_model)
-
-    # Instantiate and return backend
-    return backend_class(embedding_model=embed_func, **backend_kwargs)
+    client_class = get_backend(backend)
+    return client_class(embedder=embedder, **backend_kwargs)
 
 
-def _get_embedding_function(
-    embedding_model: Optional[str | Callable] = None,
-) -> Callable[[str], Vector]:
+# --------------------------------------------------------------------------- #
+# Document-input normalization
+# --------------------------------------------------------------------------- #
+
+
+def _generate_id(text: str, *, prefix: str = "doc") -> str:
     """
-    Get the embedding function to use.
+    Generate a unique, mostly-deterministic id for a document.
 
-    Parameters
-    ----------
-    embedding_model : str, callable, or None
-        Embedding model specification
-
-    Returns
-    -------
-    callable
-        Function that takes text and returns a vector
+    Examples
+    --------
+    >>> _generate_id("Hello world").startswith('doc_')
+    True
     """
-    if callable(embedding_model):
-        # Already a function, use it directly
-        return embedding_model
-
-    # Import imbed to get embedding function
-    try:
-        from imbed import Embed
-    except ImportError:
-        raise ImportError(
-            "The 'imbed' package is required for embedding generation. "
-            "Install it with: pip install imbed"
-        )
-
-    # Create Embed instance
-    embed = Embed(model=embedding_model) if embedding_model else Embed()
-
-    # Return a function that uses the Embed instance
-    return embed
-
-
-# Utility functions for document handling
+    text_hash = hashlib.md5(text.encode("utf-8", "replace")).hexdigest()[:8]
+    return f"{prefix}_{text_hash}_{uuid.uuid4().hex[:8]}"
 
 
 def normalize_document_input(
@@ -613,257 +179,127 @@ def normalize_document_input(
     auto_id: bool = True,
 ) -> Document:
     """
-    Normalize various document input formats to a Document object.
+    Normalize a flexible document input to a :class:`~vd.base.Document`.
+
+    Accepted shapes: a :class:`~vd.base.Document`; a ``str`` (just text); a
+    tuple ``(text, id)``, ``(text, metadata)``, or ``(text, id, metadata)``.
 
     Parameters
     ----------
     doc_input : DocumentInput
-        Input in one of the supported formats:
-        - str: Just text
-        - (text, id): Text with ID
-        - (text, metadata): Text with metadata
-        - (text, id, metadata): Full specification
-        - Document: Already a Document object
-    auto_id : bool, default True
-        If True, auto-generate ID when not provided
-
-    Returns
-    -------
-    Document
-        Normalized Document object
+        The input to normalize.
+    auto_id : bool
+        When the input carries no id, generate one (vs. leaving it empty).
 
     Examples
     --------
-    >>> doc = normalize_document_input("Hello world")
-    >>> doc.text
-    'Hello world'
-    >>> doc.id  # doctest: +SKIP
-    '...'  # Auto-generated ID
-    >>>
-    >>> doc = normalize_document_input(("Hello", "doc1"))
-    >>> doc.id
+    >>> normalize_document_input(("Hello", "doc1")).id
     'doc1'
-    >>> doc.text
-    'Hello'
-    >>>
-    >>> doc = normalize_document_input(("Hello", {'category': 'test'}))
-    >>> doc.metadata
-    {'category': 'test'}
+    >>> normalize_document_input(("Hello", {"k": "v"})).metadata
+    {'k': 'v'}
+    >>> normalize_document_input("Hello world").id.startswith('doc_')
+    True
     """
     if isinstance(doc_input, Document):
+        if not doc_input.id and auto_id:
+            doc_input.id = _generate_id(doc_input.text)
         return doc_input
 
     if isinstance(doc_input, str):
-        # Just text
-        doc_id = _generate_id(doc_input) if auto_id else None
+        doc_id = _generate_id(doc_input) if auto_id else ""
         return Document(id=doc_id, text=doc_input)
 
     if isinstance(doc_input, tuple):
         if len(doc_input) == 2:
             text, second = doc_input
-            if isinstance(second, str):
-                # (text, id)
-                return Document(id=second, text=text)
-            else:
-                # (text, metadata)
-                doc_id = _generate_id(text) if auto_id else None
+            if isinstance(second, dict):
+                doc_id = _generate_id(text) if auto_id else ""
                 return Document(id=doc_id, text=text, metadata=second)
-        elif len(doc_input) == 3:
-            # (text, id, metadata)
+            return Document(id=second, text=text)
+        if len(doc_input) == 3:
             text, doc_id, metadata = doc_input
-            return Document(id=doc_id, text=text, metadata=metadata)
+            return Document(id=doc_id, text=text, metadata=metadata or {})
 
-    raise ValueError(f"Invalid document input format: {type(doc_input)}")
-
-
-def _generate_id(text: str, *, prefix: str = "doc") -> str:
-    """
-    Generate a unique ID for a document based on its text.
-
-    Uses a hash of the text combined with a UUID to ensure uniqueness.
-
-    Parameters
-    ----------
-    text : str
-        Text to generate ID from
-    prefix : str, default 'doc'
-        Prefix for the generated ID
-
-    Returns
-    -------
-    str
-        Generated document ID
-
-    Examples
-    --------
-    >>> doc_id = _generate_id("Hello world")
-    >>> doc_id.startswith('doc_')
-    True
-    """
-    # Use hash of text + short uuid for reasonable uniqueness
-    text_hash = hashlib.md5(text.encode()).hexdigest()[:8]
-    unique_suffix = str(uuid.uuid4())[:8]
-    return f"{prefix}_{text_hash}_{unique_suffix}"
+    raise TypeError(
+        f"Cannot interpret {type(doc_input).__name__} as a document input. "
+        f"Use a str, a (text, id)/(text, metadata)/(text, id, metadata) tuple, "
+        f"or a vd.Document."
+    )
 
 
-# Egress functions for search result transformation
+# --------------------------------------------------------------------------- #
+# Egress functions — transform a search result on the way out
+# --------------------------------------------------------------------------- #
 
 
 def text_only(result: SearchResult) -> str:
-    """
-    Extract only the text from a search result.
-
-    Parameters
-    ----------
-    result : dict
-        Search result dictionary
-
-    Returns
-    -------
-    str
-        The text content
-
-    Examples
-    --------
-    >>> result = {'id': 'doc1', 'text': 'Hello', 'score': 0.9}
-    >>> text_only(result)
-    'Hello'
-    """
+    """Egress: keep only the text. ``>>> text_only({'text': 'hi'})`` -> ``'hi'``."""
     return result["text"]
 
 
 def id_only(result: SearchResult) -> str:
-    """
-    Extract only the ID from a search result.
-
-    Parameters
-    ----------
-    result : dict
-        Search result dictionary
-
-    Returns
-    -------
-    str
-        The document ID
-
-    Examples
-    --------
-    >>> result = {'id': 'doc1', 'text': 'Hello', 'score': 0.9}
-    >>> id_only(result)
-    'doc1'
-    """
+    """Egress: keep only the document id."""
     return result["id"]
 
 
 def id_and_score(result: SearchResult) -> tuple[str, float]:
-    """
-    Extract ID and score from a search result.
-
-    Parameters
-    ----------
-    result : dict
-        Search result dictionary
-
-    Returns
-    -------
-    tuple of (str, float)
-        Document ID and similarity score
-
-    Examples
-    --------
-    >>> result = {'id': 'doc1', 'text': 'Hello', 'score': 0.9}
-    >>> id_and_score(result)
-    ('doc1', 0.9)
-    """
+    """Egress: keep ``(id, score)``."""
     return result["id"], result["score"]
 
 
 def id_text_score(result: SearchResult) -> tuple[str, str, float]:
-    """
-    Extract ID, text, and score from a search result.
-
-    Parameters
-    ----------
-    result : dict
-        Search result dictionary
-
-    Returns
-    -------
-    tuple of (str, str, float)
-        Document ID, text, and similarity score
-
-    Examples
-    --------
-    >>> result = {'id': 'doc1', 'text': 'Hello', 'score': 0.9}
-    >>> id_text_score(result)
-    ('doc1', 'Hello', 0.9)
-    """
+    """Egress: keep ``(id, text, score)``."""
     return result["id"], result["text"], result["score"]
 
 
-# Similarity/distance utilities
+# --------------------------------------------------------------------------- #
+# Vector math
+# --------------------------------------------------------------------------- #
 
 
 def cosine_similarity(vec1: Vector, vec2: Vector) -> float:
     """
-    Compute cosine similarity between two vectors.
-
-    Parameters
-    ----------
-    vec1 : list of float
-        First vector
-    vec2 : list of float
-        Second vector
-
-    Returns
-    -------
-    float
-        Cosine similarity (1.0 = identical, 0.0 = orthogonal, -1.0 = opposite)
+    Cosine similarity of two vectors (1.0 identical, 0.0 orthogonal).
 
     Examples
     --------
-    >>> v1 = [1.0, 0.0, 0.0]
-    >>> v2 = [1.0, 0.0, 0.0]
-    >>> cosine_similarity(v1, v2)
+    >>> cosine_similarity([1.0, 0.0], [1.0, 0.0])
     1.0
-    >>> v3 = [0.0, 1.0, 0.0]
-    >>> cosine_similarity(v1, v3)
+    >>> cosine_similarity([1.0, 0.0], [0.0, 1.0])
     0.0
     """
-    dot_product = sum(a * b for a, b in zip(vec1, vec2))
+    dot = sum(a * b for a, b in zip(vec1, vec2))
     mag1 = sum(a * a for a in vec1) ** 0.5
     mag2 = sum(b * b for b in vec2) ** 0.5
-
     if mag1 == 0 or mag2 == 0:
         return 0.0
-
-    return dot_product / (mag1 * mag2)
+    return dot / (mag1 * mag2)
 
 
 def euclidean_distance(vec1: Vector, vec2: Vector) -> float:
     """
-    Compute Euclidean distance between two vectors.
-
-    Parameters
-    ----------
-    vec1 : list of float
-        First vector
-    vec2 : list of float
-        Second vector
-
-    Returns
-    -------
-    float
-        Euclidean distance (0.0 = identical, larger = more different)
+    Euclidean (L2) distance between two vectors.
 
     Examples
     --------
-    >>> v1 = [1.0, 0.0, 0.0]
-    >>> v2 = [1.0, 0.0, 0.0]
-    >>> euclidean_distance(v1, v2)
+    >>> euclidean_distance([1.0, 0.0], [1.0, 0.0])
     0.0
-    >>> v3 = [0.0, 1.0, 0.0]
-    >>> euclidean_distance(v1, v3)  # doctest: +ELLIPSIS
-    1.414...
     """
     return sum((a - b) ** 2 for a, b in zip(vec1, vec2)) ** 0.5
+
+
+def mean_vector(vectors: Iterable[Vector]) -> Vector:
+    """
+    Component-wise mean of a non-empty iterable of equal-length vectors.
+
+    Examples
+    --------
+    >>> mean_vector([[0.0, 2.0], [2.0, 4.0]])
+    [1.0, 3.0]
+    """
+    vectors = list(vectors)
+    if not vectors:
+        raise ValueError("mean_vector requires at least one vector")
+    n = len(vectors)
+    dim = len(vectors[0])
+    return [sum(v[i] for v in vectors) / n for i in range(dim)]

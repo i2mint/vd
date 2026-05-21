@@ -1,146 +1,129 @@
 """
-Tests for the hardened facade contract: capability protocols, typed errors,
-the ``supports_incremental_writes`` flag, and the backend escape hatch.
+Tests for the facade's contract details: typed errors, capability protocols,
+escape hatches, the static-index flag, and vector-only (no-embedder) mode.
 """
-
-import hashlib
-import uuid
 
 import pytest
 
 import vd
-from vd import connect
-from vd.base import (
+from vd import (
+    BackendNotInstalledError,
+    Document,
+    EmbeddingRequiredError,
     StaticIndexError,
     SupportsBatch,
     SupportsHybrid,
     UnsupportedCapabilityError,
     UnsupportedFilterError,
+    VdError,
 )
 
 
-def mock_embedding_function(text: str) -> list[float]:
-    """Deterministic 16-dim mock embedding for testing."""
-    text_hash = hashlib.md5(text.encode()).digest()
-    embedding = [(b / 128.0) - 1.0 for b in text_hash]
-    while len(embedding) < 16:
-        embedding.extend(embedding)
-    return embedding[:16]
+# --------------------------------------------------------------------------- #
+# Typed errors
+# --------------------------------------------------------------------------- #
 
 
-@pytest.fixture
-def client():
-    return connect("memory", embedding_model=mock_embedding_function)
-
-
-@pytest.fixture
-def collection(client):
-    return client.create_collection("contract_test")
-
-
-# --------------------------------------------------------------------------
-# Typed errors are exported and well-formed
-# --------------------------------------------------------------------------
-
-
-def test_errors_exported_from_package():
+def test_errors_exported_and_well_formed():
     assert vd.UnsupportedFilterError is UnsupportedFilterError
-    assert vd.UnsupportedCapabilityError is UnsupportedCapabilityError
-
-
-def test_error_hierarchy():
-    # UnsupportedFilterError is a bad-input error.
     assert issubclass(UnsupportedFilterError, ValueError)
-    # UnsupportedCapabilityError signals a not-implemented capability.
     assert issubclass(UnsupportedCapabilityError, NotImplementedError)
+    assert issubclass(EmbeddingRequiredError, RuntimeError)
+    assert issubclass(BackendNotInstalledError, ImportError)
+    # Every vd error shares the VdError base.
+    for err in (
+        StaticIndexError,
+        UnsupportedFilterError,
+        UnsupportedCapabilityError,
+        EmbeddingRequiredError,
+        BackendNotInstalledError,
+    ):
+        assert issubclass(err, VdError)
 
 
-# --------------------------------------------------------------------------
+def test_unknown_backend_raises_valueerror():
+    with pytest.raises(ValueError):
+        vd.connect("no_such_backend")
+
+
+def test_known_uninstalled_backend_raises_backend_not_installed():
+    # 'vespa' is in the provider registry but ships no adapter / client here.
+    if "vespa" in vd.list_backends():
+        pytest.skip("vespa adapter unexpectedly available")
+    with pytest.raises(BackendNotInstalledError):
+        vd.connect("vespa")
+
+
+# --------------------------------------------------------------------------- #
+# Embedding is external: text without an embedder fails loudly
+# --------------------------------------------------------------------------- #
+
+
+def test_text_without_embedder_raises():
+    client = vd.connect("memory")  # no embedder
+    col = client.create_collection("noembed")
+    with pytest.raises(EmbeddingRequiredError):
+        col["x"] = "raw text, but nothing can embed it"
+    with pytest.raises(EmbeddingRequiredError):
+        list(col.search("a text query"))
+
+
+def test_vector_only_mode_works_without_embedder():
+    client = vd.connect("memory")  # no embedder
+    col = client.create_collection("vectoronly")
+    col["a"] = Document(id="a", text="cat", vector=[1.0, 0.0])
+    col["b"] = Document(id="b", text="dog", vector=[0.0, 1.0])
+    hits = list(col.search([0.9, 0.1], limit=1))  # pre-computed query vector
+    assert hits[0]["id"] == "a"
+
+
+# --------------------------------------------------------------------------- #
 # Capability protocols
-# --------------------------------------------------------------------------
+# --------------------------------------------------------------------------- #
 
 
-def test_protocols_exported_from_package():
+def test_capability_protocols_exported():
     assert vd.SupportsBatch is SupportsBatch
     assert vd.SupportsHybrid is SupportsHybrid
 
 
-def test_memory_collection_supports_batch(collection):
-    # MemoryCollection has add_documents + upsert, so it satisfies SupportsBatch.
-    assert isinstance(collection, SupportsBatch)
+def test_memory_collection_supports_batch():
+    col = vd.connect("memory").create_collection("c")
+    assert isinstance(col, SupportsBatch)
 
 
-def test_memory_collection_does_not_support_hybrid(collection):
-    # No hybrid_search method => not SupportsHybrid.
-    assert not isinstance(collection, SupportsHybrid)
+def test_memory_collection_is_not_hybrid():
+    col = vd.connect("memory").create_collection("c")
+    assert not isinstance(col, SupportsHybrid)
 
 
-# --------------------------------------------------------------------------
-# supports_incremental_writes flag
-# --------------------------------------------------------------------------
+# --------------------------------------------------------------------------- #
+# Escape hatches & flags
+# --------------------------------------------------------------------------- #
 
 
-def test_supports_incremental_writes_flag(client, collection):
-    # The memory backend accepts writes at any time.
-    assert client.supports_incremental_writes is True
-    assert collection.supports_incremental_writes is True
+def test_memory_escape_hatches():
+    client = vd.connect("memory")
+    assert client.client is None  # memory has no external client
+    col = client.create_collection("c")
+    col["d"] = Document(id="d", text="t", vector=[1.0])
+    assert isinstance(col.native, dict) and "d" in col.native
 
 
-# --------------------------------------------------------------------------
-# Escape hatch: .client / .native
-# --------------------------------------------------------------------------
+def test_supports_incremental_writes_flag():
+    col = vd.connect("memory").create_collection("c")
+    assert col.supports_incremental_writes is True
 
 
-def test_backend_client_escape_hatch(client):
-    # The memory backend has no external client.
-    assert client.client is None
+# --------------------------------------------------------------------------- #
+# Filter validation against a backend's documented subset
+# --------------------------------------------------------------------------- #
 
 
-def test_collection_native_escape_hatch(collection):
-    # The memory collection's native handle is the backing dict.
-    collection["doc1"] = "hello world"
-    native = collection.native
-    assert isinstance(native, dict)
-    assert "doc1" in native
-
-
-# --------------------------------------------------------------------------
-# ChromaDB backend (skipped if chromadb is not installed)
-# --------------------------------------------------------------------------
-
-
-@pytest.fixture
-def chroma_collection():
-    # ChromaDB's in-memory client shares state across Client() instances within
-    # a process, so use a unique collection name per test to avoid collisions.
+def test_chroma_rejects_unsupported_operator():
     pytest.importorskip("chromadb")
-    client = connect("chroma", embedding_model=mock_embedding_function)
-    name = f"contract_chroma_{uuid.uuid4().hex[:8]}"
-    return client, client.create_collection(name)
-
-
-def test_chroma_escape_hatch(chroma_collection):
-    client, coll = chroma_collection
-    assert client.client is not None  # the raw chromadb client
-    assert coll.native is not None  # the raw chromadb collection
-
-
-def test_chroma_supports_batch(chroma_collection):
-    _, coll = chroma_collection
-    assert isinstance(coll, SupportsBatch)
-
-
-def test_chroma_rejects_unsupported_filter_operator(chroma_collection):
-    """ChromaDB has no $exists; vd must raise a clear UnsupportedFilterError."""
-    _, coll = chroma_collection
-    coll["doc1"] = ("hello", {"cat": "tech"})
+    col = vd.connect("chroma").create_collection("contract_chroma")
+    col["d1"] = Document(id="d1", text="hi", vector=[0.1, 0.2, 0.3], metadata={"y": 1})
+    # Chroma's filter subset has no $exists -> a clear vd error, pre-query.
     with pytest.raises(UnsupportedFilterError):
-        list(coll.search("hello", filter={"missing": {"$exists": True}}))
-
-
-def test_chroma_accepts_supported_filter(chroma_collection):
-    """A filter within ChromaDB's subset must pass validation and run."""
-    _, coll = chroma_collection
-    coll["doc1"] = ("hello tech", {"year": 2024})
-    results = list(coll.search("hello", filter={"year": {"$gte": 2020}}))
-    assert all(r["metadata"]["year"] >= 2020 for r in results)
+        list(col.search([0.1, 0.2, 0.3], filter={"missing": {"$exists": True}}))

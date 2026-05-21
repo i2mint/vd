@@ -17,7 +17,7 @@ Examples
 >>> import hashlib
 >>> def fake_embed(t):  # 8-dim deterministic toy embedding
 ...     return [b / 128.0 - 1.0 for b in hashlib.md5(t.encode()).digest()[:8]]
->>> client = connect('memory', embedding_model=fake_embed)
+>>> client = connect('memory', embedder=fake_embed)
 >>> news = TimeIndexedCollection(client.create_collection('news'))
 >>> news['a'] = Document(id='a', text='Earnings miss',
 ...                      metadata={'ts': '2025-03-13T09:00:00'})
@@ -328,7 +328,7 @@ class TimeIndexedCollection(MutableMapping):
         >>> from vd import connect, Document
         >>> import hashlib
         >>> emb = lambda t: [b/128.0-1.0 for b in hashlib.md5(t.encode()).digest()[:4]]
-        >>> col = connect('memory', embedding_model=emb).create_collection('t')
+        >>> col = connect('memory', embedder=emb).create_collection('t')
         >>> t = TimeIndexedCollection(col)
         >>> t['a'] = Document(id='a', text='x', metadata={'ts': '2025-01-01'})
         >>> t['b'] = Document(id='b', text='y', metadata={'ts': '2025-03-01'})

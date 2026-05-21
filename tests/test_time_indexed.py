@@ -112,7 +112,7 @@ def test_mean_vector_skips_none_vectors():
 @pytest.fixture
 def tic():
     """Empty TimeIndexedCollection over a fresh memory backend."""
-    client = connect("memory", embedding_model=fake_embed)
+    client = connect("memory", embedder=fake_embed)
     base = client.create_collection("news")
     return TimeIndexedCollection(base)
 
@@ -191,7 +191,9 @@ def test_query_window_with_filter(populated):
     )
     ids = [
         d.id
-        for d in populated.query_window("2025-03-13", "2025-03-14", filt={"kind": "M&A"})
+        for d in populated.query_window(
+            "2025-03-13", "2025-03-14", filt={"kind": "M&A"}
+        )
     ]
     assert ids == ["d"]
 
@@ -243,7 +245,9 @@ def test_window_iter_explicit_bounds(populated):
 
 def test_search_window_filters_by_time(populated):
     # Search for "earnings"-ish text; restrict to the 13th
-    results = list(populated.search_window("Earnings", start="2025-03-13", end="2025-03-14"))
+    results = list(
+        populated.search_window("Earnings", start="2025-03-13", end="2025-03-14")
+    )
     ids = [r["id"] for r in results]
     # All results should have ts < 2025-03-14
     assert "c" not in ids
@@ -252,7 +256,7 @@ def test_search_window_filters_by_time(populated):
 
 def test_reindex_recovers_from_external_writes():
     """If something writes directly into the underlying collection, ``reindex`` recovers."""
-    client = connect("memory", embedding_model=fake_embed)
+    client = connect("memory", embedder=fake_embed)
     base = client.create_collection("news")
     tic = TimeIndexedCollection(base)
     # Bypass the wrapper:
@@ -265,7 +269,7 @@ def test_reindex_recovers_from_external_writes():
 
 def test_reconstruction_across_instances():
     """Rewrapping a populated collection rebuilds the index correctly."""
-    client = connect("memory", embedding_model=fake_embed)
+    client = connect("memory", embedder=fake_embed)
     base = client.create_collection("news")
     tic1 = TimeIndexedCollection(base)
     tic1["a"] = Document(id="a", text="x", metadata={"ts": "2025-03-13T00:00:00"})
@@ -276,7 +280,7 @@ def test_reconstruction_across_instances():
 
 
 def test_custom_ts_field():
-    client = connect("memory", embedding_model=fake_embed)
+    client = connect("memory", embedder=fake_embed)
     base = client.create_collection("ev")
     tic = TimeIndexedCollection(base, ts_field="event_time")
     tic["a"] = Document(id="a", text="x", metadata={"event_time": "2025-03-13"})

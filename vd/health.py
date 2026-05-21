@@ -9,7 +9,7 @@ import time
 from typing import Any, Optional
 
 from vd.base import Client, Collection
-from vd.util import _check_backend_available, _backend_metadata
+from vd.providers import install_command, is_installed, provider
 
 
 def health_check_backend(
@@ -43,10 +43,11 @@ def health_check_backend(
     >>> print(status['status'])  # doctest: +SKIP
     'healthy'
     """
+    is_known = provider(backend_name) is not None
     result = {
         "backend": backend_name,
-        "available": _check_backend_available(backend_name),
-        "registered": backend_name in _backend_metadata,
+        "available": is_known and is_installed(backend_name),
+        "registered": is_known,
         "status": "unknown",
         "message": "",
         "details": {},
@@ -56,10 +57,8 @@ def health_check_backend(
     if not result["available"]:
         result["status"] = "unavailable"
         result["message"] = f"Backend '{backend_name}' is not installed"
-        if backend_name in _backend_metadata:
-            install_cmd = _backend_metadata[backend_name].get("pip_install")
-            if install_cmd:
-                result["message"] += f". Install with: {install_cmd}"
+        if is_known:
+            result["message"] += f". Install with: {install_command(backend_name)}"
         return result
 
     # Try to connect
@@ -70,7 +69,7 @@ def health_check_backend(
         def mock_embed(text):
             return [0.0] * 16
 
-        client = connect(backend_name, embedding_model=mock_embed, **config)
+        client = connect(backend_name, embedder=mock_embed, **config)
 
         # Try basic operations
         try:

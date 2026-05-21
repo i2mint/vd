@@ -16,10 +16,7 @@ def cmd_backends(args):
     """List available backends."""
     import vd
 
-    if args.planned:
-        vd.print_backends_table(include_planned=True)
-    else:
-        vd.print_backends_table(include_planned=False)
+    vd.print_backends_table()
 
 
 def cmd_install_info(args):
@@ -270,9 +267,8 @@ Examples:
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
     # Backends command
-    backends_parser = subparsers.add_parser("backends", help="List available backends")
-    backends_parser.add_argument(
-        "--planned", action="store_true", help="Include planned backends"
+    backends_parser = subparsers.add_parser(
+        "backends", help="List every vector database vd knows about"
     )
     backends_parser.set_defaults(func=cmd_backends)
 

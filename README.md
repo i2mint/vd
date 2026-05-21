@@ -1,741 +1,170 @@
-# vd - Vector Database Facades
+# vd
 
-A unified, Pythonic interface for interacting with various vector databases. The `vd` package abstracts away the specifics of each database's API to offer a consistent, database-agnostic interface for semantic search operations.
+**A facade over vector databases — one Pythonic interface, ~15 backends.**
 
-## Features
+`vd` lets you operate on any vector database and switch between them with a
+one-word change, while keeping each backend's particular power one escape hatch
+away. It also helps you *choose* the right backend and *set it up*.
 
-### Core Features
-- **Unified API**: Single interface for multiple vector database backends
-- **Backend Discovery**: Easy-to-use tools to find, install, and use different vector databases
-- **Pythonic Design**: Collections behave like MutableMapping (dict-like)
-- **Flexible Document Input**: Support for strings, tuples, and Document objects
-- **Powerful Filtering**: MongoDB-style query syntax for metadata filtering
-- **Automatic Embeddings**: Seamless integration with embedding models via `imbed`
-- **Pluggable Backends**: Easy to add new vector database backends
-- **Helpful Error Messages**: Get installation instructions when backends aren't available
-- **Type-Safe**: Full type hints and protocol-based design
-- **Well-Tested**: Comprehensive test suite with >90% coverage
+```python
+import vd
 
-### Extended Features
-- **Command-Line Interface**: Full-featured CLI for common operations
-- **Configuration Management**: YAML/TOML config files with profiles and environment variables
-- **Backend Comparison**: Compare and get recommendations for backends based on your needs
-- **Import/Export**: Support for JSONL, JSON, and directory formats
-- **Migration**: Move collections between backends with progress tracking
-- **Analytics**: Collection statistics, validation, duplicate detection, outlier analysis
-- **Text Preprocessing**: Clean and chunk text with multiple strategies
-- **Health Checks**: Monitor backend health and benchmark performance
-- **Advanced Search**: Multi-query search, similarity search, reciprocal rank fusion
+client = vd.connect("memory")          # switch DB = change this one word
+col = client.create_collection("docs")
+col["a"] = vd.Document(id="a", text="cats", vector=[0.1, 0.9, 0.0])
+col["b"] = vd.Document(id="b", text="pizza", vector=[0.9, 0.0, 0.1])
 
-## Installation
+for hit in col.search([0.1, 0.8, 0.0], limit=2):
+    print(hit["id"], hit["score"])
+```
+
+## Install
 
 ```bash
-# Basic installation (includes memory backend)
-pip install vd
-
-# With ChromaDB support
-pip install vd[chromadb]
-
-# With all optional dependencies
-pip install vd[all]
+pip install vd                 # core (zero heavy deps) + the memory backend
+pip install vd[chroma]         # + a specific backend's client
+pip install vd[embedded]       # + all embedded backends (chroma, qdrant, faiss, …)
+pip install vd[all-backends]   # + every backend client
 ```
 
-## Quick Start
+The core is near-zero-dependency. Each backend's client library is an optional
+extra named after the backend.
 
-`vd` exposes three interfaces. Pick whichever fits your workflow — each has
-its own dedicated section below.
+## The mental model
 
-- **[AI Skills Interface](#ai-skills-interface)** — *the modern way, recommended.*
-  Modern programming increasingly happens by describing intent to an AI
-  coding agent and letting it write the code. `vd` ships with a set of
-  skills that teach the agent exactly how to use the package well, so you
-  can simply ask things like *"use `vd` to do semantic search over these
-  articles"* and let it pick the right tools.
-- **[Python Interface](#python-interface)** — the classic path. `import vd`
-  and call functions directly. A small, dict-like API at the top level.
-- **[CLI Interface](#cli-interface)** — common operations exposed as `vd …`
-  commands for scripting, ops, and quick one-offs.
+`vd` stores and searches **vectors**. Turning text into vectors — *embedding* —
+is deliberately **external**: `vd` never embeds on its own. This keeps the
+facade honest (most vector DBs do not embed for you) and lightweight.
 
-## AI Skills Interface
+- **Vector-first.** You hold the embedding model. Hand `vd` `Document`s that
+  already carry a `vector`; search with a pre-computed query vector.
+- **Text convenience.** Pass an `embedder` (`text -> vector`) to `connect`, and
+  then raw text works: `col["k"] = "some text"`, `col.search("a query")`.
 
-`vd` ships its AI-agent skills inside the package itself, at
-`vd/data/skills/` (accessible programmatically via `vd.skills_dir()`). You
-are free to point any AI coding agent at this directory however you like —
-copy, symlink, or load it into whatever skill index your agent uses. The
-recommended path is the [`skill`](https://pypi.org/project/skill/) package,
-which wires the bundled skills into the agent's index for you.
-
-The bundled skills:
-
-| Skill | Use when you want to… |
-|---|---|
-| `vd-quickstart` | …connect, create a collection, add docs, run a search |
-| `vd-backend-choose` | …pick / install / configure a backend, set up YAML / TOML configs |
-| `vd-ingest` | …load a corpus: clean, chunk, batch-add documents with metadata |
-| `vd-search` | …do advanced search: filters, multi-query, RRF, similar-to-doc, dedup |
-| `vd-ops` | …export / import, migrate between backends, analyze, benchmark |
-
-### Linking the skills with the `skill` package
-
-```bash
-pip install vd
-pip install skill   # the linker CLI
-
-# Into the current project (./.claude/skills/)
-skill link-skills "$(python -c 'import vd; print(vd.skills_dir())')"
-
-# Or globally (~/.claude/skills/)
-skill link-skills "$(python -c 'import vd; print(vd.skills_dir())')" \
-    --target ~/.claude/skills
-```
-
-Once linked, ask your agent things like:
-
-- *"Use `vd` to do semantic search over these articles."*
-- *"Which `vd` backend should I use? I need persistence and a free option."*
-- *"Load this corpus into a `vd` collection — chunk by sentence, with
-  metadata."*
-- *"Migrate my `memory` collection to `chroma`."*
-
-The agent will pick the matching skill automatically and write the calls
-for you.
-
-## Python Interface
+With no embedder, passing text raises `EmbeddingRequiredError` — loud, never a
+silent wrong-model embedding.
 
 ```python
-import vd
-
-# Connect to a backend (memory backend for quick prototyping)
-client = vd.connect('memory')
-
-# Create a collection
-docs = client.create_collection('my_documents')
-
-# Add documents (simple!)
-docs['doc1'] = "Machine learning is a subset of AI"
-docs['doc2'] = "Deep learning uses neural networks"
-docs['doc3'] = "Python is great for data science"
-
-# Search with semantic similarity
-results = docs.search("artificial intelligence", limit=2)
-for result in results:
-    print(f"{result['id']}: {result['text']} (score: {result['score']:.3f})")
+client = vd.connect("chroma", persist_directory="./db", embedder=my_embed_fn)
+col = client.create_collection("docs")
+col["a"] = "cats and kittens"                  # embedded for you
+hits = list(col.search("pets", limit=5))       # query embedded for you
 ```
 
-### Backends
+## Choosing a backend
 
-`vd` supports multiple vector database backends:
-
-- **`memory`**: In-memory storage (always available, great for testing)
-- **`chroma`**: ChromaDB (requires `pip install chromadb`)
-
-More backends coming soon (Pinecone, Weaviate, Qdrant, Milvus, FAISS)!
+`vd` ships a provider registry distilled from a practitioner report
+(`misc/docs/11 -- VectorDB Selection & Setup Guide ...md`) and a recommender:
 
 ```python
-# List currently registered backends
-print(vd.list_backends())
-
-# Connect to different backends
-memory_client = vd.connect('memory')
-chroma_client = vd.connect('chroma', persist_directory='./data')
-```
-
-### Backend Discovery
-
-`vd` makes it easy to discover and install vector database backends:
-
-```python
-import vd
-
-# View all backends with a nicely formatted table
-vd.print_backends_table()
-
-# List only backends that are currently available (installed)
-available = vd.list_available_backends()
-print(f"Available: {available}")
-
-# Get detailed information about a specific backend
-info = vd.get_backend_info('chroma')
-print(info['description'])
-print(info['features'])
-
-# Get installation instructions
-instructions = vd.get_install_instructions('chroma')
-print(instructions)
-
-# List ALL possible backends (including planned ones)
-all_backends = vd.list_all_backends(include_planned=True)
-```
-
-When you try to connect to a backend that's not installed, you'll get helpful error messages:
-
-```python
->>> vd.connect('chroma')
-ValueError: Backend 'chroma' is not available.
-
-To install it:
-  pip install vd[chromadb]
-
-Or run: vd.get_install_instructions('chroma') for more details.
-```
-
-### Collections
-
-Collections are MutableMapping objects that store searchable documents:
-
-```python
-# Create a collection
-docs = client.create_collection('articles')
-
-# Dict-like operations
-docs['doc1'] = "Some text"              # Add
-doc = docs['doc1']                       # Retrieve
-del docs['doc1']                         # Delete
-len(docs)                                # Count
-for doc_id in docs:                      # Iterate
-    print(doc_id)
-```
-
-### Documents
-
-Multiple ways to specify documents:
-
-```python
-# String (simple text)
-docs['id1'] = "Just some text"
-
-# Tuple: (text, metadata)
-docs['id2'] = ("Article text", {'category': 'tech', 'year': 2024})
-
-# Tuple: (text, id) - for batch operations
-docs.add_documents([
-    ("First article", "custom_id_1"),
-    ("Second article", {'author': 'Alice'}),
-])
-
-# Document object (full control)
-doc = vd.Document(
-    id='id3',
-    text='Article text',
-    metadata={'category': 'science'},
-    vector=[0.1, 0.2, ...]  # Optional pre-computed embedding
-)
-docs.upsert(doc)
-```
-
-### Searching
-
-Powerful search with filtering and transformation:
-
-```python
-# Basic search
-results = docs.search("machine learning", limit=5)
-
-# With metadata filter
-results = docs.search(
-    "neural networks",
-    filter={'category': 'AI', 'year': {'$gte': 2020}}
-)
-
-# With egress function (transform results)
-texts = docs.search(
-    "data science",
-    limit=10,
-    egress=vd.text_only  # Just return the text
-)
-
-# Available egress functions
-vd.text_only(result)        # Returns just the text
-vd.id_only(result)          # Returns just the ID
-vd.id_and_score(result)     # Returns (id, score)
-vd.id_text_score(result)    # Returns (id, text, score)
-```
-
-### Filtering
-
-MongoDB-style filter syntax:
-
-```python
-# Equality
-docs.search("query", filter={'category': 'tech'})
-
-# Comparison operators
-docs.search("query", filter={'year': {'$gte': 2020}})
-docs.search("query", filter={'views': {'$lt': 1000}})
-
-# List membership
-docs.search("query", filter={'tags': {'$in': ['python', 'ai']}})
-
-# Logical operators
-docs.search("query", filter={
-    '$and': [
-        {'year': {'$gte': 2020}},
-        {'category': 'tech'}
-    ]
-})
-```
-
-Supported operators:
-- `$eq`: Equal
-- `$ne`: Not equal
-- `$gt`: Greater than
-- `$gte`: Greater than or equal
-- `$lt`: Less than
-- `$lte`: Less than or equal
-- `$in`: In list
-- `$and`: Logical AND
-- `$or`: Logical OR
-
-### Custom Embedding Models
-
-```python
-# Use a specific embedding model
-client = vd.connect('memory', embedding_model='text-embedding-3-large')
-
-# Use a custom embedding function
-def my_embedder(text: str) -> list[float]:
-    # Your embedding logic here
-    return [...]
-
-client = vd.connect('memory', embedding_model=my_embedder)
-```
-
-### Batch Operations
-
-```python
-# Batch add for efficiency
-docs.add_documents([
-    "Document 1",
-    ("Document 2", {'category': 'tech'}),
-    ("Document 3", "custom_id", {'year': 2024}),
-], batch_size=100)
-```
-
-### Collection Management
-
-```python
-# List collections
-for name in client.list_collections():
-    print(name)
-
-# Get existing collection
-docs = client.get_collection('my_docs')
-
-# Delete collection
-client.delete_collection('old_docs')
-```
-
-### Pre-computed Vectors
-
-```python
-# If you already have embeddings
-doc = vd.Document(
-    id='doc1',
-    text='Some text',
-    vector=[0.1, 0.2, 0.3, ...],  # Your pre-computed embedding
-)
-docs['doc1'] = doc
-
-# Search with pre-computed query vector
-query_vector = [0.15, 0.25, 0.35, ...]
-results = docs.search(query_vector, limit=5)
-```
-
-### Configuration Management
-
-Manage backend configurations with YAML or TOML files:
-
-```python
-import vd
-
-# Connect using a configuration file
-client = vd.connect_from_config('vd.yaml')
-
-# Use a specific profile
-client = vd.connect_from_config('vd.yaml', profile='production')
-
-# Create example configuration
-config_yaml = vd.create_example_config('yaml')
-vd.save_config(config, 'vd.yaml')
-```
-
-Example `vd.yaml`:
-```yaml
-profiles:
-  default:
-    backend: memory
-  dev:
-    backend: memory
-  prod:
-    backend: chroma
-    persist_directory: ./vector_db
-```
-
-Environment variable overrides:
-- `VD_PROFILE`: Select profile (default: 'default')
-- `VD_BACKEND`: Override backend name
-- `VD_EMBEDDING_MODEL`: Override embedding model
-
-### Backend Comparison and Recommendation
-
-Choose the right backend for your needs:
-
-```python
-import vd
-
-# Compare backends
-vd.print_comparison(['memory', 'chroma', 'pinecone'])
-
-# Get recommendations based on requirements
 vd.print_recommendation(
-    dataset_size='medium',      # small, medium, large, very_large
-    persistence_required=True,
-    cloud_required=False,
-    budget='free',              # free, low, medium, high
-    performance_priority='balanced'  # speed, scalability, balanced
+    corpus_size="medium", persistence=True, can_run_docker=True,
+    cloud_ok=True, budget="free", needs_hybrid=False,
 )
-
-# Get backend characteristics
-chars = vd.get_backend_characteristics()
-print(chars['chroma']['use_cases'])
+vd.print_backends_table()                       # the whole landscape
+vd.compare_backends(["chroma", "qdrant", "pgvector"])
 ```
 
-### Import/Export
-
-Export and import collections in multiple formats:
+## Setting a backend up
 
 ```python
-import vd
-
-# Export to JSONL (recommended for large collections)
-vd.export_collection(docs, 'backup.jsonl', format='jsonl')
-
-# Export to JSON
-vd.export_collection(docs, 'backup.json', format='json')
-
-# Export to directory (one file per document)
-vd.export_collection(docs, './backup_dir', format='directory')
-
-# Import from file
-vd.import_collection(docs, 'backup.jsonl')
-vd.import_collection(docs, 'backup.jsonl', skip_existing=True)
+vd.check_requirements("qdrant")    # diagnoses readiness, prints the next step
+vd.setup_guide("qdrant")           # full pip / docker / env-var playbook
+vd.install_backend("qdrant")       # the pip command (run=True to install)
 ```
 
-### Migration
+`check_requirements` is deployment-aware: it checks the pip package for
+embedded backends, whether a server answers for self-hosted ones, and the
+required environment variables for managed ones — always ending with one
+concrete next action.
 
-Move collections between backends:
+## The API
+
+| Object | Is a | Plus |
+|--------|------|------|
+| `Client` (from `connect`) | `Mapping[str, Collection]` | `create_collection`, `get_collection`, `delete_collection`, `get_or_create_collection` |
+| `Collection` | `MutableMapping[str, Document]` | `search(...)` |
+| `Document` | dataclass | `id`, `text`, `vector`, `metadata` |
 
 ```python
-import vd
+col["k"] = vd.Document(id="k", text="…", vector=[...], metadata={"y": 2024})
+doc      = col["k"]            # get
+del col["k"]                  # delete
+"k" in col, len(col), list(col)
 
-# Migrate a collection
-source = source_client.get_collection('docs')
-target = target_client.create_collection('docs')
-
-stats = vd.migrate_collection(
-    source,
-    target,
-    batch_size=100,
-    preserve_vectors=True,  # Keep existing embeddings
-    progress_callback=lambda cur, tot: print(f"{cur}/{tot}")
-)
-
-# Migrate entire client (all collections)
-vd.migrate_client(
-    source_client,
-    target_client,
-    collection_names=['docs1', 'docs2']  # Optional filter
-)
+col.search(query, *, limit=10, filter=None, egress=None, **backend_kwargs)
 ```
 
-### Collection Analytics
+`search` yields dicts `{"id", "text", "score", "metadata"}` (`score` is
+higher-is-better). Transform results with an `egress`: `vd.id_only`,
+`vd.id_and_score`, `vd.text_only`, `vd.id_text_score`, or your own.
 
-Analyze and validate collections:
+### Metadata filtering
+
+One backend-agnostic, MongoDB-style filter language — `$eq $ne $gt $gte $lt
+$lte $in $nin $exists $and $or $not`:
 
 ```python
-import vd
-
-# Get collection statistics
-stats = vd.collection_stats(docs)
-print(f"Total: {stats['total_documents']}")
-print(f"Avg length: {stats['avg_text_length']}")
-print(f"Metadata fields: {stats['metadata_fields']}")
-
-# Metadata distribution
-dist = vd.metadata_distribution(docs, 'category')
-
-# Find duplicate or near-duplicate documents
-duplicates = vd.find_duplicates(docs, threshold=0.95)
-
-# Find outliers (dissimilar documents)
-outliers = vd.find_outliers(docs, threshold=0.3)
-
-# Sample collection
-random_sample = vd.sample_collection(docs, n=10, method='random')
-diverse_sample = vd.sample_collection(docs, n=10, method='diverse')
-
-# Validate collection integrity
-report = vd.validate_collection(docs)
-if not report['valid']:
-    for issue in report['issues']:
-        print(f"Issue: {issue}")
+col.search(qvec, filter={"year": {"$gte": 2020}, "kind": {"$in": ["news", "blog"]}})
 ```
 
-### Text Preprocessing
+Each backend declares which operators it honors natively; an unsupported one
+raises `UnsupportedFilterError` rather than silently mis-filtering. Backends
+with rich native filtering (Qdrant, Pinecone, MongoDB) translate the filter;
+the rest apply it client-side with the same semantics.
 
-Clean and chunk text before adding to collections:
+### Escape hatches
 
-```python
-import vd
+The facade never traps you. `client.client` is the raw backend client;
+`collection.native` is the raw backend collection — both supported, documented
+API for reaching backend-specific features.
 
-# Clean text
-clean = vd.clean_text(
-    text,
-    lowercase=True,
-    remove_extra_whitespace=True,
-    remove_urls=True,
-    remove_emails=True
-)
+## Backends
 
-# Chunk text
-chunks = vd.chunk_text(
-    text,
-    chunk_size=500,
-    overlap=50,
-    strategy='sentences'  # chars, words, sentences, paragraphs
-)
+| Archetype | Backends |
+|-----------|----------|
+| **Embedded** (pip-only) | `memory`, `chroma`, `lancedb`, `sqlite_vec`, `duckdb`, `faiss` |
+| **Server** (also embedded) | `qdrant`, `weaviate`, `milvus` |
+| **Server** | `redis`, `elasticsearch`, `pgvector` |
+| **Managed** | `pinecone`, `mongodb` (Atlas), `turbopuffer` |
 
-# Chunk documents with metadata preservation
-chunked_docs = vd.chunk_documents(
-    documents,
-    chunk_size=500,
-    id_template='{doc_id}_chunk_{chunk_num}',
-    preserve_metadata=True
-)
+`vd.list_backends()` shows what is installed and ready now.
 
-# Extract metadata from text
-metadata = vd.extract_metadata(
-    text,
-    extract_title=True,
-    extract_length=True,
-    extract_word_count=True
-)
-```
+## The toolkit
 
-### Health Checks and Benchmarking
+Beyond the facade, `vd` bundles the composite operations people actually do:
 
-Monitor and benchmark performance:
+- **`vd.search`** — `multi_query_search`, `reciprocal_rank_fusion`,
+  `search_similar_to_document`, `deduplicate_results`.
+- **`vd.io`** — `export_collection` / `import_collection` (JSONL, JSON,
+  directory).
+- **`vd.migration`** — `migrate_collection`, `migrate_client`,
+  `copy_collection` — move data between *any* two backends.
+- **`vd.analytics`** — `collection_stats`, `find_duplicates`, `find_outliers`,
+  `validate_collection`.
+- **`vd.health`** — `health_check_backend`, `benchmark_search`.
+- **`vd.text`** — convenience text cleaning / chunking.
+- **`vd.TimeIndexedCollection`** — a time-windowed wrapper over any collection.
+- **CLI** — `vd backends`, `vd install`, `vd export/import`, `vd migrate`, …
 
-```python
-import vd
+## AI-agent skills
 
-# Check backend health
-health = vd.health_check_backend('chroma', persist_directory='./data')
-print(f"Status: {health['status']}")
-print(f"Available: {health['available']}")
+`vd` ships skills (`vd/data/skills/`) so coding agents can drive it well:
+`vd-quickstart`, `vd-backend-choose` (choosing **and** setup), `vd-ingest`,
+`vd-search`, `vd-ops`.
 
-# Check collection health
-health = vd.health_check_collection(docs)
+## Design
 
-# Benchmark search performance
-results = vd.benchmark_search(
-    docs,
-    query="test query",
-    n_queries=100,
-    limit=10
-)
-print(f"Avg latency: {results['avg_latency']*1000:.2f}ms")
-print(f"P95: {results['p95']*1000:.2f}ms")
-print(f"Throughput: {results['queries_per_second']:.1f} queries/sec")
-
-# Benchmark insertion
-results = vd.benchmark_insert(docs, n_documents=100, batch_size=10)
-```
-
-### Advanced Search
-
-Enhanced search capabilities:
-
-```python
-import vd
-
-# Multi-query search
-results = vd.multi_query_search(
-    docs,
-    queries=["AI", "machine learning"],
-    limit=10,
-    combine='best'  # interleave, concatenate, union, best
-)
-
-# Find similar documents
-similar = vd.search_similar_to_document(
-    docs,
-    doc_id='doc1',
-    limit=10,
-    exclude_self=True
-)
-
-# Reciprocal Rank Fusion (combine multiple rankings)
-results1 = list(docs.search("query1"))
-results2 = list(docs.search("query2"))
-combined = vd.reciprocal_rank_fusion([results1, results2])
-
-# Deduplicate results
-unique = vd.deduplicate_results(results, key='id', keep='first')
-```
-
-## CLI Interface
-
-`vd` includes a comprehensive CLI for common operations:
-
-```bash
-# List available backends
-vd backends
-vd backends --planned  # Include planned backends
-
-# Get installation instructions
-vd install chroma
-
-# Check backend health
-vd health memory
-
-# Export a collection
-vd export memory my_docs -o backup.jsonl
-vd export memory my_docs -o backup.json -f json
-
-# Import a collection
-vd import chroma my_docs -i backup.jsonl
-
-# View collection statistics
-vd stats memory my_docs
-vd stats memory my_docs -v  # Verbose output
-
-# Validate a collection
-vd validate memory my_docs
-
-# Migrate between backends
-vd migrate memory source_docs chroma target_docs
-
-# Benchmark search performance
-vd benchmark memory my_docs -q "test query" --queries 100
-```
-
-## Architecture
-
-The `vd` package is designed with several key principles:
-
-1. **Protocol-based**: Uses Python protocols for type safety without tight coupling
-2. **Separation of Concerns**: Embedding, storage, and search are independent
-3. **Progressive Enhancement**: Same code works from in-memory to distributed databases
-4. **Facade Pattern**: Provides a consistent interface across different backends
-
-### Project Structure
-
-```
-vd/
-├── __init__.py          # Public API
-├── base.py              # Core protocols and types
-├── util.py              # Utility functions and factory
-├── backends/            # Backend implementations
-│   ├── __init__.py
-│   ├── memory.py        # In-memory backend
-│   └── chroma.py        # ChromaDB backend
-├── data/skills/         # Bundled AI-agent skills
-└── tests/               # Comprehensive test suite
-```
-
-## Design Philosophy
-
-The `vd` package follows these design principles:
-
-- **Favor functional over object-oriented** where appropriate
-- **Use Mapping/MutableMapping abstractions** for intuitive interfaces
-- **Leverage existing packages** (dol, imbed) for core functionality
-- **Optional dependencies** for backends (graceful degradation)
-- **Progressive enhancement**: Scale from prototypes to production seamlessly
-
-## Integration with i2mint Ecosystem
-
-`vd` is designed to work seamlessly with the i2mint ecosystem:
-
-- **`dol`**: Provides the underlying Mapping/Store patterns
-- **`imbed`**: Handles embedding generation and management
-- **`i2`**: Signature manipulation for consistent interfaces
-- **`oa`**: OpenAI API integration for embeddings
-
-## Development
-
-### Running Tests
-
-```bash
-# Install development dependencies
-pip install -e .[dev]
-
-# Run tests
-pytest tests/ -v
-
-# Run tests with coverage
-pytest tests/ --cov=vd --cov-report=html
-```
-
-### Adding a New Backend
-
-1. Create a new file in `vd/backends/`
-2. Implement the backend class inheriting from `BaseBackend`
-3. Implement a collection class with the MutableMapping interface
-4. Register the backend with `@register_backend('backend_name')`
-5. Add tests in `tests/`
-
-Example:
-
-```python
-from vd.base import BaseBackend
-from vd.util import register_backend
-
-@register_backend('mydb')
-class MyDBBackend(BaseBackend):
-    def create_collection(self, name, **kwargs):
-        # Implementation
-        pass
-    # ... other methods
-```
-
-## Roadmap
-
-- [x] Import/Export (JSONL, JSON, directory)
-- [x] Migration between backends
-- [x] Collection analytics and validation
-- [x] Text preprocessing and chunking
-- [x] Health checks and benchmarking
-- [x] Advanced search (multi-query, RRF, similarity)
-- [x] Configuration file support (YAML, TOML)
-- [x] Backend comparison and recommendation
-- [x] Command-line interface
-- [x] AI-agent skills (bundled in `vd/data/skills/`)
-- [ ] Additional backends (Pinecone, Weaviate, Qdrant, FAISS)
-- [ ] Async support
-- [ ] Hybrid search (vector + keyword)
-- [ ] Comprehensive documentation site
-
-## Examples
-
-See the demo scripts for comprehensive examples:
-- `misc/examples/example_usage.py` - Basic usage and core features
-- `misc/examples/demo_backend_discovery.py` - Backend discovery features
-- `misc/examples/demo_config.py` - Configuration management
-- `misc/examples/demo_comparison.py` - Backend comparison and recommendation
-- `misc/examples/demo_utilities.py` - Import/export, migration, analytics, and more
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+- **Embedding is external.** The core operates on vectors; an `embedder` is an
+  injected, optional convenience — never a hard dependency.
+- **Two mappings.** A `Client` is a `Mapping` of collections; a `Collection` is
+  a `MutableMapping` of documents plus `search`. Idiomatic, minimal, familiar.
+- **Thin adapters.** `AbstractClient` / `AbstractCollection` implement
+  everything users see; a backend supplies a handful of raw primitives. Adding
+  a backend is ~150 lines — see the `vd-add-backend` skill.
+- **Capabilities, not a fat base.** Optional features (`SupportsBatch`,
+  `SupportsHybrid`) are `@runtime_checkable` protocols you feature-discover.
 
 ## License
 
 MIT
-
-## Links
-
-- **GitHub**: https://github.com/i2mint/vd
-- **Documentation**: Coming soon
-- **PyPI**: Coming soon

@@ -135,8 +135,18 @@ def test_unknown_logical_operator_raises():
 
 def test_supported_operators_constant_is_complete():
     expected = {
-        "$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$in", "$nin", "$exists",
-        "$and", "$or", "$not",
+        "$eq",
+        "$ne",
+        "$gt",
+        "$gte",
+        "$lt",
+        "$lte",
+        "$in",
+        "$nin",
+        "$exists",
+        "$and",
+        "$or",
+        "$not",
     }
     assert SUPPORTED_FILTER_OPERATORS == expected
 
@@ -175,7 +185,7 @@ def test_validate_filter_recurses_into_logical():
 
 @pytest.fixture
 def collection():
-    client = connect("memory", embedding_model=mock_embedding_function)
+    client = connect("memory", embedder=mock_embedding_function)
     coll = client.create_collection("filter_test")
     coll["doc1"] = ("Article 1", {"year": 2020, "views": 100, "tags": ["python"]})
     coll["doc2"] = ("Article 2", {"year": 2021, "views": 500, "tags": ["ai"]})

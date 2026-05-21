@@ -1,47 +1,41 @@
 """
-VectorDB facades - A unified interface for vector databases.
+``vd`` — one Pythonic interface to every vector database.
 
-The `vd` package provides a consistent, Pythonic API for interacting with
-various vector databases. It abstracts away the specifics of each database's
-API to offer a database-agnostic interface for semantic search operations.
+``vd`` is a **facade over vector databases**. Its purpose is to let you operate
+on any vectorDB, and switch between them with a one-argument change, while
+keeping each backend's particular power one escape hatch away. It does three
+things:
 
-Key Components
---------------
-- connect(): Factory function to create database clients
-- Document: Standardized document representation
-- Collection: MutableMapping interface for document collections
-- Client: Protocol for database connections
+1. **Choose** — :func:`recommend_backend`, :func:`print_backends_table` and the
+   provider registry help you (or an AI agent) pick the right backend.
+2. **Set up** — :func:`check_requirements` and :func:`setup_guide` diagnose and
+   walk you through installing and starting a backend.
+3. **Operate** — :func:`connect` returns a uniform client; collections behave
+   as ``MutableMapping`` of :class:`Document` plus a :meth:`search` method.
 
-Examples
---------
+Quick start
+-----------
 >>> import vd
->>>
->>> # Connect to a backend
->>> client = vd.connect('memory')  # doctest: +SKIP
->>>
->>> # Create a collection
->>> docs = client.create_collection('my_docs')  # doctest: +SKIP
->>>
->>> # Add documents (dict-like syntax)
->>> docs['doc1'] = "This is a test document"  # doctest: +SKIP
->>> docs['doc2'] = ("Another document", {'category': 'test'})  # doctest: +SKIP
->>>
->>> # Search
->>> results = docs.search("test query", limit=5)  # doctest: +SKIP
->>> for result in results:  # doctest: +SKIP
-...     print(result['id'], result['score'])
+>>> client = vd.connect('memory')          # switch DB = change this one word
+>>> col = client.create_collection('docs')
+>>> col['a'] = vd.Document(id='a', text='cats', vector=[1.0, 0.0])
+>>> col['b'] = vd.Document(id='b', text='dogs', vector=[0.0, 1.0])
+>>> [hit['id'] for hit in col.search([0.9, 0.1], limit=1)]
+['a']
 
-Available Backends
-------------------
-- 'memory': In-memory storage (always available)
-- 'chroma': ChromaDB (requires: pip install chromadb)
-
-To list all available backends:
->>> vd.list_backends()  # doctest: +SKIP
-['memory', 'chroma']
+Embedding is external
+---------------------
+``vd`` stores and searches *vectors*. Turning text into vectors is another
+package's job (e.g. ``ef``). Pass an ``embedder`` to :func:`connect` only for
+the *convenience* of writing/searching raw text; otherwise pass
+:class:`Document` objects carrying vectors, and pre-computed query vectors.
 """
 
+from __future__ import annotations
+
 from pathlib import Path as _Path
+
+__version__ = "0.2.0"
 
 
 def skills_dir() -> _Path:
@@ -49,46 +43,78 @@ def skills_dir() -> _Path:
     return _Path(__file__).parent / "data" / "skills"
 
 
-# Import backends to trigger registration
-import vd.backends  # noqa: F401
+# Importing this package registers every installed backend adapter.
+import vd.backends  # noqa: E402,F401
 
-# Public API
-from vd.base import (
+# ----- core contracts & data model ----------------------------------------- #
+from vd.base import (  # noqa: E402
+    AbstractClient,
+    AbstractCollection,
+    BackendNotInstalledError,
     Client,
     Collection,
     Document,
+    DocumentInput,
+    EmbeddingRequiredError,
     Filter,
+    Metadata,
     SearchResult,
     StaticIndexError,
     SupportsBatch,
     SupportsHybrid,
     UnsupportedCapabilityError,
     UnsupportedFilterError,
+    VdError,
     Vector,
 )
 
-# Metadata-filter language
-from vd.filters import (
+# ----- the entry point & registry ------------------------------------------ #
+from vd.util import (  # noqa: E402
+    connect,
+    cosine_similarity,
+    euclidean_distance,
+    id_and_score,
+    id_only,
+    id_text_score,
+    list_backends,
+    normalize_document_input,
+    register_backend,
+    text_only,
+)
+
+# ----- canonical metadata-filter language ---------------------------------- #
+from vd.filters import (  # noqa: E402
     SUPPORTED_FILTER_OPERATORS,
     matches_filter,
     validate_filter,
 )
-from vd.util import (
-    connect,
+
+# ----- choosing a backend (provider registry) ------------------------------ #
+from vd.providers import (  # noqa: E402
+    compare_backends,
+    get_backend_characteristics,
     get_backend_info,
     get_install_instructions,
-    id_and_score,
-    id_only,
-    id_text_score,
+    install_command,
     list_all_backends,
     list_available_backends,
-    list_backends,
     print_backends_table,
-    text_only,
+    print_comparison,
+    print_recommendation,
+    provider,
+    providers,
+    recommend_backend,
 )
 
-# Import/Export utilities
-from vd.io import (
+# ----- setting a backend up ------------------------------------------------ #
+from vd.requirements import (  # noqa: E402
+    check_requirements,
+    install_backend,
+    setup_guide,
+)
+
+# ----- import / export ----------------------------------------------------- #
+from vd.io import (  # noqa: E402
     export_collection,
     export_to_directory,
     export_to_json,
@@ -99,15 +125,15 @@ from vd.io import (
     import_from_jsonl,
 )
 
-# Migration utilities
-from vd.migration import (
+# ----- migration between backends ------------------------------------------ #
+from vd.migration import (  # noqa: E402
     copy_collection,
     migrate_client,
     migrate_collection,
 )
 
-# Analytics utilities
-from vd.analytics import (
+# ----- analytics ----------------------------------------------------------- #
+from vd.analytics import (  # noqa: E402
     collection_stats,
     find_duplicates,
     find_outliers,
@@ -116,8 +142,8 @@ from vd.analytics import (
     validate_collection,
 )
 
-# Text preprocessing
-from vd.text import (
+# ----- text preprocessing (a convenience; ef owns real segmentation) ------- #
+from vd.text import (  # noqa: E402
     chunk_documents,
     chunk_text,
     clean_text,
@@ -126,41 +152,32 @@ from vd.text import (
     truncate_text,
 )
 
-# Health checks
-from vd.health import (
+# ----- health & benchmarking ----------------------------------------------- #
+from vd.health import (  # noqa: E402
     benchmark_insert,
     benchmark_search,
     health_check_backend,
     health_check_collection,
 )
 
-# Advanced search
-from vd.search import (
+# ----- advanced search ----------------------------------------------------- #
+from vd.search import (  # noqa: E402
     deduplicate_results,
     multi_query_search,
     reciprocal_rank_fusion,
     search_similar_to_document,
 )
 
-# Configuration management
-from vd.config import (
+# ----- configuration files ------------------------------------------------- #
+from vd.config import (  # noqa: E402
     connect_from_config,
     create_example_config,
     load_config,
     save_config,
 )
 
-# Backend comparison and recommendation
-from vd.compare import (
-    compare_backends,
-    get_backend_characteristics,
-    print_comparison,
-    print_recommendation,
-    recommend_backend,
-)
-
-# Time-indexed wrapper
-from vd.time_indexed import (
+# ----- time-indexed wrapper ------------------------------------------------ #
+from vd.time_indexed import (  # noqa: E402
     TimeIndexedCollection,
     TimestampLike,
     WindowSlice,
@@ -171,45 +188,66 @@ from vd.time_indexed import (
     to_iso,
 )
 
-__version__ = "0.1.0"
-
 __all__ = [
-    # Skills (AI agent integration)
     "skills_dir",
-    # Main entry point
+    "__version__",
+    # entry point
     "connect",
-    # Core types
+    "register_backend",
+    # core contracts & data model
     "Document",
     "Client",
     "Collection",
-    # Type aliases
+    "AbstractClient",
+    "AbstractCollection",
     "Vector",
     "Filter",
+    "Metadata",
     "SearchResult",
-    # Exceptions
+    "DocumentInput",
+    # exceptions
+    "VdError",
     "StaticIndexError",
     "UnsupportedFilterError",
     "UnsupportedCapabilityError",
-    # Capability protocols
+    "EmbeddingRequiredError",
+    "BackendNotInstalledError",
+    # capability protocols
     "SupportsBatch",
     "SupportsHybrid",
-    # Metadata-filter language
+    # filter language
     "matches_filter",
     "validate_filter",
     "SUPPORTED_FILTER_OPERATORS",
-    # Backend discovery
+    # choosing a backend
     "list_backends",
     "list_available_backends",
     "list_all_backends",
     "print_backends_table",
+    "providers",
+    "provider",
     "get_backend_info",
+    "get_backend_characteristics",
     "get_install_instructions",
-    # Egress functions
+    "install_command",
+    "compare_backends",
+    "print_comparison",
+    "recommend_backend",
+    "print_recommendation",
+    # setting up a backend
+    "check_requirements",
+    "setup_guide",
+    "install_backend",
+    # egress functions
     "text_only",
     "id_only",
     "id_and_score",
     "id_text_score",
-    # Import/Export
+    # vector math
+    "cosine_similarity",
+    "euclidean_distance",
+    "normalize_document_input",
+    # import / export
     "export_collection",
     "import_collection",
     "export_to_jsonl",
@@ -218,46 +256,40 @@ __all__ = [
     "import_from_json",
     "export_to_directory",
     "import_from_directory",
-    # Migration
+    # migration
     "migrate_collection",
     "migrate_client",
     "copy_collection",
-    # Analytics
+    # analytics
     "collection_stats",
     "metadata_distribution",
     "find_duplicates",
     "find_outliers",
     "sample_collection",
     "validate_collection",
-    # Text preprocessing
+    # text preprocessing
     "chunk_text",
     "chunk_documents",
     "clean_text",
     "normalize_whitespace",
     "truncate_text",
     "extract_metadata",
-    # Health checks
+    # health
     "health_check_backend",
     "health_check_collection",
     "benchmark_search",
     "benchmark_insert",
-    # Advanced search
+    # advanced search
     "multi_query_search",
     "search_similar_to_document",
     "reciprocal_rank_fusion",
     "deduplicate_results",
-    # Configuration
+    # configuration
     "load_config",
     "save_config",
     "connect_from_config",
     "create_example_config",
-    # Backend comparison
-    "compare_backends",
-    "print_comparison",
-    "recommend_backend",
-    "print_recommendation",
-    "get_backend_characteristics",
-    # Time-indexed wrapper
+    # time-indexed wrapper
     "TimeIndexedCollection",
     "TimestampLike",
     "WindowSlice",
