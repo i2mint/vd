@@ -68,9 +68,16 @@ _DOCKER_COMMANDS: dict[str, str] = {
 # --------------------------------------------------------------------------- #
 
 
-def _check(name: str, ok: bool, detail: str) -> dict[str, Any]:
-    """Build one check record."""
-    return {"name": name, "ok": ok, "detail": detail}
+def _check(
+    name: str, ok: bool, detail: str, *, optional: bool = False
+) -> dict[str, Any]:
+    """
+    Build one check record.
+
+    An ``optional`` check is reported but does not gate overall readiness — used
+    for things like "a server is running" on a backend that also runs embedded.
+    """
+    return {"name": name, "ok": ok, "detail": detail, "optional": optional}
 
 
 def _port_open(host: str, port: int, *, timeout: float = 1.0) -> bool:
@@ -134,19 +141,28 @@ def _embedded_checks(name: str, meta: dict) -> list[dict[str, Any]]:
 
 
 def _server_checks(name: str, meta: dict) -> list[dict[str, Any]]:
-    """Checks for a self-hosted server backend."""
+    """
+    Checks for a self-hosted server backend.
+
+    When the backend also has an embedded mode (Qdrant, Milvus, Weaviate), the
+    server-reachable check is *optional*: ``vd.connect`` works embedded without
+    any server, so a missing server should not report the backend "not ready".
+    """
     port = meta.get("default_port")
     if not port:
         return []
     reachable = _port_open("localhost", int(port))
-    return [
-        _check(
-            "server reachable",
-            reachable,
-            f"something is {'answering' if reachable else 'NOT answering'} on "
-            f"localhost:{port}",
+    embedded = bool(meta.get("embedded_mode"))
+    if reachable:
+        detail = f"a server is answering on localhost:{port}"
+    elif embedded:
+        detail = (
+            f"no server on localhost:{port} — fine for embedded mode; "
+            f"start one only for server mode"
         )
-    ]
+    else:
+        detail = f"nothing is answering on localhost:{port}"
+    return [_check("server reachable", reachable, detail, optional=embedded)]
 
 
 def _managed_checks(name: str, meta: dict) -> list[dict[str, Any]]:
@@ -233,7 +249,8 @@ def check_requirements(backend: str, *, verbose: bool = True) -> dict[str, Any]:
         elif archetype == "managed":
             checks += _managed_checks(backend, meta)
 
-    ok = all(c["ok"] for c in checks)
+    # Optional checks are reported but do not gate overall readiness.
+    ok = all(c["ok"] for c in checks if not c.get("optional"))
     next_step = _next_step(backend, meta, checks, ok)
 
     result = {
