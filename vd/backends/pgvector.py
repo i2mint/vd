@@ -224,11 +224,13 @@ class PgvectorCollection(AbstractCollection):
         """
         if self._created:
             return
+        # The vector(N) type modifier must be a SQL literal — Postgres rejects
+        # a bound parameter there ("type modifiers must be simple constants").
+        # int() guards the interpolation; dimension is already an int.
         self._conn.execute(
             f"CREATE TABLE IF NOT EXISTS {self._tbl} "
             f"(doc_id text PRIMARY KEY, text text, metadata jsonb, "
-            f"embedding vector(%s))",
-            [dimension],
+            f"embedding vector({int(dimension)}))"
         )
         try:
             ops = _HNSW_OPS.get(self.metric, "vector_cosine_ops")
@@ -266,15 +268,17 @@ class PgvectorCollection(AbstractCollection):
         if not docs:
             return
         self._ensure_table(self.dimension)
-        self._conn.executemany(
-            f"INSERT INTO {self._tbl}(doc_id, text, metadata, embedding) "
-            f"VALUES (%s, %s, %s, %s) "
-            f"ON CONFLICT (doc_id) DO UPDATE SET "
-            f"text = EXCLUDED.text, "
-            f"metadata = EXCLUDED.metadata, "
-            f"embedding = EXCLUDED.embedding",
-            [[d.id, d.text, json.dumps(d.metadata or {}), d.vector] for d in docs],
-        )
+        # executemany is a cursor method in psycopg 3 (not a connection method).
+        with self._conn.cursor() as cur:
+            cur.executemany(
+                f"INSERT INTO {self._tbl}(doc_id, text, metadata, embedding) "
+                f"VALUES (%s, %s, %s, %s) "
+                f"ON CONFLICT (doc_id) DO UPDATE SET "
+                f"text = EXCLUDED.text, "
+                f"metadata = EXCLUDED.metadata, "
+                f"embedding = EXCLUDED.embedding",
+                [[d.id, d.text, json.dumps(d.metadata or {}), d.vector] for d in docs],
+            )
         self._conn.commit()
 
     def _read(self, key: str) -> Document:
@@ -331,9 +335,13 @@ class PgvectorCollection(AbstractCollection):
             return []
         op = _DISTANCE_OP.get(self.metric, "<=>")
         fetch = overfetch_limit(limit, filter)
+        # Cast the bound parameter to ``vector`` explicitly: psycopg sends a
+        # Python list as ``double precision[]``, and no ``<=>`` operator exists
+        # between ``vector`` and an array. (On INSERT the column type drives an
+        # implicit cast, but a bare operand has no such context.)
         rows = self._conn.execute(
             f"SELECT doc_id, text, metadata, "
-            f"embedding {op} %s AS dist "
+            f"embedding {op} %s::vector AS dist "
             f"FROM {self._tbl} "
             f"ORDER BY dist "
             f"LIMIT %s",

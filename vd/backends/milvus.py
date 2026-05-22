@@ -45,6 +45,7 @@ Requires: ``pip install pymilvus``
 
 from __future__ import annotations
 
+import os
 import tempfile
 from typing import Any, Callable, Iterable, Iterator, Optional
 
@@ -514,8 +515,11 @@ class MilvusBackendClient(AbstractClient):
         elif uri is not None:
             self._client = MilvusClient(uri=uri, token=token)
         else:
-            # Milvus Lite: create a temporary .db file.
-            _fd, tmp_path = tempfile.mkstemp(suffix=".db", prefix="vd_milvus_")
+            # Milvus Lite: an embedded, server-less engine. Hand it a fresh
+            # ".db" path inside a new temp directory. milvus-lite >=3.0 treats
+            # the path as a data directory it creates itself, so it must not
+            # already exist as a file (which ``tempfile.mkstemp`` would create).
+            tmp_path = os.path.join(tempfile.mkdtemp(prefix="vd_milvus_"), "milvus.db")
             self._client = MilvusClient(tmp_path)
 
         #: Track metrics for collections created via this client so they survive

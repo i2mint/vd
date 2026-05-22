@@ -1,0 +1,82 @@
+# Server backends for vd's live-verification test suite.
+#
+# Brings up one container per server-backed vd backend. The pytest suite
+# (see conftest.py) TCP-probes each port and runs the contract tests against
+# whatever is reachable; backends whose container is down are skipped, so the
+# suite stays green in a plain CI environment.
+#
+#   docker compose -f tests/docker-compose.yml up -d      # start
+#   pytest tests/                                         # run the suite
+#   docker compose -f tests/docker-compose.yml down -v    # stop + wipe
+#
+# milvus is intentionally absent: the milvus adapter is verified against the
+# embedded Milvus Lite engine (no server), which exercises the same code path.
+
+services:
+  pgvector:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: vd
+      POSTGRES_PASSWORD: vd
+      POSTGRES_DB: vd
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vd"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis/redis-stack-server:latest
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.3
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  weaviate:
+    image: cr.weaviate.io/semitechnologies/weaviate:1.28.4
+    command: ["--host", "0.0.0.0", "--port", "8080", "--scheme", "http"]
+    environment:
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
+      PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
+      DEFAULT_VECTORIZER_MODULE: "none"
+      ENABLE_MODULES: ""
+      QUERY_DEFAULTS_LIMIT: "25"
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/v1/.well-known/ready || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  mongodb:
+    image: mongodb/mongodb-atlas-local:latest
+    # Host port 27018 (not 27017) to avoid colliding with a developer's
+    # native mongod. The container still listens on 27017 internally.
+    ports:
+      - "27018:27017"
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.runCommand({ ping: 1 })' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
