@@ -104,6 +104,14 @@ class SqliteVecCollection(AbstractCollection):
             )
         self._conn.commit()
 
+    def _tables_exist(self) -> bool:
+        """Return ``True`` once the docs + vec0 tables have been created."""
+        row = self._conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE name = ?",
+            (f"{self.name}_docs",),
+        ).fetchone()
+        return row is not None
+
     # ----- raw primitives ------------------------------------------------- #
 
     def _write(self, doc: Document) -> None:
@@ -116,8 +124,12 @@ class SqliteVecCollection(AbstractCollection):
             (doc.id, doc.text, json.dumps(doc.metadata or {})),
         )
         rowid = cur.fetchone()[0]
+        # vec0 virtual tables do not support INSERT OR REPLACE conflict
+        # resolution on the rowid primary key, so upsert the vector as an
+        # explicit delete-then-insert (a no-op DELETE on first write).
+        self._conn.execute(f"DELETE FROM {self._vec_tbl} WHERE rowid = ?", (rowid,))
         self._conn.execute(
-            f"INSERT OR REPLACE INTO {self._vec_tbl}(rowid, embedding) VALUES(?, ?)",
+            f"INSERT INTO {self._vec_tbl}(rowid, embedding) VALUES(?, ?)",
             (rowid, sqlite_vec.serialize_float32(doc.vector)),
         )
         self._conn.commit()
@@ -153,19 +165,17 @@ class SqliteVecCollection(AbstractCollection):
         self._conn.commit()
 
     def _keys(self) -> Iterator[str]:
-        try:
-            rows = self._conn.execute(f"SELECT doc_id FROM {self._docs_tbl}").fetchall()
-        except sqlite3.OperationalError:
+        if not self._tables_exist():
             return iter(())  # tables not created yet (empty collection)
+        rows = self._conn.execute(f"SELECT doc_id FROM {self._docs_tbl}").fetchall()
         return iter(r[0] for r in rows)
 
     def _count(self) -> int:
-        try:
-            return self._conn.execute(
-                f"SELECT COUNT(*) FROM {self._docs_tbl}"
-            ).fetchone()[0]
-        except sqlite3.OperationalError:
-            return 0
+        if not self._tables_exist():
+            return 0  # tables not created yet (empty collection)
+        return self._conn.execute(f"SELECT COUNT(*) FROM {self._docs_tbl}").fetchone()[
+            0
+        ]
 
     def _query(
         self,
@@ -175,21 +185,32 @@ class SqliteVecCollection(AbstractCollection):
         filter: Optional[Filter],
         **kwargs,
     ) -> Iterable[SearchResult]:
-        fetch = overfetch_limit(limit, filter)
-        try:
-            rows = self._conn.execute(
-                f"SELECT d.doc_id, d.text, d.metadata, v.distance "
-                f"FROM {self._vec_tbl} v JOIN {self._docs_tbl} d ON d.rowid = v.rowid "
-                f"WHERE v.embedding MATCH ? ORDER BY v.distance LIMIT ?",
-                (sqlite_vec.serialize_float32(vector), fetch),
-            ).fetchall()
-        except sqlite3.OperationalError:
+        if not self._tables_exist():
             return []  # empty collection — tables not created yet
+        fetch = overfetch_limit(limit, filter)
+        # The vec0 KNN constraint (``k = ?``) must sit directly on the virtual
+        # table; a bare ``LIMIT`` on a JOIN is not pushed down and sqlite-vec
+        # rejects the query. Do the KNN in a subquery, then join for payloads.
+        rows = self._conn.execute(
+            f"SELECT d.doc_id, d.text, d.metadata, knn.distance "
+            f"FROM (SELECT rowid, distance FROM {self._vec_tbl} "
+            f"      WHERE embedding MATCH ? AND k = ?) knn "
+            f"JOIN {self._docs_tbl} d ON d.rowid = knn.rowid "
+            f"ORDER BY knn.distance",
+            (sqlite_vec.serialize_float32(vector), fetch),
+        ).fetchall()
         results = [
             {
                 "id": doc_id,
                 "text": text or "",
-                "score": score_from_distance(distance, self.metric),
+                # sqlite-vec yields a NULL distance for a degenerate (zero-norm)
+                # vector under cosine; treat that as 0.0 similarity, matching
+                # the memory backend's zero-vector semantics.
+                "score": (
+                    score_from_distance(distance, self.metric)
+                    if distance is not None
+                    else 0.0
+                ),
                 "metadata": json.loads(metadata or "{}"),
             }
             for doc_id, text, metadata, distance in rows

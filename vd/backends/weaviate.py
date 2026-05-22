@@ -278,8 +278,9 @@ class WeaviateCollection(AbstractCollection):
     def _class_exists(self) -> bool:
         """Return ``True`` if the Weaviate class for this collection exists."""
         try:
-            self._weaviate_client.collections.get(self._class_name)
-            return True
+            # collections.get() returns a lazy handle without a server check —
+            # collections.exists() is the actual existence query.
+            return bool(self._weaviate_client.collections.exists(self._class_name))
         except Exception:
             return False
 
@@ -472,8 +473,9 @@ class WeaviateClient(AbstractClient):
     def _class_exists(self, class_name: str) -> bool:
         """Return ``True`` if the Weaviate class ``class_name`` currently exists."""
         try:
-            self._client.collections.get(class_name)
-            return True
+            # collections.get() returns a lazy handle without a server check —
+            # collections.exists() is the actual existence query.
+            return bool(self._client.collections.exists(class_name))
         except Exception:
             return False
 

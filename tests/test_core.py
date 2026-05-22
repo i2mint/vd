@@ -166,7 +166,9 @@ def test_search_with_comparison_filter(client):
     col = client.create_collection("search_cmp")
     for i in range(6):
         v = [0.0] * 16
-        v[0] = i / 6
+        # (i + 1), not i — a zero-magnitude vector has undefined cosine
+        # similarity and some backends (Elasticsearch) reject it outright.
+        v[0] = (i + 1) / 6
         col[str(i)] = _doc(str(i), v, n=i)
     hits = list(col.search([0.5] * 16, limit=10, filter={"n": {"$gte": 3}}))
     assert sorted(int(h["id"]) for h in hits) == [3, 4, 5]
@@ -176,7 +178,8 @@ def test_search_with_in_filter(client):
     col = client.create_collection("search_in")
     for i in range(5):
         v = [0.0] * 16
-        v[0] = i / 5
+        # (i + 1), not i — avoid a zero-magnitude vector (see comment above).
+        v[0] = (i + 1) / 5
         col[str(i)] = _doc(str(i), v, n=i)
     hits = list(col.search([0.5] * 16, limit=10, filter={"n": {"$in": [1, 3]}}))
     assert sorted(int(h["id"]) for h in hits) == [1, 3]
@@ -229,6 +232,8 @@ def test_upsert_is_idempotent(client):
 
 def test_dimension_mismatch_raises(client):
     col = client.create_collection("dimcheck")
-    col["ok"] = Document(id="ok", text="t", vector=[0.0] * 16)
+    # A non-zero vector — a zero-magnitude one has undefined cosine similarity
+    # and some backends (Elasticsearch) reject it outright.
+    col["ok"] = Document(id="ok", text="t", vector=[1.0] * 16)
     with pytest.raises(ValueError):
-        col["bad"] = Document(id="bad", text="t", vector=[0.0] * 8)
+        col["bad"] = Document(id="bad", text="t", vector=[1.0] * 8)

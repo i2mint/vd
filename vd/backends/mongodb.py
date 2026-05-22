@@ -29,28 +29,17 @@ driver used here is ``pymongo`` 4.x (the official sync Python client).
   pipeline.  The score returned by ``$meta: "vectorSearchScore"`` is
   *higher-is-better* and is used directly as the ``vd`` result ``score``.
 
-**IMPORTANT — the Atlas vector search index must be created out-of-band.**
-``MongoDBClient.create_collection`` creates the *MongoDB collection* (the
-document container) but it **cannot** create the Atlas vector search index.
-The vector search index must be created separately, before ``search()`` is
-called, via:
-
-1. The Atlas UI: *Atlas → Browse Collections → Search Indexes → Create
-   Search Index → Atlas Vector Search*, or
-2. The Atlas Data API / Admin API, or
-3. The MongoDB Atlas Terraform provider.
-
-When you create the index, set:
-
-- *field*: ``"embedding"``
-- *type*: ``"knnVector"``
-- *dimensions*: the embedding dimension you are using (e.g. ``1536``)
-- *similarity*: ``"cosine"`` (or ``"euclidean"`` / ``"dotProduct"`` to match
-  your ``metric`` choice)
-
-The default index name expected by this adapter is ``"vector_index"``; pass
-``vector_index="my_name"`` to ``MongoDBClient`` or ``index="my_name"`` to
-``collection.search()`` to override.
+**The Atlas vector search index is created automatically.** On the first
+:meth:`~MongoDBCollection.search`, this adapter creates the vector search
+index — on the ``"embedding"`` field, with the collection's dimension and
+metric — via ``create_search_index``, then blocks until Atlas reports it
+queryable. This makes the backend behave like every other ``vd`` adapter
+(which all create their own index). Index creation requires an Atlas-capable
+deployment: Atlas, or a local ``mongodb-atlas-local`` / AtlasCLI deployment —
+it is **not** available on a plain ``mongod``. The index name defaults to
+``"vector_index"``; override it with ``vector_index="my_name"`` on
+:class:`MongoDBClient`, or pass ``index="my_name"`` to
+``collection.search()`` to use a different, externally-managed index.
 
 On the **M0 free tier**, only one vector search index is allowed per cluster.
 
@@ -65,13 +54,14 @@ from typing import Any, Callable, Iterable, Iterator, Optional
 try:
     from pymongo import MongoClient
     from pymongo.collection import Collection as PymongoCollection
-    from pymongo.errors import CollectionInvalid
+    from pymongo.errors import CollectionInvalid, OperationFailure
 except ImportError as e:  # pragma: no cover
     raise ImportError(
         "The mongodb backend needs the 'pymongo' package. "
         "Install with: pip install pymongo"
     ) from e
 
+from vd.backends._helpers import apply_client_filter, overfetch_limit
 from vd.base import (
     AbstractClient,
     AbstractCollection,
@@ -106,126 +96,6 @@ _METRIC_TO_ATLAS_SIMILARITY = {
 
 
 # ---------------------------------------------------------------------------
-# Filter translation helpers
-# ---------------------------------------------------------------------------
-
-
-def _prefix_field(key: str) -> str:
-    """
-    Return the MongoDB document path for a vd filter field key.
-
-    User metadata is stored under the ``metadata`` sub-document, so every
-    plain field key is prefixed with ``"metadata."``.  Operator keys that
-    start with ``"$"`` are returned unchanged.
-
-    Examples
-    --------
-    >>> _prefix_field("year")
-    'metadata.year'
-    >>> _prefix_field("$and")
-    '$and'
-    """
-    return key if key.startswith("$") else f"metadata.{key}"
-
-
-def _to_mongo_filter(ast: Optional[Filter]) -> Optional[dict]:
-    """
-    Translate a canonical ``vd`` filter AST to a MongoDB Query Language document.
-
-    The canonical vd filter dialect is already modelled after MQL, so the
-    translation is nearly identity.  The one structural change: every
-    *field* key (not operator key) must be prefixed with ``"metadata."``
-    because user metadata is stored nested under that sub-document in the
-    MongoDB document schema.  Operator keys (``$and``, ``$or``, ``$not``,
-    ``$eq``, ``$gt``, ...) are left unchanged and MongoDB handles them
-    natively.
-
-    Logical operators are recursed through transparently.  ``$not`` wraps
-    its sub-document in MQL's ``{"$not": {...}}`` form for field conditions.
-
-    Parameters
-    ----------
-    ast : dict or None
-        A filter in the canonical ``vd`` dialect (see :mod:`vd.filters`).
-        ``None`` or empty returns ``None`` (no filter applied).
-
-    Returns
-    -------
-    dict or None
-        A MongoDB Query Language document ready to pass as ``filter`` in a
-        ``$vectorSearch`` stage, or ``None`` when no filtering is needed.
-
-    Examples
-    --------
-    >>> _to_mongo_filter(None)
-    >>> _to_mongo_filter({})
-    >>> _to_mongo_filter({"year": 2024})
-    {'metadata.year': 2024}
-    >>> _to_mongo_filter({"year": {"$gte": 2020}})
-    {'metadata.year': {'$gte': 2020}}
-    >>> _to_mongo_filter({"$and": [{"year": 2024}, {"tag": "ai"}]})
-    {'$and': [{'metadata.year': 2024}, {'metadata.tag': 'ai'}]}
-    """
-    if not ast:
-        return None
-
-    result: dict = {}
-    for key, value in ast.items():
-        if key == "$and":
-            # $and takes a list of sub-filter documents
-            result["$and"] = [_to_mongo_filter(sub) for sub in value]
-        elif key == "$or":
-            # $or takes a list of sub-filter documents
-            result["$or"] = [_to_mongo_filter(sub) for sub in value]
-        elif key == "$not":
-            # $not in the vd AST wraps a single sub-filter; translate each
-            # field condition inside it with prefixed keys.
-            result.update(_to_mongo_not(value))
-        else:
-            # Plain field condition — prefix the key with "metadata."
-            result[_prefix_field(key)] = value
-
-    return result or None
-
-
-def _to_mongo_not(sub: Filter) -> dict:
-    """
-    Translate a ``$not`` sub-filter into MQL negation form.
-
-    MQL ``$not`` operates on a single field condition
-    (``{"field": {"$not": {...}}}``), whereas the vd ``$not`` wraps an
-    entire sub-filter.  We translate by prefixing each field and wrapping
-    its condition in ``{"$not": condition}``.  Nested logical operators
-    inside ``$not`` are passed through recursively.
-
-    Parameters
-    ----------
-    sub : dict
-        The sub-filter expression to negate.
-
-    Returns
-    -------
-    dict
-        An MQL document expressing the negation.
-    """
-    result: dict = {}
-    for key, value in sub.items():
-        if key in ("$and", "$or", "$not"):
-            # Logical operators inside $not: recurse via _to_mongo_filter
-            translated = _to_mongo_filter({key: value})
-            if translated:
-                result.update(translated)
-        else:
-            prefixed = _prefix_field(key)
-            if isinstance(value, dict):
-                result[prefixed] = {"$not": value}
-            else:
-                # Bare equality — express as $not: {$eq: value}
-                result[prefixed] = {"$not": {"$eq": value}}
-    return result
-
-
-# ---------------------------------------------------------------------------
 # Helper: build a $vectorSearch aggregation pipeline
 # ---------------------------------------------------------------------------
 
@@ -235,7 +105,6 @@ def _build_vector_search_pipeline(
     *,
     limit: int,
     index: str,
-    mongo_filter: Optional[dict],
 ) -> list[dict]:
     """
     Build the MongoDB aggregation pipeline for a ``$vectorSearch`` query.
@@ -247,22 +116,26 @@ def _build_vector_search_pipeline(
        ``vectorSearchScore`` meta-field (higher-is-better cosine/dot/
        euclidean similarity score assigned by Atlas).
 
-    The ``numCandidates`` parameter controls the pre-filter candidate pool.
-    Atlas requires ``numCandidates >= limit``; we use
-    ``max(limit * _CANDIDATES_MULTIPLIER, _MIN_NUM_CANDIDATES)`` as the
-    default, matching common practice from the Atlas documentation.
+    Metadata filtering is **not** done here. Atlas ``$vectorSearch`` can only
+    pre-filter on fields explicitly declared as ``filter`` fields in the index
+    definition — but ``vd``'s filter language is open-ended, so filtering is
+    applied client-side (over-fetch, then :func:`apply_client_filter`), exactly
+    as the pgvector / redis / weaviate / milvus adapters do. This keeps filter
+    semantics identical across every backend.
+
+    The ``numCandidates`` parameter controls the candidate pool. Atlas requires
+    ``numCandidates >= limit``; we use
+    ``max(limit * _CANDIDATES_MULTIPLIER, _MIN_NUM_CANDIDATES)``.
 
     Parameters
     ----------
     vector : list[float]
         The query embedding vector.
     limit : int
-        Number of nearest neighbours to return.
+        Number of nearest neighbours to return (already over-fetched by the
+        caller when a filter is present).
     index : str
-        Name of the Atlas vector search index (must exist out-of-band).
-    mongo_filter : dict or None
-        An MQL filter document (already translated by ``_to_mongo_filter``),
-        or ``None`` to skip metadata filtering.
+        Name of the Atlas vector search index.
 
     Returns
     -------
@@ -270,18 +143,16 @@ def _build_vector_search_pipeline(
         A two-stage aggregation pipeline.
     """
     num_candidates = max(limit * _CANDIDATES_MULTIPLIER, _MIN_NUM_CANDIDATES)
-    vector_search_stage: dict[str, Any] = {
-        "index": index,
-        "path": "embedding",
-        "queryVector": vector,
-        "numCandidates": num_candidates,
-        "limit": limit,
-    }
-    if mongo_filter:
-        vector_search_stage["filter"] = mongo_filter
-
     return [
-        {"$vectorSearch": vector_search_stage},
+        {
+            "$vectorSearch": {
+                "index": index,
+                "path": "embedding",
+                "queryVector": vector,
+                "numCandidates": num_candidates,
+                "limit": limit,
+            }
+        },
         {
             "$project": {
                 "_id": 1,
@@ -291,6 +162,36 @@ def _build_vector_search_pipeline(
             }
         },
     ]
+
+
+# ---------------------------------------------------------------------------
+# Helper: rebuild a vd Document from a raw MongoDB document
+# ---------------------------------------------------------------------------
+
+
+def _raw_to_document(raw: dict) -> Document:
+    """
+    Rebuild a :class:`~vd.base.Document` from a raw MongoDB document.
+
+    The stored shape is ``{"_id": id, "text": text, "embedding": vector,
+    "metadata": {...}}`` (see :meth:`MongoDBCollection._write`); this is the
+    inverse mapping.
+
+    Parameters
+    ----------
+    raw : dict
+        A document as returned by ``pymongo``'s ``find_one`` / ``aggregate``.
+
+    Returns
+    -------
+    Document
+    """
+    return Document(
+        id=raw["_id"],
+        text=raw.get("text", ""),
+        vector=raw.get("embedding"),
+        metadata=raw.get("metadata") or {},
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -315,10 +216,9 @@ class MongoDBCollection(AbstractCollection):
     The ``vectorSearchScore`` returned by Atlas is higher-is-better and is
     used directly as the vd result ``score`` regardless of metric.
 
-    The Atlas vector search index named by ``vector_index`` must exist on
-    the field ``"embedding"`` of this collection *before* :meth:`search` is
-    called.  This adapter does not create it — see the module docstring for
-    how to do so via the Atlas UI or API.
+    The Atlas vector search index named by ``vector_index`` is created
+    automatically on the first :meth:`search` (see :meth:`_ensure_search_index`);
+    the adapter then blocks until Atlas reports it queryable.
 
     Parameters
     ----------
@@ -354,11 +254,88 @@ class MongoDBCollection(AbstractCollection):
         self.dimension = dimension
         self.metric = metric
         self._vector_index = vector_index
+        #: Set once the Atlas vector search index is confirmed queryable.
+        self._index_ready = False
 
     @property
     def native(self) -> PymongoCollection:
         """The raw ``pymongo.collection.Collection`` handle (escape hatch)."""
         return self._coll
+
+    # ----- Atlas vector search index --------------------------------------- #
+
+    def _ensure_search_index(self) -> None:
+        """
+        Create the Atlas vector search index and wait until it is queryable.
+
+        Lazy and idempotent: invoked on the first :meth:`search`, once the
+        vector dimension is known. The index is created on the ``"embedding"``
+        field with this collection's ``dimension`` and ``metric``; the adapter
+        then blocks until Atlas reports it queryable. A no-op once ready.
+
+        Raises
+        ------
+        RuntimeError
+            If the dimension is still unknown, if the deployment is not
+            Atlas-capable (no ``$listSearchIndexes`` support), or if the index
+            does not become queryable within the timeout.
+        """
+        if self._index_ready:
+            return
+        try:
+            existing = {idx["name"] for idx in self._coll.list_search_indexes()}
+        except OperationFailure as exc:
+            raise RuntimeError(
+                "This MongoDB deployment does not support Atlas Vector Search. "
+                "Connect to Atlas or a local 'mongodb-atlas-local' / AtlasCLI "
+                "deployment — a plain mongod cannot run $vectorSearch."
+            ) from exc
+        if self._vector_index not in existing:
+            if self.dimension is None:
+                raise RuntimeError(
+                    f"Cannot create the Atlas vector search index for "
+                    f"collection {self.name!r}: the vector dimension is unknown. "
+                    f"Write a document first, or pass dimension= to "
+                    f"create_collection."
+                )
+            from pymongo.operations import SearchIndexModel
+
+            similarity = _METRIC_TO_ATLAS_SIMILARITY.get(self.metric, "cosine")
+            self._coll.create_search_index(
+                SearchIndexModel(
+                    definition={
+                        "fields": [
+                            {
+                                "type": "vector",
+                                "path": "embedding",
+                                "numDimensions": self.dimension,
+                                "similarity": similarity,
+                            }
+                        ]
+                    },
+                    name=self._vector_index,
+                    type="vectorSearch",
+                )
+            )
+        self._wait_until_queryable()
+        self._index_ready = True
+
+    def _wait_until_queryable(
+        self, *, timeout: float = 120.0, poll_interval: float = 1.0
+    ) -> None:
+        """Block until the vector search index reports ``queryable``."""
+        import time
+
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            for idx in self._coll.list_search_indexes(self._vector_index):
+                if idx.get("queryable"):
+                    return
+            time.sleep(poll_interval)
+        raise RuntimeError(
+            f"Atlas vector search index {self._vector_index!r} for collection "
+            f"{self.name!r} did not become queryable within {timeout:.0f}s."
+        )
 
     # ----- raw primitives -------------------------------------------------- #
 
@@ -472,10 +449,16 @@ class MongoDBCollection(AbstractCollection):
             ``vectorSearchScore``, higher-is-better.
         """
         index = kwargs.get("index", self._vector_index)
-        mongo_filter = _to_mongo_filter(filter)
-        pipeline = _build_vector_search_pipeline(
-            vector, limit=limit, index=index, mongo_filter=mongo_filter
-        )
+        # Auto-create/await our managed index; a caller-supplied index= is
+        # assumed to be managed externally and is used as-is.
+        if index == self._vector_index:
+            self._ensure_search_index()
+
+        # Over-fetch when filtering, then filter client-side — Atlas can only
+        # pre-filter on index-declared fields, so the canonical vd evaluator is
+        # applied locally (identical to every other server-backed adapter).
+        fetch = overfetch_limit(limit, filter)
+        pipeline = _build_vector_search_pipeline(vector, limit=fetch, index=index)
 
         # Allow callers to override numCandidates via kwargs.
         if "num_candidates" in kwargs:
@@ -483,17 +466,16 @@ class MongoDBCollection(AbstractCollection):
                 kwargs["num_candidates"]
             )
 
-        results = []
-        for raw in self._coll.aggregate(pipeline):
-            results.append(
-                {
-                    "id": raw["_id"],
-                    "text": raw.get("text", ""),
-                    "score": raw.get("score", 0.0),
-                    "metadata": raw.get("metadata", {}),
-                }
-            )
-        return results
+        results = [
+            {
+                "id": raw["_id"],
+                "text": raw.get("text", ""),
+                "score": raw.get("score", 0.0),
+                "metadata": raw.get("metadata", {}),
+            }
+            for raw in self._coll.aggregate(pipeline)
+        ]
+        return apply_client_filter(results, filter, limit=limit)
 
 
 # ---------------------------------------------------------------------------
@@ -512,10 +494,9 @@ class MongoDBClient(AbstractClient):
     named by ``database`` (default ``"vd"``).
 
     The Atlas vector search index on each collection's ``"embedding"`` field
-    **must be created out-of-band** (Atlas UI, Admin API, or Terraform) before
-    :meth:`~MongoDBCollection.search` works.  Use the ``vector_index`` name
-    you gave that index when constructing this client (or override per-query
-    with ``collection.search(..., index="my_index")``).
+    is created automatically on the first search, named by ``vector_index``
+    (default ``"vector_index"``). Pass ``index="my_index"`` to
+    ``collection.search(...)`` to use a different, externally-managed index.
 
     Parameters
     ----------
@@ -554,8 +535,9 @@ class MongoDBClient(AbstractClient):
 
         client = vd.connect("mongodb")          # reads MONGODB_URI from env
         col = client.get_or_create_collection("my_docs", dimension=1536)
-        # Create the Atlas vector search index on "embedding" before search!
         col["doc1"] = vd.Document(id="doc1", text="hello", vector=[0.1]*1536)
+        # The Atlas vector search index is created on the first search call;
+        # that call blocks until Atlas reports the index queryable.
         for hit in col.search([0.1]*1536, limit=5):
             print(hit["id"], hit["score"])
     """

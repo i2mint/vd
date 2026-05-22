@@ -195,16 +195,28 @@ class ElasticsearchCollection(AbstractCollection):
 
     def _ensure_index(self) -> None:
         """
-        Create the Elasticsearch index on the first write if it does not exist.
+        Ensure the ``embedding`` dense_vector field is mapped before a write.
 
-        The dimension must be known (set) before this is called, which is
-        guaranteed because :meth:`~vd.base.AbstractCollection._vet_vector`
-        sets ``self.dimension`` from the first vector before ``_write`` runs.
+        The index itself is created eagerly by
+        :meth:`ElasticsearchClient.create_collection`, so an empty collection
+        is still visible to ``list_collections`` / ``in`` / ``get_collection``.
+        The ``dense_vector`` field, however, needs the vector dimension — not
+        known until the first vector arrives — so it is added here, lazily, via
+        ``put_mapping``. ``self.dimension`` is guaranteed set by then because
+        :meth:`~vd.base.AbstractCollection._vet_vector` runs before ``_write``.
         """
+        full_mapping = _build_mapping(self.dimension, self.metric)
         if not _index_exists(self._es, self.name):
-            self._es.indices.create(
+            # Index missing (collection created outside the adapter, or the
+            # index was dropped) — create it whole.
+            self._es.indices.create(index=self.name, mappings=full_mapping)
+            return
+        mapping = self._es.indices.get_mapping(index=self.name)
+        properties = mapping[self.name]["mappings"].get("properties", {})
+        if "embedding" not in properties:
+            self._es.indices.put_mapping(
                 index=self.name,
-                mappings=_build_mapping(self.dimension, self.metric),
+                properties={"embedding": full_mapping["properties"]["embedding"]},
             )
 
     # ----- raw primitives --------------------------------------------------- #
@@ -276,37 +288,26 @@ class ElasticsearchCollection(AbstractCollection):
         """
         Iterate all document ids in the index.
 
-        Uses a ``match_all`` query with pagination (``search_after``) to
-        retrieve ids page by page. For very large indices (tens of millions of
-        documents) prefer the Scroll API or the ``helpers.scan`` utility; the
-        ``search_after`` approach used here avoids the deprecated Scroll deep
-        pagination but still loads all ids into memory.
+        Uses the scroll-based ``helpers.scan`` to walk every document.
+        Elasticsearch disallows sorting (fielddata access) on the ``_id``
+        field, which rules out an ``_id``-keyed ``search_after`` pagination;
+        ``scan`` needs no sort. Ids are materialised into a list (as the
+        previous ``search_after`` implementation also did).
         """
         if not _index_exists(self._es, self.name):
             return iter(())
+        from elasticsearch.helpers import scan
 
-        ids: list[str] = []
-        search_after: Any = None
-        while True:
-            body: dict = {
-                "query": {"match_all": {}},
-                "size": _KEYS_PAGE_SIZE,
-                "_source": False,
-                "sort": [{"_id": "asc"}],
-            }
-            if search_after is not None:
-                body["search_after"] = search_after
-
-            response = self._es.search(index=self.name, body=body)
-            hits = response["hits"]["hits"]
-            if not hits:
-                break
-            for hit in hits:
-                ids.append(hit["_id"])
-            search_after = hits[-1]["sort"]
-            if len(hits) < _KEYS_PAGE_SIZE:
-                break
-
+        ids = [
+            hit["_id"]
+            for hit in scan(
+                self._es,
+                index=self.name,
+                query={"query": {"match_all": {}}},
+                _source=False,
+                size=_KEYS_PAGE_SIZE,
+            )
+        ]
         return iter(ids)
 
     def _count(self) -> int:
@@ -441,8 +442,12 @@ class ElasticsearchClient(AbstractClient):
         """
         Create a new collection (Elasticsearch index).
 
-        The index is created **lazily** on the first write when ``dimension``
-        is ``None``, or **eagerly** here when ``dimension`` is supplied.
+        The index is created **eagerly** so the collection is immediately
+        visible to :meth:`list_collections`, ``in``, and :meth:`get_collection`
+        even before its first write. The ``embedding`` ``dense_vector`` field
+        is added with a full mapping now when ``dimension`` is supplied, or
+        **lazily** on the first write otherwise (Elasticsearch needs the vector
+        dimension to map a ``dense_vector`` field).
 
         Parameters
         ----------
@@ -450,8 +455,8 @@ class ElasticsearchClient(AbstractClient):
             Index name. **Must be lowercase** — Elasticsearch rejects names
             with uppercase letters.
         dimension : int, optional
-            Vector dimension. Required for eager index creation; may be
-            deferred until the first write.
+            Vector dimension. When given, the ``dense_vector`` field is mapped
+            now; otherwise it is deferred until the first write.
         metric : str
             Distance metric: ``"cosine"``, ``"dot"``, or ``"l2"``.
         **index_config
@@ -472,16 +477,23 @@ class ElasticsearchClient(AbstractClient):
             dimension=dimension,
             metric=metric,
         )
-        if dimension is not None:
-            # Eager index creation: build the mapping now.
-            settings = index_config if index_config else None
-            create_kwargs: dict[str, Any] = {
-                "index": name,
-                "mappings": _build_mapping(dimension, metric),
+        # Always create the index now (an empty collection must still be
+        # listable). The dense_vector field needs the dimension, so it is only
+        # mapped here when known — otherwise _ensure_index adds it on first write.
+        mappings: dict[str, Any] = {
+            "properties": {
+                "text": {"type": "text"},
+                "metadata": {"type": "object", "enabled": False},
             }
-            if settings:
-                create_kwargs["settings"] = settings
-            self._client.indices.create(**create_kwargs)
+        }
+        if dimension is not None:
+            mappings["properties"]["embedding"] = _build_mapping(dimension, metric)[
+                "properties"
+            ]["embedding"]
+        create_kwargs: dict[str, Any] = {"index": name, "mappings": mappings}
+        if index_config:
+            create_kwargs["settings"] = index_config
+        self._client.indices.create(**create_kwargs)
         return col
 
     def get_collection(self, name: str) -> ElasticsearchCollection:
