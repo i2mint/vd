@@ -5,9 +5,11 @@ Provides functions for multi-query search, search result merging, and
 other advanced search patterns.
 """
 
-from typing import Any, Callable, Iterator, Optional, Union
+import math
+import re
+from typing import Any, Callable, Iterable, Iterator, Optional, Union
 
-from vd.base import Collection, SearchResult
+from vd.base import Collection, SearchResult, SupportsHybrid, Vector
 
 
 def multi_query_search(
@@ -346,3 +348,286 @@ def deduplicate_results(
             if result["score"] > seen[key_value]["score"]:
                 seen[key_value] = result
                 yield result
+
+
+# --------------------------------------------------------------------------- #
+# Hybrid search — top-level entry + client-side BM25 fallback
+# --------------------------------------------------------------------------- #
+
+#: Minimum default for `k_dense`/`k_lexical` when callers don't override.
+_HYBRID_OVERFETCH_FLOOR = 50
+
+#: Simple ASCII-word tokenizer for the built-in BM25 fallback. Adapters that
+#: want better tokenization (stemming, CJK, etc.) should pass a custom
+#: ``lexical_search`` callable.
+_TOKEN_RE = re.compile(r"\w+", re.UNICODE)
+
+
+def _tokenize(text: str) -> list[str]:
+    """Lowercased word tokens — used by the built-in BM25 fallback."""
+    return _TOKEN_RE.findall(text.lower())
+
+
+def bm25_lexical_search(
+    collection: Collection,
+    query_text: str,
+    *,
+    limit: int = 10,
+    filter: Optional[dict] = None,
+    k1: float = 1.5,
+    b: float = 0.75,
+) -> list[SearchResult]:
+    """
+    Brute-force BM25 lexical search over a vd collection's stored ``text``.
+
+    Iterates every document in ``collection``, tokenizes its ``text`` field,
+    and computes Okapi BM25 scores against ``query_text``. Used as the default
+    lexical side of :func:`hybrid_search` when a collection does not implement
+    :class:`SupportsHybrid`.
+
+    Cost is **O(N)** in the collection size — fine for prototypes and
+    collections up to ~100k documents. For larger workloads, either switch to
+    a backend with native hybrid search (weaviate, elasticsearch, redis, …)
+    or pass a custom ``lexical_search`` callable to :func:`hybrid_search` that
+    consults a real text index.
+
+    Parameters
+    ----------
+    collection : Collection
+        Any vd Collection. Documents whose ``text`` is empty contribute zero
+        score and are filtered out of the result.
+    query_text : str
+        The lexical query.
+    limit : int
+        Maximum number of results.
+    filter : dict, optional
+        Canonical ``vd`` metadata filter. Applied client-side via
+        :func:`vd.filters.matches_filter`.
+    k1, b : float
+        BM25 hyperparameters. Defaults match the standard Okapi BM25.
+
+    Returns
+    -------
+    list[dict]
+        Result dicts in the same shape as :meth:`Collection.search` —
+        ``{"id", "text", "score", "metadata"}`` — sorted by descending score.
+
+    Examples
+    --------
+    >>> import vd
+    >>> c = vd.connect('memory').create_collection('t', dimension=2)
+    >>> c['a'] = vd.Document(id='a', text='the quick brown fox', vector=[1.0, 0.0])
+    >>> c['b'] = vd.Document(id='b', text='lazy dog sleeps', vector=[0.0, 1.0])
+    >>> hits = bm25_lexical_search(c, 'quick fox', limit=1)
+    >>> hits[0]['id']
+    'a'
+    """
+    from vd.filters import matches_filter
+
+    query_tokens = _tokenize(query_text)
+    if not query_tokens:
+        return []
+
+    # Pass 1: tokenize once, compute document frequencies and lengths.
+    docs: list[tuple[str, str, dict, list[str]]] = []
+    df: dict[str, int] = {}
+    for doc_id in collection:
+        doc = collection[doc_id]
+        if filter is not None and not matches_filter(doc.metadata or {}, filter):
+            continue
+        tokens = _tokenize(doc.text or "")
+        if not tokens:
+            continue
+        docs.append((doc_id, doc.text, dict(doc.metadata or {}), tokens))
+        for term in set(tokens):
+            df[term] = df.get(term, 0) + 1
+
+    if not docs:
+        return []
+
+    n_docs = len(docs)
+    avg_len = sum(len(toks) for _, _, _, toks in docs) / n_docs
+
+    # Pass 2: BM25 scoring (Okapi).
+    query_terms = set(query_tokens)
+    idf = {
+        term: math.log(1 + (n_docs - df[term] + 0.5) / (df[term] + 0.5))
+        for term in query_terms
+        if term in df
+    }
+
+    scored: list[SearchResult] = []
+    for doc_id, text, metadata, tokens in docs:
+        score = 0.0
+        doc_len = len(tokens)
+        tf: dict[str, int] = {}
+        for tok in tokens:
+            if tok in idf:
+                tf[tok] = tf.get(tok, 0) + 1
+        if not tf:
+            continue
+        for term, freq in tf.items():
+            numer = freq * (k1 + 1)
+            denom = freq + k1 * (1 - b + b * doc_len / avg_len)
+            score += idf[term] * numer / denom
+        scored.append(
+            {"id": doc_id, "text": text, "score": score, "metadata": metadata}
+        )
+
+    scored.sort(key=lambda r: r["score"], reverse=True)
+    return scored[:limit]
+
+
+def _rrf_fuse(
+    result_lists: Iterable[list[SearchResult]],
+    *,
+    rrf_k: int = 60,
+    limit: int = 10,
+) -> list[SearchResult]:
+    """Reciprocal Rank Fusion over result lists, returning the top ``limit``."""
+    scores: dict[str, dict[str, Any]] = {}
+    for results in result_lists:
+        for rank, item in enumerate(results, 1):
+            doc_id = item["id"]
+            contribution = 1.0 / (rrf_k + rank)
+            if doc_id not in scores:
+                # Keep the first occurrence's payload for text/metadata.
+                scores[doc_id] = {"item": dict(item), "score": 0.0}
+            scores[doc_id]["score"] += contribution
+    fused = []
+    for doc_id, entry in scores.items():
+        item = entry["item"]
+        # Replace the source score with the fused RRF score so downstream
+        # consumers can rely on result["score"] = fused score.
+        item["score"] = entry["score"]
+        fused.append(item)
+    fused.sort(key=lambda r: r["score"], reverse=True)
+    return fused[:limit]
+
+
+def hybrid_search(
+    collection: Collection,
+    query: Union[str, Vector],
+    *,
+    query_text: Optional[str] = None,
+    limit: int = 10,
+    filter: Optional[dict] = None,
+    k_dense: Optional[int] = None,
+    k_lexical: Optional[int] = None,
+    rrf_k: int = 60,
+    lexical_search: Optional[Callable[..., list[SearchResult]]] = None,
+    egress: Optional[Callable[[SearchResult], Any]] = None,
+    **kwargs,
+) -> Iterator[SearchResult]:
+    """
+    Hybrid (dense + lexical) search that works on any vd Collection.
+
+    Dispatches to the collection's native ``hybrid_search`` when it implements
+    :class:`~vd.SupportsHybrid` (efficient, server-side). Otherwise fuses the
+    collection's own dense :meth:`~vd.Collection.search` with a client-side
+    lexical scan (default: :func:`bm25_lexical_search`) via **Reciprocal Rank
+    Fusion**.
+
+    The portable contract is RRF. Backend-specific knobs (weighted blend
+    ``alpha``, fusion-type variants, native ranker choices) are accepted via
+    ``**kwargs`` and forwarded to the adapter when it has a native
+    implementation; they are ignored by the client-side fallback.
+
+    Parameters
+    ----------
+    collection : Collection
+        Any vd Collection — native-hybrid or not.
+    query : str or list[float]
+        Query text (embedded by the collection if it has an embedder) or a
+        pre-computed query vector. When ``query`` is a vector, ``query_text``
+        is **required**.
+    query_text : str, optional
+        Explicit text for the lexical side. Defaults to ``query`` when
+        ``query`` is a string.
+    limit : int
+        Number of fused results to return.
+    filter : dict, optional
+        Canonical ``vd`` metadata filter, applied to both sub-searches.
+    k_dense, k_lexical : int, optional
+        How many results to fetch from each sub-search before fusion. Default
+        is ``max(4 * limit, 50)`` for each side. Widen for higher recall.
+    rrf_k : int
+        Reciprocal Rank Fusion constant (typically 60).
+    lexical_search : callable, optional
+        Custom ``lexical_search(collection, query_text, *, limit, filter,
+        **kwargs) -> list[SearchResult]``. Defaults to
+        :func:`bm25_lexical_search`. Used only on the fallback path.
+    egress : callable, optional
+        Per-result transform applied before yielding.
+    **kwargs
+        Extra options. On the native path they are forwarded to the adapter
+        (e.g. ``alpha=0.7`` on weaviate). On the fallback path they are
+        ignored.
+
+    Yields
+    ------
+    dict
+        Fused result dicts. ``score`` is the RRF score on the fallback path,
+        or the adapter's fused score on the native path.
+
+    Examples
+    --------
+    >>> import vd
+    >>> client = vd.connect('memory')
+    >>> col = client.create_collection('docs', dimension=2)
+    >>> col['a'] = vd.Document(id='a', text='cats purr',
+    ...                        vector=[1.0, 0.0])
+    >>> col['b'] = vd.Document(id='b', text='dogs bark',
+    ...                        vector=[0.0, 1.0])
+    >>> hits = list(vd.hybrid_search(col, [0.9, 0.1], query_text='cats',
+    ...                              limit=1))
+    >>> hits[0]['id']
+    'a'
+    """
+    k_dense_eff = k_dense if k_dense is not None else max(4 * limit, _HYBRID_OVERFETCH_FLOOR)
+    k_lexical_eff = (
+        k_lexical if k_lexical is not None else max(4 * limit, _HYBRID_OVERFETCH_FLOOR)
+    )
+
+    # Native path.
+    if isinstance(collection, SupportsHybrid):
+        for hit in collection.hybrid_search(
+            query,
+            query_text=query_text,
+            limit=limit,
+            filter=filter,
+            k_dense=k_dense_eff,
+            k_lexical=k_lexical_eff,
+            rrf_k=rrf_k,
+            egress=egress,
+            **kwargs,
+        ):
+            yield hit
+        return
+
+    # Fallback: dense via collection.search() + lexical via callable, fused by RRF.
+    # Resolve the text for the lexical side. (The dense side accepts the original
+    # `query` directly — the collection's search() does its own embed/vet.)
+    if isinstance(query, str):
+        text = query_text if query_text is not None else query
+    else:
+        if query_text is None:
+            raise ValueError(
+                "hybrid_search needs a `query_text` for the lexical side when "
+                "`query` is a vector. Either pass query_text=..., or pass "
+                "`query` as a string and let the embedder handle both."
+            )
+        text = query_text
+    if not text:
+        raise ValueError("hybrid_search needs a non-empty lexical query string.")
+
+    dense_hits = list(
+        collection.search(query, limit=k_dense_eff, filter=filter)
+    )
+
+    lex_fn = lexical_search if lexical_search is not None else bm25_lexical_search
+    lex_hits = lex_fn(collection, text, limit=k_lexical_eff, filter=filter)
+
+    fused = _rrf_fuse([dense_hits, lex_hits], rrf_k=rrf_k, limit=limit)
+    for hit in fused:
+        yield egress(hit) if egress is not None else hit

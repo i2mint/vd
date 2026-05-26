@@ -388,6 +388,86 @@ class WeaviateCollection(AbstractCollection):
         ]
         return apply_client_filter(raw_results, filter, limit=limit)
 
+    # ----- native hybrid via Weaviate BM25 + dense, fused client-side ------ #
+
+    def _lexical_query(
+        self,
+        text: str,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        """
+        BM25 lexical search over the Weaviate ``text`` property.
+
+        Used as the lexical side of :meth:`hybrid_search`. Metadata filtering
+        is applied client-side (Weaviate's typed filter builder cannot operate
+        on vd's JSON-stringified metadata field).
+        """
+        del kwargs  # unused; bm25 call below has no pass-through knobs
+        fetch = overfetch_limit(limit, filter)
+        wcol = self._wcol()
+        response = wcol.query.bm25(
+            query=text,
+            limit=fetch,
+        )
+        raw_results: list[SearchResult] = []
+        for obj in response.objects:
+            props = obj.properties or {}
+            metadata = {}
+            try:
+                metadata = json.loads(props.get(_META_PROP, "") or "{}")
+            except (TypeError, ValueError):
+                metadata = {}
+            raw_results.append(
+                {
+                    "id": props.get(_VD_ID_PROP, str(obj.uuid)),
+                    "text": props.get(_TEXT_PROP, ""),
+                    # BM25 score available via metadata.score if requested;
+                    # the fuser uses ranks not raw scores, so leave as 0.
+                    "score": 0.0,
+                    "metadata": metadata,
+                }
+            )
+        return list(apply_client_filter(raw_results, filter, limit=limit))
+
+    def hybrid_search(
+        self,
+        query,
+        *,
+        query_text=None,
+        limit: int = 10,
+        filter: Optional[Filter] = None,
+        k_dense: Optional[int] = None,
+        k_lexical: Optional[int] = None,
+        rrf_k: int = 60,
+        egress=None,
+        **kwargs,
+    ):
+        """
+        Hybrid (dense + BM25) search via Weaviate, fused client-side with RRF.
+
+        See :class:`vd.SupportsHybrid` for the canonical contract. Backend
+        notes: Weaviate's first-class ``query.hybrid(...)`` is **not** used
+        here — we run ``near_vector`` and ``bm25`` separately and fuse them
+        client-side so the result is independent of Weaviate's internal score
+        normalization and works the same way across native and fallback paths.
+        Pass ``query_text=...`` explicitly when ``query`` is a vector.
+        """
+        return self._hybrid_via_rrf(
+            query,
+            self._lexical_query,
+            query_text=query_text,
+            limit=limit,
+            filter=filter,
+            k_dense=k_dense,
+            k_lexical=k_lexical,
+            rrf_k=rrf_k,
+            egress=egress,
+            **kwargs,
+        )
+
 
 # --------------------------------------------------------------------------- #
 # WeaviateClient

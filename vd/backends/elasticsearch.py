@@ -365,6 +365,70 @@ class ElasticsearchCollection(AbstractCollection):
         raw_results = [_hit_to_result(h) for h in hits]
         return apply_client_filter(raw_results, filter, limit=limit)
 
+    # ----- native hybrid via ES BM25 + dense, fused client-side ----------- #
+
+    def _lexical_query(
+        self,
+        text: str,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        """
+        BM25 lexical search over the ES ``text`` field.
+
+        Used as the lexical side of :meth:`hybrid_search`. Metadata is filtered
+        client-side (same approach as :meth:`_query`).
+        """
+        del kwargs
+        if not _index_exists(self._es, self.name):
+            return []
+        k = overfetch_limit(limit, filter)
+        response = self._es.search(
+            index=self.name,
+            query={"match": {"text": text}},
+            size=k,
+        )
+        hits = response["hits"]["hits"]
+        raw_results = [_hit_to_result(h) for h in hits]
+        return list(apply_client_filter(raw_results, filter, limit=limit))
+
+    def hybrid_search(
+        self,
+        query,
+        *,
+        query_text=None,
+        limit: int = 10,
+        filter: Optional[Filter] = None,
+        k_dense: Optional[int] = None,
+        k_lexical: Optional[int] = None,
+        rrf_k: int = 60,
+        egress=None,
+        **kwargs,
+    ):
+        """
+        Hybrid (kNN + BM25) search via Elasticsearch, fused client-side with RRF.
+
+        See :class:`vd.SupportsHybrid` for the canonical contract. Backend
+        notes: ES 8.x has a server-side RRF retriever, but we deliberately run
+        ``knn`` and ``match`` separately and fuse client-side so the fused
+        score is uniform across vd backends. Pass ``query_text=...``
+        explicitly when ``query`` is a vector.
+        """
+        return self._hybrid_via_rrf(
+            query,
+            self._lexical_query,
+            query_text=query_text,
+            limit=limit,
+            filter=filter,
+            k_dense=k_dense,
+            k_lexical=k_lexical,
+            rrf_k=rrf_k,
+            egress=egress,
+            **kwargs,
+        )
+
 
 # --------------------------------------------------------------------------- #
 # Client

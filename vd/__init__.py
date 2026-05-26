@@ -162,7 +162,9 @@ from vd.health import (  # noqa: E402
 
 # ----- advanced search ----------------------------------------------------- #
 from vd.search import (  # noqa: E402
+    bm25_lexical_search,
     deduplicate_results,
+    hybrid_search,
     multi_query_search,
     reciprocal_rank_fusion,
     search_similar_to_document,
@@ -284,6 +286,8 @@ __all__ = [
     "search_similar_to_document",
     "reciprocal_rank_fusion",
     "deduplicate_results",
+    "hybrid_search",
+    "bm25_lexical_search",
     # configuration
     "load_config",
     "save_config",
