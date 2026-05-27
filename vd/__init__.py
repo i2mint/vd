@@ -50,6 +50,8 @@ import vd.backends  # noqa: E402,F401
 from vd.base import (  # noqa: E402
     AbstractClient,
     AbstractCollection,
+    AsyncClient,
+    AsyncCollection,
     BackendNotInstalledError,
     Client,
     Collection,
@@ -62,10 +64,19 @@ from vd.base import (  # noqa: E402
     StaticIndexError,
     SupportsBatch,
     SupportsHybrid,
+    SupportsNativeAsync,
     UnsupportedCapabilityError,
     UnsupportedFilterError,
     VdError,
     Vector,
+)
+
+# ----- async support ------------------------------------------------------- #
+from vd.asynchronous import (  # noqa: E402
+    AsyncClientWrapper,
+    AsyncCollectionWrapper,
+    connect_async,
+    hybrid_search_async,
 )
 
 # ----- the entry point & registry ------------------------------------------ #
@@ -217,6 +228,14 @@ __all__ = [
     # capability protocols
     "SupportsBatch",
     "SupportsHybrid",
+    "SupportsNativeAsync",
+    # async
+    "AsyncClient",
+    "AsyncCollection",
+    "AsyncClientWrapper",
+    "AsyncCollectionWrapper",
+    "connect_async",
+    "hybrid_search_async",
     # filter language
     "matches_filter",
     "validate_filter",

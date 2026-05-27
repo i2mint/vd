@@ -34,6 +34,7 @@ from collections.abc import Mapping, MutableMapping
 from dataclasses import dataclass, field
 from typing import (
     Any,
+    AsyncIterator,
     Callable,
     Iterable,
     Iterator,
@@ -340,6 +341,95 @@ class SupportsHybrid(Protocol):
         egress: Optional[Callable[[SearchResult], Any]] = None,
         **kwargs,
     ) -> Iterator[SearchResult]: ...
+
+
+# --------------------------------------------------------------------------- #
+# Async protocols — opt-in, every backend covered by the default wrapper
+# --------------------------------------------------------------------------- #
+
+
+@runtime_checkable
+class AsyncCollection(Protocol):
+    """
+    The async sibling of :class:`Collection`.
+
+    Same conceptual surface — storage + ``search`` — but every method is
+    awaitable and iterators are :class:`~typing.AsyncIterator`. The mapping
+    interface is exposed as explicit ``get`` / ``set`` / ``delete`` / ``keys``
+    / ``count`` methods (the stdlib's ``MutableMapping`` ABC has no async
+    counterpart; explicit methods are the Motor / aiopg convention).
+
+    Construct via :func:`vd.connect_async`; the universal
+    :class:`AsyncCollectionWrapper` in :mod:`vd.asynchronous` adapts every
+    backend to this protocol by dispatching to the sync API through
+    :func:`asyncio.to_thread`. Backends with native async SDKs override the
+    wrapper and additionally satisfy :class:`SupportsNativeAsync`.
+    """
+
+    async def get(self, key: str) -> "Document": ...
+
+    async def set(
+        self, key: str, value: Union[str, tuple, "Document"]
+    ) -> None: ...
+
+    async def delete(self, key: str) -> None: ...
+
+    def keys(self) -> AsyncIterator[str]: ...
+
+    async def count(self) -> int: ...
+
+    def search(
+        self,
+        query: Union[str, Vector],
+        *,
+        limit: int = 10,
+        filter: Optional[Filter] = None,
+        egress: Optional[Callable[[SearchResult], Any]] = None,
+        **kwargs,
+    ) -> AsyncIterator[SearchResult]: ...
+
+
+@runtime_checkable
+class AsyncClient(Protocol):
+    """
+    The async sibling of :class:`Client`.
+
+    Same operations — collection create / fetch / drop / list — exposed as
+    awaitables and async iterators. Construct via :func:`vd.connect_async`.
+    """
+
+    async def create_collection(
+        self,
+        name: str,
+        *,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
+    ) -> AsyncCollection: ...
+
+    async def get_collection(self, name: str) -> AsyncCollection: ...
+
+    async def delete_collection(self, name: str) -> None: ...
+
+    def list_collections(self) -> AsyncIterator[str]: ...
+
+
+@runtime_checkable
+class SupportsNativeAsync(Protocol):
+    """
+    Marker protocol set on async clients/collections that use a backend's
+    native async SDK rather than the universal :func:`asyncio.to_thread`
+    wrapper.
+
+    Why care: in high-concurrency event-loop apps (FastAPI, Starlette, etc.),
+    a ``to_thread``-wrapped backend still blocks a worker thread per request.
+    For real non-blocking I/O, prefer collections that satisfy this protocol.
+    The wrapper sets this attribute to ``False``; native adapters set it to
+    ``True``. ``isinstance(c, SupportsNativeAsync)`` matches both — check
+    ``c.native_async`` for the boolean.
+    """
+
+    native_async: bool
 
 
 # --------------------------------------------------------------------------- #
