@@ -4,6 +4,7 @@
 
    module_docs/vd
    module_docs/vd/analytics
+   module_docs/vd/asynchronous
    module_docs/vd/backends
    module_docs/vd/backends/_helpers
    module_docs/vd/backends/chroma

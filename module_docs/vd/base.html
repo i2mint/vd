@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.base &mdash; vd 0.2.5 documentation</title>
+  <title>vd.base &mdash; vd 0.2.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=cb850272"></script>
+      <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -51,6 +51,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../vd.html">vd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="asynchronous.html">vd.asynchronous</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends.html">vd.backends</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends/_helpers.html">vd.backends._helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends/chroma.html">vd.backends.chroma</a></li>
@@ -91,6 +92,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#vd.base.AbstractCollection.upsert"><code class="docutils literal notranslate"><span class="pre">AbstractCollection.upsert()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.base.AsyncClient"><code class="docutils literal notranslate"><span class="pre">AsyncClient</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.base.AsyncCollection"><code class="docutils literal notranslate"><span class="pre">AsyncCollection</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.BackendNotInstalledError"><code class="docutils literal notranslate"><span class="pre">BackendNotInstalledError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.Client"><code class="docutils literal notranslate"><span class="pre">Client</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#vd.base.Client.create_collection"><code class="docutils literal notranslate"><span class="pre">Client.create_collection()</span></code></a></li>
@@ -110,6 +113,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.StaticIndexError"><code class="docutils literal notranslate"><span class="pre">StaticIndexError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.SupportsBatch"><code class="docutils literal notranslate"><span class="pre">SupportsBatch</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.SupportsHybrid"><code class="docutils literal notranslate"><span class="pre">SupportsHybrid</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.base.SupportsNativeAsync"><code class="docutils literal notranslate"><span class="pre">SupportsNativeAsync</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.UnsupportedCapabilityError"><code class="docutils literal notranslate"><span class="pre">UnsupportedCapabilityError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.UnsupportedFilterError"><code class="docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.base.VdError"><code class="docutils literal notranslate"><span class="pre">VdError</span></code></a></li>
@@ -396,6 +400,30 @@ set this <code class="docutils literal notranslate"><span class="pre">False</spa
 </section>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="vd.base.AsyncClient">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">AsyncClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/base.html#AsyncClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.AsyncClient" title="Link to this definition"></a></dt>
+<dd><p>The async sibling of <a class="reference internal" href="#vd.base.Client" title="vd.base.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a>.</p>
+<p>Same operations — collection create / fetch / drop / list — exposed as
+awaitables and async iterators. Construct via <a class="reference internal" href="../vd.html#vd.connect_async" title="vd.connect_async"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.connect_async()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="vd.base.AsyncCollection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">AsyncCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/base.html#AsyncCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.AsyncCollection" title="Link to this definition"></a></dt>
+<dd><p>The async sibling of <a class="reference internal" href="#vd.base.Collection" title="vd.base.Collection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code></a>.</p>
+<p>Same conceptual surface — storage + <code class="docutils literal notranslate"><span class="pre">search</span></code> — but every method is
+awaitable and iterators are <code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code>. The mapping
+interface is exposed as explicit <code class="docutils literal notranslate"><span class="pre">get</span></code> / <code class="docutils literal notranslate"><span class="pre">set</span></code> / <code class="docutils literal notranslate"><span class="pre">delete</span></code> / <code class="docutils literal notranslate"><span class="pre">keys</span></code>
+/ <code class="docutils literal notranslate"><span class="pre">count</span></code> methods (the stdlib’s <code class="docutils literal notranslate"><span class="pre">MutableMapping</span></code> ABC has no async
+counterpart; explicit methods are the Motor / aiopg convention).</p>
+<p>Construct via <a class="reference internal" href="../vd.html#vd.connect_async" title="vd.connect_async"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.connect_async()</span></code></a>; the universal
+<code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncCollectionWrapper</span></code> in <a class="reference internal" href="asynchronous.html#module-vd.asynchronous" title="vd.asynchronous"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vd.asynchronous</span></code></a> adapts every
+backend to this protocol by dispatching to the sync API through
+<code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.to_thread()</span></code>. Backends with native async SDKs override the
+wrapper and additionally satisfy <a class="reference internal" href="#vd.base.SupportsNativeAsync" title="vd.base.SupportsNativeAsync"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsNativeAsync</span></code></a>.</p>
+</dd></dl>
+
 <dl class="py exception">
 <dt class="sig sig-object py" id="vd.base.BackendNotInstalledError">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">BackendNotInstalledError</span></span><a class="reference internal" href="../../_modules/vd/base.html#BackendNotInstalledError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.BackendNotInstalledError" title="Link to this definition"></a></dt>
@@ -569,6 +597,20 @@ Both default to <code class="docutils literal notranslate"><span class="pre">max
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="vd.base.SupportsNativeAsync">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">SupportsNativeAsync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/base.html#SupportsNativeAsync"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.SupportsNativeAsync" title="Link to this definition"></a></dt>
+<dd><p>Marker protocol set on async clients/collections that use a backend’s
+native async SDK rather than the universal <code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.to_thread()</span></code>
+wrapper.</p>
+<p>Why care: in high-concurrency event-loop apps (FastAPI, Starlette, etc.),
+a <code class="docutils literal notranslate"><span class="pre">to_thread</span></code>-wrapped backend still blocks a worker thread per request.
+For real non-blocking I/O, prefer collections that satisfy this protocol.
+The wrapper sets this attribute to <code class="docutils literal notranslate"><span class="pre">False</span></code>; native adapters set it to
+<code class="docutils literal notranslate"><span class="pre">True</span></code>. <code class="docutils literal notranslate"><span class="pre">isinstance(c,</span> <span class="pre">SupportsNativeAsync)</span></code> matches both — check
+<code class="docutils literal notranslate"><span class="pre">c.native_async</span></code> for the boolean.</p>
 </dd></dl>
 
 <dl class="py exception">

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; vd 0.2.5 documentation</title>
+  <title>Index &mdash; vd 0.2.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=cb850272"></script>
+      <script src="_static/documentation_options.js?v=fc7d8818"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -48,6 +48,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd.html">vd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/asynchronous.html">vd.asynchronous</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends.html">vd.backends</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/_helpers.html">vd.backends._helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
@@ -116,6 +117,7 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -145,18 +147,46 @@
         <li><a href="module_docs/vd/base.html#vd.base.AbstractCollection">(class in vd.base)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd.html#vd.AbstractCollection.add_documents">add_documents() (vd.AbstractCollection method)</a>
 
       <ul>
+        <li><a href="module_docs/vd.html#vd.AsyncCollectionWrapper.add_documents">(vd.AsyncCollectionWrapper method)</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncCollectionWrapper.add_documents">(vd.asynchronous.AsyncCollectionWrapper method)</a>
+</li>
         <li><a href="module_docs/vd/base.html#vd.base.AbstractCollection.add_documents">(vd.base.AbstractCollection method)</a>
 </li>
       </ul></li>
       <li><a href="module_docs/vd/backends/_helpers.html#vd.backends._helpers.apply_client_filter">apply_client_filter() (in module vd.backends._helpers)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd/config.html#vd.config.apply_env_overrides">apply_env_overrides() (in module vd.config)</a>
 </li>
+      <li><a href="module_docs/vd.html#vd.AsyncClient">AsyncClient (class in vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/base.html#vd.base.AsyncClient">(class in vd.base)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.AsyncClientWrapper">AsyncClientWrapper (class in vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncClientWrapper">(class in vd.asynchronous)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.AsyncCollection">AsyncCollection (class in vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/base.html#vd.base.AsyncCollection">(class in vd.base)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.AsyncCollectionWrapper">AsyncCollectionWrapper (class in vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncCollectionWrapper">(class in vd.asynchronous)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -238,12 +268,20 @@
       <li><a href="module_docs/vd.html#vd.AbstractClient.client">client (vd.AbstractClient property)</a>
 
       <ul>
+        <li><a href="module_docs/vd.html#vd.AsyncClientWrapper.client">(vd.AsyncClientWrapper property)</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncClientWrapper.client">(vd.asynchronous.AsyncClientWrapper property)</a>
+</li>
         <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.client">(vd.base.AbstractClient property)</a>
 </li>
       </ul></li>
       <li><a href="module_docs/vd.html#vd.AbstractClient.close">close() (vd.AbstractClient method)</a>
 
       <ul>
+        <li><a href="module_docs/vd.html#vd.AsyncClientWrapper.close">(vd.AsyncClientWrapper method)</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncClientWrapper.close">(vd.asynchronous.AsyncClientWrapper method)</a>
+</li>
         <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.close">(vd.base.AbstractClient method)</a>
 </li>
       </ul></li>
@@ -265,10 +303,10 @@
 </li>
       <li><a href="module_docs/vd/cli.html#vd.cli.cmd_validate">cmd_validate() (in module vd.cli)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd/backends/_helpers.html#vd.backends._helpers.coerce_metadata">coerce_metadata() (in module vd.backends._helpers)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd.html#vd.Collection">Collection (class in vd)</a>
 
       <ul>
@@ -293,6 +331,12 @@
         <li><a href="module_docs/vd/util.html#vd.util.connect">(in module vd.util)</a>
 </li>
       </ul></li>
+      <li><a href="module_docs/vd.html#vd.connect_async">connect_async() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.connect_async">(in module vd.asynchronous)</a>
+</li>
+      </ul></li>
       <li><a href="module_docs/vd.html#vd.connect_from_config">connect_from_config() (in module vd)</a>
 
       <ul>
@@ -311,6 +355,12 @@
         <li><a href="module_docs/vd/util.html#vd.util.cosine_similarity">(in module vd.util)</a>
 </li>
       </ul></li>
+      <li><a href="module_docs/vd.html#vd.AsyncCollectionWrapper.count">count() (vd.AsyncCollectionWrapper method)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncCollectionWrapper.count">(vd.asynchronous.AsyncCollectionWrapper method)</a>
+</li>
+      </ul></li>
       <li><a href="module_docs/vd.html#vd.count_docs">count_docs() (in module vd)</a>
 
       <ul>
@@ -320,6 +370,10 @@
       <li><a href="module_docs/vd.html#vd.AbstractClient.create_collection">create_collection() (vd.AbstractClient method)</a>
 
       <ul>
+        <li><a href="module_docs/vd.html#vd.AsyncClientWrapper.create_collection">(vd.AsyncClientWrapper method)</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncClientWrapper.create_collection">(vd.asynchronous.AsyncClientWrapper method)</a>
+</li>
         <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient.create_collection">(vd.backends.memory.MemoryClient method)</a>
 </li>
         <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.create_collection">(vd.base.AbstractClient method)</a>
@@ -347,9 +401,19 @@
         <li><a href="module_docs/vd/search.html#vd.search.deduplicate_results">(in module vd.search)</a>
 </li>
       </ul></li>
+      <li><a href="module_docs/vd.html#vd.AsyncCollectionWrapper.delete">delete() (vd.AsyncCollectionWrapper method)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncCollectionWrapper.delete">(vd.asynchronous.AsyncCollectionWrapper method)</a>
+</li>
+      </ul></li>
       <li><a href="module_docs/vd.html#vd.AbstractClient.delete_collection">delete_collection() (vd.AbstractClient method)</a>
 
       <ul>
+        <li><a href="module_docs/vd.html#vd.AsyncClientWrapper.delete_collection">(vd.AsyncClientWrapper method)</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncClientWrapper.delete_collection">(vd.asynchronous.AsyncClientWrapper method)</a>
+</li>
         <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient.delete_collection">(vd.backends.memory.MemoryClient method)</a>
 </li>
         <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.delete_collection">(vd.base.AbstractClient method)</a>
@@ -449,6 +513,12 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd.html#vd.AsyncCollectionWrapper.get">get() (vd.AsyncCollectionWrapper method)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncCollectionWrapper.get">(vd.asynchronous.AsyncCollectionWrapper method)</a>
+</li>
+      </ul></li>
       <li><a href="module_docs/vd/util.html#vd.util.get_backend">get_backend() (in module vd.util)</a>
 </li>
       <li><a href="module_docs/vd.html#vd.get_backend_characteristics">get_backend_characteristics() (in module vd)</a>
@@ -466,6 +536,10 @@
       <li><a href="module_docs/vd.html#vd.AbstractClient.get_collection">get_collection() (vd.AbstractClient method)</a>
 
       <ul>
+        <li><a href="module_docs/vd.html#vd.AsyncClientWrapper.get_collection">(vd.AsyncClientWrapper method)</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncClientWrapper.get_collection">(vd.asynchronous.AsyncClientWrapper method)</a>
+</li>
         <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient.get_collection">(vd.backends.memory.MemoryClient method)</a>
 </li>
         <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.get_collection">(vd.base.AbstractClient method)</a>
@@ -486,6 +560,10 @@
       <li><a href="module_docs/vd.html#vd.AbstractClient.get_or_create_collection">get_or_create_collection() (vd.AbstractClient method)</a>
 
       <ul>
+        <li><a href="module_docs/vd.html#vd.AsyncClientWrapper.get_or_create_collection">(vd.AsyncClientWrapper method)</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncClientWrapper.get_or_create_collection">(vd.asynchronous.AsyncClientWrapper method)</a>
+</li>
         <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.get_or_create_collection">(vd.base.AbstractClient method)</a>
 </li>
       </ul></li>
@@ -523,6 +601,12 @@
 
       <ul>
         <li><a href="module_docs/vd/search.html#vd.search.hybrid_search">(in module vd.search)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.hybrid_search_async">hybrid_search_async() (in module vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.hybrid_search_async">(in module vd.asynchronous)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -592,6 +676,18 @@
   </ul></td>
 </tr></table>
 
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd.html#vd.AsyncCollectionWrapper.keys">keys() (vd.AsyncCollectionWrapper method)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncCollectionWrapper.keys">(vd.asynchronous.AsyncCollectionWrapper method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -616,6 +712,10 @@
       <li><a href="module_docs/vd.html#vd.AbstractClient.list_collections">list_collections() (vd.AbstractClient method)</a>
 
       <ul>
+        <li><a href="module_docs/vd.html#vd.AsyncClientWrapper.list_collections">(vd.AsyncClientWrapper method)</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncClientWrapper.list_collections">(vd.asynchronous.AsyncClientWrapper method)</a>
+</li>
         <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient.list_collections">(vd.backends.memory.MemoryClient method)</a>
 </li>
         <li><a href="module_docs/vd/base.html#vd.base.AbstractClient.list_collections">(vd.base.AbstractClient method)</a>
@@ -693,6 +793,8 @@
 </li>
         <li><a href="module_docs/vd/analytics.html#module-vd.analytics">vd.analytics</a>
 </li>
+        <li><a href="module_docs/vd/asynchronous.html#module-vd.asynchronous">vd.asynchronous</a>
+</li>
         <li><a href="module_docs/vd/backends.html#module-vd.backends">vd.backends</a>
 </li>
         <li><a href="module_docs/vd/backends/_helpers.html#module-vd.backends._helpers">vd.backends._helpers</a>
@@ -743,9 +845,23 @@
       <li><a href="module_docs/vd.html#vd.AbstractCollection.native">native (vd.AbstractCollection property)</a>
 
       <ul>
+        <li><a href="module_docs/vd.html#vd.AsyncCollectionWrapper.native">(vd.AsyncCollectionWrapper property)</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncCollectionWrapper.native">(vd.asynchronous.AsyncCollectionWrapper property)</a>
+</li>
         <li><a href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection.native">(vd.backends.memory.MemoryCollection property)</a>
 </li>
         <li><a href="module_docs/vd/base.html#vd.base.AbstractCollection.native">(vd.base.AbstractCollection property)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.AsyncClientWrapper.native_async">native_async (vd.AsyncClientWrapper attribute)</a>
+
+      <ul>
+        <li><a href="module_docs/vd.html#id0">(vd.AsyncCollectionWrapper attribute)</a>, <a href="module_docs/vd.html#vd.AsyncCollectionWrapper.native_async">[1]</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncClientWrapper.native_async">(vd.asynchronous.AsyncClientWrapper attribute)</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#id0">(vd.asynchronous.AsyncCollectionWrapper attribute)</a>, <a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncCollectionWrapper.native_async">[1]</a>
 </li>
       </ul></li>
   </ul></td>
@@ -889,6 +1005,10 @@
       <li><a href="module_docs/vd.html#vd.AbstractCollection.search">search() (vd.AbstractCollection method)</a>
 
       <ul>
+        <li><a href="module_docs/vd.html#vd.AsyncCollectionWrapper.search">(vd.AsyncCollectionWrapper method)</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncCollectionWrapper.search">(vd.asynchronous.AsyncCollectionWrapper method)</a>
+</li>
         <li><a href="module_docs/vd/base.html#vd.base.AbstractCollection.search">(vd.base.AbstractCollection method)</a>
 </li>
         <li><a href="module_docs/vd/base.html#vd.base.Collection.search">(vd.base.Collection method)</a>
@@ -910,14 +1030,20 @@
       </ul></li>
       <li><a href="module_docs/vd/search.html#vd.search.search_with_feedback">search_with_feedback() (in module vd.search)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/vd.html#vd.AsyncCollectionWrapper.set">set() (vd.AsyncCollectionWrapper method)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncCollectionWrapper.set">(vd.asynchronous.AsyncCollectionWrapper method)</a>
+</li>
+      </ul></li>
       <li><a href="module_docs/vd.html#vd.setup_guide">setup_guide() (in module vd)</a>
 
       <ul>
         <li><a href="module_docs/vd/requirements.html#vd.requirements.setup_guide">(in module vd.requirements)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd.html#vd.skills_dir">skills_dir() (in module vd)</a>
 </li>
       <li><a href="module_docs/vd.html#vd.StaticIndexError">StaticIndexError</a>, <a href="module_docs/vd/base.html#vd.base.StaticIndexError">[1]</a>
@@ -947,7 +1073,25 @@
       <li><a href="module_docs/vd.html#vd.SupportsHybrid">SupportsHybrid (class in vd)</a>
 
       <ul>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.SupportsHybrid">(class in vd.asynchronous)</a>
+</li>
         <li><a href="module_docs/vd/base.html#vd.base.SupportsHybrid">(class in vd.base)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.SupportsNativeAsync">SupportsNativeAsync (class in vd)</a>
+
+      <ul>
+        <li><a href="module_docs/vd/base.html#vd.base.SupportsNativeAsync">(class in vd.base)</a>
+</li>
+      </ul></li>
+      <li><a href="module_docs/vd.html#vd.AsyncClientWrapper.sync">sync (vd.AsyncClientWrapper property)</a>
+
+      <ul>
+        <li><a href="module_docs/vd.html#vd.AsyncCollectionWrapper.sync">(vd.AsyncCollectionWrapper property)</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncClientWrapper.sync">(vd.asynchronous.AsyncClientWrapper property)</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncCollectionWrapper.sync">(vd.asynchronous.AsyncCollectionWrapper property)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1004,11 +1148,13 @@
 </li>
       <li><a href="module_docs/vd.html#vd.UnsupportedFilterError">UnsupportedFilterError</a>, <a href="module_docs/vd/base.html#vd.base.UnsupportedFilterError">[1]</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/vd.html#vd.AbstractCollection.upsert">upsert() (vd.AbstractCollection method)</a>
 
       <ul>
+        <li><a href="module_docs/vd.html#vd.AsyncCollectionWrapper.upsert">(vd.AsyncCollectionWrapper method)</a>
+</li>
+        <li><a href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncCollectionWrapper.upsert">(vd.asynchronous.AsyncCollectionWrapper method)</a>
+</li>
         <li><a href="module_docs/vd/base.html#vd.base.AbstractCollection.upsert">(vd.base.AbstractCollection method)</a>
 </li>
       </ul></li>
@@ -1042,6 +1188,13 @@
 
       <ul>
         <li><a href="module_docs/vd/analytics.html#module-vd.analytics">module</a>
+</li>
+      </ul></li>
+      <li>
+    vd.asynchronous
+
+      <ul>
+        <li><a href="module_docs/vd/asynchronous.html#module-vd.asynchronous">module</a>
 </li>
       </ul></li>
       <li>

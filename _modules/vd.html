@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd &mdash; vd 0.2.5 documentation</title>
+  <title>vd &mdash; vd 0.2.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=cb850272"></script>
+      <script src="../_static/documentation_options.js?v=fc7d8818"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -48,6 +48,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../module_docs/vd.html">vd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/asynchronous.html">vd.asynchronous</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/backends.html">vd.backends</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/backends/_helpers.html">vd.backends._helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
@@ -160,6 +161,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># noqa: E402</span>
     <span class="n">AbstractClient</span><span class="p">,</span>
     <span class="n">AbstractCollection</span><span class="p">,</span>
+    <span class="n">AsyncClient</span><span class="p">,</span>
+    <span class="n">AsyncCollection</span><span class="p">,</span>
     <span class="n">BackendNotInstalledError</span><span class="p">,</span>
     <span class="n">Client</span><span class="p">,</span>
     <span class="n">Collection</span><span class="p">,</span>
@@ -172,10 +175,19 @@
     <span class="n">StaticIndexError</span><span class="p">,</span>
     <span class="n">SupportsBatch</span><span class="p">,</span>
     <span class="n">SupportsHybrid</span><span class="p">,</span>
+    <span class="n">SupportsNativeAsync</span><span class="p">,</span>
     <span class="n">UnsupportedCapabilityError</span><span class="p">,</span>
     <span class="n">UnsupportedFilterError</span><span class="p">,</span>
     <span class="n">VdError</span><span class="p">,</span>
     <span class="n">Vector</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># ----- async support ------------------------------------------------------- #</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.asynchronous</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># noqa: E402</span>
+    <span class="n">AsyncClientWrapper</span><span class="p">,</span>
+    <span class="n">AsyncCollectionWrapper</span><span class="p">,</span>
+    <span class="n">connect_async</span><span class="p">,</span>
+    <span class="n">hybrid_search_async</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># ----- the entry point &amp; registry ------------------------------------------ #</span>
@@ -327,6 +339,14 @@
     <span class="c1"># capability protocols</span>
     <span class="s2">&quot;SupportsBatch&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SupportsHybrid&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SupportsNativeAsync&quot;</span><span class="p">,</span>
+    <span class="c1"># async</span>
+    <span class="s2">&quot;AsyncClient&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AsyncCollection&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AsyncClientWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AsyncCollectionWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;connect_async&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hybrid_search_async&quot;</span><span class="p">,</span>
     <span class="c1"># filter language</span>
     <span class="s2">&quot;matches_filter&quot;</span><span class="p">,</span>
     <span class="s2">&quot;validate_filter&quot;</span><span class="p">,</span>

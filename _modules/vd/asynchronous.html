@@ -1,0 +1,598 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vd.asynchronous &mdash; vd 0.2.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            vd
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd.html">vd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/asynchronous.html">vd.asynchronous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends.html">vd.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/_helpers.html">vd.backends._helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/duckdb.html">vd.backends.duckdb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/elasticsearch.html">vd.backends.elasticsearch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/faiss.html">vd.backends.faiss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/lancedb.html">vd.backends.lancedb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/milvus.html">vd.backends.milvus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/mongodb.html">vd.backends.mongodb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/pgvector.html">vd.backends.pgvector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/pinecone.html">vd.backends.pinecone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/qdrant.html">vd.backends.qdrant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/redis.html">vd.backends.redis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/sqlite_vec.html">vd.backends.sqlite_vec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/turbopuffer.html">vd.backends.turbopuffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/weaviate.html">vd.backends.weaviate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/base.html">vd.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/cli.html">vd.cli</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/config.html">vd.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/filters.html">vd.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/health.html">vd.health</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/io.html">vd.io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/migration.html">vd.migration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/providers.html">vd.providers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/requirements.html">vd.requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/search.html">vd.search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/text.html">vd.text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/time_indexed.html">vd.time_indexed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/util.html">vd.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../vd.html">vd</a></li>
+      <li class="breadcrumb-item active">vd.asynchronous</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vd.asynchronous</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Async support for ``vd``: universal wrapper + opt-in native implementations.</span>
+
+<span class="sd">This module gives every ``vd`` backend an ``async``/``await`` surface day one,</span>
+<span class="sd">without forking the adapter hierarchy. Two pieces:</span>
+
+<span class="sd">- :class:`AsyncCollectionWrapper` / :class:`AsyncClientWrapper` —</span>
+<span class="sd">  thin adapters that take any sync :class:`vd.Collection` / :class:`vd.Client`</span>
+<span class="sd">  and dispatch every method to :func:`asyncio.to_thread`. This is the</span>
+<span class="sd">  **universal fallback**: every backend works through it.</span>
+<span class="sd">- :func:`connect_async` — the entry point. Mirrors :func:`vd.connect`. If a</span>
+<span class="sd">  backend ships a native async client (Phase 2 follow-ups: chroma, qdrant,</span>
+<span class="sd">  weaviate, elasticsearch, redis, mongodb, lancedb, milvus, pinecone,</span>
+<span class="sd">  turbopuffer), :func:`connect_async` returns *that*; otherwise it returns</span>
+<span class="sd">  the wrapper.</span>
+
+<span class="sd">The asyncio.to_thread wrapper does **not** unblock the event loop — it just</span>
+<span class="sd">moves blocking calls off the main thread, freeing the loop. For real</span>
+<span class="sd">non-blocking I/O against a network backend, use a client that satisfies</span>
+<span class="sd">:class:`vd.SupportsNativeAsync`.</span>
+
+<span class="sd">The module name is ``vd.asynchronous`` (not ``vd.async``) because ``async``</span>
+<span class="sd">is a Python keyword.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">AsyncIterator</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AsyncClient</span><span class="p">,</span>
+    <span class="n">AsyncCollection</span><span class="p">,</span>
+    <span class="n">Document</span><span class="p">,</span>
+    <span class="n">Filter</span><span class="p">,</span>
+    <span class="n">SearchResult</span><span class="p">,</span>
+    <span class="n">SupportsHybrid</span><span class="p">,</span>
+    <span class="n">Vector</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Universal wrappers</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+
+<div class="viewcode-block" id="AsyncCollectionWrapper">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncCollectionWrapper">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AsyncCollectionWrapper</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adapt a sync :class:`~vd.Collection` to the :class:`~vd.AsyncCollection`</span>
+<span class="sd">    contract by dispatching every method to :func:`asyncio.to_thread`.</span>
+
+<span class="sd">    Use :func:`connect_async` rather than instantiating this directly — it</span>
+<span class="sd">    will pick this wrapper or a native async adapter as appropriate.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sync_collection :</span>
+<span class="sd">        A live :class:`~vd.Collection` (typically obtained from a</span>
+<span class="sd">        :class:`~vd.Client`).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    native_async : bool</span>
+<span class="sd">        Always ``False`` for this wrapper. The wrapper still satisfies</span>
+<span class="sd">        :class:`~vd.SupportsNativeAsync` structurally (the attribute is</span>
+<span class="sd">        present), but the boolean tells callers that I/O is happening in a</span>
+<span class="sd">        thread pool rather than on the event loop. Prefer a native</span>
+<span class="sd">        implementation for high-concurrency workloads.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#: This wrapper offloads to a thread pool; it doesn&#39;t do non-blocking I/O.</span>
+    <span class="n">native_async</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sync_collection</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sync</span> <span class="o">=</span> <span class="n">sync_collection</span>
+
+    <span class="c1"># ----- escape hatch — the wrapped sync collection ---------------------- #</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sync</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The underlying sync :class:`~vd.Collection` — a documented escape hatch.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sync</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">native</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pass through to the wrapped collection&#39;s :attr:`~vd.Collection.native`.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="p">,</span> <span class="s2">&quot;native&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># ----- AsyncCollection contract ---------------------------------------- #</span>
+
+<div class="viewcode-block" id="AsyncCollectionWrapper.get">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncCollectionWrapper.get">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Document</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetch one document; raises ``KeyError`` if absent.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AsyncCollectionWrapper.set">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncCollectionWrapper.set">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">Document</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Insert or replace a document (idempotent upsert).&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AsyncCollectionWrapper.delete">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncCollectionWrapper.delete">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete a document; raises ``KeyError`` if absent.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AsyncCollectionWrapper.keys">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncCollectionWrapper.keys">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Yield document ids.&quot;&quot;&quot;</span>
+        <span class="c1"># We materialize once in a worker thread, then yield from memory.</span>
+        <span class="c1"># Streaming through asyncio.to_thread per-item would be much slower</span>
+        <span class="c1"># for the common case where _keys() is already O(N) iteration.</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">doc_id</span></div>
+
+
+<div class="viewcode-block" id="AsyncCollectionWrapper.count">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncCollectionWrapper.count">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of documents.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="o">.</span><span class="fm">__len__</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AsyncCollectionWrapper.search">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncCollectionWrapper.search">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Vector</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Filter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">egress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">SearchResult</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Yield the ``limit`` documents most similar to ``query``.</span>
+
+<span class="sd">        The underlying search runs once on a worker thread; results stream</span>
+<span class="sd">        from memory. (Most backends&#39; sync ``search`` already returns a list</span>
+<span class="sd">        or a fully-realized iterator under the hood.)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_run</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+                    <span class="n">query</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="n">egress</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="n">_run</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">hit</span></div>
+
+
+    <span class="c1"># ----- batch convenience (also satisfies an async SupportsBatch) ------ #</span>
+
+<div class="viewcode-block" id="AsyncCollectionWrapper.add_documents">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncCollectionWrapper.add_documents">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">add_documents</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">documents</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Batch upsert — mirrors :meth:`~vd.AbstractCollection.add_documents`.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="o">.</span><span class="n">add_documents</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">documents</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AsyncCollectionWrapper.upsert">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncCollectionWrapper.upsert">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">upsert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">:</span> <span class="n">Document</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Insert or replace ``document``.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="o">.</span><span class="n">upsert</span><span class="p">,</span> <span class="n">document</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AsyncClientWrapper">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncClientWrapper">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AsyncClientWrapper</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adapt a sync :class:`~vd.Client` to the :class:`~vd.AsyncClient`</span>
+<span class="sd">    contract by dispatching every method to :func:`asyncio.to_thread`.</span>
+
+<span class="sd">    Use :func:`connect_async` rather than instantiating this directly.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sync_client :</span>
+<span class="sd">        A live :class:`~vd.Client` (typically obtained from :func:`vd.connect`).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    native_async : bool</span>
+<span class="sd">        Always ``False`` for this wrapper.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">native_async</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sync_client</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sync</span> <span class="o">=</span> <span class="n">sync_client</span>
+
+    <span class="c1"># ----- escape hatches -------------------------------------------------- #</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sync</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The underlying sync :class:`~vd.Client` — a documented escape hatch.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sync</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pass through to the wrapped client&#39;s :attr:`~vd.Client.client`.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="p">,</span> <span class="s2">&quot;client&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># ----- AsyncClient contract -------------------------------------------- #</span>
+
+<div class="viewcode-block" id="AsyncClientWrapper.create_collection">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncClientWrapper.create_collection">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_collection</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">dimension</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">index_config</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncCollection</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new collection; raise ``ValueError`` if it exists.&quot;&quot;&quot;</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="o">.</span><span class="n">create_collection</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">dimension</span><span class="o">=</span><span class="n">dimension</span><span class="p">,</span>
+            <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">index_config</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">AsyncCollectionWrapper</span><span class="p">(</span><span class="n">col</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AsyncClientWrapper.get_collection">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncClientWrapper.get_collection">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncCollection</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an existing collection; raise ``KeyError`` if absent.&quot;&quot;&quot;</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="o">.</span><span class="n">get_collection</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">AsyncCollectionWrapper</span><span class="p">(</span><span class="n">col</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AsyncClientWrapper.get_or_create_collection">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncClientWrapper.get_or_create_collection">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_or_create_collection</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">dimension</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">index_config</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncCollection</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return collection ``name``, creating it if missing.&quot;&quot;&quot;</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="o">.</span><span class="n">get_or_create_collection</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">dimension</span><span class="o">=</span><span class="n">dimension</span><span class="p">,</span>
+            <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">index_config</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">AsyncCollectionWrapper</span><span class="p">(</span><span class="n">col</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AsyncClientWrapper.delete_collection">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncClientWrapper.delete_collection">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delete_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Drop a collection; raise ``KeyError`` if absent.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="o">.</span><span class="n">delete_collection</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AsyncClientWrapper.list_collections">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncClientWrapper.list_collections">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_collections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Yield collection names.&quot;&quot;&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="o">.</span><span class="n">list_collections</span><span class="p">()))</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">name</span></div>
+
+
+    <span class="c1"># ----- lifecycle / context manager ------------------------------------ #</span>
+
+<div class="viewcode-block" id="AsyncClientWrapper.close">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.AsyncClientWrapper.close">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Release backend resources. Calls ``close()`` on the sync client if present.&quot;&quot;&quot;</span>
+        <span class="n">close</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sync</span><span class="p">,</span> <span class="s2">&quot;close&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">close</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="n">close</span><span class="p">)</span></div>
+
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AsyncClientWrapper&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aexit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Entry point</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+
+<div class="viewcode-block" id="connect_async">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.connect_async">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect_async</span><span class="p">(</span><span class="n">backend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncClient</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Async sibling of :func:`vd.connect`.</span>
+
+<span class="sd">    Returns an :class:`~vd.AsyncClient`. Today every backend goes through</span>
+<span class="sd">    the universal :class:`AsyncClientWrapper` (built on</span>
+<span class="sd">    :func:`asyncio.to_thread`); Phase 2 follow-ups will plug in native async</span>
+<span class="sd">    clients per backend, which :func:`connect_async` will return instead.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    backend : str</span>
+<span class="sd">        Backend name — same vocabulary as :func:`vd.connect`.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Forwarded to :func:`vd.connect`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    AsyncClient</span>
+<span class="sd">        A live async client. ``await`` once at session start::</span>
+
+<span class="sd">            client = await vd.connect_async(&quot;memory&quot;)</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import asyncio, vd</span>
+<span class="sd">    &gt;&gt;&gt; async def go():</span>
+<span class="sd">    ...     client = await vd.connect_async(&quot;memory&quot;)</span>
+<span class="sd">    ...     col = await client.create_collection(&quot;docs&quot;, dimension=2)</span>
+<span class="sd">    ...     await col.set(&quot;a&quot;, vd.Document(id=&quot;a&quot;, text=&quot;x&quot;, vector=[1.0, 0.0]))</span>
+<span class="sd">    ...     return await col.count()</span>
+<span class="sd">    &gt;&gt;&gt; asyncio.run(go())</span>
+<span class="sd">    1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Late import to avoid a top-level cycle (vd.util imports nothing in here,</span>
+    <span class="c1"># but keep it lazy so this module is safe to import standalone).</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">vd.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">connect</span>
+
+    <span class="c1"># Per-backend native async adapters can be wired here in Phase 2 by</span>
+    <span class="c1"># checking a registry for an async constructor before falling back. For</span>
+    <span class="c1"># Phase 1 every backend uses the universal wrapper.</span>
+    <span class="n">sync_client</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="n">connect</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">AsyncClientWrapper</span><span class="p">(</span><span class="n">sync_client</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># hybrid_search_async — async sibling of vd.hybrid_search</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+
+<div class="viewcode-block" id="hybrid_search_async">
+<a class="viewcode-back" href="../../module_docs/vd/asynchronous.html#vd.hybrid_search_async">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">hybrid_search_async</span><span class="p">(</span>
+    <span class="n">collection</span><span class="p">:</span> <span class="n">AsyncCollection</span><span class="p">,</span>
+    <span class="n">query</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Vector</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">query_text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Filter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">k_dense</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">k_lexical</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">rrf_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
+    <span class="n">lexical_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">egress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">SearchResult</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Async sibling of :func:`vd.hybrid_search`.</span>
+
+<span class="sd">    If the wrapped sync collection&#39;s class supports native hybrid (i.e.</span>
+<span class="sd">    satisfies :class:`~vd.SupportsHybrid`), dispatches the whole fused call</span>
+<span class="sd">    to a worker thread. Otherwise runs the universal client-side BM25 + RRF</span>
+<span class="sd">    fallback in a worker thread too. In both cases the awaitable + async</span>
+<span class="sd">    iterator interface stays uniform.</span>
+
+<span class="sd">    Parameters mirror :func:`vd.hybrid_search` exactly; see that function for</span>
+<span class="sd">    the full docs.</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Fused result dicts.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import asyncio, vd</span>
+<span class="sd">    &gt;&gt;&gt; async def go():</span>
+<span class="sd">    ...     client = await vd.connect_async(&quot;memory&quot;)</span>
+<span class="sd">    ...     col = await client.create_collection(&quot;docs&quot;, dimension=2)</span>
+<span class="sd">    ...     await col.set(&quot;a&quot;, vd.Document(id=&quot;a&quot;, text=&quot;cats&quot;,</span>
+<span class="sd">    ...                                    vector=[1.0, 0.0]))</span>
+<span class="sd">    ...     await col.set(&quot;b&quot;, vd.Document(id=&quot;b&quot;, text=&quot;dogs&quot;,</span>
+<span class="sd">    ...                                    vector=[0.0, 1.0]))</span>
+<span class="sd">    ...     hits = []</span>
+<span class="sd">    ...     async for h in vd.hybrid_search_async(col, [0.9, 0.1],</span>
+<span class="sd">    ...                                           query_text=&quot;cats&quot;, limit=1):</span>
+<span class="sd">    ...         hits.append(h[&quot;id&quot;])</span>
+<span class="sd">    ...     return hits</span>
+<span class="sd">    &gt;&gt;&gt; asyncio.run(go())</span>
+<span class="sd">    [&#39;a&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">vd.search</span><span class="w"> </span><span class="kn">import</span> <span class="n">hybrid_search</span> <span class="k">as</span> <span class="n">sync_hybrid_search</span>
+
+    <span class="n">sync_collection</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="s2">&quot;sync&quot;</span><span class="p">,</span> <span class="n">collection</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">sync_hybrid_search</span><span class="p">(</span>
+                <span class="n">sync_collection</span><span class="p">,</span>
+                <span class="n">query</span><span class="p">,</span>
+                <span class="n">query_text</span><span class="o">=</span><span class="n">query_text</span><span class="p">,</span>
+                <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+                <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">,</span>
+                <span class="n">k_dense</span><span class="o">=</span><span class="n">k_dense</span><span class="p">,</span>
+                <span class="n">k_lexical</span><span class="o">=</span><span class="n">k_lexical</span><span class="p">,</span>
+                <span class="n">rrf_k</span><span class="o">=</span><span class="n">rrf_k</span><span class="p">,</span>
+                <span class="n">lexical_search</span><span class="o">=</span><span class="n">lexical_search</span><span class="p">,</span>
+                <span class="n">egress</span><span class="o">=</span><span class="n">egress</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">to_thread</span><span class="p">(</span><span class="n">_run</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">hit</span></div>
+
+
+
+<span class="c1"># Re-export SupportsHybrid so users importing from vd.asynchronous have the</span>
+<span class="c1"># whole hybrid surface in one place — even if their native-async adapter</span>
+<span class="c1"># decides to also satisfy SupportsHybrid directly.</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;AsyncCollectionWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AsyncClientWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;connect_async&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hybrid_search_async&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SupportsHybrid&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

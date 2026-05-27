@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.base &mdash; vd 0.2.5 documentation</title>
+  <title>vd.base &mdash; vd 0.2.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=cb850272"></script>
+      <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -48,6 +48,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd.html">vd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/asynchronous.html">vd.asynchronous</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends.html">vd.backends</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/_helpers.html">vd.backends._helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
@@ -142,6 +143,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
+    <span class="n">AsyncIterator</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
     <span class="n">Iterable</span><span class="p">,</span>
     <span class="n">Iterator</span><span class="p">,</span>
@@ -499,6 +501,104 @@
 
 
 <span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Async protocols — opt-in, every backend covered by the default wrapper</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+
+<div class="viewcode-block" id="AsyncCollection">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.AsyncCollection">[docs]</a>
+<span class="nd">@runtime_checkable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AsyncCollection</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The async sibling of :class:`Collection`.</span>
+
+<span class="sd">    Same conceptual surface — storage + ``search`` — but every method is</span>
+<span class="sd">    awaitable and iterators are :class:`~typing.AsyncIterator`. The mapping</span>
+<span class="sd">    interface is exposed as explicit ``get`` / ``set`` / ``delete`` / ``keys``</span>
+<span class="sd">    / ``count`` methods (the stdlib&#39;s ``MutableMapping`` ABC has no async</span>
+<span class="sd">    counterpart; explicit methods are the Motor / aiopg convention).</span>
+
+<span class="sd">    Construct via :func:`vd.connect_async`; the universal</span>
+<span class="sd">    :class:`AsyncCollectionWrapper` in :mod:`vd.asynchronous` adapts every</span>
+<span class="sd">    backend to this protocol by dispatching to the sync API through</span>
+<span class="sd">    :func:`asyncio.to_thread`. Backends with native async SDKs override the</span>
+<span class="sd">    wrapper and additionally satisfy :class:`SupportsNativeAsync`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Document&quot;</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="s2">&quot;Document&quot;</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Vector</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Filter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">egress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">SearchResult</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span> <span class="o">...</span></div>
+
+
+
+<div class="viewcode-block" id="AsyncClient">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.AsyncClient">[docs]</a>
+<span class="nd">@runtime_checkable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AsyncClient</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The async sibling of :class:`Client`.</span>
+
+<span class="sd">    Same operations — collection create / fetch / drop / list — exposed as</span>
+<span class="sd">    awaitables and async iterators. Construct via :func:`vd.connect_async`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_collection</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">dimension</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">index_config</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncCollection</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncCollection</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delete_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">list_collections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span> <span class="o">...</span></div>
+
+
+
+<div class="viewcode-block" id="SupportsNativeAsync">
+<a class="viewcode-back" href="../../module_docs/vd/base.html#vd.SupportsNativeAsync">[docs]</a>
+<span class="nd">@runtime_checkable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SupportsNativeAsync</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Marker protocol set on async clients/collections that use a backend&#39;s</span>
+<span class="sd">    native async SDK rather than the universal :func:`asyncio.to_thread`</span>
+<span class="sd">    wrapper.</span>
+
+<span class="sd">    Why care: in high-concurrency event-loop apps (FastAPI, Starlette, etc.),</span>
+<span class="sd">    a ``to_thread``-wrapped backend still blocks a worker thread per request.</span>
+<span class="sd">    For real non-blocking I/O, prefer collections that satisfy this protocol.</span>
+<span class="sd">    The wrapper sets this attribute to ``False``; native adapters set it to</span>
+<span class="sd">    ``True``. ``isinstance(c, SupportsNativeAsync)`` matches both — check</span>
+<span class="sd">    ``c.native_async`` for the boolean.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">native_async</span><span class="p">:</span> <span class="nb">bool</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
 <span class="c1"># Helpers shared by the abstract bases</span>
 <span class="c1"># --------------------------------------------------------------------------- #</span>
 
@@ -710,9 +810,7 @@
             <span class="n">text</span> <span class="o">=</span> <span class="n">query_text</span>
             <span class="n">vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vet_vector</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;hybrid_search needs a non-empty lexical query string.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;hybrid_search needs a non-empty lexical query string.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">vec</span><span class="p">,</span> <span class="n">text</span>
 
     <span class="c1"># ----- MutableMapping interface --------------------------------------- #</span>

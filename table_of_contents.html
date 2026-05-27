@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; vd 0.2.5 documentation</title>
+  <title>&lt;no title&gt; &mdash; vd 0.2.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=cb850272"></script>
+      <script src="_static/documentation_options.js?v=fc7d8818"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -49,6 +49,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd.html">vd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/asynchronous.html">vd.asynchronous</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends.html">vd.backends</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/_helpers.html">vd.backends._helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
@@ -113,6 +114,10 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#embedding-is-external">Embedding is external</a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.AbstractClient"><code class="docutils literal notranslate"><span class="pre">AbstractClient</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.AbstractCollection"><code class="docutils literal notranslate"><span class="pre">AbstractCollection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.AsyncClient"><code class="docutils literal notranslate"><span class="pre">AsyncClient</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.AsyncClientWrapper"><code class="docutils literal notranslate"><span class="pre">AsyncClientWrapper</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.AsyncCollection"><code class="docutils literal notranslate"><span class="pre">AsyncCollection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.AsyncCollectionWrapper"><code class="docutils literal notranslate"><span class="pre">AsyncCollectionWrapper</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.BackendNotInstalledError"><code class="docutils literal notranslate"><span class="pre">BackendNotInstalledError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.Client"><code class="docutils literal notranslate"><span class="pre">Client</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.Collection"><code class="docutils literal notranslate"><span class="pre">Collection</span></code></a></li>
@@ -121,6 +126,7 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.StaticIndexError"><code class="docutils literal notranslate"><span class="pre">StaticIndexError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.SupportsBatch"><code class="docutils literal notranslate"><span class="pre">SupportsBatch</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.SupportsHybrid"><code class="docutils literal notranslate"><span class="pre">SupportsHybrid</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.SupportsNativeAsync"><code class="docutils literal notranslate"><span class="pre">SupportsNativeAsync</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.TimeIndexedCollection"><code class="docutils literal notranslate"><span class="pre">TimeIndexedCollection</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.UnsupportedCapabilityError"><code class="docutils literal notranslate"><span class="pre">UnsupportedCapabilityError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.UnsupportedFilterError"><code class="docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a></li>
@@ -136,6 +142,7 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.collection_stats"><code class="docutils literal notranslate"><span class="pre">collection_stats()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.compare_backends"><code class="docutils literal notranslate"><span class="pre">compare_backends()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.connect"><code class="docutils literal notranslate"><span class="pre">connect()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.connect_async"><code class="docutils literal notranslate"><span class="pre">connect_async()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.connect_from_config"><code class="docutils literal notranslate"><span class="pre">connect_from_config()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.copy_collection"><code class="docutils literal notranslate"><span class="pre">copy_collection()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.cosine_similarity"><code class="docutils literal notranslate"><span class="pre">cosine_similarity()</span></code></a></li>
@@ -156,6 +163,7 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.health_check_backend"><code class="docutils literal notranslate"><span class="pre">health_check_backend()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.health_check_collection"><code class="docutils literal notranslate"><span class="pre">health_check_collection()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.hybrid_search"><code class="docutils literal notranslate"><span class="pre">hybrid_search()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.hybrid_search_async"><code class="docutils literal notranslate"><span class="pre">hybrid_search_async()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.id_and_score"><code class="docutils literal notranslate"><span class="pre">id_and_score()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.id_only"><code class="docutils literal notranslate"><span class="pre">id_only()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.id_text_score"><code class="docutils literal notranslate"><span class="pre">id_text_score()</span></code></a></li>
@@ -208,6 +216,14 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/analytics.html#vd.analytics.validate_collection"><code class="docutils literal notranslate"><span class="pre">validate_collection()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/asynchronous.html">vd.asynchronous</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncClientWrapper"><code class="docutils literal notranslate"><span class="pre">AsyncClientWrapper</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncCollectionWrapper"><code class="docutils literal notranslate"><span class="pre">AsyncCollectionWrapper</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/asynchronous.html#vd.asynchronous.SupportsHybrid"><code class="docutils literal notranslate"><span class="pre">SupportsHybrid</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/asynchronous.html#vd.asynchronous.connect_async"><code class="docutils literal notranslate"><span class="pre">connect_async()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/asynchronous.html#vd.asynchronous.hybrid_search_async"><code class="docutils literal notranslate"><span class="pre">hybrid_search_async()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends.html">vd.backends</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/_helpers.html">vd.backends._helpers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/backends/_helpers.html#vd.backends._helpers.OVERFETCH_FACTOR"><code class="docutils literal notranslate"><span class="pre">OVERFETCH_FACTOR</span></code></a></li>
@@ -239,6 +255,8 @@
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/base.html">vd.base</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.AbstractClient"><code class="docutils literal notranslate"><span class="pre">AbstractClient</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.AbstractCollection"><code class="docutils literal notranslate"><span class="pre">AbstractCollection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.AsyncClient"><code class="docutils literal notranslate"><span class="pre">AsyncClient</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.AsyncCollection"><code class="docutils literal notranslate"><span class="pre">AsyncCollection</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.BackendNotInstalledError"><code class="docutils literal notranslate"><span class="pre">BackendNotInstalledError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.Client"><code class="docutils literal notranslate"><span class="pre">Client</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.Collection"><code class="docutils literal notranslate"><span class="pre">Collection</span></code></a></li>
@@ -249,6 +267,7 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.StaticIndexError"><code class="docutils literal notranslate"><span class="pre">StaticIndexError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.SupportsBatch"><code class="docutils literal notranslate"><span class="pre">SupportsBatch</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.SupportsHybrid"><code class="docutils literal notranslate"><span class="pre">SupportsHybrid</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.SupportsNativeAsync"><code class="docutils literal notranslate"><span class="pre">SupportsNativeAsync</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.UnsupportedCapabilityError"><code class="docutils literal notranslate"><span class="pre">UnsupportedCapabilityError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.UnsupportedFilterError"><code class="docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.VdError"><code class="docutils literal notranslate"><span class="pre">VdError</span></code></a></li>

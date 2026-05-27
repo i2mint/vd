@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.search &mdash; vd 0.2.5 documentation</title>
+  <title>vd.search &mdash; vd 0.2.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=cb850272"></script>
+      <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -48,6 +48,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd.html">vd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/analytics.html">vd.analytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/asynchronous.html">vd.asynchronous</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends.html">vd.backends</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/_helpers.html">vd.backends._helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
@@ -712,7 +713,9 @@
 <span class="sd">    &gt;&gt;&gt; hits[0][&#39;id&#39;]</span>
 <span class="sd">    &#39;a&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">k_dense_eff</span> <span class="o">=</span> <span class="n">k_dense</span> <span class="k">if</span> <span class="n">k_dense</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">limit</span><span class="p">,</span> <span class="n">_HYBRID_OVERFETCH_FLOOR</span><span class="p">)</span>
+    <span class="n">k_dense_eff</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">k_dense</span> <span class="k">if</span> <span class="n">k_dense</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">limit</span><span class="p">,</span> <span class="n">_HYBRID_OVERFETCH_FLOOR</span><span class="p">)</span>
+    <span class="p">)</span>
     <span class="n">k_lexical_eff</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">k_lexical</span> <span class="k">if</span> <span class="n">k_lexical</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">limit</span><span class="p">,</span> <span class="n">_HYBRID_OVERFETCH_FLOOR</span><span class="p">)</span>
     <span class="p">)</span>
@@ -749,9 +752,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;hybrid_search needs a non-empty lexical query string.&quot;</span><span class="p">)</span>
 
-    <span class="n">dense_hits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-        <span class="n">collection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">k_dense_eff</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="n">dense_hits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">collection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">k_dense_eff</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">))</span>
 
     <span class="n">lex_fn</span> <span class="o">=</span> <span class="n">lexical_search</span> <span class="k">if</span> <span class="n">lexical_search</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">bm25_lexical_search</span>
     <span class="n">lex_hits</span> <span class="o">=</span> <span class="n">lex_fn</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">k_lexical_eff</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">)</span>
