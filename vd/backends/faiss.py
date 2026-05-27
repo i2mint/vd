@@ -31,7 +31,11 @@ except ImportError as e:  # pragma: no cover
         "Install with: pip install faiss-cpu numpy"
     ) from e
 
-from vd.backends._helpers import apply_client_filter, overfetch_limit
+from vd.backends._helpers import (
+    apply_client_filter,
+    overfetch_limit,
+    score_from_distance,
+)
 from vd.base import (
     AbstractClient,
     AbstractCollection,
@@ -150,13 +154,25 @@ class FaissCollection(AbstractCollection):
             if doc_id is None:
                 continue
             doc = self._docs[doc_id]
-            # IndexFlatIP -> higher is better; IndexFlatL2 -> lower is better.
-            value = float(score)
+            # FAISS conventions vs. vd's canonical score (vd.base "Score
+            # semantics"):
+            #   - IndexFlatIP (cosine/dot): returns inner product directly,
+            #     higher-is-better. For cosine, vectors are L2-normalized at
+            #     write time, so the inner product IS cosine similarity in
+            #     [-1, 1] — matches vd's cosine score. For dot, the raw
+            #     inner product matches vd's dot score (note: vd's dot
+            #     convention is the raw inner product, NOT the negated form
+            #     `score_from_distance("dot")` un-negates from).
+            #   - IndexFlatL2: returns *squared* L2 distance, lower-is-better.
+            #     Funnel through score_from_distance to canonicalize to
+            #     1/(1+d) ∈ (0, 1] like every other distance-returning adapter.
+            raw = float(score)
+            value = score_from_distance(raw, "l2") if self.metric == "l2" else raw
             results.append(
                 {
                     "id": doc_id,
                     "text": doc.text,
-                    "score": value if self.metric != "l2" else 1.0 / (1.0 + value),
+                    "score": value,
                     "metadata": dict(doc.metadata),
                 }
             )

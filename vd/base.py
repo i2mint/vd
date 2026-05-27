@@ -67,6 +67,43 @@ DocumentInput = Union[
 #: spellings (e.g. ``"l2"`` -> Qdrant ``Distance.EUCLID``).
 METRICS = frozenset({"cosine", "dot", "l2"})
 
+# --------------------------------------------------------------------------- #
+# Score semantics — the cross-backend contract for SearchResult["score"]
+# --------------------------------------------------------------------------- #
+#
+# Every :data:`SearchResult` carries a ``score`` field. ``vd``'s contract for
+# that number is **higher-is-better, per-metric canonical similarity**:
+#
+# ============  ===============================  ======================
+# metric        canonical score                  range
+# ============  ===============================  ======================
+# ``cosine``    ``1 - cosine_distance``          ``[-1, 1]``
+# ``dot``       raw inner product                ``(-inf, +inf)``
+# ``l2``        ``1 / (1 + euclidean_distance)`` ``(0, 1]``
+# ============  ===============================  ======================
+#
+# Rationale:
+#
+# - **Same backend, different metrics** stay comparable (all three are
+#   higher-better).
+# - **Same metric, different backends** stay comparable: ``vd``'s own
+#   ``reciprocal_rank_fusion`` / ``deduplicate_results`` / ``multi_query_search``
+#   helpers and consumers like ``ef.SearchHit`` all assume this scale, so an
+#   adapter that returns ``1 / (1 + raw_distance)`` for cosine instead of
+#   ``1 - raw_distance`` would mis-rank only across adapters but consistently
+#   confuse score-threshold logic.
+#
+# The reference implementations are :func:`vd.backends.memory._similarity`
+# (in-memory adapter) and :func:`vd.backends._helpers.score_from_distance`
+# (distance-returning adapters). Adapters whose backend natively returns a
+# higher-is-better score on a *different* per-metric scale (e.g. Elasticsearch
+# kNN, MongoDB Atlas, Pinecone) **document the deviation in their adapter
+# docstring** rather than silently rescaling, because rescaling a backend's
+# own combined-ranking score can change ordering for ties. The deviation is
+# the cost of using that backend's native scoring.
+#
+# See issue #9 for the history of this contract.
+
 # Re-exported from vd.filters; imported lazily inside methods to avoid a cycle
 # (vd.filters imports UnsupportedFilterError from this module).
 
@@ -705,7 +742,13 @@ class AbstractCollection(MutableMapping):
         ------
         dict
             ``{"id", "text", "score", "metadata"}`` — or whatever ``egress``
-            returns.
+            returns. ``score`` is a higher-is-better, per-metric canonical
+            similarity (see the "Score semantics" table at the top of
+            :mod:`vd.base`): cosine in ``[-1, 1]``, dot in ``(-inf, +inf)``,
+            l2 squashed to ``(0, 1]``. Adapters whose backend returns a
+            native combined-ranking score on a different scale (e.g.
+            Elasticsearch, Atlas, Pinecone) document the deviation in
+            their own docstring.
         """
         from vd.filters import validate_filter
 
