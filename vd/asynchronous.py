@@ -91,9 +91,7 @@ class AsyncCollectionWrapper:
         """Fetch one document; raises ``KeyError`` if absent."""
         return await asyncio.to_thread(self._sync.__getitem__, key)
 
-    async def set(
-        self, key: str, value: Union[str, tuple, Document]
-    ) -> None:
+    async def set(self, key: str, value: Union[str, tuple, Document]) -> None:
         """Insert or replace a document (idempotent upsert)."""
         await asyncio.to_thread(self._sync.__setitem__, key, value)
 
