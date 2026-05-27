@@ -289,24 +289,56 @@ class SupportsHybrid(Protocol):
     A collection that supports native hybrid (dense + lexical) search.
 
     Hybrid search has no syntactic convergence across vector databases, so it
-    is an opt-in capability, never baseline. Feature-discover before calling::
+    is an opt-in capability, never baseline. Prefer the top-level
+    :func:`vd.hybrid_search` — it dispatches to this protocol when the
+    collection implements it and falls back to a pure-Python BM25 + RRF
+    fusion otherwise. Feature-discover directly only when you specifically
+    need to refuse the fallback path::
 
         if isinstance(collection, SupportsHybrid):
-            hits = collection.hybrid_search(vec, "query text", alpha=0.5)
+            hits = collection.hybrid_search("query text", limit=20)
 
-    Backends without native hybrid do not implement this; combine separate
-    dense + lexical result lists with :func:`vd.reciprocal_rank_fusion`.
+    The portable contract is **Reciprocal Rank Fusion** (every native backend
+    supports it). Weighted-blend (``alpha``) and other backend-specific
+    fusion variants are accepted via ``**kwargs`` and documented per adapter
+    — they are not portable across backends.
+
+    Parameters
+    ----------
+    query : str or list[float]
+        Query text (embedded via the collection's embedder if configured)
+        or a pre-computed query vector for the dense side.
+    query_text : str, optional
+        Explicit text for the lexical side. Defaults to ``query`` when
+        ``query`` is a string. **Required** when ``query`` is a vector.
+    limit : int
+        Number of fused results to return.
+    filter : dict, optional
+        Canonical ``vd`` metadata filter applied to both sub-searches.
+    k_dense, k_lexical : int, optional
+        How many results to fetch from each sub-search before fusion.
+        Both default to ``max(4 * limit, 50)``. Widen for higher recall.
+    rrf_k : int
+        Reciprocal Rank Fusion constant (typically 60).
+    egress : callable, optional
+        Transform applied to each fused result before it is yielded.
+    **kwargs
+        Backend-specific knobs (e.g. ``alpha=0.7`` on weaviate,
+        ``ranker="weighted"`` on milvus). Documented per adapter.
     """
 
     def hybrid_search(
         self,
-        query: Vector,
-        query_text: str,
+        query: Union[str, Vector],
         *,
+        query_text: Optional[str] = None,
         limit: int = 10,
         filter: Optional[Filter] = None,
-        alpha: float = 0.5,
-        fusion: str = "rrf",
+        k_dense: Optional[int] = None,
+        k_lexical: Optional[int] = None,
+        rrf_k: int = 60,
+        egress: Optional[Callable[[SearchResult], Any]] = None,
+        **kwargs,
     ) -> Iterator[SearchResult]: ...
 
 
@@ -490,6 +522,38 @@ class AbstractCollection(MutableMapping):
         vector = self.embed(query) if isinstance(query, str) else query
         return self._vet_vector(vector)
 
+    def _resolve_hybrid_inputs(
+        self,
+        query: Union[str, Vector],
+        query_text: Optional[str],
+    ) -> tuple[Vector, str]:
+        """
+        Normalize ``(query, query_text)`` for ``hybrid_search`` into ``(vec, text)``.
+
+        - ``query`` may be a string (used for both the dense and lexical sides
+          when ``query_text`` is omitted) or a pre-computed vector (then
+          ``query_text`` is **required**).
+        - The returned ``vec`` is dimension-vetted; the returned ``text`` is
+          guaranteed to be a non-empty string for the lexical side.
+        """
+        if isinstance(query, str):
+            text = query_text if query_text is not None else query
+            vec = self._vet_vector(self.embed(query))
+        else:
+            if query_text is None:
+                raise ValueError(
+                    "hybrid_search needs a `query_text` for the lexical side "
+                    "when `query` is a vector. Either pass query_text=..., or "
+                    "pass `query` as a string and let the embedder handle both."
+                )
+            text = query_text
+            vec = self._vet_vector(query)
+        if not text:
+            raise ValueError(
+                "hybrid_search needs a non-empty lexical query string."
+            )
+        return vec, text
+
     # ----- MutableMapping interface --------------------------------------- #
 
     def __setitem__(self, key: str, value: Union[str, tuple, Document]) -> None:
@@ -561,6 +625,58 @@ class AbstractCollection(MutableMapping):
         query_vector = self._resolve_query(query)
         for result in self._query(query_vector, limit=limit, filter=filter, **kwargs):
             yield egress(result) if egress is not None else result
+
+    # ----- hybrid orchestration (used by SupportsHybrid adapters) --------- #
+
+    def _hybrid_via_rrf(
+        self,
+        query: Union[str, Vector],
+        lexical_query: Callable[..., Iterable[SearchResult]],
+        *,
+        query_text: Optional[str] = None,
+        limit: int = 10,
+        filter: Optional[Filter] = None,
+        k_dense: Optional[int] = None,
+        k_lexical: Optional[int] = None,
+        rrf_k: int = 60,
+        egress: Optional[Callable[[SearchResult], Any]] = None,
+        **kwargs,
+    ) -> Iterator[SearchResult]:
+        """
+        Run dense ``_query`` + a backend-specific ``lexical_query`` and fuse with RRF.
+
+        The pattern every adapter's :meth:`hybrid_search` calls. The adapter
+        passes in its lexical primitive (``self._lexical_query``); this method
+        handles input resolution, filter validation, over-fetch defaults, and
+        Reciprocal Rank Fusion.
+
+        ``lexical_query`` must accept ``(query_text, *, limit, filter, **kwargs)``
+        and return an iterable of result dicts shaped like ``_query`` results.
+        """
+        from vd.filters import validate_filter
+        from vd.search import _HYBRID_OVERFETCH_FLOOR, _rrf_fuse
+
+        validate_filter(filter, supported=self.supported_filter_operators)
+        vec, text = self._resolve_hybrid_inputs(query, query_text)
+        k_dense_eff = (
+            k_dense if k_dense is not None else max(4 * limit, _HYBRID_OVERFETCH_FLOOR)
+        )
+        k_lex_eff = (
+            k_lexical
+            if k_lexical is not None
+            else max(4 * limit, _HYBRID_OVERFETCH_FLOOR)
+        )
+        # NOTE: ``**kwargs`` carry backend-specific native-fusion knobs (e.g.
+        # ``alpha=0.7``). This client-RRF orchestration cannot honor them and
+        # deliberately drops them rather than risk leaking them into the dense
+        # or lexical sub-query calls (which would raise TypeError on most
+        # backends). Adapters wanting native fusion should override
+        # ``hybrid_search`` and call their backend's fused API directly.
+        del kwargs  # unused on this path
+        dense = list(self._query(vec, limit=k_dense_eff, filter=filter))
+        lex = list(lexical_query(text, limit=k_lex_eff, filter=filter))
+        for hit in _rrf_fuse([dense, lex], rrf_k=rrf_k, limit=limit):
+            yield egress(hit) if egress is not None else hit
 
     # ----- batch convenience (also satisfies SupportsBatch) --------------- #
 

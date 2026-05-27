@@ -365,10 +365,127 @@ class RedisCollection(AbstractCollection):
 
         return apply_client_filter(results, filter, limit=limit)
 
+    # ----- native hybrid via RediSearch BM25 + dense, fused client-side --- #
+
+    def _lexical_query(
+        self,
+        text: str,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        """
+        BM25 lexical search via ``FT.SEARCH`` on the ``text`` field.
+
+        Used as the lexical side of :meth:`hybrid_search`. Metadata filtering
+        is applied client-side (vd stores metadata as a JSON blob, not as
+        individually indexed RediSearch fields).
+        """
+        del kwargs
+        if not _index_exists(self._redis, self._index_name):
+            return []
+        fetch = overfetch_limit(limit, filter)
+        # Escape RediSearch query-language special characters; keep tokens.
+        escaped = _escape_redisearch_query(text)
+        if not escaped:
+            return []
+        q = (
+            Query(f"@text:({escaped})")
+            .return_fields("text", "metadata", "vd_id")
+            .paging(0, fetch)
+            .dialect(2)
+        )
+        try:
+            response = self._redis.ft(self._index_name).search(q)
+        except Exception:
+            return []
+        results: list[SearchResult] = []
+        for doc in response.docs:
+            try:
+                metadata = json.loads(getattr(doc, "metadata", "{}") or "{}")
+            except (json.JSONDecodeError, TypeError):
+                metadata = {}
+            results.append(
+                {
+                    "id": getattr(doc, "vd_id", ""),
+                    "text": getattr(doc, "text", ""),
+                    "score": 0.0,  # RRF fuser uses ranks, not raw scores.
+                    "metadata": metadata,
+                }
+            )
+        return list(apply_client_filter(results, filter, limit=limit))
+
+    def hybrid_search(
+        self,
+        query,
+        *,
+        query_text=None,
+        limit: int = 10,
+        filter: Optional[Filter] = None,
+        k_dense: Optional[int] = None,
+        k_lexical: Optional[int] = None,
+        rrf_k: int = 60,
+        egress=None,
+        **kwargs,
+    ):
+        """
+        Hybrid (KNN + BM25) search via RediSearch, fused client-side with RRF.
+
+        See :class:`vd.SupportsHybrid` for the canonical contract. Backend
+        notes: Redis 8.4+ has a native ``HybridQuery`` that fuses BM25 and
+        KNN server-side; we deliberately run them separately and fuse
+        client-side so the fused score is uniform across vd backends and so
+        the adapter works on Redis < 8.4 as well. Pass ``query_text=...``
+        explicitly when ``query`` is a vector.
+        """
+        return self._hybrid_via_rrf(
+            query,
+            self._lexical_query,
+            query_text=query_text,
+            limit=limit,
+            filter=filter,
+            k_dense=k_dense,
+            k_lexical=k_lexical,
+            rrf_k=rrf_k,
+            egress=egress,
+            **kwargs,
+        )
+
 
 # --------------------------------------------------------------------------- #
 # Module-level helper used by _read (defined after the class for readability)
 # --------------------------------------------------------------------------- #
+
+
+_REDISEARCH_SPECIAL_CHARS = set(",.<>{}[]\"':;!@#$%^&*()-+=~|\\/")
+
+
+def _escape_redisearch_query(text: str) -> str:
+    """
+    Escape RediSearch query-language special characters in ``text``.
+
+    Returns a space-joined OR-able token string. Returns an empty string when
+    no usable tokens remain.
+    """
+    cleaned: list[str] = []
+    current: list[str] = []
+    for ch in text:
+        if ch in _REDISEARCH_SPECIAL_CHARS:
+            if current:
+                cleaned.append("".join(current))
+                current = []
+        elif ch.isspace():
+            if current:
+                cleaned.append("".join(current))
+                current = []
+        else:
+            current.append(ch)
+    if current:
+        cleaned.append("".join(current))
+    # Filter out one-char tokens that RediSearch treats as stopwords.
+    tokens = [t for t in cleaned if len(t) >= 2]
+    return " | ".join(tokens)
 
 
 def _raw_to_document(raw: dict) -> Document:
