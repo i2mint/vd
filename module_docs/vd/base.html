@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.base &mdash; vd 0.2.4 documentation</title>
+  <title>vd.base &mdash; vd 0.2.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="../../_static/documentation_options.js?v=cb850272"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -536,13 +536,39 @@ should still feature-discover:</p>
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.base.</span></span><span class="sig-name descname"><span class="pre">SupportsHybrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/base.html#SupportsHybrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.base.SupportsHybrid" title="Link to this definition"></a></dt>
 <dd><p>A collection that supports native hybrid (dense + lexical) search.</p>
 <p>Hybrid search has no syntactic convergence across vector databases, so it
-is an opt-in capability, never baseline. Feature-discover before calling:</p>
+is an opt-in capability, never baseline. Prefer the top-level
+<a class="reference internal" href="../vd.html#vd.hybrid_search" title="vd.hybrid_search"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.hybrid_search()</span></code></a> — it dispatches to this protocol when the
+collection implements it and falls back to a pure-Python BM25 + RRF
+fusion otherwise. Feature-discover directly only when you specifically
+need to refuse the fallback path:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">SupportsHybrid</span><span class="p">):</span>
-    <span class="n">hits</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">hybrid_search</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="s2">&quot;query text&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">hits</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">hybrid_search</span><span class="p">(</span><span class="s2">&quot;query text&quot;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Backends without native hybrid do not implement this; combine separate
-dense + lexical result lists with <a class="reference internal" href="../vd.html#vd.reciprocal_rank_fusion" title="vd.reciprocal_rank_fusion"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.reciprocal_rank_fusion()</span></code></a>.</p>
+<p>The portable contract is <strong>Reciprocal Rank Fusion</strong> (every native backend
+supports it). Weighted-blend (<code class="docutils literal notranslate"><span class="pre">alpha</span></code>) and other backend-specific
+fusion variants are accepted via <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> and documented per adapter
+— they are not portable across backends.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>str</em><em> or </em><em>list</em><em>[</em><em>float</em><em>]</em>) – Query text (embedded via the collection’s embedder if configured)
+or a pre-computed query vector for the dense side.</p></li>
+<li><p><strong>query_text</strong> (<em>str</em><em>, </em><em>optional</em>) – Explicit text for the lexical side. Defaults to <code class="docutils literal notranslate"><span class="pre">query</span></code> when
+<code class="docutils literal notranslate"><span class="pre">query</span></code> is a string. <strong>Required</strong> when <code class="docutils literal notranslate"><span class="pre">query</span></code> is a vector.</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – Number of fused results to return.</p></li>
+<li><p><strong>filter</strong> (<em>dict</em><em>, </em><em>optional</em>) – Canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> metadata filter applied to both sub-searches.</p></li>
+<li><p><strong>k_dense</strong> (<em>int</em><em>, </em><em>optional</em>) – How many results to fetch from each sub-search before fusion.
+Both default to <code class="docutils literal notranslate"><span class="pre">max(4</span> <span class="pre">*</span> <span class="pre">limit,</span> <span class="pre">50)</span></code>. Widen for higher recall.</p></li>
+<li><p><strong>k_lexical</strong> (<em>int</em><em>, </em><em>optional</em>) – How many results to fetch from each sub-search before fusion.
+Both default to <code class="docutils literal notranslate"><span class="pre">max(4</span> <span class="pre">*</span> <span class="pre">limit,</span> <span class="pre">50)</span></code>. Widen for higher recall.</p></li>
+<li><p><strong>rrf_k</strong> (<em>int</em>) – Reciprocal Rank Fusion constant (typically 60).</p></li>
+<li><p><strong>egress</strong> (<em>callable</em><em>, </em><em>optional</em>) – Transform applied to each fused result before it is yielded.</p></li>
+<li><p><strong>**kwargs</strong> – Backend-specific knobs (e.g. <code class="docutils literal notranslate"><span class="pre">alpha=0.7</span></code> on weaviate,
+<code class="docutils literal notranslate"><span class="pre">ranker=&quot;weighted&quot;</span></code> on milvus). Documented per adapter.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py exception">

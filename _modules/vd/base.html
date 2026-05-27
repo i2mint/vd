@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.base &mdash; vd 0.2.4 documentation</title>
+  <title>vd.base &mdash; vd 0.2.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="../../_static/documentation_options.js?v=cb850272"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -444,24 +444,56 @@
 <span class="sd">    A collection that supports native hybrid (dense + lexical) search.</span>
 
 <span class="sd">    Hybrid search has no syntactic convergence across vector databases, so it</span>
-<span class="sd">    is an opt-in capability, never baseline. Feature-discover before calling::</span>
+<span class="sd">    is an opt-in capability, never baseline. Prefer the top-level</span>
+<span class="sd">    :func:`vd.hybrid_search` — it dispatches to this protocol when the</span>
+<span class="sd">    collection implements it and falls back to a pure-Python BM25 + RRF</span>
+<span class="sd">    fusion otherwise. Feature-discover directly only when you specifically</span>
+<span class="sd">    need to refuse the fallback path::</span>
 
 <span class="sd">        if isinstance(collection, SupportsHybrid):</span>
-<span class="sd">            hits = collection.hybrid_search(vec, &quot;query text&quot;, alpha=0.5)</span>
+<span class="sd">            hits = collection.hybrid_search(&quot;query text&quot;, limit=20)</span>
 
-<span class="sd">    Backends without native hybrid do not implement this; combine separate</span>
-<span class="sd">    dense + lexical result lists with :func:`vd.reciprocal_rank_fusion`.</span>
+<span class="sd">    The portable contract is **Reciprocal Rank Fusion** (every native backend</span>
+<span class="sd">    supports it). Weighted-blend (``alpha``) and other backend-specific</span>
+<span class="sd">    fusion variants are accepted via ``**kwargs`` and documented per adapter</span>
+<span class="sd">    — they are not portable across backends.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    query : str or list[float]</span>
+<span class="sd">        Query text (embedded via the collection&#39;s embedder if configured)</span>
+<span class="sd">        or a pre-computed query vector for the dense side.</span>
+<span class="sd">    query_text : str, optional</span>
+<span class="sd">        Explicit text for the lexical side. Defaults to ``query`` when</span>
+<span class="sd">        ``query`` is a string. **Required** when ``query`` is a vector.</span>
+<span class="sd">    limit : int</span>
+<span class="sd">        Number of fused results to return.</span>
+<span class="sd">    filter : dict, optional</span>
+<span class="sd">        Canonical ``vd`` metadata filter applied to both sub-searches.</span>
+<span class="sd">    k_dense, k_lexical : int, optional</span>
+<span class="sd">        How many results to fetch from each sub-search before fusion.</span>
+<span class="sd">        Both default to ``max(4 * limit, 50)``. Widen for higher recall.</span>
+<span class="sd">    rrf_k : int</span>
+<span class="sd">        Reciprocal Rank Fusion constant (typically 60).</span>
+<span class="sd">    egress : callable, optional</span>
+<span class="sd">        Transform applied to each fused result before it is yielded.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Backend-specific knobs (e.g. ``alpha=0.7`` on weaviate,</span>
+<span class="sd">        ``ranker=&quot;weighted&quot;`` on milvus). Documented per adapter.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">hybrid_search</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">query</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span>
-        <span class="n">query_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Vector</span><span class="p">],</span>
         <span class="o">*</span><span class="p">,</span>
+        <span class="n">query_text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
         <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Filter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">fusion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rrf&quot;</span><span class="p">,</span>
+        <span class="n">k_dense</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">k_lexical</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rrf_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
+        <span class="n">egress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">SearchResult</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span> <span class="o">...</span></div>
 
 
@@ -651,6 +683,38 @@
         <span class="n">vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embed</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">query</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vet_vector</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_hybrid_inputs</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Vector</span><span class="p">],</span>
+        <span class="n">query_text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Vector</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Normalize ``(query, query_text)`` for ``hybrid_search`` into ``(vec, text)``.</span>
+
+<span class="sd">        - ``query`` may be a string (used for both the dense and lexical sides</span>
+<span class="sd">          when ``query_text`` is omitted) or a pre-computed vector (then</span>
+<span class="sd">          ``query_text`` is **required**).</span>
+<span class="sd">        - The returned ``vec`` is dimension-vetted; the returned ``text`` is</span>
+<span class="sd">          guaranteed to be a non-empty string for the lexical side.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">query_text</span> <span class="k">if</span> <span class="n">query_text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">query</span>
+            <span class="n">vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vet_vector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embed</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">query_text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;hybrid_search needs a `query_text` for the lexical side &quot;</span>
+                    <span class="s2">&quot;when `query` is a vector. Either pass query_text=..., or &quot;</span>
+                    <span class="s2">&quot;pass `query` as a string and let the embedder handle both.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">query_text</span>
+            <span class="n">vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vet_vector</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;hybrid_search needs a non-empty lexical query string.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">vec</span><span class="p">,</span> <span class="n">text</span>
+
     <span class="c1"># ----- MutableMapping interface --------------------------------------- #</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -725,6 +789,58 @@
         <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="n">query_vector</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">egress</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="k">if</span> <span class="n">egress</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">result</span></div>
 
+
+    <span class="c1"># ----- hybrid orchestration (used by SupportsHybrid adapters) --------- #</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_hybrid_via_rrf</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Vector</span><span class="p">],</span>
+        <span class="n">lexical_query</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">query_text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Filter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">k_dense</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">k_lexical</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rrf_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
+        <span class="n">egress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">SearchResult</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run dense ``_query`` + a backend-specific ``lexical_query`` and fuse with RRF.</span>
+
+<span class="sd">        The pattern every adapter&#39;s :meth:`hybrid_search` calls. The adapter</span>
+<span class="sd">        passes in its lexical primitive (``self._lexical_query``); this method</span>
+<span class="sd">        handles input resolution, filter validation, over-fetch defaults, and</span>
+<span class="sd">        Reciprocal Rank Fusion.</span>
+
+<span class="sd">        ``lexical_query`` must accept ``(query_text, *, limit, filter, **kwargs)``</span>
+<span class="sd">        and return an iterable of result dicts shaped like ``_query`` results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">vd.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_filter</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">vd.search</span><span class="w"> </span><span class="kn">import</span> <span class="n">_HYBRID_OVERFETCH_FLOOR</span><span class="p">,</span> <span class="n">_rrf_fuse</span>
+
+        <span class="n">validate_filter</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">supported</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">supported_filter_operators</span><span class="p">)</span>
+        <span class="n">vec</span><span class="p">,</span> <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_hybrid_inputs</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">query_text</span><span class="p">)</span>
+        <span class="n">k_dense_eff</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">k_dense</span> <span class="k">if</span> <span class="n">k_dense</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">limit</span><span class="p">,</span> <span class="n">_HYBRID_OVERFETCH_FLOOR</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">k_lex_eff</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">k_lexical</span>
+            <span class="k">if</span> <span class="n">k_lexical</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">limit</span><span class="p">,</span> <span class="n">_HYBRID_OVERFETCH_FLOOR</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># NOTE: ``**kwargs`` carry backend-specific native-fusion knobs (e.g.</span>
+        <span class="c1"># ``alpha=0.7``). This client-RRF orchestration cannot honor them and</span>
+        <span class="c1"># deliberately drops them rather than risk leaking them into the dense</span>
+        <span class="c1"># or lexical sub-query calls (which would raise TypeError on most</span>
+        <span class="c1"># backends). Adapters wanting native fusion should override</span>
+        <span class="c1"># ``hybrid_search`` and call their backend&#39;s fused API directly.</span>
+        <span class="k">del</span> <span class="n">kwargs</span>  <span class="c1"># unused on this path</span>
+        <span class="n">dense</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">k_dense_eff</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">))</span>
+        <span class="n">lex</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">lexical_query</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">k_lex_eff</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">_rrf_fuse</span><span class="p">([</span><span class="n">dense</span><span class="p">,</span> <span class="n">lex</span><span class="p">],</span> <span class="n">rrf_k</span><span class="o">=</span><span class="n">rrf_k</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">egress</span><span class="p">(</span><span class="n">hit</span><span class="p">)</span> <span class="k">if</span> <span class="n">egress</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">hit</span>
 
     <span class="c1"># ----- batch convenience (also satisfies SupportsBatch) --------------- #</span>
 

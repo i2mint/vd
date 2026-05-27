@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.search &mdash; vd 0.2.4 documentation</title>
+  <title>vd.search &mdash; vd 0.2.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="../../_static/documentation_options.js?v=cb850272"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -113,9 +113,11 @@
 <span class="sd">other advanced search patterns.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">SearchResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">SearchResult</span><span class="p">,</span> <span class="n">SupportsHybrid</span><span class="p">,</span> <span class="n">Vector</span>
 
 
 <div class="viewcode-block" id="multi_query_search">
@@ -468,6 +470,295 @@
             <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">seen</span><span class="p">[</span><span class="n">key_value</span><span class="p">][</span><span class="s2">&quot;score&quot;</span><span class="p">]:</span>
                 <span class="n">seen</span><span class="p">[</span><span class="n">key_value</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
                 <span class="k">yield</span> <span class="n">result</span></div>
+
+
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Hybrid search — top-level entry + client-side BM25 fallback</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+
+<span class="c1">#: Minimum default for `k_dense`/`k_lexical` when callers don&#39;t override.</span>
+<span class="n">_HYBRID_OVERFETCH_FLOOR</span> <span class="o">=</span> <span class="mi">50</span>
+
+<span class="c1">#: Simple ASCII-word tokenizer for the built-in BM25 fallback. Adapters that</span>
+<span class="c1">#: want better tokenization (stemming, CJK, etc.) should pass a custom</span>
+<span class="c1">#: ``lexical_search`` callable.</span>
+<span class="n">_TOKEN_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\w+&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Lowercased word tokens — used by the built-in BM25 fallback.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_TOKEN_RE</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="bm25_lexical_search">
+<a class="viewcode-back" href="../../module_docs/vd/search.html#vd.bm25_lexical_search">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">bm25_lexical_search</span><span class="p">(</span>
+    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+    <span class="n">query_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">k1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">b</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.75</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Brute-force BM25 lexical search over a vd collection&#39;s stored ``text``.</span>
+
+<span class="sd">    Iterates every document in ``collection``, tokenizes its ``text`` field,</span>
+<span class="sd">    and computes Okapi BM25 scores against ``query_text``. Used as the default</span>
+<span class="sd">    lexical side of :func:`hybrid_search` when a collection does not implement</span>
+<span class="sd">    :class:`SupportsHybrid`.</span>
+
+<span class="sd">    Cost is **O(N)** in the collection size — fine for prototypes and</span>
+<span class="sd">    collections up to ~100k documents. For larger workloads, either switch to</span>
+<span class="sd">    a backend with native hybrid search (weaviate, elasticsearch, redis, …)</span>
+<span class="sd">    or pass a custom ``lexical_search`` callable to :func:`hybrid_search` that</span>
+<span class="sd">    consults a real text index.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    collection : Collection</span>
+<span class="sd">        Any vd Collection. Documents whose ``text`` is empty contribute zero</span>
+<span class="sd">        score and are filtered out of the result.</span>
+<span class="sd">    query_text : str</span>
+<span class="sd">        The lexical query.</span>
+<span class="sd">    limit : int</span>
+<span class="sd">        Maximum number of results.</span>
+<span class="sd">    filter : dict, optional</span>
+<span class="sd">        Canonical ``vd`` metadata filter. Applied client-side via</span>
+<span class="sd">        :func:`vd.filters.matches_filter`.</span>
+<span class="sd">    k1, b : float</span>
+<span class="sd">        BM25 hyperparameters. Defaults match the standard Okapi BM25.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list[dict]</span>
+<span class="sd">        Result dicts in the same shape as :meth:`Collection.search` —</span>
+<span class="sd">        ``{&quot;id&quot;, &quot;text&quot;, &quot;score&quot;, &quot;metadata&quot;}`` — sorted by descending score.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import vd</span>
+<span class="sd">    &gt;&gt;&gt; c = vd.connect(&#39;memory&#39;).create_collection(&#39;t&#39;, dimension=2)</span>
+<span class="sd">    &gt;&gt;&gt; c[&#39;a&#39;] = vd.Document(id=&#39;a&#39;, text=&#39;the quick brown fox&#39;, vector=[1.0, 0.0])</span>
+<span class="sd">    &gt;&gt;&gt; c[&#39;b&#39;] = vd.Document(id=&#39;b&#39;, text=&#39;lazy dog sleeps&#39;, vector=[0.0, 1.0])</span>
+<span class="sd">    &gt;&gt;&gt; hits = bm25_lexical_search(c, &#39;quick fox&#39;, limit=1)</span>
+<span class="sd">    &gt;&gt;&gt; hits[0][&#39;id&#39;]</span>
+<span class="sd">    &#39;a&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">vd.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">matches_filter</span>
+
+    <span class="n">query_tokens</span> <span class="o">=</span> <span class="n">_tokenize</span><span class="p">(</span><span class="n">query_text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">query_tokens</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="c1"># Pass 1: tokenize once, compute document frequencies and lengths.</span>
+    <span class="n">docs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">df</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">matches_filter</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{},</span> <span class="nb">filter</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">_tokenize</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">tokens</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">docs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{}),</span> <span class="n">tokens</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">tokens</span><span class="p">):</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">docs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="n">n_docs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">docs</span><span class="p">)</span>
+    <span class="n">avg_len</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">toks</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">toks</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_docs</span>
+
+    <span class="c1"># Pass 2: BM25 scoring (Okapi).</span>
+    <span class="n">query_terms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">query_tokens</span><span class="p">)</span>
+    <span class="n">idf</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">term</span><span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">n_docs</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">query_terms</span>
+        <span class="k">if</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">df</span>
+    <span class="p">}</span>
+
+    <span class="n">scored</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">tokens</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">:</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">doc_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
+        <span class="n">tf</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">idf</span><span class="p">:</span>
+                <span class="n">tf</span><span class="p">[</span><span class="n">tok</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tok</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">tf</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">term</span><span class="p">,</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">tf</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">numer</span> <span class="o">=</span> <span class="n">freq</span> <span class="o">*</span> <span class="p">(</span><span class="n">k1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">denom</span> <span class="o">=</span> <span class="n">freq</span> <span class="o">+</span> <span class="n">k1</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">b</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">doc_len</span> <span class="o">/</span> <span class="n">avg_len</span><span class="p">)</span>
+            <span class="n">score</span> <span class="o">+=</span> <span class="n">idf</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">*</span> <span class="n">numer</span> <span class="o">/</span> <span class="n">denom</span>
+        <span class="n">scored</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">doc_id</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="n">scored</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">scored</span><span class="p">[:</span><span class="n">limit</span><span class="p">]</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rrf_fuse</span><span class="p">(</span>
+    <span class="n">result_lists</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">rrf_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reciprocal Rank Fusion over result lists, returning the top ``limit``.&quot;&quot;&quot;</span>
+    <span class="n">scores</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">results</span> <span class="ow">in</span> <span class="n">result_lists</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">rank</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">doc_id</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+            <span class="n">contribution</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">rrf_k</span> <span class="o">+</span> <span class="n">rank</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">doc_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">:</span>
+                <span class="c1"># Keep the first occurrence&#39;s payload for text/metadata.</span>
+                <span class="n">scores</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;item&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">item</span><span class="p">),</span> <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">}</span>
+            <span class="n">scores</span><span class="p">[</span><span class="n">doc_id</span><span class="p">][</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">contribution</span>
+    <span class="n">fused</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">scores</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;item&quot;</span><span class="p">]</span>
+        <span class="c1"># Replace the source score with the fused RRF score so downstream</span>
+        <span class="c1"># consumers can rely on result[&quot;score&quot;] = fused score.</span>
+        <span class="n">item</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span>
+        <span class="n">fused</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="n">fused</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fused</span><span class="p">[:</span><span class="n">limit</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="hybrid_search">
+<a class="viewcode-back" href="../../module_docs/vd/search.html#vd.hybrid_search">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hybrid_search</span><span class="p">(</span>
+    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+    <span class="n">query</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Vector</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">query_text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">k_dense</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">k_lexical</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">rrf_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
+    <span class="n">lexical_search</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">egress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">SearchResult</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hybrid (dense + lexical) search that works on any vd Collection.</span>
+
+<span class="sd">    Dispatches to the collection&#39;s native ``hybrid_search`` when it implements</span>
+<span class="sd">    :class:`~vd.SupportsHybrid` (efficient, server-side). Otherwise fuses the</span>
+<span class="sd">    collection&#39;s own dense :meth:`~vd.Collection.search` with a client-side</span>
+<span class="sd">    lexical scan (default: :func:`bm25_lexical_search`) via **Reciprocal Rank</span>
+<span class="sd">    Fusion**.</span>
+
+<span class="sd">    The portable contract is RRF. Backend-specific knobs (weighted blend</span>
+<span class="sd">    ``alpha``, fusion-type variants, native ranker choices) are accepted via</span>
+<span class="sd">    ``**kwargs`` and forwarded to the adapter when it has a native</span>
+<span class="sd">    implementation; they are ignored by the client-side fallback.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    collection : Collection</span>
+<span class="sd">        Any vd Collection — native-hybrid or not.</span>
+<span class="sd">    query : str or list[float]</span>
+<span class="sd">        Query text (embedded by the collection if it has an embedder) or a</span>
+<span class="sd">        pre-computed query vector. When ``query`` is a vector, ``query_text``</span>
+<span class="sd">        is **required**.</span>
+<span class="sd">    query_text : str, optional</span>
+<span class="sd">        Explicit text for the lexical side. Defaults to ``query`` when</span>
+<span class="sd">        ``query`` is a string.</span>
+<span class="sd">    limit : int</span>
+<span class="sd">        Number of fused results to return.</span>
+<span class="sd">    filter : dict, optional</span>
+<span class="sd">        Canonical ``vd`` metadata filter, applied to both sub-searches.</span>
+<span class="sd">    k_dense, k_lexical : int, optional</span>
+<span class="sd">        How many results to fetch from each sub-search before fusion. Default</span>
+<span class="sd">        is ``max(4 * limit, 50)`` for each side. Widen for higher recall.</span>
+<span class="sd">    rrf_k : int</span>
+<span class="sd">        Reciprocal Rank Fusion constant (typically 60).</span>
+<span class="sd">    lexical_search : callable, optional</span>
+<span class="sd">        Custom ``lexical_search(collection, query_text, *, limit, filter,</span>
+<span class="sd">        **kwargs) -&gt; list[SearchResult]``. Defaults to</span>
+<span class="sd">        :func:`bm25_lexical_search`. Used only on the fallback path.</span>
+<span class="sd">    egress : callable, optional</span>
+<span class="sd">        Per-result transform applied before yielding.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Extra options. On the native path they are forwarded to the adapter</span>
+<span class="sd">        (e.g. ``alpha=0.7`` on weaviate). On the fallback path they are</span>
+<span class="sd">        ignored.</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Fused result dicts. ``score`` is the RRF score on the fallback path,</span>
+<span class="sd">        or the adapter&#39;s fused score on the native path.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import vd</span>
+<span class="sd">    &gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; col = client.create_collection(&#39;docs&#39;, dimension=2)</span>
+<span class="sd">    &gt;&gt;&gt; col[&#39;a&#39;] = vd.Document(id=&#39;a&#39;, text=&#39;cats purr&#39;,</span>
+<span class="sd">    ...                        vector=[1.0, 0.0])</span>
+<span class="sd">    &gt;&gt;&gt; col[&#39;b&#39;] = vd.Document(id=&#39;b&#39;, text=&#39;dogs bark&#39;,</span>
+<span class="sd">    ...                        vector=[0.0, 1.0])</span>
+<span class="sd">    &gt;&gt;&gt; hits = list(vd.hybrid_search(col, [0.9, 0.1], query_text=&#39;cats&#39;,</span>
+<span class="sd">    ...                              limit=1))</span>
+<span class="sd">    &gt;&gt;&gt; hits[0][&#39;id&#39;]</span>
+<span class="sd">    &#39;a&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">k_dense_eff</span> <span class="o">=</span> <span class="n">k_dense</span> <span class="k">if</span> <span class="n">k_dense</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">limit</span><span class="p">,</span> <span class="n">_HYBRID_OVERFETCH_FLOOR</span><span class="p">)</span>
+    <span class="n">k_lexical_eff</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">k_lexical</span> <span class="k">if</span> <span class="n">k_lexical</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">limit</span><span class="p">,</span> <span class="n">_HYBRID_OVERFETCH_FLOOR</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Native path.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">SupportsHybrid</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">collection</span><span class="o">.</span><span class="n">hybrid_search</span><span class="p">(</span>
+            <span class="n">query</span><span class="p">,</span>
+            <span class="n">query_text</span><span class="o">=</span><span class="n">query_text</span><span class="p">,</span>
+            <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+            <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">,</span>
+            <span class="n">k_dense</span><span class="o">=</span><span class="n">k_dense_eff</span><span class="p">,</span>
+            <span class="n">k_lexical</span><span class="o">=</span><span class="n">k_lexical_eff</span><span class="p">,</span>
+            <span class="n">rrf_k</span><span class="o">=</span><span class="n">rrf_k</span><span class="p">,</span>
+            <span class="n">egress</span><span class="o">=</span><span class="n">egress</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="k">yield</span> <span class="n">hit</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Fallback: dense via collection.search() + lexical via callable, fused by RRF.</span>
+    <span class="c1"># Resolve the text for the lexical side. (The dense side accepts the original</span>
+    <span class="c1"># `query` directly — the collection&#39;s search() does its own embed/vet.)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">query_text</span> <span class="k">if</span> <span class="n">query_text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">query</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">query_text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;hybrid_search needs a `query_text` for the lexical side when &quot;</span>
+                <span class="s2">&quot;`query` is a vector. Either pass query_text=..., or pass &quot;</span>
+                <span class="s2">&quot;`query` as a string and let the embedder handle both.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">query_text</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;hybrid_search needs a non-empty lexical query string.&quot;</span><span class="p">)</span>
+
+    <span class="n">dense_hits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="n">collection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">k_dense_eff</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">lex_fn</span> <span class="o">=</span> <span class="n">lexical_search</span> <span class="k">if</span> <span class="n">lexical_search</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">bm25_lexical_search</span>
+    <span class="n">lex_hits</span> <span class="o">=</span> <span class="n">lex_fn</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">k_lexical_eff</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">)</span>
+
+    <span class="n">fused</span> <span class="o">=</span> <span class="n">_rrf_fuse</span><span class="p">([</span><span class="n">dense_hits</span><span class="p">,</span> <span class="n">lex_hits</span><span class="p">],</span> <span class="n">rrf_k</span><span class="o">=</span><span class="n">rrf_k</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">fused</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">egress</span><span class="p">(</span><span class="n">hit</span><span class="p">)</span> <span class="k">if</span> <span class="n">egress</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">hit</span></div>
 
 </pre></div>
 

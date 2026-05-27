@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd &mdash; vd 0.2.4 documentation</title>
+  <title>vd &mdash; vd 0.2.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="../_static/documentation_options.js?v=cb850272"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -106,6 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#vd.WindowSlice"><code class="docutils literal notranslate"><span class="pre">WindowSlice</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.benchmark_insert"><code class="docutils literal notranslate"><span class="pre">benchmark_insert()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.benchmark_search"><code class="docutils literal notranslate"><span class="pre">benchmark_search()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.bm25_lexical_search"><code class="docutils literal notranslate"><span class="pre">bm25_lexical_search()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.check_requirements"><code class="docutils literal notranslate"><span class="pre">check_requirements()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.chunk_documents"><code class="docutils literal notranslate"><span class="pre">chunk_documents()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.chunk_text"><code class="docutils literal notranslate"><span class="pre">chunk_text()</span></code></a></li>
@@ -132,6 +133,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#vd.get_install_instructions"><code class="docutils literal notranslate"><span class="pre">get_install_instructions()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.health_check_backend"><code class="docutils literal notranslate"><span class="pre">health_check_backend()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.health_check_collection"><code class="docutils literal notranslate"><span class="pre">health_check_collection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vd.hybrid_search"><code class="docutils literal notranslate"><span class="pre">hybrid_search()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.id_and_score"><code class="docutils literal notranslate"><span class="pre">id_and_score()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.id_only"><code class="docutils literal notranslate"><span class="pre">id_only()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.id_text_score"><code class="docutils literal notranslate"><span class="pre">id_text_score()</span></code></a></li>
@@ -609,13 +611,39 @@ should still feature-discover:</p>
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.</span></span><span class="sig-name descname"><span class="pre">SupportsHybrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/base.html#SupportsHybrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.SupportsHybrid" title="Link to this definition"></a></dt>
 <dd><p>A collection that supports native hybrid (dense + lexical) search.</p>
 <p>Hybrid search has no syntactic convergence across vector databases, so it
-is an opt-in capability, never baseline. Feature-discover before calling:</p>
+is an opt-in capability, never baseline. Prefer the top-level
+<a class="reference internal" href="#vd.hybrid_search" title="vd.hybrid_search"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.hybrid_search()</span></code></a> — it dispatches to this protocol when the
+collection implements it and falls back to a pure-Python BM25 + RRF
+fusion otherwise. Feature-discover directly only when you specifically
+need to refuse the fallback path:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">SupportsHybrid</span><span class="p">):</span>
-    <span class="n">hits</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">hybrid_search</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="s2">&quot;query text&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">hits</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">hybrid_search</span><span class="p">(</span><span class="s2">&quot;query text&quot;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Backends without native hybrid do not implement this; combine separate
-dense + lexical result lists with <a class="reference internal" href="#vd.reciprocal_rank_fusion" title="vd.reciprocal_rank_fusion"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.reciprocal_rank_fusion()</span></code></a>.</p>
+<p>The portable contract is <strong>Reciprocal Rank Fusion</strong> (every native backend
+supports it). Weighted-blend (<code class="docutils literal notranslate"><span class="pre">alpha</span></code>) and other backend-specific
+fusion variants are accepted via <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> and documented per adapter
+— they are not portable across backends.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>str</em><em> or </em><em>list</em><em>[</em><em>float</em><em>]</em>) – Query text (embedded via the collection’s embedder if configured)
+or a pre-computed query vector for the dense side.</p></li>
+<li><p><strong>query_text</strong> (<em>str</em><em>, </em><em>optional</em>) – Explicit text for the lexical side. Defaults to <code class="docutils literal notranslate"><span class="pre">query</span></code> when
+<code class="docutils literal notranslate"><span class="pre">query</span></code> is a string. <strong>Required</strong> when <code class="docutils literal notranslate"><span class="pre">query</span></code> is a vector.</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – Number of fused results to return.</p></li>
+<li><p><strong>filter</strong> (<em>dict</em><em>, </em><em>optional</em>) – Canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> metadata filter applied to both sub-searches.</p></li>
+<li><p><strong>k_dense</strong> (<em>int</em><em>, </em><em>optional</em>) – How many results to fetch from each sub-search before fusion.
+Both default to <code class="docutils literal notranslate"><span class="pre">max(4</span> <span class="pre">*</span> <span class="pre">limit,</span> <span class="pre">50)</span></code>. Widen for higher recall.</p></li>
+<li><p><strong>k_lexical</strong> (<em>int</em><em>, </em><em>optional</em>) – How many results to fetch from each sub-search before fusion.
+Both default to <code class="docutils literal notranslate"><span class="pre">max(4</span> <span class="pre">*</span> <span class="pre">limit,</span> <span class="pre">50)</span></code>. Widen for higher recall.</p></li>
+<li><p><strong>rrf_k</strong> (<em>int</em>) – Reciprocal Rank Fusion constant (typically 60).</p></li>
+<li><p><strong>egress</strong> (<em>callable</em><em>, </em><em>optional</em>) – Transform applied to each fused result before it is yielded.</p></li>
+<li><p><strong>**kwargs</strong> – Backend-specific knobs (e.g. <code class="docutils literal notranslate"><span class="pre">alpha=0.7</span></code> on weaviate,
+<code class="docutils literal notranslate"><span class="pre">ranker=&quot;weighted&quot;</span></code> on milvus). Documented per adapter.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -803,6 +831,52 @@ native filter via the escape hatch (<code class="docutils literal notranslate"><
 <span class="gp">&gt;&gt;&gt; </span><span class="n">docs</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add some documents...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">benchmark_search</span><span class="p">(</span><span class="n">docs</span><span class="p">,</span> <span class="s2">&quot;test query&quot;</span><span class="p">,</span> <span class="n">n_queries</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.bm25_lexical_search">
+<span class="sig-prename descclassname"><span class="pre">vd.</span></span><span class="sig-name descname"><span class="pre">bm25_lexical_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="vd/base.html#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.75</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/vd/search.html#bm25_lexical_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.bm25_lexical_search" title="Link to this definition"></a></dt>
+<dd><p>Brute-force BM25 lexical search over a vd collection’s stored <code class="docutils literal notranslate"><span class="pre">text</span></code>.</p>
+<p>Iterates every document in <code class="docutils literal notranslate"><span class="pre">collection</span></code>, tokenizes its <code class="docutils literal notranslate"><span class="pre">text</span></code> field,
+and computes Okapi BM25 scores against <code class="docutils literal notranslate"><span class="pre">query_text</span></code>. Used as the default
+lexical side of <a class="reference internal" href="#vd.hybrid_search" title="vd.hybrid_search"><code class="xref py py-func docutils literal notranslate"><span class="pre">hybrid_search()</span></code></a> when a collection does not implement
+<a class="reference internal" href="#vd.SupportsHybrid" title="vd.SupportsHybrid"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsHybrid</span></code></a>.</p>
+<p>Cost is <strong>O(N)</strong> in the collection size — fine for prototypes and
+collections up to ~100k documents. For larger workloads, either switch to
+a backend with native hybrid search (weaviate, elasticsearch, redis, …)
+or pass a custom <code class="docutils literal notranslate"><span class="pre">lexical_search</span></code> callable to <a class="reference internal" href="#vd.hybrid_search" title="vd.hybrid_search"><code class="xref py py-func docutils literal notranslate"><span class="pre">hybrid_search()</span></code></a> that
+consults a real text index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>collection</strong> (<a class="reference internal" href="#vd.Collection" title="vd.Collection"><em>Collection</em></a>) – Any vd Collection. Documents whose <code class="docutils literal notranslate"><span class="pre">text</span></code> is empty contribute zero
+score and are filtered out of the result.</p></li>
+<li><p><strong>query_text</strong> (<em>str</em>) – The lexical query.</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – Maximum number of results.</p></li>
+<li><p><strong>filter</strong> (<em>dict</em><em>, </em><em>optional</em>) – Canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> metadata filter. Applied client-side via
+<a class="reference internal" href="vd/filters.html#vd.filters.matches_filter" title="vd.filters.matches_filter"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.filters.matches_filter()</span></code></a>.</p></li>
+<li><p><strong>k1</strong> (<em>float</em>) – BM25 hyperparameters. Defaults match the standard Okapi BM25.</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – BM25 hyperparameters. Defaults match the standard Okapi BM25.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Result dicts in the same shape as <a class="reference internal" href="#vd.Collection.search" title="vd.Collection.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Collection.search()</span></code></a> —
+<code class="docutils literal notranslate"><span class="pre">{&quot;id&quot;,</span> <span class="pre">&quot;text&quot;,</span> <span class="pre">&quot;score&quot;,</span> <span class="pre">&quot;metadata&quot;}</span></code> — sorted by descending score.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[dict]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;the quick brown fox&#39;</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;lazy dog sleeps&#39;</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hits</span> <span class="o">=</span> <span class="n">bm25_lexical_search</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s1">&#39;quick fox&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hits</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+<span class="go">&#39;a&#39;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1443,6 +1517,65 @@ connection</em>, not embedding — embedding stays the caller’s concern.</p></
 <span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">docs</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">status</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">health_check_collection</span><span class="p">(</span><span class="n">docs</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.hybrid_search">
+<span class="sig-prename descclassname"><span class="pre">vd.</span></span><span class="sig-name descname"><span class="pre">hybrid_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="vd/base.html#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_dense</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_lexical</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rrf_k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lexical_search</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/vd/search.html#hybrid_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.hybrid_search" title="Link to this definition"></a></dt>
+<dd><p>Hybrid (dense + lexical) search that works on any vd Collection.</p>
+<p>Dispatches to the collection’s native <code class="docutils literal notranslate"><span class="pre">hybrid_search</span></code> when it implements
+<a class="reference internal" href="#vd.SupportsHybrid" title="vd.SupportsHybrid"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsHybrid</span></code></a> (efficient, server-side). Otherwise fuses the
+collection’s own dense <a class="reference internal" href="#vd.Collection.search" title="vd.Collection.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a> with a client-side
+lexical scan (default: <a class="reference internal" href="#vd.bm25_lexical_search" title="vd.bm25_lexical_search"><code class="xref py py-func docutils literal notranslate"><span class="pre">bm25_lexical_search()</span></code></a>) via <strong>Reciprocal Rank
+Fusion</strong>.</p>
+<p>The portable contract is RRF. Backend-specific knobs (weighted blend
+<code class="docutils literal notranslate"><span class="pre">alpha</span></code>, fusion-type variants, native ranker choices) are accepted via
+<code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> and forwarded to the adapter when it has a native
+implementation; they are ignored by the client-side fallback.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>collection</strong> (<a class="reference internal" href="#vd.Collection" title="vd.Collection"><em>Collection</em></a>) – Any vd Collection — native-hybrid or not.</p></li>
+<li><p><strong>query</strong> (<em>str</em><em> or </em><em>list</em><em>[</em><em>float</em><em>]</em>) – Query text (embedded by the collection if it has an embedder) or a
+pre-computed query vector. When <code class="docutils literal notranslate"><span class="pre">query</span></code> is a vector, <code class="docutils literal notranslate"><span class="pre">query_text</span></code>
+is <strong>required</strong>.</p></li>
+<li><p><strong>query_text</strong> (<em>str</em><em>, </em><em>optional</em>) – Explicit text for the lexical side. Defaults to <code class="docutils literal notranslate"><span class="pre">query</span></code> when
+<code class="docutils literal notranslate"><span class="pre">query</span></code> is a string.</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – Number of fused results to return.</p></li>
+<li><p><strong>filter</strong> (<em>dict</em><em>, </em><em>optional</em>) – Canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> metadata filter, applied to both sub-searches.</p></li>
+<li><p><strong>k_dense</strong> (<em>int</em><em>, </em><em>optional</em>) – How many results to fetch from each sub-search before fusion. Default
+is <code class="docutils literal notranslate"><span class="pre">max(4</span> <span class="pre">*</span> <span class="pre">limit,</span> <span class="pre">50)</span></code> for each side. Widen for higher recall.</p></li>
+<li><p><strong>k_lexical</strong> (<em>int</em><em>, </em><em>optional</em>) – How many results to fetch from each sub-search before fusion. Default
+is <code class="docutils literal notranslate"><span class="pre">max(4</span> <span class="pre">*</span> <span class="pre">limit,</span> <span class="pre">50)</span></code> for each side. Widen for higher recall.</p></li>
+<li><p><strong>rrf_k</strong> (<em>int</em>) – Reciprocal Rank Fusion constant (typically 60).</p></li>
+<li><p><strong>lexical_search</strong> (<em>callable</em><em>, </em><em>optional</em>) – Custom <code class="docutils literal notranslate"><span class="pre">lexical_search(collection,</span> <span class="pre">query_text,</span> <span class="pre">*,</span> <span class="pre">limit,</span> <span class="pre">filter,</span>
+<span class="pre">**kwargs)</span> <span class="pre">-&gt;</span> <span class="pre">list[SearchResult]</span></code>. Defaults to
+<a class="reference internal" href="#vd.bm25_lexical_search" title="vd.bm25_lexical_search"><code class="xref py py-func docutils literal notranslate"><span class="pre">bm25_lexical_search()</span></code></a>. Used only on the fallback path.</p></li>
+<li><p><strong>egress</strong> (<em>callable</em><em>, </em><em>optional</em>) – Per-result transform applied before yielding.</p></li>
+<li><p><strong>**kwargs</strong> – Extra options. On the native path they are forwarded to the adapter
+(e.g. <code class="docutils literal notranslate"><span class="pre">alpha=0.7</span></code> on weaviate). On the fallback path they are
+ignored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – Fused result dicts. <code class="docutils literal notranslate"><span class="pre">score</span></code> is the RRF score on the fallback path,
+or the adapter’s fused score on the native path.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">col</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s1">&#39;docs&#39;</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">col</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;cats purr&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                       <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">col</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;dogs bark&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                       <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">vd</span><span class="o">.</span><span class="n">hybrid_search</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="n">query_text</span><span class="o">=</span><span class="s1">&#39;cats&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                             <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hits</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+<span class="go">&#39;a&#39;</span>
 </pre></div>
 </div>
 </dd></dl>

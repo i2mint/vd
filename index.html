@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to vd’s documentation! &mdash; vd 0.2.4 documentation</title>
+  <title>Welcome to vd’s documentation! &mdash; vd 0.2.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="_static/documentation_options.js?v=cb850272"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -131,6 +131,7 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.WindowSlice"><code class="docutils literal notranslate"><span class="pre">WindowSlice</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.benchmark_insert"><code class="docutils literal notranslate"><span class="pre">benchmark_insert()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.benchmark_search"><code class="docutils literal notranslate"><span class="pre">benchmark_search()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.bm25_lexical_search"><code class="docutils literal notranslate"><span class="pre">bm25_lexical_search()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.check_requirements"><code class="docutils literal notranslate"><span class="pre">check_requirements()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.chunk_documents"><code class="docutils literal notranslate"><span class="pre">chunk_documents()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.chunk_text"><code class="docutils literal notranslate"><span class="pre">chunk_text()</span></code></a></li>
@@ -157,6 +158,7 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.get_install_instructions"><code class="docutils literal notranslate"><span class="pre">get_install_instructions()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.health_check_backend"><code class="docutils literal notranslate"><span class="pre">health_check_backend()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.health_check_collection"><code class="docutils literal notranslate"><span class="pre">health_check_collection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.hybrid_search"><code class="docutils literal notranslate"><span class="pre">hybrid_search()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.id_and_score"><code class="docutils literal notranslate"><span class="pre">id_and_score()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.id_only"><code class="docutils literal notranslate"><span class="pre">id_only()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.id_text_score"><code class="docutils literal notranslate"><span class="pre">id_text_score()</span></code></a></li>
@@ -339,7 +341,9 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/vd/search.html">vd.search</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.bm25_lexical_search"><code class="docutils literal notranslate"><span class="pre">bm25_lexical_search()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.deduplicate_results"><code class="docutils literal notranslate"><span class="pre">deduplicate_results()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.hybrid_search"><code class="docutils literal notranslate"><span class="pre">hybrid_search()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.multi_query_search"><code class="docutils literal notranslate"><span class="pre">multi_query_search()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.reciprocal_rank_fusion"><code class="docutils literal notranslate"><span class="pre">reciprocal_rank_fusion()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.search_similar_to_document"><code class="docutils literal notranslate"><span class="pre">search_similar_to_document()</span></code></a></li>
@@ -390,7 +394,7 @@
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-<p>Release: 0.2.4</p>
+<p>Release: 0.2.5</p>
 <p>Last change: May 27, 2026</p>
 </section>
 
