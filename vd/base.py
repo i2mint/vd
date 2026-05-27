@@ -549,9 +549,7 @@ class AbstractCollection(MutableMapping):
             text = query_text
             vec = self._vet_vector(query)
         if not text:
-            raise ValueError(
-                "hybrid_search needs a non-empty lexical query string."
-            )
+            raise ValueError("hybrid_search needs a non-empty lexical query string.")
         return vec, text
 
     # ----- MutableMapping interface --------------------------------------- #

@@ -584,7 +584,9 @@ def hybrid_search(
     >>> hits[0]['id']
     'a'
     """
-    k_dense_eff = k_dense if k_dense is not None else max(4 * limit, _HYBRID_OVERFETCH_FLOOR)
+    k_dense_eff = (
+        k_dense if k_dense is not None else max(4 * limit, _HYBRID_OVERFETCH_FLOOR)
+    )
     k_lexical_eff = (
         k_lexical if k_lexical is not None else max(4 * limit, _HYBRID_OVERFETCH_FLOOR)
     )
@@ -621,9 +623,7 @@ def hybrid_search(
     if not text:
         raise ValueError("hybrid_search needs a non-empty lexical query string.")
 
-    dense_hits = list(
-        collection.search(query, limit=k_dense_eff, filter=filter)
-    )
+    dense_hits = list(collection.search(query, limit=k_dense_eff, filter=filter))
 
     lex_fn = lexical_search if lexical_search is not None else bm25_lexical_search
     lex_hits = lex_fn(collection, text, limit=k_lexical_eff, filter=filter)
