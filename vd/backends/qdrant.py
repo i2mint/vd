@@ -239,6 +239,15 @@ class QdrantCollection(AbstractCollection):
         for point in response.points:
             payload = point.payload or {}
             score = point.score
+            # Qdrant `point.score` per metric (see vd.base "Score semantics"):
+            #   - cosine: cosine similarity in [-1, 1]  → matches vd canonical
+            #   - dot:    raw inner product              → matches vd canonical
+            #   - euclid: a *distance* value (lower-is-better); Qdrant's
+            #     own sort orders ascending in that case. The existing
+            #     transform 1/(1+d) matches vd's canonical l2 score directly
+            #     (no un-negation), so leave it as-is. If a future Qdrant
+            #     client version switches Euclid to higher-is-better, this
+            #     branch must be revisited.
             results.append(
                 {
                     "id": payload.get(_ID_KEY, str(point.id)),

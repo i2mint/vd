@@ -21,14 +21,42 @@ OVERFETCH_FACTOR = 10
 
 def score_from_distance(distance: float, metric: str) -> float:
     """
-    Convert a raw backend distance to a higher-is-better similarity score.
+    Convert a raw backend distance to ``vd``'s canonical similarity score.
+
+    Reference implementation of the cross-backend score contract documented
+    in :mod:`vd.base` ("Score semantics"): every ``SearchResult`` ``score``
+    is **higher-is-better** on a per-metric canonical scale, so fusion /
+    dedup / threshold logic works the same way across adapters.
+
+    Per-metric output:
+
+    ============  ===============================  ======================
+    metric        formula                          range
+    ============  ===============================  ======================
+    ``cosine``    ``1 - distance``                 ``[-1, 1]``
+    ``dot``       ``-distance``                    ``(-inf, +inf)``
+    ``l2``        ``1 / (1 + distance)``           ``(0, 1]``
+    ============  ===============================  ======================
+
+    Adapters whose backend already returns a higher-is-better number on a
+    *different* per-metric scale (Elasticsearch kNN ``_score``, MongoDB
+    Atlas ``vectorSearchScore``, Pinecone ``match.score``) **do not** route
+    through this helper — they pass the native score through and document
+    the deviation. Adapters whose backend returns a lower-is-better distance
+    (Chroma, DuckDB, FAISS L2, LanceDB, Milvus L2, pgvector, Redis,
+    sqlite-vec, Turbopuffer, Weaviate) call this helper to canonicalize.
 
     Parameters
     ----------
     distance : float
-        The backend's raw distance (lower = closer).
+        The backend's raw distance (lower = closer). For ``dot``, this is
+        the convention some backends use of negating the inner product so
+        that "distance" sorts the same way; for ``cosine``, the cosine
+        distance in ``[0, 2]``; for ``l2``, the Euclidean (or squared
+        Euclidean) distance in ``[0, +inf)``.
     metric : str
-        ``"cosine"``, ``"dot"``, or ``"l2"``.
+        ``"cosine"``, ``"dot"``, or ``"l2"``. Unknown metrics fall through
+        to the ``l2`` formula so the result is at least bounded.
 
     Examples
     --------
@@ -36,12 +64,16 @@ def score_from_distance(distance: float, metric: str) -> float:
     1.0
     >>> round(score_from_distance(1.0, 'l2'), 3)
     0.5
+    >>> score_from_distance(-0.7, 'dot')
+    0.7
     """
     if metric == "cosine":
-        # Cosine distance is in [0, 2]; similarity = 1 - distance.
+        # Cosine distance is in [0, 2]; similarity = 1 - distance ∈ [-1, 1].
         return 1.0 - distance
     if metric == "dot":
-        # Many backends report negative inner product as the "distance".
+        # Many backends report negative inner product as the "distance" so
+        # the smallest "distance" is the most similar; un-negate to recover
+        # the raw inner product (vd's canonical dot score).
         return -distance
     # l2 (and any unknown): squash a non-negative distance into (0, 1].
     return 1.0 / (1.0 + distance)

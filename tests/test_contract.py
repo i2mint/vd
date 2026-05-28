@@ -127,3 +127,66 @@ def test_chroma_rejects_unsupported_operator():
     # Chroma's filter subset has no $exists -> a clear vd error, pre-query.
     with pytest.raises(UnsupportedFilterError):
         list(col.search([0.1, 0.2, 0.3], filter={"missing": {"$exists": True}}))
+
+
+# --------------------------------------------------------------------------- #
+# Score semantics — the cross-backend contract documented in vd.base.
+# Pin the canonical scale on the in-memory reference adapter; distance-
+# returning adapters route through score_from_distance and therefore match
+# automatically. See vd/base.py "Score semantics" and issue #9.
+# --------------------------------------------------------------------------- #
+
+
+@pytest.mark.parametrize(
+    "metric,query,expected_top_score",
+    [
+        # Identical vectors → cosine similarity = 1.0 (max of [-1, 1]).
+        ("cosine", [1.0, 0.0, 0.0], 1.0),
+        # Identical vectors → inner product = 1.0 (no upper bound; equality here).
+        ("dot", [1.0, 0.0, 0.0], 1.0),
+        # Identical vectors → euclidean distance = 0 → score = 1/(1+0) = 1.0.
+        ("l2", [1.0, 0.0, 0.0], 1.0),
+    ],
+)
+def test_score_contract_identical_query_returns_max_canonical_score(
+    metric, query, expected_top_score
+):
+    """An identical query vector gets the canonical maximum for its metric."""
+    col = vd.connect("memory").create_collection(
+        f"score_contract_{metric}", metric=metric
+    )
+    col["a"] = Document(id="a", text="match", vector=query)
+    col["b"] = Document(id="b", text="other", vector=[0.0, 1.0, 0.0])
+    hits = list(col.search(query, limit=2))
+    assert hits[0]["id"] == "a"
+    assert hits[0]["score"] == pytest.approx(expected_top_score)
+
+
+def test_score_contract_cosine_orthogonal_is_zero():
+    """vd canonical cosine score for orthogonal vectors is exactly 0.0."""
+    col = vd.connect("memory").create_collection(
+        "score_contract_cos_ortho", metric="cosine"
+    )
+    col["a"] = Document(id="a", text="x", vector=[1.0, 0.0])
+    col["b"] = Document(id="b", text="y", vector=[0.0, 1.0])
+    hits = list(col.search([1.0, 0.0], limit=2))
+    by_id = {h["id"]: h["score"] for h in hits}
+    assert by_id["a"] == pytest.approx(1.0)
+    assert by_id["b"] == pytest.approx(0.0)
+
+
+def test_score_from_distance_helper_matches_documented_table():
+    """The reference helper produces exactly the formulas documented in vd.base."""
+    from vd.backends._helpers import score_from_distance
+
+    # cosine: 1 - d, d ∈ [0, 2] -> score ∈ [-1, 1]
+    assert score_from_distance(0.0, "cosine") == 1.0
+    assert score_from_distance(1.0, "cosine") == 0.0
+    assert score_from_distance(2.0, "cosine") == -1.0
+    # dot: -d (un-negate backends' negated inner product convention)
+    assert score_from_distance(-0.7, "dot") == pytest.approx(0.7)
+    assert score_from_distance(2.5, "dot") == pytest.approx(-2.5)
+    # l2: 1/(1+d), d ∈ [0, inf) -> score ∈ (0, 1]
+    assert score_from_distance(0.0, "l2") == 1.0
+    assert score_from_distance(1.0, "l2") == pytest.approx(0.5)
+    assert score_from_distance(9.0, "l2") == pytest.approx(0.1)
