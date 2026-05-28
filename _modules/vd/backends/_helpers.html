@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.backends._helpers &mdash; vd 0.2.6 documentation</title>
+  <title>vd.backends._helpers &mdash; vd 0.2.7 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=fc7d8818"></script>
+      <script src="../../../_static/documentation_options.js?v=58050c01"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -132,14 +132,42 @@
 <a class="viewcode-back" href="../../../module_docs/vd/backends/_helpers.html#vd.backends._helpers.score_from_distance">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">score_from_distance</span><span class="p">(</span><span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert a raw backend distance to a higher-is-better similarity score.</span>
+<span class="sd">    Convert a raw backend distance to ``vd``&#39;s canonical similarity score.</span>
+
+<span class="sd">    Reference implementation of the cross-backend score contract documented</span>
+<span class="sd">    in :mod:`vd.base` (&quot;Score semantics&quot;): every ``SearchResult`` ``score``</span>
+<span class="sd">    is **higher-is-better** on a per-metric canonical scale, so fusion /</span>
+<span class="sd">    dedup / threshold logic works the same way across adapters.</span>
+
+<span class="sd">    Per-metric output:</span>
+
+<span class="sd">    ============  ===============================  ======================</span>
+<span class="sd">    metric        formula                          range</span>
+<span class="sd">    ============  ===============================  ======================</span>
+<span class="sd">    ``cosine``    ``1 - distance``                 ``[-1, 1]``</span>
+<span class="sd">    ``dot``       ``-distance``                    ``(-inf, +inf)``</span>
+<span class="sd">    ``l2``        ``1 / (1 + distance)``           ``(0, 1]``</span>
+<span class="sd">    ============  ===============================  ======================</span>
+
+<span class="sd">    Adapters whose backend already returns a higher-is-better number on a</span>
+<span class="sd">    *different* per-metric scale (Elasticsearch kNN ``_score``, MongoDB</span>
+<span class="sd">    Atlas ``vectorSearchScore``, Pinecone ``match.score``) **do not** route</span>
+<span class="sd">    through this helper — they pass the native score through and document</span>
+<span class="sd">    the deviation. Adapters whose backend returns a lower-is-better distance</span>
+<span class="sd">    (Chroma, DuckDB, FAISS L2, LanceDB, Milvus L2, pgvector, Redis,</span>
+<span class="sd">    sqlite-vec, Turbopuffer, Weaviate) call this helper to canonicalize.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    distance : float</span>
-<span class="sd">        The backend&#39;s raw distance (lower = closer).</span>
+<span class="sd">        The backend&#39;s raw distance (lower = closer). For ``dot``, this is</span>
+<span class="sd">        the convention some backends use of negating the inner product so</span>
+<span class="sd">        that &quot;distance&quot; sorts the same way; for ``cosine``, the cosine</span>
+<span class="sd">        distance in ``[0, 2]``; for ``l2``, the Euclidean (or squared</span>
+<span class="sd">        Euclidean) distance in ``[0, +inf)``.</span>
 <span class="sd">    metric : str</span>
-<span class="sd">        ``&quot;cosine&quot;``, ``&quot;dot&quot;``, or ``&quot;l2&quot;``.</span>
+<span class="sd">        ``&quot;cosine&quot;``, ``&quot;dot&quot;``, or ``&quot;l2&quot;``. Unknown metrics fall through</span>
+<span class="sd">        to the ``l2`` formula so the result is at least bounded.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -147,12 +175,16 @@
 <span class="sd">    1.0</span>
 <span class="sd">    &gt;&gt;&gt; round(score_from_distance(1.0, &#39;l2&#39;), 3)</span>
 <span class="sd">    0.5</span>
+<span class="sd">    &gt;&gt;&gt; score_from_distance(-0.7, &#39;dot&#39;)</span>
+<span class="sd">    0.7</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;cosine&quot;</span><span class="p">:</span>
-        <span class="c1"># Cosine distance is in [0, 2]; similarity = 1 - distance.</span>
+        <span class="c1"># Cosine distance is in [0, 2]; similarity = 1 - distance ∈ [-1, 1].</span>
         <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">distance</span>
     <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;dot&quot;</span><span class="p">:</span>
-        <span class="c1"># Many backends report negative inner product as the &quot;distance&quot;.</span>
+        <span class="c1"># Many backends report negative inner product as the &quot;distance&quot; so</span>
+        <span class="c1"># the smallest &quot;distance&quot; is the most similar; un-negate to recover</span>
+        <span class="c1"># the raw inner product (vd&#39;s canonical dot score).</span>
         <span class="k">return</span> <span class="o">-</span><span class="n">distance</span>
     <span class="c1"># l2 (and any unknown): squash a non-negative distance into (0, 1].</span>
     <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">distance</span><span class="p">)</span></div>

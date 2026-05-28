@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.base &mdash; vd 0.2.6 documentation</title>
+  <title>vd.base &mdash; vd 0.2.7 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
+      <script src="../../_static/documentation_options.js?v=58050c01"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -367,7 +367,13 @@ unsupported operator fails with a clear <a class="reference internal" href="#vd.
 </dd>
 <dt class="field-even">Yields<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>dict</em> – <code class="docutils literal notranslate"><span class="pre">{&quot;id&quot;,</span> <span class="pre">&quot;text&quot;,</span> <span class="pre">&quot;score&quot;,</span> <span class="pre">&quot;metadata&quot;}</span></code> — or whatever <code class="docutils literal notranslate"><span class="pre">egress</span></code>
-returns.</p>
+returns. <code class="docutils literal notranslate"><span class="pre">score</span></code> is a higher-is-better, per-metric canonical
+similarity (see the “Score semantics” table at the top of
+<a class="reference internal" href="#module-vd.base" title="vd.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vd.base</span></code></a>): cosine in <code class="docutils literal notranslate"><span class="pre">[-1,</span> <span class="pre">1]</span></code>, dot in <code class="docutils literal notranslate"><span class="pre">(-inf,</span> <span class="pre">+inf)</span></code>,
+l2 squashed to <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">1]</span></code>. Adapters whose backend returns a
+native combined-ranking score on a different scale (e.g.
+Elasticsearch, Atlas, Pinecone) document the deviation in
+their own docstring.</p>
 </dd>
 </dl>
 </dd></dl>

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.base &mdash; vd 0.2.6 documentation</title>
+  <title>vd.base &mdash; vd 0.2.7 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
+      <script src="../../_static/documentation_options.js?v=58050c01"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -175,6 +175,43 @@
 <span class="c1">#: Distance metrics the facade understands. Adapters map these to their own</span>
 <span class="c1">#: spellings (e.g. ``&quot;l2&quot;`` -&gt; Qdrant ``Distance.EUCLID``).</span>
 <span class="n">METRICS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span> <span class="s2">&quot;dot&quot;</span><span class="p">,</span> <span class="s2">&quot;l2&quot;</span><span class="p">})</span>
+
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1"># Score semantics — the cross-backend contract for SearchResult[&quot;score&quot;]</span>
+<span class="c1"># --------------------------------------------------------------------------- #</span>
+<span class="c1">#</span>
+<span class="c1"># Every :data:`SearchResult` carries a ``score`` field. ``vd``&#39;s contract for</span>
+<span class="c1"># that number is **higher-is-better, per-metric canonical similarity**:</span>
+<span class="c1">#</span>
+<span class="c1"># ============  ===============================  ======================</span>
+<span class="c1"># metric        canonical score                  range</span>
+<span class="c1"># ============  ===============================  ======================</span>
+<span class="c1"># ``cosine``    ``1 - cosine_distance``          ``[-1, 1]``</span>
+<span class="c1"># ``dot``       raw inner product                ``(-inf, +inf)``</span>
+<span class="c1"># ``l2``        ``1 / (1 + euclidean_distance)`` ``(0, 1]``</span>
+<span class="c1"># ============  ===============================  ======================</span>
+<span class="c1">#</span>
+<span class="c1"># Rationale:</span>
+<span class="c1">#</span>
+<span class="c1"># - **Same backend, different metrics** stay comparable (all three are</span>
+<span class="c1">#   higher-better).</span>
+<span class="c1"># - **Same metric, different backends** stay comparable: ``vd``&#39;s own</span>
+<span class="c1">#   ``reciprocal_rank_fusion`` / ``deduplicate_results`` / ``multi_query_search``</span>
+<span class="c1">#   helpers and consumers like ``ef.SearchHit`` all assume this scale, so an</span>
+<span class="c1">#   adapter that returns ``1 / (1 + raw_distance)`` for cosine instead of</span>
+<span class="c1">#   ``1 - raw_distance`` would mis-rank only across adapters but consistently</span>
+<span class="c1">#   confuse score-threshold logic.</span>
+<span class="c1">#</span>
+<span class="c1"># The reference implementations are :func:`vd.backends.memory._similarity`</span>
+<span class="c1"># (in-memory adapter) and :func:`vd.backends._helpers.score_from_distance`</span>
+<span class="c1"># (distance-returning adapters). Adapters whose backend natively returns a</span>
+<span class="c1"># higher-is-better score on a *different* per-metric scale (e.g. Elasticsearch</span>
+<span class="c1"># kNN, MongoDB Atlas, Pinecone) **document the deviation in their adapter</span>
+<span class="c1"># docstring** rather than silently rescaling, because rescaling a backend&#39;s</span>
+<span class="c1"># own combined-ranking score can change ordering for ties. The deviation is</span>
+<span class="c1"># the cost of using that backend&#39;s native scoring.</span>
+<span class="c1">#</span>
+<span class="c1"># See issue #9 for the history of this contract.</span>
 
 <span class="c1"># Re-exported from vd.filters; imported lazily inside methods to avoid a cycle</span>
 <span class="c1"># (vd.filters imports UnsupportedFilterError from this module).</span>
@@ -527,9 +564,7 @@
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Document&quot;</span><span class="p">:</span> <span class="o">...</span>
 
-    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="s2">&quot;Document&quot;</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="s2">&quot;Document&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 
@@ -878,7 +913,13 @@
 <span class="sd">        ------</span>
 <span class="sd">        dict</span>
 <span class="sd">            ``{&quot;id&quot;, &quot;text&quot;, &quot;score&quot;, &quot;metadata&quot;}`` — or whatever ``egress``</span>
-<span class="sd">            returns.</span>
+<span class="sd">            returns. ``score`` is a higher-is-better, per-metric canonical</span>
+<span class="sd">            similarity (see the &quot;Score semantics&quot; table at the top of</span>
+<span class="sd">            :mod:`vd.base`): cosine in ``[-1, 1]``, dot in ``(-inf, +inf)``,</span>
+<span class="sd">            l2 squashed to ``(0, 1]``. Adapters whose backend returns a</span>
+<span class="sd">            native combined-ranking score on a different scale (e.g.</span>
+<span class="sd">            Elasticsearch, Atlas, Pinecone) document the deviation in</span>
+<span class="sd">            their own docstring.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">vd.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_filter</span>
 
