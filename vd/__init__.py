@@ -173,6 +173,7 @@ from vd.health import (  # noqa: E402
 
 # ----- advanced search ----------------------------------------------------- #
 from vd.search import (  # noqa: E402
+    BM25Index,
     bm25_lexical_search,
     deduplicate_results,
     hybrid_search,
@@ -307,6 +308,7 @@ __all__ = [
     "deduplicate_results",
     "hybrid_search",
     "bm25_lexical_search",
+    "BM25Index",
     # configuration
     "load_config",
     "save_config",
