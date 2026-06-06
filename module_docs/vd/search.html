@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.search &mdash; vd 0.2.7 documentation</title>
+  <title>vd.search &mdash; vd 0.2.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=58050c01"></script>
+      <script src="../../_static/documentation_options.js?v=b01fafc3"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -79,6 +79,10 @@
 <li class="toctree-l1"><a class="reference internal" href="providers.html">vd.providers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="requirements.html">vd.requirements</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">vd.search</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vd.search.BM25Index"><code class="docutils literal notranslate"><span class="pre">BM25Index</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vd.search.BM25Index.search"><code class="docutils literal notranslate"><span class="pre">BM25Index.search()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.search.bm25_lexical_search"><code class="docutils literal notranslate"><span class="pre">bm25_lexical_search()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.search.deduplicate_results"><code class="docutils literal notranslate"><span class="pre">deduplicate_results()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vd.search.hybrid_search"><code class="docutils literal notranslate"><span class="pre">hybrid_search()</span></code></a></li>
@@ -122,19 +126,73 @@
 <p>Advanced search utilities for vd.</p>
 <p>Provides functions for multi-query search, search result merging, and
 other advanced search patterns.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="vd.search.BM25Index">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.search.</span></span><span class="sig-name descname"><span class="pre">BM25Index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">collection:</span> <span class="pre">~vd.base.Collection,</span> <span class="pre">*,</span> <span class="pre">filter:</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">tokenize:</span> <span class="pre">~typing.Callable[[str],</span> <span class="pre">list[str]]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">_tokenize&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vd/search.html#BM25Index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.search.BM25Index" title="Link to this definition"></a></dt>
+<dd><p>A reusable Okapi BM25 index over a vd collection’s stored <code class="docutils literal notranslate"><span class="pre">text</span></code>.</p>
+<p>Builds the <strong>query-independent</strong> term statistics — per-document token
+lists, document frequencies, document lengths, and the mean length — once
+in <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code>, then answers many queries against them via
+<a class="reference internal" href="#vd.search.BM25Index.search" title="vd.search.BM25Index.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a>. This is the build-once / query-many companion to
+<a class="reference internal" href="#vd.search.bm25_lexical_search" title="vd.search.bm25_lexical_search"><code class="xref py py-func docutils literal notranslate"><span class="pre">bm25_lexical_search()</span></code></a> (which builds a throwaway index for a single
+query): for batch evaluation or any repeated querying of the same
+collection it turns an O(N · Q) workload (re-tokenizing every document on
+every query) into O(N + scoring · Q).</p>
+<p>Construction is <strong>O(N)</strong> in the collection size; each <a class="reference internal" href="#vd.search.BM25Index.search" title="vd.search.BM25Index.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a> is
+O(matching documents). Fine for prototypes and collections up to ~100k
+documents; for larger workloads switch to a backend with a native text
+index (weaviate, elasticsearch, redis, …).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>collection</strong> (<a class="reference internal" href="../vd.html#vd.Collection" title="vd.Collection"><em>Collection</em></a>) – Any vd Collection (or mapping-like <code class="docutils literal notranslate"><span class="pre">id</span> <span class="pre">-&gt;</span> <span class="pre">obj</span></code> exposing <code class="docutils literal notranslate"><span class="pre">.text</span></code> and
+<code class="docutils literal notranslate"><span class="pre">.metadata</span></code>). Documents whose <code class="docutils literal notranslate"><span class="pre">text</span></code> is empty contribute zero score
+and are dropped at build time.</p></li>
+<li><p><strong>filter</strong> (<em>dict</em><em>, </em><em>optional</em>) – Canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> metadata filter, applied <strong>once</strong> at build time (via
+<a class="reference internal" href="filters.html#vd.filters.matches_filter" title="vd.filters.matches_filter"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.filters.matches_filter()</span></code></a>) so the index covers only the
+matching documents and its statistics reflect that subset.</p></li>
+<li><p><strong>tokenize</strong> (<em>Callable</em><em>[</em><em>[</em><em>str</em><em>]</em><em>, </em><em>list</em><em>[</em><em>str</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Tokenizer (default: lowercased <code class="docutils literal notranslate"><span class="pre">\w+</span></code> tokens). Pass a custom one for
+stemming, CJK, etc.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;memory&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;the quick brown fox&#39;</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;lazy dog sleeps&#39;</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">index</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">BM25Index</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">index</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;quick fox&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+<span class="go">&#39;a&#39;</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.search.BM25Index.search">
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.75</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/search.html#BM25Index.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.search.BM25Index.search" title="Link to this definition"></a></dt>
+<dd><p>Okapi BM25 scores for <code class="docutils literal notranslate"><span class="pre">query_text</span></code> over the indexed documents.</p>
+<p>Returns result dicts in the same shape as <code class="xref py py-meth docutils literal notranslate"><span class="pre">Collection.search()</span></code> —
+<code class="docutils literal notranslate"><span class="pre">{&quot;id&quot;,</span> <span class="pre">&quot;text&quot;,</span> <span class="pre">&quot;score&quot;,</span> <span class="pre">&quot;metadata&quot;}</span></code> — sorted by descending score.
+<code class="docutils literal notranslate"><span class="pre">k1</span></code> / <code class="docutils literal notranslate"><span class="pre">b</span></code> are the standard Okapi hyperparameters (scoring-time, so
+one index can be queried with different settings).</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.search.bm25_lexical_search">
 <span class="sig-prename descclassname"><span class="pre">vd.search.</span></span><span class="sig-name descname"><span class="pre">bm25_lexical_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="base.html#vd.base.Collection" title="vd.base.Collection"><span class="pre">Collection</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.75</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vd/search.html#bm25_lexical_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.search.bm25_lexical_search" title="Link to this definition"></a></dt>
 <dd><p>Brute-force BM25 lexical search over a vd collection’s stored <code class="docutils literal notranslate"><span class="pre">text</span></code>.</p>
-<p>Iterates every document in <code class="docutils literal notranslate"><span class="pre">collection</span></code>, tokenizes its <code class="docutils literal notranslate"><span class="pre">text</span></code> field,
-and computes Okapi BM25 scores against <code class="docutils literal notranslate"><span class="pre">query_text</span></code>. Used as the default
-lexical side of <a class="reference internal" href="#vd.search.hybrid_search" title="vd.search.hybrid_search"><code class="xref py py-func docutils literal notranslate"><span class="pre">hybrid_search()</span></code></a> when a collection does not implement
-<code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsHybrid</span></code>.</p>
+<p>Builds a throwaway <a class="reference internal" href="#vd.search.BM25Index" title="vd.search.BM25Index"><code class="xref py py-class docutils literal notranslate"><span class="pre">BM25Index</span></code></a> over <code class="docutils literal notranslate"><span class="pre">collection</span></code> and runs a single
+query against it. Used as the default lexical side of <a class="reference internal" href="#vd.search.hybrid_search" title="vd.search.hybrid_search"><code class="xref py py-func docutils literal notranslate"><span class="pre">hybrid_search()</span></code></a>
+when a collection does not implement <code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsHybrid</span></code>.</p>
 <p>Cost is <strong>O(N)</strong> in the collection size — fine for prototypes and
-collections up to ~100k documents. For larger workloads, either switch to
-a backend with native hybrid search (weaviate, elasticsearch, redis, …)
-or pass a custom <code class="docutils literal notranslate"><span class="pre">lexical_search</span></code> callable to <a class="reference internal" href="#vd.search.hybrid_search" title="vd.search.hybrid_search"><code class="xref py py-func docutils literal notranslate"><span class="pre">hybrid_search()</span></code></a> that
-consults a real text index.</p>
+collections up to ~100k documents. <strong>For repeated queries over the same
+collection, build a</strong> <a class="reference internal" href="#vd.search.BM25Index" title="vd.search.BM25Index"><code class="xref py py-class docutils literal notranslate"><span class="pre">BM25Index</span></code></a> <strong>once and call</strong>
+<a class="reference internal" href="#vd.search.BM25Index.search" title="vd.search.BM25Index.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BM25Index.search()</span></code></a> <strong>per query</strong> instead of calling this function in a
+loop — the term statistics are then computed once rather than on every call.
+For larger workloads, switch to a backend with native hybrid search
+(weaviate, elasticsearch, redis, …) or pass a custom <code class="docutils literal notranslate"><span class="pre">lexical_search</span></code>
+callable to <a class="reference internal" href="#vd.search.hybrid_search" title="vd.search.hybrid_search"><code class="xref py py-func docutils literal notranslate"><span class="pre">hybrid_search()</span></code></a> that consults a real text index.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

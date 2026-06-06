@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.search &mdash; vd 0.2.7 documentation</title>
+  <title>vd.search &mdash; vd 0.2.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=58050c01"></script>
+      <script src="../../_static/documentation_options.js?v=b01fafc3"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -492,6 +492,138 @@
     <span class="k">return</span> <span class="n">_TOKEN_RE</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
 
 
+<div class="viewcode-block" id="BM25Index">
+<a class="viewcode-back" href="../../module_docs/vd/search.html#vd.BM25Index">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BM25Index</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A reusable Okapi BM25 index over a vd collection&#39;s stored ``text``.</span>
+
+<span class="sd">    Builds the **query-independent** term statistics — per-document token</span>
+<span class="sd">    lists, document frequencies, document lengths, and the mean length — once</span>
+<span class="sd">    in :meth:`__init__`, then answers many queries against them via</span>
+<span class="sd">    :meth:`search`. This is the build-once / query-many companion to</span>
+<span class="sd">    :func:`bm25_lexical_search` (which builds a throwaway index for a single</span>
+<span class="sd">    query): for batch evaluation or any repeated querying of the same</span>
+<span class="sd">    collection it turns an O(N · Q) workload (re-tokenizing every document on</span>
+<span class="sd">    every query) into O(N + scoring · Q).</span>
+
+<span class="sd">    Construction is **O(N)** in the collection size; each :meth:`search` is</span>
+<span class="sd">    O(matching documents). Fine for prototypes and collections up to ~100k</span>
+<span class="sd">    documents; for larger workloads switch to a backend with a native text</span>
+<span class="sd">    index (weaviate, elasticsearch, redis, …).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    collection : Collection</span>
+<span class="sd">        Any vd Collection (or mapping-like ``id -&gt; obj`` exposing ``.text`` and</span>
+<span class="sd">        ``.metadata``). Documents whose ``text`` is empty contribute zero score</span>
+<span class="sd">        and are dropped at build time.</span>
+<span class="sd">    filter : dict, optional</span>
+<span class="sd">        Canonical ``vd`` metadata filter, applied **once** at build time (via</span>
+<span class="sd">        :func:`vd.filters.matches_filter`) so the index covers only the</span>
+<span class="sd">        matching documents and its statistics reflect that subset.</span>
+<span class="sd">    tokenize : Callable[[str], list[str]], optional</span>
+<span class="sd">        Tokenizer (default: lowercased ``\\w+`` tokens). Pass a custom one for</span>
+<span class="sd">        stemming, CJK, etc.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import vd</span>
+<span class="sd">    &gt;&gt;&gt; c = vd.connect(&#39;memory&#39;).create_collection(&#39;t&#39;, dimension=2)</span>
+<span class="sd">    &gt;&gt;&gt; c[&#39;a&#39;] = vd.Document(id=&#39;a&#39;, text=&#39;the quick brown fox&#39;, vector=[1.0, 0.0])</span>
+<span class="sd">    &gt;&gt;&gt; c[&#39;b&#39;] = vd.Document(id=&#39;b&#39;, text=&#39;lazy dog sleeps&#39;, vector=[0.0, 1.0])</span>
+<span class="sd">    &gt;&gt;&gt; index = vd.BM25Index(c)</span>
+<span class="sd">    &gt;&gt;&gt; index.search(&#39;quick fox&#39;, limit=1)[0][&#39;id&#39;]</span>
+<span class="sd">    &#39;a&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="nb">filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tokenize</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_tokenize</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">vd.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">matches_filter</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tokenize</span> <span class="o">=</span> <span class="n">tokenize</span>
+        <span class="c1"># Pass 1 (query-independent): tokenize once, compute document</span>
+        <span class="c1"># frequencies and lengths.</span>
+        <span class="n">docs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">df</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">matches_filter</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{},</span> <span class="nb">filter</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">tokens</span> <span class="o">=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">tokens</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">docs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{}),</span> <span class="n">tokens</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">tokens</span><span class="p">):</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_docs</span> <span class="o">=</span> <span class="n">docs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_docs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">docs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_avg_len</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">toks</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">toks</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_docs</span> <span class="k">if</span> <span class="n">docs</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of non-empty, filter-surviving documents in the index.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_docs</span>
+
+<div class="viewcode-block" id="BM25Index.search">
+<a class="viewcode-back" href="../../module_docs/vd/search.html#vd.BM25Index.search">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">k1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
+        <span class="n">b</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.75</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Okapi BM25 scores for ``query_text`` over the indexed documents.</span>
+
+<span class="sd">        Returns result dicts in the same shape as :meth:`Collection.search` —</span>
+<span class="sd">        ``{&quot;id&quot;, &quot;text&quot;, &quot;score&quot;, &quot;metadata&quot;}`` — sorted by descending score.</span>
+<span class="sd">        ``k1`` / ``b`` are the standard Okapi hyperparameters (scoring-time, so</span>
+<span class="sd">        one index can be queried with different settings).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query_tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenize</span><span class="p">(</span><span class="n">query_text</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">query_tokens</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="c1"># Pass 2 (query-dependent): idf for the query terms, then Okapi scoring.</span>
+        <span class="n">n_docs</span><span class="p">,</span> <span class="n">avg_len</span><span class="p">,</span> <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_docs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_avg_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
+        <span class="n">idf</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">term</span><span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">n_docs</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">query_tokens</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">df</span>
+        <span class="p">}</span>
+
+        <span class="n">scored</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">tokens</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docs</span><span class="p">:</span>
+            <span class="n">doc_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
+            <span class="n">tf</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">idf</span><span class="p">:</span>
+                    <span class="n">tf</span><span class="p">[</span><span class="n">tok</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tok</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">tf</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">for</span> <span class="n">term</span><span class="p">,</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">tf</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">numer</span> <span class="o">=</span> <span class="n">freq</span> <span class="o">*</span> <span class="p">(</span><span class="n">k1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">denom</span> <span class="o">=</span> <span class="n">freq</span> <span class="o">+</span> <span class="n">k1</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">b</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">doc_len</span> <span class="o">/</span> <span class="n">avg_len</span><span class="p">)</span>
+                <span class="n">score</span> <span class="o">+=</span> <span class="n">idf</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">*</span> <span class="n">numer</span> <span class="o">/</span> <span class="n">denom</span>
+            <span class="n">scored</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">doc_id</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="n">scored</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">scored</span><span class="p">[:</span><span class="n">limit</span><span class="p">]</span></div>
+</div>
+
+
+
 <div class="viewcode-block" id="bm25_lexical_search">
 <a class="viewcode-back" href="../../module_docs/vd/search.html#vd.bm25_lexical_search">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">bm25_lexical_search</span><span class="p">(</span>
@@ -506,16 +638,18 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Brute-force BM25 lexical search over a vd collection&#39;s stored ``text``.</span>
 
-<span class="sd">    Iterates every document in ``collection``, tokenizes its ``text`` field,</span>
-<span class="sd">    and computes Okapi BM25 scores against ``query_text``. Used as the default</span>
-<span class="sd">    lexical side of :func:`hybrid_search` when a collection does not implement</span>
-<span class="sd">    :class:`SupportsHybrid`.</span>
+<span class="sd">    Builds a throwaway :class:`BM25Index` over ``collection`` and runs a single</span>
+<span class="sd">    query against it. Used as the default lexical side of :func:`hybrid_search`</span>
+<span class="sd">    when a collection does not implement :class:`SupportsHybrid`.</span>
 
 <span class="sd">    Cost is **O(N)** in the collection size — fine for prototypes and</span>
-<span class="sd">    collections up to ~100k documents. For larger workloads, either switch to</span>
-<span class="sd">    a backend with native hybrid search (weaviate, elasticsearch, redis, …)</span>
-<span class="sd">    or pass a custom ``lexical_search`` callable to :func:`hybrid_search` that</span>
-<span class="sd">    consults a real text index.</span>
+<span class="sd">    collections up to ~100k documents. **For repeated queries over the same</span>
+<span class="sd">    collection, build a** :class:`BM25Index` **once and call**</span>
+<span class="sd">    :meth:`BM25Index.search` **per query** instead of calling this function in a</span>
+<span class="sd">    loop — the term statistics are then computed once rather than on every call.</span>
+<span class="sd">    For larger workloads, switch to a backend with native hybrid search</span>
+<span class="sd">    (weaviate, elasticsearch, redis, …) or pass a custom ``lexical_search``</span>
+<span class="sd">    callable to :func:`hybrid_search` that consults a real text index.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -548,60 +682,9 @@
 <span class="sd">    &gt;&gt;&gt; hits[0][&#39;id&#39;]</span>
 <span class="sd">    &#39;a&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">vd.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">matches_filter</span>
-
-    <span class="n">query_tokens</span> <span class="o">=</span> <span class="n">_tokenize</span><span class="p">(</span><span class="n">query_text</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">query_tokens</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">[]</span>
-
-    <span class="c1"># Pass 1: tokenize once, compute document frequencies and lengths.</span>
-    <span class="n">docs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">df</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
-        <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">matches_filter</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{},</span> <span class="nb">filter</span><span class="p">):</span>
-            <span class="k">continue</span>
-        <span class="n">tokens</span> <span class="o">=</span> <span class="n">_tokenize</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">tokens</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="n">docs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{}),</span> <span class="n">tokens</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">tokens</span><span class="p">):</span>
-            <span class="n">df</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">term</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">docs</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">[]</span>
-
-    <span class="n">n_docs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">docs</span><span class="p">)</span>
-    <span class="n">avg_len</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">toks</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">toks</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_docs</span>
-
-    <span class="c1"># Pass 2: BM25 scoring (Okapi).</span>
-    <span class="n">query_terms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">query_tokens</span><span class="p">)</span>
-    <span class="n">idf</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">term</span><span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">n_docs</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">query_terms</span>
-        <span class="k">if</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">df</span>
-    <span class="p">}</span>
-
-    <span class="n">scored</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SearchResult</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">tokens</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">:</span>
-        <span class="n">score</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="n">doc_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
-        <span class="n">tf</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">idf</span><span class="p">:</span>
-                <span class="n">tf</span><span class="p">[</span><span class="n">tok</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tok</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">tf</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="k">for</span> <span class="n">term</span><span class="p">,</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">tf</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">numer</span> <span class="o">=</span> <span class="n">freq</span> <span class="o">*</span> <span class="p">(</span><span class="n">k1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">denom</span> <span class="o">=</span> <span class="n">freq</span> <span class="o">+</span> <span class="n">k1</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">b</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">doc_len</span> <span class="o">/</span> <span class="n">avg_len</span><span class="p">)</span>
-            <span class="n">score</span> <span class="o">+=</span> <span class="n">idf</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">*</span> <span class="n">numer</span> <span class="o">/</span> <span class="n">denom</span>
-        <span class="n">scored</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">doc_id</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span>
-        <span class="p">)</span>
-
-    <span class="n">scored</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">scored</span><span class="p">[:</span><span class="n">limit</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">BM25Index</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">)</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+        <span class="n">query_text</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">k1</span><span class="o">=</span><span class="n">k1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span>
+    <span class="p">)</span></div>
 
 
 
