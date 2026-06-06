@@ -60,6 +60,10 @@ dev = [
     "duckdb",
     "sqlite-vec",
 ]
+# Lightweight test-runner deps for CI (no backend extras — those live in
+# `dev`). Installed in CI via [tool.wads.ci.install].extras so the async
+# suite (tests/test_async.py) has pytest-asyncio.
+test = ["pytest>=7.0", "pytest-cov>=4.0", "pytest-asyncio>=0.23"]
 docs = ["sphinx>=6.0", "sphinx-rtd-theme>=1.0"]
 
 [tool.hatch.build.targets.wheel]
@@ -101,6 +105,12 @@ asyncio_mode = "auto"
 
 [tool.wads.ci]
 installer = "uv"
+
+[tool.wads.ci.install]
+# Install the `test` extra so CI has the async test runner (pytest-asyncio);
+# without it tests/test_async.py errors with "async def functions are not
+# natively supported" and every async test fails.
+extras = "test"
 
 [tool.wads.ci.testing]
 python_versions = ["3.10", "3.12"]
