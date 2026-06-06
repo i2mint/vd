@@ -75,6 +75,50 @@ def test_bm25_filter_is_applied():
     assert [h["id"] for h in hits] == ["a"]
 
 
+# ---------- BM25Index: build-once / query-many ----------------------------- #
+
+
+def _toy_collection():
+    client = vd.connect("memory")
+    col = client.create_collection("bm25idx", dimension=2)
+    col["a"] = vd.Document(id="a", text="the quick brown fox", vector=[1.0, 0.0])
+    col["b"] = vd.Document(id="b", text="lazy dog sleeps", vector=[0.0, 1.0])
+    col["c"] = vd.Document(id="c", text="quick fox runs", vector=[0.5, 0.5])
+    return col
+
+
+def test_bm25_index_matches_one_shot_function():
+    """A prebuilt BM25Index gives identical results to bm25_lexical_search."""
+    col = _toy_collection()
+    index = vd.BM25Index(col)
+    for query in ("quick fox", "lazy dog", "runs", "nonexistentterm"):
+        one_shot = vd.bm25_lexical_search(col, query, limit=10)
+        from_index = index.search(query, limit=10)
+        assert [(r["id"], round(r["score"], 9)) for r in from_index] == [
+            (r["id"], round(r["score"], 9)) for r in one_shot
+        ], f"mismatch for {query!r}"
+
+
+def test_bm25_index_reusable_across_queries():
+    """The same index answers many queries (build-once / query-many)."""
+    index = vd.BM25Index(_toy_collection())
+    assert index.search("lazy dog", limit=1)[0]["id"] == "b"
+    assert index.search("quick fox", limit=2)[0]["id"] in ("a", "c")
+    assert len(index) == 3
+
+
+def test_bm25_index_empty_query_and_filter():
+    col = _toy_collection()
+    assert vd.BM25Index(col).search("", limit=5) == []
+    # filter applied once at build time → only matching docs are indexed
+    col["d"] = vd.Document(
+        id="d", text="quick fox flies", vector=[0.2, 0.8], metadata={"kind": "z"}
+    )
+    index = vd.BM25Index(col, filter={"kind": "z"})
+    assert len(index) == 1
+    assert [r["id"] for r in index.search("quick fox", limit=10)] == ["d"]
+
+
 # ---------- Hybrid contract: parametrized over every reachable backend ----- #
 
 
