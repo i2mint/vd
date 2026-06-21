@@ -8,17 +8,39 @@ version = "0.2.9"
 description = "A facade over vector databases — one interface, ~15 backends"
 readme = "README.md"
 requires-python = ">=3.10"
-keywords = ["vector database", "vector search", "embeddings", "facade", "ANN"]
+keywords = [
+    "vector database",
+    "vector search",
+    "embeddings",
+    "facade",
+    "ANN",
+    "similarity search",
+    "RAG",
+]
 authors = []
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Database :: Database Engines/Servers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 # The core is deliberately near-zero-dependency: it operates on vectors and
 # stdlib mappings. Embedding is external; each backend's client is an extra.
 dependencies = ["pyyaml>=6.0"]
 
-[project.license]
-text = "mit"
+license = "MIT"
 
 [project.urls]
-Homepage = "https://github.com/i2mint/vd"
+Homepage = "https://i2mint.github.io/vd/"
+Repository = "https://github.com/i2mint/vd"
+Issues = "https://github.com/i2mint/vd/issues"
+Changelog = "https://github.com/i2mint/vd/blob/master/CHANGELOG.md"
 
 [project.scripts]
 vd = "vd.cli:main"
