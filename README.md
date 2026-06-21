@@ -147,11 +147,29 @@ Beyond the facade, `vd` bundles the composite operations people actually do:
 - **`vd.TimeIndexedCollection`** — a time-windowed wrapper over any collection.
 - **CLI** — `vd backends`, `vd install`, `vd export/import`, `vd migrate`, …
 
-## AI-agent skills
+## Skills
 
-`vd` ships skills (`vd/data/skills/`) so coding agents can drive it well:
-`vd-quickstart`, `vd-backend-choose` (choosing **and** setup), `vd-ingest`,
-`vd-search`, `vd-ops`.
+This package ships agent skills you can install into any agent host with
+[`gh skill`](https://cli.github.com/manual/gh_skill) (don't have it?
+[install gh](https://cli.github.com/)):
+
+```bash
+gh skill install i2mint/vd vd-quickstart --agent claude-code
+gh skill install i2mint/vd vd-backend-choose
+gh skill install i2mint/vd vd-ingest
+gh skill install i2mint/vd vd-search
+gh skill install i2mint/vd vd-ops
+gh skill install i2mint/vd vd-add-backend
+```
+
+| Skill | Use it when… |
+|-------|--------------|
+| `vd-quickstart` | doing basic semantic/vector search — connect, create a collection, add docs, query |
+| `vd-backend-choose` | picking a vector DB, weighing trade-offs, or installing/starting a backend |
+| `vd-ingest` | loading documents/files into a collection — cleaning, chunking, metadata, bulk insert |
+| `vd-search` | going beyond a basic `.search()` — filters, multi-query, RRF, similar-to, dedup, by-vector |
+| `vd-ops` | managing a collection — export/import, migrate, stats, integrity, health checks, benchmarks |
+| `vd-add-backend` | (developer) implementing or reviewing a new vd backend adapter |
 
 ## Design
 
