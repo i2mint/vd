@@ -7,7 +7,8 @@ description: >-
   AbstractClient/AbstractCollection raw-primitive contract, filter handling,
   capability protocols, the escape hatch, and the provider registry. Trigger on
   "add a backend to vd", "implement the X backend", "vd adapter".
-audience: developers
+metadata:
+  audience: developers
 ---
 
 # Implementing a `vd` backend
@@ -88,10 +89,73 @@ class <Name>Client(AbstractClient):
    archetype, pip package, license, docs URLs, `verify_command`, notes) and set
    its `adapter:` field to your backend name. Add the name to
    `_BACKEND_MODULES` in `vd/backends/__init__.py`.
-8. **Tests:** add the backend to `TESTABLE_BACKENDS` in `tests/conftest.py` if
-   it can run in plain CI — the parametrized `test_core.py` suite then exercises
-   it automatically. Otherwise it is "correct-by-construction" (no server here).
+8. **Tests:** add the backend to `EMBEDDED_BACKENDS` in `tests/conftest.py` if
+   it needs no server, or to `SERVER_BACKENDS` (with a TCP probe and connect
+   kwargs) if it does — the parametrized `test_core.py` and `test_hybrid.py`
+   suites then exercise it automatically, and server backends are skipped
+   when their container is down. The root `conftest.py` needs no edit: it
+   skips doctest collection for any backend module that raises
+   `ImportError`, so a missing SDK never breaks the run.
 9. **Update user skills** in `vd/data/skills/` if the happy path changed.
+
+## Optional: native hybrid search
+
+If the backend has a real text index (BM25 / full-text), implement a lexical
+primitive and let the shared orchestration fuse it with the dense side:
+
+```python
+def _lexical_query(self, text, *, limit, filter, **kwargs):  # -> list[dict]
+    ...   # same result shape as _query; apply_client_filter if filtering client-side
+
+def hybrid_search(self, query, *, query_text=None, limit=10, filter=None,
+                  k_dense=None, k_lexical=None, rrf_k=60, egress=None, **kwargs):
+    return self._hybrid_via_rrf(query, self._lexical_query, query_text=query_text,
+                                limit=limit, filter=filter, k_dense=k_dense,
+                                k_lexical=k_lexical, rrf_k=rrf_k, egress=egress,
+                                **kwargs)
+```
+
+Defining `hybrid_search` makes the collection satisfy `SupportsHybrid`, so
+`vd.hybrid_search` takes the native path. References: `lancedb.py` (embedded
+FTS index), `elasticsearch.py`, `redis.py`, `weaviate.py`. Then add the
+backend to the native set in `test_native_vs_fallback_path_is_observable`
+(`tests/test_hybrid.py`).
+
+## Optional: native async
+
+If the backend's SDK ships an async client, add async siblings in the same
+module on the bases from `vd/asynchronous.py`, and register the client:
+
+```python
+from vd.asynchronous import (AsyncAbstractClient, AsyncAbstractCollection,
+                             register_async_backend)
+
+class NativeAsync<Name>Collection(AsyncAbstractCollection):
+    async def _write_many(self, docs): ...
+    async def _read(self, key): ...          # raise KeyError if absent
+    async def _drop(self, key): ...          # raise KeyError if absent
+    async def _keys(self): ...               # async generator of ids
+    async def _count(self): ...
+    async def _query(self, vector, *, limit, filter, **kwargs): ...  # -> list[dict]
+
+@register_async_backend("<name>")
+class NativeAsync<Name>Client(AsyncAbstractClient):
+    async def create_collection(self, name, *, dimension=None, metric="cosine", **index_config): ...
+    async def get_collection(self, name): ...
+    async def delete_collection(self, name): ...
+    async def list_collections(self): ...    # async generator of names
+```
+
+`AsyncAbstractCollection` shares the sync base's embedding, dimension and
+filter-validation policy, so only I/O differs. `vd.connect_async("<name>")`
+then returns the native client (`native_async is True`); `native=False` still
+gives the `to_thread` wrapper. `register_async_backend(name, factory)` also accepts a
+function (sync or `async`) that picks per connection mode: qdrant's factory
+returns the native client only for `url=`, because qdrant-client's embedded
+async client runs blocking code on the event loop. Measure before claiming
+non-blocking. Share pure helpers (filter compiler, row ↔
+`Document` converters) between the sync and async classes rather than copying
+them — see `qdrant.py`, and its parity test in `tests/test_async_native.py`.
 
 ## Hard don'ts
 

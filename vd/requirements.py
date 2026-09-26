@@ -334,6 +334,8 @@ def setup_guide(backend: str) -> str:
     lines.append("")
     lines.append("1. Install the client:")
     lines.append(f"   {install_command(backend)}")
+    if meta.get("adapter") and meta.get("pip_packages"):
+        lines.append(f"   (client libraries: {', '.join(meta['pip_packages'])})")
 
     if backend in _DOCKER_COMMANDS:
         lines += [
@@ -384,8 +386,9 @@ def install_backend(backend: str, *, run: bool = False) -> str:
     """
     cmd = install_command(backend)
     if run and cmd.startswith("pip install "):
+        import shlex
         import subprocess
 
-        packages = cmd.removeprefix("pip install ").split()
+        packages = shlex.split(cmd.removeprefix("pip install "))
         subprocess.run([sys.executable, "-m", "pip", "install", *packages], check=True)
     return cmd

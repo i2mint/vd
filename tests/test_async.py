@@ -16,8 +16,7 @@ tests run against the ``memory`` backend (no infra needed) and verify:
 - :func:`vd.hybrid_search_async` dispatches correctly through the wrapper;
 - the async context-manager protocol works.
 
-Phase 2 follow-ups will add per-backend native async adapters; each backend
-will get its own parametrized test entries at that time.
+Native async adapters (Phase 2, #20) are tested in ``tests/test_async_native.py``.
 """
 
 import pytest

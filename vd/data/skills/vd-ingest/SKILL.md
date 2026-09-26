@@ -7,7 +7,8 @@ description: >-
   metadata, and adding the result in batches. Trigger on requests like "load
   these docs into a vector DB", "chunk this text", "preprocess before
   embedding", or "bulk insert".
-audience: users
+metadata:
+  audience: users
 ---
 
 # Ingesting a corpus into vd

@@ -8,13 +8,19 @@ S3-native. Each ``vd`` collection is one Lance table with columns
 ``(id, text, vector, metadata)``; metadata travels as a JSON string and the
 canonical filter is applied client-side (over-fetching candidates first).
 
+Collections satisfy :class:`vd.SupportsHybrid`: the lexical side runs on
+LanceDB's built-in BM25 full-text index over ``text`` (no extra package),
+created on the first :meth:`~LanceDBCollection.hybrid_search` call.
+
 Requires: ``pip install lancedb``
 """
 
 from __future__ import annotations
 
+import inspect
 import json
 import tempfile
+import threading
 from typing import Callable, Iterable, Iterator, Optional
 
 try:
@@ -39,6 +45,13 @@ from vd.base import (
     Vector,
 )
 from vd.util import register_backend
+
+#: Serializes FTS-index creation within the process (see ``_ensure_fts_index``).
+_FTS_INDEX_LOCK = threading.Lock()
+
+#: ``(database uri, table name)`` pairs known to have the FTS index on ``text``.
+#: Shared by every collection object; entries are dropped when the table is.
+_FTS_READY: set = set()
 
 #: vd metric -> LanceDB distance-type name.
 _METRIC = {"cosine": "cosine", "l2": "l2", "dot": "dot"}
@@ -173,6 +186,144 @@ class LanceDBCollection(AbstractCollection):
             )
         return apply_client_filter(results, filter, limit=limit)
 
+    # ----- native hybrid: LanceDB FTS (BM25) + dense, fused with RRF ------ #
+
+    @staticmethod
+    def _has_fts_index(table) -> bool:
+        """Whether ``table`` has LanceDB's full-text index on ``text``."""
+        return any(
+            getattr(index, "index_type", None) == "FTS"
+            and list(getattr(index, "columns", [])) == ["text"]
+            for index in table.list_indices()
+        )
+
+    def _fts_key(self) -> tuple:
+        return (getattr(self._db, "uri", id(self._db)), self.name)
+
+    def _ensure_fts_index(self, table) -> None:
+        """
+        Build LanceDB's native full-text index on ``text`` if it is missing.
+
+        Known-indexed tables are cached per ``(database, table)``, so the
+        check costs nothing after the first call. Creation is serialized by a
+        process-wide lock (taken only when the index is missing), and a
+        failed create is tolerated when the index turns out to exist
+        afterwards (a concurrent creator in another process).
+        """
+        key = self._fts_key()
+        if key in _FTS_READY:
+            return
+        if not self._has_fts_index(table):
+            with _FTS_INDEX_LOCK:
+                table = self._table or table
+                if not self._has_fts_index(table):
+                    try:
+                        if "config" in inspect.signature(table.create_index).parameters:
+                            from lancedb.index import FTS
+
+                            table.create_index("text", config=FTS(), replace=False)
+                        else:  # pragma: no cover - lancedb before the FTS() config
+                            table.create_fts_index(
+                                "text", replace=False, use_tantivy=False
+                            )
+                    except Exception:
+                        fresh = self._table
+                        if fresh is None or not self._has_fts_index(fresh):
+                            raise
+        _FTS_READY.add(key)
+
+    def _lexical_query(
+        self,
+        text: str,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        """
+        BM25 lexical search through LanceDB's built-in full-text index.
+
+        The lexical side of :meth:`hybrid_search`. The index on ``text`` is
+        built on the first call; rows written afterwards are still searched
+        (LanceDB scans unindexed rows), so no rebuild is needed for
+        correctness. Building the index is a write, so on read-only storage
+        create it beforehand (``collection.native.create_index("text",
+        config=lancedb.index.FTS())``). Call ``collection.native.optimize()``
+        after large ingests to fold new rows into the index for speed. Metadata is
+        filtered client-side, as in :meth:`_query`.
+        """
+        del kwargs
+        for attempt in range(2):
+            table = self._table
+            if table is None:
+                return []
+            self._ensure_fts_index(table)
+            table = self._table  # reopen: a handle from before the index misses it
+            if table is None:  # dropped in the meantime
+                return []
+            try:
+                hits = (
+                    table.search(text, query_type="fts")
+                    .limit(overfetch_limit(limit, filter))
+                    .to_list()
+                )
+                break
+            except (ValueError, RuntimeError) as error:
+                # The table was dropped and recreated since the index was
+                # cached: forget it and build the index again, once. (Newer
+                # lancedb raises ValueError here, older releases RuntimeError.)
+                if attempt or "INVERTED index" not in str(error):
+                    raise
+                _FTS_READY.discard(self._fts_key())
+        results = []
+        for hit in hits:
+            doc = self._to_document(hit)
+            results.append(
+                {
+                    "id": doc.id,
+                    "text": doc.text,
+                    "score": float(hit.get("_score", 0.0)),
+                    "metadata": doc.metadata,
+                }
+            )
+        return apply_client_filter(results, filter, limit=limit)
+
+    def hybrid_search(
+        self,
+        query,
+        *,
+        query_text=None,
+        limit: int = 10,
+        filter: Optional[Filter] = None,
+        k_dense: Optional[int] = None,
+        k_lexical: Optional[int] = None,
+        rrf_k: int = 60,
+        egress=None,
+        **kwargs,
+    ):
+        """
+        Hybrid (dense + native FTS) search, fused client-side with RRF.
+
+        See :class:`vd.SupportsHybrid` for the canonical contract. The dense
+        side is :meth:`_query`; the lexical side is :meth:`_lexical_query`
+        (LanceDB's BM25 full-text index, built on first use). Fusion is done
+        by ``vd`` rather than LanceDB's own ``query_type="hybrid"`` so the
+        fused score is the same RRF score on every backend. Pass
+        ``query_text=...`` when ``query`` is a vector.
+        """
+        return self._hybrid_via_rrf(
+            query,
+            self._lexical_query,
+            query_text=query_text,
+            limit=limit,
+            filter=filter,
+            k_dense=k_dense,
+            k_lexical=k_lexical,
+            rrf_k=rrf_k,
+            egress=egress,
+            **kwargs,
+        )
+
     @staticmethod
     def _to_document(row: dict) -> Document:
         vector = row.get("vector")
@@ -247,6 +398,7 @@ class LanceDBClient(AbstractClient):
         if name in set(_table_names(self._client)):
             self._client.drop_table(name)
         self._metrics.pop(name, None)
+        _FTS_READY.discard((getattr(self._client, "uri", id(self._client)), name))
 
     def list_collections(self) -> Iterator[str]:
         names = set(_table_names(self._client)) | set(self._metrics)

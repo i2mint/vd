@@ -153,6 +153,21 @@ def _quoted(name: str) -> str:
 # --------------------------------------------------------------------------- #
 
 
+def _embedding_to_list(embedding) -> list[float]:
+    """
+    Convert an ``embedding`` column value to ``list[float]``.
+
+    pgvector-python returns a numpy array (< 0.5) or its own ``pgvector.Vector``
+    (>= 0.5, not iterable); both expose a list conversion. Plain sequences are
+    accepted too.
+    """
+    for attr in ("to_list", "tolist"):
+        convert = getattr(embedding, attr, None)
+        if convert is not None:
+            return [float(x) for x in convert()]
+    return [float(x) for x in embedding]
+
+
 class PgvectorCollection(AbstractCollection):
     """
     A ``vd`` collection backed by one Postgres table with a ``vector(N)`` column.
@@ -294,7 +309,7 @@ class PgvectorCollection(AbstractCollection):
         return Document(
             id=key,
             text=text or "",
-            vector=list(embedding) if embedding is not None else None,
+            vector=_embedding_to_list(embedding) if embedding is not None else None,
             metadata=metadata
             if isinstance(metadata, dict)
             else json.loads(metadata or "{}"),

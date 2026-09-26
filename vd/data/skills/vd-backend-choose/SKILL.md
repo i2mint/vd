@@ -1,18 +1,20 @@
 ---
 name: vd-backend-choose
 description: >-
-  Backend-selection and setup tooling for the vd package. Use this skill when
-  the user is picking a vector database with vd, asks "which backend should I
-  use", weighs persistence / cloud / cost / hybrid / scale trade-offs, hits a
-  "backend not installed" error, or needs help installing and starting a
-  vectorDB (pip packages, Docker, API keys, env vars).
-audience: users
+  Backend-selection tooling for the vd package. Use this skill when the user
+  is picking a vector database with vd, asks "which backend should I use",
+  compares backends, or weighs persistence / cloud / cost / hybrid search /
+  async / scale / license trade-offs. For installing, starting and verifying
+  the chosen backend (pip, Docker, API keys), use vd-setup-backend.
+metadata:
+  audience: users
 ---
 
-# vd — choosing and setting up a backend
+# vd — choosing a backend
 
 `vd` knows ~21 vector databases and ships facade adapters for 15. This skill
-has two jobs: **choose** the right one, then **set it up**.
+**chooses** the right one; **vd-setup-backend** then installs, starts and
+verifies it.
 
 ## 1. Choose
 
@@ -38,9 +40,23 @@ vd.print_recommendation(
 ```
 
 Key heuristics it applies: tiny + no persistence → `memory`; already running
-Postgres → `pgvector`; no Docker → embedded (`chroma`/`lancedb`); air-gapped →
-self-hostable Apache/BSD backends; hybrid wanted → `weaviate`; huge scale →
-`milvus`; free managed → `qdrant`.
+Postgres → `pgvector`; no Docker → embedded (`chroma`, or `lancedb` when hybrid
+search is wanted); air-gapped → self-hostable Apache/BSD backends; hybrid
+wanted → `weaviate`; huge scale → `milvus`; free managed → `qdrant`.
+
+### Capabilities that differ by backend in vd
+
+`vd.hybrid_search` works on every backend (a client-side BM25 + RRF fallback),
+but these backends run the lexical side natively, which scales far better:
+`weaviate`, `elasticsearch`, `redis`, and `lancedb` (the only embedded one).
+Check with `isinstance(collection, vd.SupportsHybrid)`.
+
+`vd.connect_async` also works on every backend (a thread-pool wrapper), but
+only these do real non-blocking I/O through a native async SDK:
+`vd.list_async_backends()` → currently `qdrant`, when connected to a server
+(`url=`); embedded Qdrant uses the wrapper. `client.native_async` tells you
+which one you got. Prefer a native client for
+high-concurrency async apps (FastAPI, Starlette).
 
 ### Browse the landscape
 
@@ -71,19 +87,12 @@ and stores **URLs** to live pricing/docs (never cached prices — they drift).
 
 ## 2. Set up
 
+Hand over to **vd-setup-backend**. In short:
+
 ```python
 vd.check_requirements("qdrant")   # diagnoses readiness, prints the NEXT STEP
-vd.setup_guide("qdrant")          # full copy-pasteable playbook (pip/docker/env)
-vd.install_backend("qdrant")      # returns the pip command; run=True to install
+print(vd.setup_guide("qdrant"))   # full copy-pasteable playbook (pip/docker/env)
 ```
-
-`check_requirements` is archetype-aware: for embedded backends it checks the
-pip package (and quirks like sqlite-vec needing SQLite ≥3.41); for server
-backends it checks whether something answers on the default port (non-fatal if
-the backend also runs embedded); for managed backends it checks the required
-env vars (`PINECONE_API_KEY`, `QDRANT_URL`, `MONGODB_URI`, …). It always ends
-with one concrete **next step** — a pip command, a `docker run` one-liner, or
-an `export VAR=...`.
 
 ## 3. Connect
 

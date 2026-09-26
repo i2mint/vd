@@ -33,9 +33,14 @@ the *convenience* of writing/searching raw text; otherwise pass
 
 from __future__ import annotations
 
+from importlib.metadata import PackageNotFoundError as _PackageNotFoundError
+from importlib.metadata import version as _version
 from pathlib import Path as _Path
 
-__version__ = "0.2.0"
+try:  # the installed distribution is the single source of truth
+    __version__ = _version("vd")
+except _PackageNotFoundError:  # pragma: no cover - running from an uninstalled tree
+    __version__ = "unknown"
 
 
 def skills_dir() -> _Path:
@@ -73,10 +78,14 @@ from vd.base import (  # noqa: E402
 
 # ----- async support ------------------------------------------------------- #
 from vd.asynchronous import (  # noqa: E402
+    AsyncAbstractClient,
+    AsyncAbstractCollection,
     AsyncClientWrapper,
     AsyncCollectionWrapper,
     connect_async,
     hybrid_search_async,
+    list_async_backends,
+    register_async_backend,
 )
 
 # ----- the entry point & registry ------------------------------------------ #
@@ -235,8 +244,12 @@ __all__ = [
     "AsyncCollection",
     "AsyncClientWrapper",
     "AsyncCollectionWrapper",
+    "AsyncAbstractClient",
+    "AsyncAbstractCollection",
     "connect_async",
     "hybrid_search_async",
+    "register_async_backend",
+    "list_async_backends",
     # filter language
     "matches_filter",
     "validate_filter",

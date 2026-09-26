@@ -529,50 +529,15 @@ def _coerce_document(key: str, value: Union[str, tuple, Document]) -> Document:
     )
 
 
-# --------------------------------------------------------------------------- #
-# AbstractCollection — adapter-author base
-# --------------------------------------------------------------------------- #
-
-
-class AbstractCollection(MutableMapping):
+class _CollectionPolicy:
     """
-    Base class implementing the :class:`Collection` contract for adapters.
+    The I/O-free document and query policy shared by every collection base.
 
-    A backend subclasses this and implements the *raw primitives* below;
-    everything users see is provided here, once, uniformly:
-
-    - flexible ``__setitem__`` inputs (text / tuple / :class:`Document`),
-    - optional text embedding when a ``Document`` arrives without a vector,
-    - text-query embedding in :meth:`search`,
-    - central filter validation against :attr:`supported_filter_operators`,
-    - ``egress`` result transforms,
-    - batch helpers (:meth:`add_documents`, :meth:`upsert`),
-    - eager dimension-mismatch detection.
-
-    Subclass responsibilities (raw primitives)
-    ------------------------------------------
-    ``_write(doc)``
-        Upsert one document. Its ``vector`` is guaranteed non-``None`` and
-        dimension-checked.
-    ``_read(key) -> Document``
-        Fetch one document; raise ``KeyError`` if absent.
-    ``_drop(key)``
-        Delete one document; raise ``KeyError`` if absent.
-    ``_keys() -> Iterator[str]``
-        Iterate document ids.
-    ``_count() -> int``
-        Number of documents.
-    ``_query(vector, *, limit, filter, **kwargs) -> Iterable[SearchResult]``
-        Raw nearest-neighbor search. ``filter`` is the canonical AST — the
-        adapter translates it. Each result is a dict with at least ``id``,
-        ``text``, ``score``, ``metadata``.
-
-    Optional overrides
-    ------------------
-    ``_write_many(docs)``
-        Efficient bulk upsert. Defaults to a loop over ``_write``.
-    ``native`` (property)
-        The raw backend collection handle (escape hatch).
+    Holds what :class:`AbstractCollection` (sync) and
+    :class:`vd.asynchronous.AsyncAbstractCollection` (native async) must do
+    identically: embedding text through the injected embedder, learning and
+    enforcing the collection dimension, and resolving search / hybrid query
+    inputs. Nothing here touches a backend, so both bases reuse it as is.
     """
 
     #: Filter operators this backend can honor. Default: the full language.
@@ -676,6 +641,53 @@ class AbstractCollection(MutableMapping):
         if not text:
             raise ValueError("hybrid_search needs a non-empty lexical query string.")
         return vec, text
+
+
+# --------------------------------------------------------------------------- #
+# AbstractCollection — adapter-author base
+# --------------------------------------------------------------------------- #
+
+
+class AbstractCollection(_CollectionPolicy, MutableMapping):
+    """
+    Base class implementing the :class:`Collection` contract for adapters.
+
+    A backend subclasses this and implements the *raw primitives* below;
+    everything users see is provided here, once, uniformly:
+
+    - flexible ``__setitem__`` inputs (text / tuple / :class:`Document`),
+    - optional text embedding when a ``Document`` arrives without a vector,
+    - text-query embedding in :meth:`search`,
+    - central filter validation against :attr:`supported_filter_operators`,
+    - ``egress`` result transforms,
+    - batch helpers (:meth:`add_documents`, :meth:`upsert`),
+    - eager dimension-mismatch detection.
+
+    Subclass responsibilities (raw primitives)
+    ------------------------------------------
+    ``_write(doc)``
+        Upsert one document. Its ``vector`` is guaranteed non-``None`` and
+        dimension-checked.
+    ``_read(key) -> Document``
+        Fetch one document; raise ``KeyError`` if absent.
+    ``_drop(key)``
+        Delete one document; raise ``KeyError`` if absent.
+    ``_keys() -> Iterator[str]``
+        Iterate document ids.
+    ``_count() -> int``
+        Number of documents.
+    ``_query(vector, *, limit, filter, **kwargs) -> Iterable[SearchResult]``
+        Raw nearest-neighbor search. ``filter`` is the canonical AST — the
+        adapter translates it. Each result is a dict with at least ``id``,
+        ``text``, ``score``, ``metadata``.
+
+    Optional overrides
+    ------------------
+    ``_write_many(docs)``
+        Efficient bulk upsert. Defaults to a loop over ``_write``.
+    ``native`` (property)
+        The raw backend collection handle (escape hatch).
+    """
 
     # ----- MutableMapping interface --------------------------------------- #
 

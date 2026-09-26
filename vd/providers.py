@@ -124,10 +124,18 @@ def install_command(name: str) -> str:
     """
     Return the ``pip install`` command that makes ``name`` usable.
 
+    A backend ``vd`` has an adapter for installs through ``vd``'s own extra
+    (``vd[<backend>]``), which pins exactly the client libraries that adapter
+    imports. The extra is double-quoted so the command is safe to paste into
+    zsh, bash, PowerShell and cmd. Providers without an adapter get their raw
+    client package(s).
+
     Examples
     --------
     >>> install_command('qdrant')
-    'pip install qdrant-client'
+    'pip install "vd[qdrant]"'
+    >>> install_command('opensearch')
+    'pip install opensearch-py'
     >>> install_command('memory')
     'memory needs no installation (built into vd)'
     """
@@ -137,7 +145,11 @@ def install_command(name: str) -> str:
     packages = meta.get("pip_packages") or []
     if not packages:
         return f"{name} needs no installation (built into vd)"
-    return "pip install " + " ".join(packages)
+    if meta.get("adapter"):
+        return f'pip install "vd[{meta["adapter"]}]"'
+    return "pip install " + " ".join(
+        f'"{p}"' if "[" in p else p for p in packages
+    )
 
 
 # --------------------------------------------------------------------------- #

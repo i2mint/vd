@@ -7,7 +7,8 @@ description: >-
   statistics, finding duplicates / outliers, validating integrity, running
   health checks, benchmarking search or insert latency, or driving any of the
   above from the `vd` CLI.
-audience: users
+metadata:
+  audience: users
 ---
 
 # Operational tasks on vd collections
