@@ -1,4 +1,0 @@
-vd.backends
-===========
-.. automodule:: vd.backends
-   :members:

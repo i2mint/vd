@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="teal" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>vd.time_indexed - vd</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="vd.util" href="vd.util.html" /><link rel="prev" title="vd.text" href="vd.text.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d88b86f9" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=2ceb65ce" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="vd.time_indexed"/>
+    <meta name="twitter:card" content="summary"/>
+  
+<link rel="alternate" type="text/markdown" href="vd.time_indexed.html.md">
+<link rel="describedby" href="../llms.txt" type="text/markdown">
+</head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
+      
+      
+      <strong>vd</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/i2mint/vd" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="vd.html">vd</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="vd.analytics.html">vd.analytics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.asynchronous.html">vd.asynchronous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.backends.html">vd.backends</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="vd.backends.memory.html">vd.backends.memory</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="vd.base.html">vd.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.cli.html">vd.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.config.html">vd.config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.filters.html">vd.filters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.health.html">vd.health</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.io.html">vd.io</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.migration.html">vd.migration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.requirements.html">vd.requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.search.html">vd.search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.text.html">vd.text</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">vd.time_indexed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.util.html">vd.util</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ai-agents.html">For AI agents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#vd.time_indexed.TimeIndexedCollection"><code class="docutils literal notranslate"><span class="pre">TimeIndexedCollection</span></code></a><ul>
+<li><a class="reference internal" href="#vd.time_indexed.TimeIndexedCollection.base"><code class="docutils literal notranslate"><span class="pre">TimeIndexedCollection.base</span></code></a></li>
+<li><a class="reference internal" href="#vd.time_indexed.TimeIndexedCollection.query_window"><code class="docutils literal notranslate"><span class="pre">TimeIndexedCollection.query_window()</span></code></a></li>
+<li><a class="reference internal" href="#vd.time_indexed.TimeIndexedCollection.reindex"><code class="docutils literal notranslate"><span class="pre">TimeIndexedCollection.reindex()</span></code></a></li>
+<li><a class="reference internal" href="#vd.time_indexed.TimeIndexedCollection.search_window"><code class="docutils literal notranslate"><span class="pre">TimeIndexedCollection.search_window()</span></code></a></li>
+<li><a class="reference internal" href="#vd.time_indexed.TimeIndexedCollection.time_range"><code class="docutils literal notranslate"><span class="pre">TimeIndexedCollection.time_range()</span></code></a></li>
+<li><a class="reference internal" href="#vd.time_indexed.TimeIndexedCollection.window_iter"><code class="docutils literal notranslate"><span class="pre">TimeIndexedCollection.window_iter()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#vd.time_indexed.WindowSlice"><code class="docutils literal notranslate"><span class="pre">WindowSlice</span></code></a></li>
+<li><a class="reference internal" href="#vd.time_indexed.count_docs"><code class="docutils literal notranslate"><span class="pre">count_docs()</span></code></a></li>
+<li><a class="reference internal" href="#vd.time_indexed.mean_vector"><code class="docutils literal notranslate"><span class="pre">mean_vector()</span></code></a></li>
+<li><a class="reference internal" href="#vd.time_indexed.parse_window"><code class="docutils literal notranslate"><span class="pre">parse_window()</span></code></a></li>
+<li><a class="reference internal" href="#vd.time_indexed.to_datetime"><code class="docutils literal notranslate"><span class="pre">to_datetime()</span></code></a></li>
+<li><a class="reference internal" href="#vd.time_indexed.to_iso"><code class="docutils literal notranslate"><span class="pre">to_iso()</span></code></a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">vd</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../api.html"><span itemprop="name">API reference</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="vd.html"><span itemprop="name">vd</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">vd.time_indexed</strong>
+        <meta itemprop="position" content="4" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue dark-code" role="main">
+          <section id="module-vd.time_indexed">
+<span id="vd-time-indexed"></span><h1>vd.time_indexed<a class="headerlink" href="#module-vd.time_indexed" title="Link to this heading">#</a></h1>
+<p>Time-indexed vector collection wrapper.</p>
+<p>Wraps any vd <code class="docutils literal notranslate"><span class="pre">Collection</span></code> and adds an in-memory sorted <code class="docutils literal notranslate"><span class="pre">(timestamp,</span> <span class="pre">id)</span></code>
+index, enabling efficient retrieval by time window, fixed-window aggregation
+(daily/hourly buckets), and time-bounded semantic search.</p>
+<p>The wrapper is backend-agnostic: it works with any object that satisfies the
+vd <code class="docutils literal notranslate"><span class="pre">Collection</span></code> protocol (<code class="docutils literal notranslate"><span class="pre">MutableMapping</span></code> + <code class="docutils literal notranslate"><span class="pre">search</span></code>). Timestamps are
+stored as ISO-8601 strings in document metadata, so backend-side metadata
+filtering keeps working (e.g. ChromaDB’s <code class="docutils literal notranslate"><span class="pre">$gte</span></code> filter on a string field
+sorts correctly because ISO-8601 is lexicographically ordered).</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">vd</span><span class="w"> </span><span class="kn">import</span> <span class="n">connect</span><span class="p">,</span> <span class="n">Document</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+</span><span data-line="3"><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">fake_embed</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>  <span class="c1"># 8-dim deterministic toy embedding</span>
+</span><span data-line="4"><span class="gp">... </span>    <span class="k">return</span> <span class="p">[</span><span class="n">b</span> <span class="o">/</span> <span class="mf">128.0</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">digest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]]</span>
+</span><span data-line="5"><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="s1">'memory'</span><span class="p">,</span> <span class="n">embedder</span><span class="o">=</span><span class="n">fake_embed</span><span class="p">)</span>
+</span><span data-line="6"><span class="gp">&gt;&gt;&gt; </span><span class="n">news</span> <span class="o">=</span> <span class="n">TimeIndexedCollection</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s1">'news'</span><span class="p">))</span>
+</span><span data-line="7"><span class="gp">&gt;&gt;&gt; </span><span class="n">news</span><span class="p">[</span><span class="s1">'a'</span><span class="p">]</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">'a'</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">'Earnings miss'</span><span class="p">,</span>
+</span><span data-line="8"><span class="gp">... </span>                     <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">'ts'</span><span class="p">:</span> <span class="s1">'2025-03-13T09:00:00'</span><span class="p">})</span>
+</span><span data-line="9"><span class="gp">&gt;&gt;&gt; </span><span class="n">news</span><span class="p">[</span><span class="s1">'b'</span><span class="p">]</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">'b'</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">'Profit warning'</span><span class="p">,</span>
+</span><span data-line="10"><span class="gp">... </span>                     <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">'ts'</span><span class="p">:</span> <span class="s1">'2025-03-13T15:30:00'</span><span class="p">})</span>
+</span><span data-line="11"><span class="gp">&gt;&gt;&gt; </span><span class="n">news</span><span class="p">[</span><span class="s1">'c'</span><span class="p">]</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">'c'</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">'Tariffs announced'</span><span class="p">,</span>
+</span><span data-line="12"><span class="gp">... </span>                     <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">'ts'</span><span class="p">:</span> <span class="s1">'2025-03-14T08:00:00'</span><span class="p">})</span>
+</span><span data-line="13"><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">news</span><span class="o">.</span><span class="n">query_window</span><span class="p">(</span><span class="s1">'2025-03-13'</span><span class="p">,</span> <span class="s1">'2025-03-14'</span><span class="p">)]</span>
+</span><span data-line="14"><span class="go">['a', 'b']</span>
+</span><span data-line="15"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Count documents per day</span>
+</span><span data-line="16"><span class="gp">&gt;&gt;&gt; </span><span class="p">[(</span><span class="n">s</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span>
+</span><span data-line="17"><span class="gp">... </span> <span class="n">news</span><span class="o">.</span><span class="n">window_iter</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="s1">'1d'</span><span class="p">,</span> <span class="n">reducer</span><span class="o">=</span><span class="nb">len</span><span class="p">)]</span>
+</span><span data-line="18"><span class="go">[('2025-03-13', 2), ('2025-03-14', 1)]</span>
+</span></pre></div>
+</div>
+<p class="rubric">Functions</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.time_indexed.count_docs" title="vd.time_indexed.count_docs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_docs</span></code></a>(docs)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">len</span></code> reducer that also handles generator inputs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vd.time_indexed.mean_vector" title="vd.time_indexed.mean_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_vector</span></code></a>(docs)</p></td>
+<td><p>Element-wise mean of document embeddings.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.time_indexed.parse_window" title="vd.time_indexed.parse_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_window</span></code></a>(window)</p></td>
+<td><p>Parse a window spec into a <code class="docutils literal notranslate"><span class="pre">timedelta</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vd.time_indexed.to_datetime" title="vd.time_indexed.to_datetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_datetime</span></code></a>(ts)</p></td>
+<td><p>Coerce a timestamp-like value into a tz-aware UTC <code class="docutils literal notranslate"><span class="pre">datetime</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.time_indexed.to_iso" title="vd.time_indexed.to_iso"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_iso</span></code></a>(ts)</p></td>
+<td><p>ISO-8601 (UTC) string suitable for cross-backend metadata storage.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Classes</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.time_indexed.TimeIndexedCollection" title="vd.time_indexed.TimeIndexedCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeIndexedCollection</span></code></a>(collection, *[, ...])</p></td>
+<td><p>Time-indexed wrapper over any vd <code class="docutils literal notranslate"><span class="pre">Collection</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vd.time_indexed.WindowSlice" title="vd.time_indexed.WindowSlice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WindowSlice</span></code></a>(start, end)</p></td>
+<td><p>A time window: <code class="docutils literal notranslate"><span class="pre">[start,</span> <span class="pre">end)</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="vd.time_indexed.TimeIndexedCollection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.time_indexed.</span></span><span class="sig-name descname"><span class="pre">TimeIndexedCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ts'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts_parser</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">to_datetime&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/time_indexed.html#TimeIndexedCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.time_indexed.TimeIndexedCollection" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MutableMapping</span></code></a></p>
+<p>Time-indexed wrapper over any vd <code class="docutils literal notranslate"><span class="pre">Collection</span></code>.</p>
+<p>Maintains a sorted <code class="docutils literal notranslate"><span class="pre">(ts_epoch,</span> <span class="pre">id)</span></code> index alongside the underlying
+collection. Each stored document MUST carry a timestamp in its metadata
+under <code class="docutils literal notranslate"><span class="pre">ts_field</span></code> (default <code class="docutils literal notranslate"><span class="pre">&quot;ts&quot;</span></code>). The stored value is normalized to
+an ISO-8601 string so backend-side filtering remains usable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>collection</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MutableMapping</span></code></a></span>) – Any vd Collection (MutableMapping + <code class="docutils literal notranslate"><span class="pre">search</span></code>).</p></li>
+<li><p><strong>ts_field</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Metadata key holding the timestamp.</p></li>
+<li><p><strong>ts_parser</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>]</span>) – Optional custom parser <code class="docutils literal notranslate"><span class="pre">Any</span> <span class="pre">-&gt;</span> <span class="pre">datetime</span></code>. Defaults to
+<a class="reference internal" href="#vd.time_indexed.to_datetime" title="vd.time_indexed.to_datetime"><code class="xref py py-func docutils literal notranslate"><span class="pre">to_datetime()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The index is rebuilt on construction from whatever the underlying
+collection already contains (so the wrapper is safe to re-wrap a persisted
+collection across process restarts).</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="vd.time_indexed.TimeIndexedCollection.base">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">base</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping" title="(in Python v3.14)"><span class="pre">MutableMapping</span></a></span><a class="headerlink" href="#vd.time_indexed.TimeIndexedCollection.base" title="Link to this definition">#</a></dt>
+<dd><p>The wrapped underlying collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.time_indexed.TimeIndexedCollection.query_window">
+<span class="sig-name descname"><span class="pre">query_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">filt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/time_indexed.html#TimeIndexedCollection.query_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.time_indexed.TimeIndexedCollection.query_window" title="Link to this definition">#</a></dt>
+<dd><p>Yield documents with <code class="docutils literal notranslate"><span class="pre">start</span> <span class="pre">&lt;=</span> <span class="pre">ts</span> <span class="pre">&lt;</span> <span class="pre">end</span></code>, in chronological order.</p>
+<p><code class="docutils literal notranslate"><span class="pre">start</span></code> / <code class="docutils literal notranslate"><span class="pre">end</span></code> may be <code class="docutils literal notranslate"><span class="pre">None</span></code> for half-open infinity. <code class="docutils literal notranslate"><span class="pre">filt</span></code> is
+an optional MongoDB-style predicate applied to document metadata,
+evaluated client-side (so it works on any backend).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference internal" href="vd.base.html#vd.base.Document" title="vd.base.Document"><code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.time_indexed.TimeIndexedCollection.reindex">
+<span class="sig-name descname"><span class="pre">reindex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/time_indexed.html#TimeIndexedCollection.reindex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.time_indexed.TimeIndexedCollection.reindex" title="Link to this definition">#</a></dt>
+<dd><p>Force-rebuild the in-memory time index from the underlying collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.time_indexed.TimeIndexedCollection.search_window">
+<span class="sig-name descname"><span class="pre">search_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/time_indexed.html#TimeIndexedCollection.search_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.time_indexed.TimeIndexedCollection.search_window" title="Link to this definition">#</a></dt>
+<dd><p>Semantic search restricted to a time window.</p>
+<p>Builds a metadata filter on <code class="docutils literal notranslate"><span class="pre">ts_field</span></code> and delegates to the
+underlying collection’s <code class="docutils literal notranslate"><span class="pre">search</span></code>. Falls back to a client-side
+post-filter for backends that don’t honor the filter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.time_indexed.TimeIndexedCollection.time_range">
+<span class="sig-name descname"><span class="pre">time_range</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/time_indexed.html#TimeIndexedCollection.time_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.time_indexed.TimeIndexedCollection.time_range" title="Link to this definition">#</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">(min_ts,</span> <span class="pre">max_ts)</span></code> as aware datetimes, or None if empty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>]]</span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">vd</span><span class="w"> </span><span class="kn">import</span> <span class="n">connect</span><span class="p">,</span> <span class="n">Document</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+</span><span data-line="3"><span class="gp">&gt;&gt;&gt; </span><span class="n">emb</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="p">[</span><span class="n">b</span><span class="o">/</span><span class="mf">128.0</span><span class="o">-</span><span class="mf">1.0</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">digest</span><span class="p">()[:</span><span class="mi">4</span><span class="p">]]</span>
+</span><span data-line="4"><span class="gp">&gt;&gt;&gt; </span><span class="n">col</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="s1">'memory'</span><span class="p">,</span> <span class="n">embedder</span><span class="o">=</span><span class="n">emb</span><span class="p">)</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s1">'t'</span><span class="p">)</span>
+</span><span data-line="5"><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">TimeIndexedCollection</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+</span><span data-line="6"><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="s1">'a'</span><span class="p">]</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">'a'</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">'x'</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">'ts'</span><span class="p">:</span> <span class="s1">'2025-01-01'</span><span class="p">})</span>
+</span><span data-line="7"><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="s1">'b'</span><span class="p">]</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">'b'</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">'ts'</span><span class="p">:</span> <span class="s1">'2025-03-01'</span><span class="p">})</span>
+</span><span data-line="8"><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">time_range</span><span class="p">()]</span>
+</span><span data-line="9"><span class="go">['2025-01-01T00:00:00+00:00', '2025-03-01T00:00:00+00:00']</span>
+</span></pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.time_indexed.TimeIndexedCollection.window_iter">
+<span class="sig-name descname"><span class="pre">window_iter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1d'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reducer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">count_docs&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_empty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/time_indexed.html#TimeIndexedCollection.window_iter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.time_indexed.TimeIndexedCollection.window_iter" title="Link to this definition">#</a></dt>
+<dd><p>Yield <code class="docutils literal notranslate"><span class="pre">(window_start,</span> <span class="pre">window_end,</span> <span class="pre">reducer_value)</span></code> over fixed windows.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>window</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">timedelta</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span>) – Window size. See <a class="reference internal" href="#vd.time_indexed.parse_window" title="vd.time_indexed.parse_window"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_window()</span></code></a> for accepted forms.</p></li>
+<li><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – Override the data range. Default: actual min/max ts in the index.</p></li>
+<li><p><strong>end</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – Override the data range. Default: actual min/max ts in the index.</p></li>
+<li><p><strong>reducer</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="vd.base.html#vd.base.Document" title="vd.base.Document"><code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code></a>]], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span>) – Callable taking the iterable of in-window <a href="#id1"><span class="problematic" id="id2">``</span></a>Document``s. Default
+is <a class="reference internal" href="#vd.time_indexed.count_docs" title="vd.time_indexed.count_docs"><code class="xref py py-func docutils literal notranslate"><span class="pre">count_docs()</span></code></a>. See also <a class="reference internal" href="#vd.time_indexed.mean_vector" title="vd.time_indexed.mean_vector"><code class="xref py py-func docutils literal notranslate"><span class="pre">mean_vector()</span></code></a>.</p></li>
+<li><p><strong>skip_empty</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – If True, omit windows that contained zero documents.</p></li>
+<li><p><strong>align</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – If True (default), align <code class="docutils literal notranslate"><span class="pre">start</span></code> to the previous midnight (for
+daily windows) or to <code class="docutils literal notranslate"><span class="pre">window</span></code>-rounded boundary so downstream
+joins are clean. If False, use the literal <code class="docutils literal notranslate"><span class="pre">start</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="vd.time_indexed.WindowSlice">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.time_indexed.</span></span><span class="sig-name descname"><span class="pre">WindowSlice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/time_indexed.html#WindowSlice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.time_indexed.WindowSlice" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A time window: <code class="docutils literal notranslate"><span class="pre">[start,</span> <span class="pre">end)</span></code>.</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.time_indexed.count_docs">
+<span class="sig-prename descclassname"><span class="pre">vd.time_indexed.</span></span><span class="sig-name descname"><span class="pre">count_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">docs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/time_indexed.html#count_docs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.time_indexed.count_docs" title="Link to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">len</span></code> reducer that also handles generator inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">count_docs</span><span class="p">(</span><span class="nb">iter</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+</span><span data-line="2"><span class="go">3</span>
+</span></pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.time_indexed.mean_vector">
+<span class="sig-prename descclassname"><span class="pre">vd.time_indexed.</span></span><span class="sig-name descname"><span class="pre">mean_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">docs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/time_indexed.html#mean_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.time_indexed.mean_vector" title="Link to this definition">#</a></dt>
+<dd><p>Element-wise mean of document embeddings. <code class="docutils literal notranslate"><span class="pre">None</span></code> if empty / no vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]]</span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Document</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="n">mean_vector</span><span class="p">([</span>
+</span><span data-line="3"><span class="gp">... </span>    <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">'a'</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]),</span>
+</span><span data-line="4"><span class="gp">... </span>    <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">'b'</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]),</span>
+</span><span data-line="5"><span class="gp">... </span><span class="p">])</span>
+</span><span data-line="6"><span class="go">[2.0, 3.0]</span>
+</span><span data-line="7"><span class="gp">&gt;&gt;&gt; </span><span class="n">mean_vector</span><span class="p">([])</span> <span class="ow">is</span> <span class="kc">None</span>
+</span><span data-line="8"><span class="go">True</span>
+</span></pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.time_indexed.parse_window">
+<span class="sig-prename descclassname"><span class="pre">vd.time_indexed.</span></span><span class="sig-name descname"><span class="pre">parse_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/time_indexed.html#parse_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.time_indexed.parse_window" title="Link to this definition">#</a></dt>
+<dd><p>Parse a window spec into a <code class="docutils literal notranslate"><span class="pre">timedelta</span></code>.</p>
+<p>Strings use a trailing unit char: <code class="docutils literal notranslate"><span class="pre">&quot;1d&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;4h&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;30m&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;15s&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;1w&quot;</span></code>. Numbers are treated as seconds. A <code class="docutils literal notranslate"><span class="pre">timedelta</span></code> is returned as-is.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">timedelta</span></code></a></span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">parse_window</span><span class="p">(</span><span class="s1">'1d'</span><span class="p">)</span> <span class="o">==</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span data-line="2"><span class="go">True</span>
+</span><span data-line="3"><span class="gp">&gt;&gt;&gt; </span><span class="n">parse_window</span><span class="p">(</span><span class="s1">'4h'</span><span class="p">)</span> <span class="o">==</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</span><span data-line="4"><span class="go">True</span>
+</span><span data-line="5"><span class="gp">&gt;&gt;&gt; </span><span class="n">parse_window</span><span class="p">(</span><span class="mi">3600</span><span class="p">)</span> <span class="o">==</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span data-line="6"><span class="go">True</span>
+</span></pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.time_indexed.to_datetime">
+<span class="sig-prename descclassname"><span class="pre">vd.time_indexed.</span></span><span class="sig-name descname"><span class="pre">to_datetime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/time_indexed.html#to_datetime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.time_indexed.to_datetime" title="Link to this definition">#</a></dt>
+<dd><p>Coerce a timestamp-like value into a tz-aware UTC <code class="docutils literal notranslate"><span class="pre">datetime</span></code>.</p>
+<p>Accepts ISO-8601 strings (with or without timezone), date-only strings
+(<code class="docutils literal notranslate"><span class="pre">&quot;2025-03-13&quot;</span></code>), epoch seconds (int or float), and <code class="docutils literal notranslate"><span class="pre">datetime</span></code> objects.
+Naive datetimes / strings are assumed UTC.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a></span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">'2025-03-13T09:00:00'</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+</span><span data-line="2"><span class="go">'2025-03-13T09:00:00+00:00'</span>
+</span><span data-line="3"><span class="gp">&gt;&gt;&gt; </span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">'2025-03-13'</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+</span><span data-line="4"><span class="go">'2025-03-13T00:00:00+00:00'</span>
+</span><span data-line="5"><span class="gp">&gt;&gt;&gt; </span><span class="n">to_datetime</span><span class="p">(</span><span class="mi">1741856400</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+</span><span data-line="6"><span class="go">'2025-03-13T09:00:00+00:00'</span>
+</span></pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.time_indexed.to_iso">
+<span class="sig-prename descclassname"><span class="pre">vd.time_indexed.</span></span><span class="sig-name descname"><span class="pre">to_iso</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/time_indexed.html#to_iso"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.time_indexed.to_iso" title="Link to this definition">#</a></dt>
+<dd><p>ISO-8601 (UTC) string suitable for cross-backend metadata storage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">to_iso</span><span class="p">(</span><span class="s1">'2025-03-13T09:00:00'</span><span class="p">)</span>
+</span><span data-line="2"><span class="go">'2025-03-13T09:00:00+00:00'</span>
+</span></pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="vd.text.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">vd.text</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="vd.util.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">vd.util</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright">
+  <p>
+    Made with
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+  <a href="https://github.com/i2mint/vd" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../_static/documentation_options.js?v=29c81e07"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=fd10adb8"></script>
+      <script src="../_static/shibuya.js?v=50760d75"></script></body>
+</html>

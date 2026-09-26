@@ -1,4 +1,0 @@
-vd.backends.elasticsearch
-=========================
-.. automodule:: vd.backends.elasticsearch
-   :members:

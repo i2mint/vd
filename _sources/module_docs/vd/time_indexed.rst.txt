@@ -1,4 +1,0 @@
-vd.time_indexed
-===============
-.. automodule:: vd.time_indexed
-   :members:

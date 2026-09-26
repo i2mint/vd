@@ -1,4 +1,0 @@
-vd.backends.pgvector
-====================
-.. automodule:: vd.backends.pgvector
-   :members:

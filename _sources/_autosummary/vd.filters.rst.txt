@@ -1,0 +1,21 @@
+vd.filters
+==========
+
+.. automodule:: vd.filters
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      LOGICAL_OPERATORS
+      FIELD_OPERATORS
+      SUPPORTED_FILTER_OPERATORS
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      matches_filter
+      validate_filter
+   

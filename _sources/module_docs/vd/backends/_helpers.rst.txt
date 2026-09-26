@@ -1,4 +1,0 @@
-vd.backends._helpers
-====================
-.. automodule:: vd.backends._helpers
-   :members:

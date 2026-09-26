@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "built_at": "2026-09-26T10:53:13Z",
+  "package": {
+    "name": "vd",
+    "version": "0.2.11",
+    "display_name": "vd",
+    "source": "pyproject.toml"
+  },
+  "git": {
+    "available": true,
+    "commit": "ee58c419c2f7d2e6c91db53bfa0ff0eec9b99cce",
+    "short_commit": "ee58c41",
+    "branch": "master",
+    "tags": [],
+    "dirty": false,
+    "remote_url": "https://github.com/i2mint/vd",
+    "commit_url": "https://github.com/i2mint/vd/commit/ee58c419c2f7d2e6c91db53bfa0ff0eec9b99cce",
+    "error": null
+  },
+  "ci": {
+    "provider": "github",
+    "repository": "i2mint/vd",
+    "sha": "ee58c419c2f7d2e6c91db53bfa0ff0eec9b99cce",
+    "sha_in_history": true,
+    "ref": "refs/heads/master",
+    "ref_name": "master",
+    "run_id": "36237070547",
+    "run_url": "https://github.com/i2mint/vd/actions/runs/36237070547",
+    "server_url": "https://github.com"
+  },
+  "tools": {
+    "epythet": "0.2.12",
+    "sphinx": "9.1.0",
+    "docutils": "0.22.4",
+    "python": "3.12.14"
+  },
+  "config": {
+    "theme": "auto",
+    "html_theme": "shibuya",
+    "accent": "#006d6b",
+    "mode": "auto",
+    "api_generator": "autosummary",
+    "ignore": [
+      "tests/",
+      "scrap/",
+      "examples/"
+    ],
+    "agent_outputs": true,
+    "aggregates": [
+      "md"
+    ],
+    "ai_artifacts": true,
+    "provenance": true,
+    "docs_dir": "docsrc"
+  },
+  "site": {
+    "modules_documented": 17,
+    "objects_documented": 344
+  },
+  "pypi": {
+    "checked": true,
+    "latest": "0.2.11",
+    "relation": "same",
+    "error": null
+  },
+  "reproduce": "git clone https://github.com/i2mint/vd && cd vd\ngit checkout ee58c419c2f7d2e6c91db53bfa0ff0eec9b99cce\npip install \"epythet==0.2.12\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "warnings": [],
+  "alignment": {
+    "aligned": true,
+    "notes": []
+  }
+}

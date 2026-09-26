@@ -1,4 +1,0 @@
-vd
-==
-.. automodule:: vd
-   :members:

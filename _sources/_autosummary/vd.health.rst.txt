@@ -1,0 +1,15 @@
+vd.health
+=========
+
+.. automodule:: vd.health
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      benchmark_insert
+      benchmark_search
+      health_check_backend
+      health_check_collection
+   

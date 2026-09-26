@@ -1,0 +1,140 @@
+﻿vd
+==
+
+.. automodule:: vd
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      skills_dir
+      connect
+      register_backend
+      connect_async
+      hybrid_search_async
+      register_async_backend
+      list_async_backends
+      matches_filter
+      validate_filter
+      list_backends
+      list_available_backends
+      list_all_backends
+      print_backends_table
+      providers
+      provider
+      get_backend_info
+      get_backend_characteristics
+      get_install_instructions
+      install_command
+      compare_backends
+      print_comparison
+      recommend_backend
+      print_recommendation
+      check_requirements
+      setup_guide
+      install_backend
+      text_only
+      id_only
+      id_and_score
+      id_text_score
+      cosine_similarity
+      euclidean_distance
+      normalize_document_input
+      export_collection
+      import_collection
+      export_to_jsonl
+      import_from_jsonl
+      export_to_json
+      import_from_json
+      export_to_directory
+      import_from_directory
+      migrate_collection
+      migrate_client
+      copy_collection
+      collection_stats
+      metadata_distribution
+      find_duplicates
+      find_outliers
+      sample_collection
+      validate_collection
+      chunk_text
+      chunk_documents
+      clean_text
+      normalize_whitespace
+      truncate_text
+      extract_metadata
+      health_check_backend
+      health_check_collection
+      benchmark_search
+      benchmark_insert
+      multi_query_search
+      search_similar_to_document
+      reciprocal_rank_fusion
+      deduplicate_results
+      hybrid_search
+      bm25_lexical_search
+      load_config
+      save_config
+      connect_from_config
+      create_example_config
+      count_docs
+      mean_vector
+      parse_window
+      to_datetime
+      to_iso
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Document
+      Client
+      Collection
+      AbstractClient
+      AbstractCollection
+      SupportsBatch
+      SupportsHybrid
+      SupportsNativeAsync
+      AsyncClient
+      AsyncCollection
+      AsyncClientWrapper
+      AsyncCollectionWrapper
+      AsyncAbstractClient
+      AsyncAbstractCollection
+      BM25Index
+      TimeIndexedCollection
+      WindowSlice
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      VdError
+      StaticIndexError
+      UnsupportedFilterError
+      UnsupportedCapabilityError
+      EmbeddingRequiredError
+      BackendNotInstalledError
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   analytics
+   asynchronous
+   backends
+   base
+   cli
+   config
+   filters
+   health
+   io
+   migration
+   requirements
+   search
+   text
+   time_indexed
+   util

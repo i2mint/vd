@@ -1,0 +1,23 @@
+vd.util
+=======
+
+.. automodule:: vd.util
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      connect
+      cosine_similarity
+      euclidean_distance
+      get_backend
+      id_and_score
+      id_only
+      id_text_score
+      list_backends
+      mean_vector
+      normalize_document_input
+      register_backend
+      text_only
+   

@@ -1,4 +1,0 @@
-vd.backends.redis
-=================
-.. automodule:: vd.backends.redis
-   :members:

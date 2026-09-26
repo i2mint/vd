@@ -1,0 +1,17 @@
+vd.analytics
+============
+
+.. automodule:: vd.analytics
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      collection_stats
+      find_duplicates
+      find_outliers
+      metadata_distribution
+      sample_collection
+      validate_collection
+   

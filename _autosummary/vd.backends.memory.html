@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="teal" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>vd.backends.memory - vd</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="vd.base" href="vd.base.html" /><link rel="prev" title="vd.backends" href="vd.backends.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d88b86f9" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=2ceb65ce" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="vd.backends.memory"/>
+    <meta name="twitter:card" content="summary"/>
+  
+<link rel="alternate" type="text/markdown" href="vd.backends.memory.html.md">
+<link rel="describedby" href="../llms.txt" type="text/markdown">
+</head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
+      
+      
+      <strong>vd</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/i2mint/vd" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="vd.html">vd</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="vd.analytics.html">vd.analytics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.asynchronous.html">vd.asynchronous</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="vd.backends.html">vd.backends</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">vd.backends.memory</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="vd.base.html">vd.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.cli.html">vd.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.config.html">vd.config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.filters.html">vd.filters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.health.html">vd.health</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.io.html">vd.io</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.migration.html">vd.migration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.requirements.html">vd.requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.search.html">vd.search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.text.html">vd.text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.time_indexed.html">vd.time_indexed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.util.html">vd.util</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ai-agents.html">For AI agents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#vd.backends.memory.MemoryClient"><code class="docutils literal notranslate"><span class="pre">MemoryClient</span></code></a><ul>
+<li><a class="reference internal" href="#vd.backends.memory.MemoryClient.backend_name"><code class="docutils literal notranslate"><span class="pre">MemoryClient.backend_name</span></code></a></li>
+<li><a class="reference internal" href="#vd.backends.memory.MemoryClient.create_collection"><code class="docutils literal notranslate"><span class="pre">MemoryClient.create_collection()</span></code></a></li>
+<li><a class="reference internal" href="#vd.backends.memory.MemoryClient.delete_collection"><code class="docutils literal notranslate"><span class="pre">MemoryClient.delete_collection()</span></code></a></li>
+<li><a class="reference internal" href="#vd.backends.memory.MemoryClient.get_collection"><code class="docutils literal notranslate"><span class="pre">MemoryClient.get_collection()</span></code></a></li>
+<li><a class="reference internal" href="#vd.backends.memory.MemoryClient.list_collections"><code class="docutils literal notranslate"><span class="pre">MemoryClient.list_collections()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#vd.backends.memory.MemoryCollection"><code class="docutils literal notranslate"><span class="pre">MemoryCollection</span></code></a><ul>
+<li><a class="reference internal" href="#vd.backends.memory.MemoryCollection.native"><code class="docutils literal notranslate"><span class="pre">MemoryCollection.native</span></code></a></li>
+<li><a class="reference internal" href="#vd.backends.memory.MemoryCollection.supported_filter_operators"><code class="docutils literal notranslate"><span class="pre">MemoryCollection.supported_filter_operators</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">vd</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../api.html"><span itemprop="name">API reference</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="vd.html"><span itemprop="name">vd</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="vd.backends.html"><span itemprop="name">vd.backends</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="4" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">vd.backends.memory</strong>
+        <meta itemprop="position" content="5" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue dark-code" role="main">
+          <section id="module-vd.backends.memory">
+<span id="vd-backends-memory"></span><h1>vd.backends.memory<a class="headerlink" href="#module-vd.backends.memory" title="Link to this heading">#</a></h1>
+<p>In-memory backend — the reference adapter.</p>
+<p>Stores documents in a plain <code class="docutils literal notranslate"><span class="pre">dict</span></code> and answers queries with brute-force
+similarity in pure Python. Always available (no third-party dependency), and
+the canonical example of how a backend implements the small set of raw
+primitives that <a class="reference internal" href="vd.base.html#vd.base.AbstractCollection" title="vd.base.AbstractCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractCollection</span></code></a> builds on. Use it for
+tests, notebooks, and corpora small enough that an ANN index is overkill.</p>
+<p class="rubric">Classes</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.backends.memory.MemoryClient" title="vd.backends.memory.MemoryClient"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MemoryClient</span></code></a>(*[, embedder])</p></td>
+<td><p>In-memory vector database client.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vd.backends.memory.MemoryCollection" title="vd.backends.memory.MemoryCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MemoryCollection</span></code></a>(name, *[, embedder, ...])</p></td>
+<td><p>A collection backed by an in-process <code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">Document]</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryClient">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.backends.memory.</span></span><span class="sig-name descname"><span class="pre">MemoryClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/backends/memory.html#MemoryClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryClient" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="vd.base.html#vd.base.AbstractClient" title="vd.base.AbstractClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractClient</span></code></a></p>
+<p>In-memory vector database client.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">'memory'</span><span class="p">)</span>
+</span><span data-line="3"><span class="gp">&gt;&gt;&gt; </span><span class="n">col</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s1">'docs'</span><span class="p">)</span>
+</span><span data-line="4"><span class="gp">&gt;&gt;&gt; </span><span class="n">col</span><span class="p">[</span><span class="s1">'a'</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">'a'</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">'cat'</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+</span><span data-line="5"><span class="gp">&gt;&gt;&gt; </span><span class="n">col</span><span class="p">[</span><span class="s1">'b'</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">'b'</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">'dog'</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+</span><span data-line="6"><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">col</span><span class="o">.</span><span class="n">search</span><span class="p">([</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+</span><span data-line="7"><span class="go">['a']</span>
+</span></pre></div>
+</div>
+<dl class="field-list simple">
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryClient.backend_name">
+<span class="sig-name descname"><span class="pre">backend_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'memory'</span></span><a class="headerlink" href="#vd.backends.memory.MemoryClient.backend_name" title="Link to this definition">#</a></dt>
+<dd><p>The registry name of this backend (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;chroma&quot;</span></code>). Adapters set it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryClient.create_collection">
+<span class="sig-name descname"><span class="pre">create_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cosine'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">index_config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/backends/memory.html#MemoryClient.create_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryClient.create_collection" title="Link to this definition">#</a></dt>
+<dd><p>Create a new collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Collection name.</p></li>
+<li><p><strong>dimension</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>) – Vector dimension. May be <code class="docutils literal notranslate"><span class="pre">None</span></code> for backends that can infer it
+from the first written vector; required up front by backends that
+cannot.</p></li>
+<li><p><strong>metric</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Distance metric: <code class="docutils literal notranslate"><span class="pre">&quot;cosine&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dot&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;l2&quot;</span></code>.</p></li>
+<li><p><strong>**index_config</strong> – Backend-specific index tuning (HNSW <code class="docutils literal notranslate"><span class="pre">M</span></code>/<code class="docutils literal notranslate"><span class="pre">ef</span></code>, IVF <code class="docutils literal notranslate"><span class="pre">nlist</span></code>, …).
+Documented per adapter; never abstracted into a common enum.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If a collection of that name already exists.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#vd.backends.memory.MemoryCollection" title="vd.backends.memory.MemoryCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">MemoryCollection</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryClient.delete_collection">
+<span class="sig-name descname"><span class="pre">delete_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/backends/memory.html#MemoryClient.delete_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryClient.delete_collection" title="Link to this definition">#</a></dt>
+<dd><p>Drop a collection; raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryClient.get_collection">
+<span class="sig-name descname"><span class="pre">get_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/backends/memory.html#MemoryClient.get_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryClient.get_collection" title="Link to this definition">#</a></dt>
+<dd><p>Return an existing collection; raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#vd.backends.memory.MemoryCollection" title="vd.backends.memory.MemoryCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">MemoryCollection</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryClient.list_collections">
+<span class="sig-name descname"><span class="pre">list_collections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/backends/memory.html#MemoryClient.list_collections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryClient.list_collections" title="Link to this definition">#</a></dt>
+<dd><p>Iterate collection names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.backends.memory.</span></span><span class="sig-name descname"><span class="pre">MemoryCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cosine'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/backends/memory.html#MemoryCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.memory.MemoryCollection" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="vd.base.html#vd.base.AbstractCollection" title="vd.base.AbstractCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractCollection</span></code></a></p>
+<p>A collection backed by an in-process <code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">Document]</span></code>.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection.native">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">native</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="vd.base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#vd.backends.memory.MemoryCollection.native" title="Link to this definition">#</a></dt>
+<dd><p>The raw <code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">Document]</span></code> backing this collection (escape hatch).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection.supported_filter_operators">
+<span class="sig-name descname"><span class="pre">supported_filter_operators</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or'})</span></span><a class="headerlink" href="#vd.backends.memory.MemoryCollection.supported_filter_operators" title="Link to this definition">#</a></dt>
+<dd><p>the full language.
+Adapters narrow this; <code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code> validates against it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Filter operators this backend can honor. Default</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="vd.backends.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">vd.backends</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="vd.base.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">vd.base</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright">
+  <p>
+    Made with
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+  <a href="https://github.com/i2mint/vd" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../_static/documentation_options.js?v=29c81e07"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=fd10adb8"></script>
+      <script src="../_static/shibuya.js?v=50760d75"></script></body>
+</html>

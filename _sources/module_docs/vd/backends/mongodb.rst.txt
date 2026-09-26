@@ -1,4 +1,0 @@
-vd.backends.mongodb
-===================
-.. automodule:: vd.backends.mongodb
-   :members:

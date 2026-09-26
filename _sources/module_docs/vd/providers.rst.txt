@@ -1,4 +1,0 @@
-vd.providers
-============
-.. automodule:: vd.providers
-   :members:

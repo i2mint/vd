@@ -1,0 +1,39 @@
+vd.base
+=======
+
+.. automodule:: vd.base
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      DocumentInput
+      METRICS
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AbstractClient
+      AbstractCollection
+      AsyncClient
+      AsyncCollection
+      Client
+      Collection
+      Document
+      SupportsBatch
+      SupportsHybrid
+      SupportsNativeAsync
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      BackendNotInstalledError
+      EmbeddingRequiredError
+      StaticIndexError
+      UnsupportedCapabilityError
+      UnsupportedFilterError
+      VdError
+   

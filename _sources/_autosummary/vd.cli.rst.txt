@@ -1,0 +1,21 @@
+vd.cli
+======
+
+.. automodule:: vd.cli
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      cmd_backends
+      cmd_benchmark
+      cmd_export
+      cmd_health_check
+      cmd_import
+      cmd_install_info
+      cmd_migrate
+      cmd_stats
+      cmd_validate
+      main
+   

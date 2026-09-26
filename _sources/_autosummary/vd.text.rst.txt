@@ -1,0 +1,17 @@
+vd.text
+=======
+
+.. automodule:: vd.text
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      chunk_documents
+      chunk_text
+      clean_text
+      extract_metadata
+      normalize_whitespace
+      truncate_text
+   

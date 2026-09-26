@@ -1,639 +1,1028 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
+<html lang="en" data-accent-color="teal" data-content_root="../../">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.io &mdash; vd 0.2.10 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
-
-  
-      <script src="../../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=8db09a1e"></script>
-      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
-      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
-      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
-</head>
-
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-
-          
-          
-          <a href="../../index.html" class="icon icon-home">
-            vd
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>vd.io - vd</title><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d88b86f9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=2ceb65ce" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="vd.io"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../index.html">
+      
+      
+      <strong>vd</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/i2mint/vd" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd.html">vd</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/analytics.html">vd.analytics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/asynchronous.html">vd.asynchronous</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends.html">vd.backends</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/_helpers.html">vd.backends._helpers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/duckdb.html">vd.backends.duckdb</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/elasticsearch.html">vd.backends.elasticsearch</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/faiss.html">vd.backends.faiss</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/lancedb.html">vd.backends.lancedb</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/milvus.html">vd.backends.milvus</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/mongodb.html">vd.backends.mongodb</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/pgvector.html">vd.backends.pgvector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/pinecone.html">vd.backends.pinecone</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/qdrant.html">vd.backends.qdrant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/redis.html">vd.backends.redis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/sqlite_vec.html">vd.backends.sqlite_vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/turbopuffer.html">vd.backends.turbopuffer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/weaviate.html">vd.backends.weaviate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/base.html">vd.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/cli.html">vd.cli</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/config.html">vd.config</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/filters.html">vd.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/health.html">vd.health</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/io.html">vd.io</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/migration.html">vd.migration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/providers.html">vd.providers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/requirements.html">vd.requirements</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/search.html">vd.search</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/text.html">vd.text</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/time_indexed.html">vd.time_indexed</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/util.html">vd.util</a></li>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/vd.html">vd</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.analytics.html">vd.analytics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.asynchronous.html">vd.asynchronous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.backends.html">vd.backends</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/vd.backends.memory.html">vd.backends.memory</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.base.html">vd.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.cli.html">vd.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.config.html">vd.config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.filters.html">vd.filters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.health.html">vd.health</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.io.html">vd.io</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.migration.html">vd.migration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.requirements.html">vd.requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.search.html">vd.search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.text.html">vd.text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.time_indexed.html">vd.time_indexed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.util.html">vd.util</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../ai-agents.html">For AI agents</a></li>
 </ul>
 
         </div>
       </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">vd</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
-          <li class="breadcrumb-item"><a href="../vd.html">vd</a></li>
-      <li class="breadcrumb-item active">vd.io</li>
-      <li class="wy-breadcrumbs-aside">
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <h1>Source code for vd.io</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Import/export utilities for vd collections.</span>
-
-<span class="sd">This module provides functions to export collections to various formats</span>
-<span class="sd">and import data from different sources.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Document</span>
-
-
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">vd</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">Module code</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../vd.html"><span itemprop="name">vd</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">vd.io</strong>
+        <meta itemprop="position" content="4" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue dark-code" role="main">
+          <h1>Source code for vd.io</h1><div class="highlight"><pre>
+<span></span><span data-line="1"><span class="sd">"""</span>
+</span><span data-line="2"><span class="sd">Import/export utilities for vd collections.</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="sd">This module provides functions to export collections to various formats</span>
+</span><span data-line="5"><span class="sd">and import data from different sources.</span>
+</span><span data-line="6"><span class="sd">"""</span>
+</span><span data-line="7">
+</span><span data-line="8"><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+</span><span data-line="11">
+</span><span data-line="12"><span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Document</span>
+</span><span data-line="13">
+</span><span data-line="14">
 <div class="viewcode-block" id="export_to_jsonl">
-<a class="viewcode-back" href="../../module_docs/vd/io.html#vd.export_to_jsonl">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">export_to_jsonl</span><span class="p">(</span>
-    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
-    <span class="n">output_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">include_vectors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Export a collection to JSONL (JSON Lines) format.</span>
+<a class="viewcode-back" href="../../_autosummary/vd.io.html#vd.export_to_jsonl">[docs]</a>
+</span><span data-line="15"><span class="k">def</span><span class="w"> </span><span class="nf">export_to_jsonl</span><span class="p">(</span>
+</span><span data-line="16">    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+</span><span data-line="17">    <span class="n">output_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+</span><span data-line="18">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="19">    <span class="n">include_vectors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="20"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span data-line="21"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="22"><span class="sd">    Export a collection to JSONL (JSON Lines) format.</span>
+</span><span data-line="23">
+</span><span data-line="24"><span class="sd">    Each line is a JSON object representing a document.</span>
+</span><span data-line="25">
+</span><span data-line="26"><span class="sd">    Parameters</span>
+</span><span data-line="27"><span class="sd">    ----------</span>
+</span><span data-line="28"><span class="sd">    collection : Collection</span>
+</span><span data-line="29"><span class="sd">        Collection to export</span>
+</span><span data-line="30"><span class="sd">    output_path : str or Path</span>
+</span><span data-line="31"><span class="sd">        Output file path</span>
+</span><span data-line="32"><span class="sd">    include_vectors : bool, default True</span>
+</span><span data-line="33"><span class="sd">        Whether to include embedding vectors in the export</span>
+</span><span data-line="34">
+</span><span data-line="35"><span class="sd">    Returns</span>
+</span><span data-line="36"><span class="sd">    -------</span>
+</span><span data-line="37"><span class="sd">    int</span>
+</span><span data-line="38"><span class="sd">        Number of documents exported</span>
+</span><span data-line="39">
+</span><span data-line="40"><span class="sd">    Examples</span>
+</span><span data-line="41"><span class="sd">    --------</span>
+</span><span data-line="42"><span class="sd">    &gt;&gt;&gt; import vd</span>
+</span><span data-line="43"><span class="sd">    &gt;&gt;&gt; client = vd.connect('memory')  # doctest: +SKIP</span>
+</span><span data-line="44"><span class="sd">    &gt;&gt;&gt; docs = client.create_collection('test')  # doctest: +SKIP</span>
+</span><span data-line="45"><span class="sd">    &gt;&gt;&gt; docs['doc1'] = "Hello"  # doctest: +SKIP</span>
+</span><span data-line="46"><span class="sd">    &gt;&gt;&gt; vd.export_to_jsonl(docs, 'backup.jsonl')  # doctest: +SKIP</span>
+</span><span data-line="47"><span class="sd">    1</span>
+</span><span data-line="48"><span class="sd">    """</span>
+</span><span data-line="49">    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+</span><span data-line="50">    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="51">
+</span><span data-line="52">    <span class="k">with</span> <span class="n">output_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span data-line="53">        <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+</span><span data-line="54">            <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+</span><span data-line="55">            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="56">                <span class="s2">"id"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+</span><span data-line="57">                <span class="s2">"text"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+</span><span data-line="58">                <span class="s2">"metadata"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+</span><span data-line="59">            <span class="p">}</span>
+</span><span data-line="60">            <span class="k">if</span> <span class="n">include_vectors</span> <span class="ow">and</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
+</span><span data-line="61">                <span class="n">data</span><span class="p">[</span><span class="s2">"vector"</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span>
+</span><span data-line="62">
+</span><span data-line="63">            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="64">            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span data-line="65">
+</span><span data-line="66">    <span class="k">return</span> <span class="n">count</span></div>
 
-<span class="sd">    Each line is a JSON object representing a document.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    collection : Collection</span>
-<span class="sd">        Collection to export</span>
-<span class="sd">    output_path : str or Path</span>
-<span class="sd">        Output file path</span>
-<span class="sd">    include_vectors : bool, default True</span>
-<span class="sd">        Whether to include embedding vectors in the export</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    int</span>
-<span class="sd">        Number of documents exported</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import vd</span>
-<span class="sd">    &gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; docs = client.create_collection(&#39;test&#39;)  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; docs[&#39;doc1&#39;] = &quot;Hello&quot;  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; vd.export_to_jsonl(docs, &#39;backup.jsonl&#39;)  # doctest: +SKIP</span>
-<span class="sd">    1</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
-    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="k">with</span> <span class="n">output_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
-                <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="n">include_vectors</span> <span class="ow">and</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
-                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;vector&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span>
-
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
-
-    <span class="k">return</span> <span class="n">count</span></div>
-
-
-
+</span><span data-line="67">
+</span><span data-line="68">
 <div class="viewcode-block" id="import_from_jsonl">
-<a class="viewcode-back" href="../../module_docs/vd/io.html#vd.import_from_jsonl">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">import_from_jsonl</span><span class="p">(</span>
-    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
-    <span class="n">input_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="n">skip_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Import documents from JSONL format into a collection.</span>
+<a class="viewcode-back" href="../../_autosummary/vd.io.html#vd.import_from_jsonl">[docs]</a>
+</span><span data-line="69"><span class="k">def</span><span class="w"> </span><span class="nf">import_from_jsonl</span><span class="p">(</span>
+</span><span data-line="70">    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+</span><span data-line="71">    <span class="n">input_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+</span><span data-line="72">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="73">    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+</span><span data-line="74">    <span class="n">skip_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="75"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span data-line="76"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="77"><span class="sd">    Import documents from JSONL format into a collection.</span>
+</span><span data-line="78">
+</span><span data-line="79"><span class="sd">    Parameters</span>
+</span><span data-line="80"><span class="sd">    ----------</span>
+</span><span data-line="81"><span class="sd">    collection : Collection</span>
+</span><span data-line="82"><span class="sd">        Collection to import into</span>
+</span><span data-line="83"><span class="sd">    input_path : str or Path</span>
+</span><span data-line="84"><span class="sd">        Input file path</span>
+</span><span data-line="85"><span class="sd">    batch_size : int, default 100</span>
+</span><span data-line="86"><span class="sd">        Batch size for adding documents</span>
+</span><span data-line="87"><span class="sd">    skip_existing : bool, default False</span>
+</span><span data-line="88"><span class="sd">        If True, skip documents with IDs that already exist</span>
+</span><span data-line="89">
+</span><span data-line="90"><span class="sd">    Returns</span>
+</span><span data-line="91"><span class="sd">    -------</span>
+</span><span data-line="92"><span class="sd">    int</span>
+</span><span data-line="93"><span class="sd">        Number of documents imported</span>
+</span><span data-line="94">
+</span><span data-line="95"><span class="sd">    Examples</span>
+</span><span data-line="96"><span class="sd">    --------</span>
+</span><span data-line="97"><span class="sd">    &gt;&gt;&gt; import vd</span>
+</span><span data-line="98"><span class="sd">    &gt;&gt;&gt; client = vd.connect('memory')  # doctest: +SKIP</span>
+</span><span data-line="99"><span class="sd">    &gt;&gt;&gt; docs = client.create_collection('test')  # doctest: +SKIP</span>
+</span><span data-line="100"><span class="sd">    &gt;&gt;&gt; vd.import_from_jsonl(docs, 'backup.jsonl')  # doctest: +SKIP</span>
+</span><span data-line="101"><span class="sd">    1</span>
+</span><span data-line="102"><span class="sd">    """</span>
+</span><span data-line="103">    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+</span><span data-line="104">    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="105">    <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="106">
+</span><span data-line="107">    <span class="k">with</span> <span class="n">input_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span data-line="108">        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+</span><span data-line="109">            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</span><span data-line="110">
+</span><span data-line="111">            <span class="c1"># Check if we should skip</span>
+</span><span data-line="112">            <span class="k">if</span> <span class="n">skip_existing</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+</span><span data-line="113">                <span class="k">continue</span>
+</span><span data-line="114">
+</span><span data-line="115">            <span class="c1"># Create document</span>
+</span><span data-line="116">            <span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
+</span><span data-line="117">                <span class="nb">id</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
+</span><span data-line="118">                <span class="n">text</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"text"</span><span class="p">],</span>
+</span><span data-line="119">                <span class="n">vector</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"vector"</span><span class="p">),</span>
+</span><span data-line="120">                <span class="n">metadata</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"metadata"</span><span class="p">,</span> <span class="p">{}),</span>
+</span><span data-line="121">            <span class="p">)</span>
+</span><span data-line="122">
+</span><span data-line="123">            <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</span><span data-line="124">            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span data-line="125">
+</span><span data-line="126">            <span class="c1"># Flush batch</span>
+</span><span data-line="127">            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">batch_size</span><span class="p">:</span>
+</span><span data-line="128">                <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+</span><span data-line="129">                <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="130">
+</span><span data-line="131">    <span class="c1"># Flush remaining</span>
+</span><span data-line="132">    <span class="k">if</span> <span class="n">batch</span><span class="p">:</span>
+</span><span data-line="133">        <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+</span><span data-line="134">
+</span><span data-line="135">    <span class="k">return</span> <span class="n">count</span></div>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    collection : Collection</span>
-<span class="sd">        Collection to import into</span>
-<span class="sd">    input_path : str or Path</span>
-<span class="sd">        Input file path</span>
-<span class="sd">    batch_size : int, default 100</span>
-<span class="sd">        Batch size for adding documents</span>
-<span class="sd">    skip_existing : bool, default False</span>
-<span class="sd">        If True, skip documents with IDs that already exist</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    int</span>
-<span class="sd">        Number of documents imported</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import vd</span>
-<span class="sd">    &gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; docs = client.create_collection(&#39;test&#39;)  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; vd.import_from_jsonl(docs, &#39;backup.jsonl&#39;)  # doctest: +SKIP</span>
-<span class="sd">    1</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
-    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="k">with</span> <span class="n">input_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-
-            <span class="c1"># Check if we should skip</span>
-            <span class="k">if</span> <span class="n">skip_existing</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="c1"># Create document</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
-                <span class="nb">id</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-                <span class="n">text</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">],</span>
-                <span class="n">vector</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vector&quot;</span><span class="p">),</span>
-                <span class="n">metadata</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="p">{}),</span>
-            <span class="p">)</span>
-
-            <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
-            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
-
-            <span class="c1"># Flush batch</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">batch_size</span><span class="p">:</span>
-                <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-                <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="c1"># Flush remaining</span>
-    <span class="k">if</span> <span class="n">batch</span><span class="p">:</span>
-        <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">count</span></div>
-
-
-
+</span><span data-line="136">
+</span><span data-line="137">
 <div class="viewcode-block" id="export_to_json">
-<a class="viewcode-back" href="../../module_docs/vd/io.html#vd.export_to_json">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">export_to_json</span><span class="p">(</span>
-    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
-    <span class="n">output_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">include_vectors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">indent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Export a collection to JSON format.</span>
+<a class="viewcode-back" href="../../_autosummary/vd.io.html#vd.export_to_json">[docs]</a>
+</span><span data-line="138"><span class="k">def</span><span class="w"> </span><span class="nf">export_to_json</span><span class="p">(</span>
+</span><span data-line="139">    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+</span><span data-line="140">    <span class="n">output_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+</span><span data-line="141">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="142">    <span class="n">include_vectors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="143">    <span class="n">indent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+</span><span data-line="144"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span data-line="145"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="146"><span class="sd">    Export a collection to JSON format.</span>
+</span><span data-line="147">
+</span><span data-line="148"><span class="sd">    Creates a JSON array of all documents.</span>
+</span><span data-line="149">
+</span><span data-line="150"><span class="sd">    Parameters</span>
+</span><span data-line="151"><span class="sd">    ----------</span>
+</span><span data-line="152"><span class="sd">    collection : Collection</span>
+</span><span data-line="153"><span class="sd">        Collection to export</span>
+</span><span data-line="154"><span class="sd">    output_path : str or Path</span>
+</span><span data-line="155"><span class="sd">        Output file path</span>
+</span><span data-line="156"><span class="sd">    include_vectors : bool, default True</span>
+</span><span data-line="157"><span class="sd">        Whether to include embedding vectors</span>
+</span><span data-line="158"><span class="sd">    indent : int, optional</span>
+</span><span data-line="159"><span class="sd">        JSON indentation (None for compact)</span>
+</span><span data-line="160">
+</span><span data-line="161"><span class="sd">    Returns</span>
+</span><span data-line="162"><span class="sd">    -------</span>
+</span><span data-line="163"><span class="sd">    int</span>
+</span><span data-line="164"><span class="sd">        Number of documents exported</span>
+</span><span data-line="165"><span class="sd">    """</span>
+</span><span data-line="166">    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+</span><span data-line="167">    <span class="n">documents</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="168">
+</span><span data-line="169">    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+</span><span data-line="170">        <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+</span><span data-line="171">        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="172">            <span class="s2">"id"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+</span><span data-line="173">            <span class="s2">"text"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+</span><span data-line="174">            <span class="s2">"metadata"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+</span><span data-line="175">        <span class="p">}</span>
+</span><span data-line="176">        <span class="k">if</span> <span class="n">include_vectors</span> <span class="ow">and</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
+</span><span data-line="177">            <span class="n">data</span><span class="p">[</span><span class="s2">"vector"</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span>
+</span><span data-line="178">
+</span><span data-line="179">        <span class="n">documents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span data-line="180">
+</span><span data-line="181">    <span class="k">with</span> <span class="n">output_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span data-line="182">        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span>
+</span><span data-line="183">
+</span><span data-line="184">    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span></div>
 
-<span class="sd">    Creates a JSON array of all documents.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    collection : Collection</span>
-<span class="sd">        Collection to export</span>
-<span class="sd">    output_path : str or Path</span>
-<span class="sd">        Output file path</span>
-<span class="sd">    include_vectors : bool, default True</span>
-<span class="sd">        Whether to include embedding vectors</span>
-<span class="sd">    indent : int, optional</span>
-<span class="sd">        JSON indentation (None for compact)</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    int</span>
-<span class="sd">        Number of documents exported</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
-    <span class="n">documents</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
-        <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
-            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="n">include_vectors</span> <span class="ow">and</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;vector&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span>
-
-        <span class="n">documents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-    <span class="k">with</span> <span class="n">output_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span></div>
-
-
-
+</span><span data-line="185">
+</span><span data-line="186">
 <div class="viewcode-block" id="import_from_json">
-<a class="viewcode-back" href="../../module_docs/vd/io.html#vd.import_from_json">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">import_from_json</span><span class="p">(</span>
-    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
-    <span class="n">input_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="n">skip_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Import documents from JSON format into a collection.</span>
+<a class="viewcode-back" href="../../_autosummary/vd.io.html#vd.import_from_json">[docs]</a>
+</span><span data-line="187"><span class="k">def</span><span class="w"> </span><span class="nf">import_from_json</span><span class="p">(</span>
+</span><span data-line="188">    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+</span><span data-line="189">    <span class="n">input_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+</span><span data-line="190">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="191">    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+</span><span data-line="192">    <span class="n">skip_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="193"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span data-line="194"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="195"><span class="sd">    Import documents from JSON format into a collection.</span>
+</span><span data-line="196">
+</span><span data-line="197"><span class="sd">    Parameters</span>
+</span><span data-line="198"><span class="sd">    ----------</span>
+</span><span data-line="199"><span class="sd">    collection : Collection</span>
+</span><span data-line="200"><span class="sd">        Collection to import into</span>
+</span><span data-line="201"><span class="sd">    input_path : str or Path</span>
+</span><span data-line="202"><span class="sd">        Input file path</span>
+</span><span data-line="203"><span class="sd">    batch_size : int, default 100</span>
+</span><span data-line="204"><span class="sd">        Batch size for adding documents</span>
+</span><span data-line="205"><span class="sd">    skip_existing : bool, default False</span>
+</span><span data-line="206"><span class="sd">        If True, skip documents with IDs that already exist</span>
+</span><span data-line="207">
+</span><span data-line="208"><span class="sd">    Returns</span>
+</span><span data-line="209"><span class="sd">    -------</span>
+</span><span data-line="210"><span class="sd">    int</span>
+</span><span data-line="211"><span class="sd">        Number of documents imported</span>
+</span><span data-line="212"><span class="sd">    """</span>
+</span><span data-line="213">    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+</span><span data-line="214">
+</span><span data-line="215">    <span class="k">with</span> <span class="n">input_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span data-line="216">        <span class="n">documents_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span data-line="217">
+</span><span data-line="218">    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="219">    <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="220">
+</span><span data-line="221">    <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">documents_data</span><span class="p">:</span>
+</span><span data-line="222">        <span class="c1"># Check if we should skip</span>
+</span><span data-line="223">        <span class="k">if</span> <span class="n">skip_existing</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+</span><span data-line="224">            <span class="k">continue</span>
+</span><span data-line="225">
+</span><span data-line="226">        <span class="c1"># Create document</span>
+</span><span data-line="227">        <span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
+</span><span data-line="228">            <span class="nb">id</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
+</span><span data-line="229">            <span class="n">text</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"text"</span><span class="p">],</span>
+</span><span data-line="230">            <span class="n">vector</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"vector"</span><span class="p">),</span>
+</span><span data-line="231">            <span class="n">metadata</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"metadata"</span><span class="p">,</span> <span class="p">{}),</span>
+</span><span data-line="232">        <span class="p">)</span>
+</span><span data-line="233">
+</span><span data-line="234">        <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</span><span data-line="235">        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span data-line="236">
+</span><span data-line="237">        <span class="c1"># Flush batch</span>
+</span><span data-line="238">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">batch_size</span><span class="p">:</span>
+</span><span data-line="239">            <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+</span><span data-line="240">            <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="241">
+</span><span data-line="242">    <span class="c1"># Flush remaining</span>
+</span><span data-line="243">    <span class="k">if</span> <span class="n">batch</span><span class="p">:</span>
+</span><span data-line="244">        <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+</span><span data-line="245">
+</span><span data-line="246">    <span class="k">return</span> <span class="n">count</span></div>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    collection : Collection</span>
-<span class="sd">        Collection to import into</span>
-<span class="sd">    input_path : str or Path</span>
-<span class="sd">        Input file path</span>
-<span class="sd">    batch_size : int, default 100</span>
-<span class="sd">        Batch size for adding documents</span>
-<span class="sd">    skip_existing : bool, default False</span>
-<span class="sd">        If True, skip documents with IDs that already exist</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    int</span>
-<span class="sd">        Number of documents imported</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
-
-    <span class="k">with</span> <span class="n">input_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">documents_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">documents_data</span><span class="p">:</span>
-        <span class="c1"># Check if we should skip</span>
-        <span class="k">if</span> <span class="n">skip_existing</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
-            <span class="k">continue</span>
-
-        <span class="c1"># Create document</span>
-        <span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
-            <span class="nb">id</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-            <span class="n">text</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">],</span>
-            <span class="n">vector</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vector&quot;</span><span class="p">),</span>
-            <span class="n">metadata</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="p">{}),</span>
-        <span class="p">)</span>
-
-        <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
-        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="c1"># Flush batch</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">batch_size</span><span class="p">:</span>
-            <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-            <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="c1"># Flush remaining</span>
-    <span class="k">if</span> <span class="n">batch</span><span class="p">:</span>
-        <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">count</span></div>
-
-
-
+</span><span data-line="247">
+</span><span data-line="248">
 <div class="viewcode-block" id="export_to_directory">
-<a class="viewcode-back" href="../../module_docs/vd/io.html#vd.export_to_directory">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">export_to_directory</span><span class="p">(</span>
-    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
-    <span class="n">output_dir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">include_vectors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Export collection as a directory with one JSON file per document.</span>
+<a class="viewcode-back" href="../../_autosummary/vd.io.html#vd.export_to_directory">[docs]</a>
+</span><span data-line="249"><span class="k">def</span><span class="w"> </span><span class="nf">export_to_directory</span><span class="p">(</span>
+</span><span data-line="250">    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+</span><span data-line="251">    <span class="n">output_dir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+</span><span data-line="252">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="253">    <span class="n">include_vectors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="254"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span data-line="255"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="256"><span class="sd">    Export collection as a directory with one JSON file per document.</span>
+</span><span data-line="257">
+</span><span data-line="258"><span class="sd">    Useful for version control and easy browsing.</span>
+</span><span data-line="259">
+</span><span data-line="260"><span class="sd">    Parameters</span>
+</span><span data-line="261"><span class="sd">    ----------</span>
+</span><span data-line="262"><span class="sd">    collection : Collection</span>
+</span><span data-line="263"><span class="sd">        Collection to export</span>
+</span><span data-line="264"><span class="sd">    output_dir : str or Path</span>
+</span><span data-line="265"><span class="sd">        Output directory path</span>
+</span><span data-line="266"><span class="sd">    include_vectors : bool, default True</span>
+</span><span data-line="267"><span class="sd">        Whether to include vectors</span>
+</span><span data-line="268">
+</span><span data-line="269"><span class="sd">    Returns</span>
+</span><span data-line="270"><span class="sd">    -------</span>
+</span><span data-line="271"><span class="sd">    int</span>
+</span><span data-line="272"><span class="sd">        Number of documents exported</span>
+</span><span data-line="273"><span class="sd">    """</span>
+</span><span data-line="274">    <span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+</span><span data-line="275">    <span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="276">
+</span><span data-line="277">    <span class="c1"># Export metadata</span>
+</span><span data-line="278">    <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="279">        <span class="s2">"collection_name"</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">"unknown"</span><span class="p">),</span>
+</span><span data-line="280">        <span class="s2">"total_documents"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">),</span>
+</span><span data-line="281">    <span class="p">}</span>
+</span><span data-line="282">    <span class="p">(</span><span class="n">output_dir</span> <span class="o">/</span> <span class="s2">"_metadata.json"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+</span><span data-line="283">        <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span>
+</span><span data-line="284">    <span class="p">)</span>
+</span><span data-line="285">
+</span><span data-line="286">    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="287">    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+</span><span data-line="288">        <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+</span><span data-line="289">        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="290">            <span class="s2">"id"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+</span><span data-line="291">            <span class="s2">"text"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+</span><span data-line="292">            <span class="s2">"metadata"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+</span><span data-line="293">        <span class="p">}</span>
+</span><span data-line="294">        <span class="k">if</span> <span class="n">include_vectors</span> <span class="ow">and</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
+</span><span data-line="295">            <span class="n">data</span><span class="p">[</span><span class="s2">"vector"</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span>
+</span><span data-line="296">
+</span><span data-line="297">        <span class="c1"># Sanitize filename</span>
+</span><span data-line="298">        <span class="n">safe_id</span> <span class="o">=</span> <span class="n">doc_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span>
+</span><span data-line="299">        <span class="n">file_path</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">safe_id</span><span class="si">}</span><span class="s2">.json"</span>
+</span><span data-line="300">
+</span><span data-line="301">        <span class="n">file_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+</span><span data-line="302">            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span>
+</span><span data-line="303">        <span class="p">)</span>
+</span><span data-line="304">        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span data-line="305">
+</span><span data-line="306">    <span class="k">return</span> <span class="n">count</span></div>
 
-<span class="sd">    Useful for version control and easy browsing.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    collection : Collection</span>
-<span class="sd">        Collection to export</span>
-<span class="sd">    output_dir : str or Path</span>
-<span class="sd">        Output directory path</span>
-<span class="sd">    include_vectors : bool, default True</span>
-<span class="sd">        Whether to include vectors</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    int</span>
-<span class="sd">        Number of documents exported</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
-    <span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="c1"># Export metadata</span>
-    <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;collection_name&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;total_documents&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">),</span>
-    <span class="p">}</span>
-    <span class="p">(</span><span class="n">output_dir</span> <span class="o">/</span> <span class="s2">&quot;_metadata.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
-        <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
-    <span class="p">)</span>
-
-    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
-        <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
-            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="n">include_vectors</span> <span class="ow">and</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;vector&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span>
-
-        <span class="c1"># Sanitize filename</span>
-        <span class="n">safe_id</span> <span class="o">=</span> <span class="n">doc_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
-        <span class="n">file_path</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">safe_id</span><span class="si">}</span><span class="s2">.json&quot;</span>
-
-        <span class="n">file_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
-        <span class="p">)</span>
-        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
-
-    <span class="k">return</span> <span class="n">count</span></div>
-
-
-
+</span><span data-line="307">
+</span><span data-line="308">
 <div class="viewcode-block" id="import_from_directory">
-<a class="viewcode-back" href="../../module_docs/vd/io.html#vd.import_from_directory">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">import_from_directory</span><span class="p">(</span>
-    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
-    <span class="n">input_dir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="n">skip_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;*.json&quot;</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Import documents from a directory of JSON files.</span>
+<a class="viewcode-back" href="../../_autosummary/vd.io.html#vd.import_from_directory">[docs]</a>
+</span><span data-line="309"><span class="k">def</span><span class="w"> </span><span class="nf">import_from_directory</span><span class="p">(</span>
+</span><span data-line="310">    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+</span><span data-line="311">    <span class="n">input_dir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+</span><span data-line="312">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="313">    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+</span><span data-line="314">    <span class="n">skip_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="315">    <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"*.json"</span><span class="p">,</span>
+</span><span data-line="316"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span data-line="317"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="318"><span class="sd">    Import documents from a directory of JSON files.</span>
+</span><span data-line="319">
+</span><span data-line="320"><span class="sd">    Parameters</span>
+</span><span data-line="321"><span class="sd">    ----------</span>
+</span><span data-line="322"><span class="sd">    collection : Collection</span>
+</span><span data-line="323"><span class="sd">        Collection to import into</span>
+</span><span data-line="324"><span class="sd">    input_dir : str or Path</span>
+</span><span data-line="325"><span class="sd">        Input directory path</span>
+</span><span data-line="326"><span class="sd">    batch_size : int, default 100</span>
+</span><span data-line="327"><span class="sd">        Batch size for adding documents</span>
+</span><span data-line="328"><span class="sd">    skip_existing : bool, default False</span>
+</span><span data-line="329"><span class="sd">        If True, skip documents with IDs that already exist</span>
+</span><span data-line="330"><span class="sd">    pattern : str, default '*.json'</span>
+</span><span data-line="331"><span class="sd">        File pattern to match</span>
+</span><span data-line="332">
+</span><span data-line="333"><span class="sd">    Returns</span>
+</span><span data-line="334"><span class="sd">    -------</span>
+</span><span data-line="335"><span class="sd">    int</span>
+</span><span data-line="336"><span class="sd">        Number of documents imported</span>
+</span><span data-line="337"><span class="sd">    """</span>
+</span><span data-line="338">    <span class="n">input_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_dir</span><span class="p">)</span>
+</span><span data-line="339">    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="340">    <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="341">
+</span><span data-line="342">    <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">input_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+</span><span data-line="343">        <span class="c1"># Skip metadata file</span>
+</span><span data-line="344">        <span class="k">if</span> <span class="n">file_path</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">"_metadata.json"</span><span class="p">:</span>
+</span><span data-line="345">            <span class="k">continue</span>
+</span><span data-line="346">
+</span><span data-line="347">        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">file_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">))</span>
+</span><span data-line="348">
+</span><span data-line="349">        <span class="c1"># Check if we should skip</span>
+</span><span data-line="350">        <span class="k">if</span> <span class="n">skip_existing</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+</span><span data-line="351">            <span class="k">continue</span>
+</span><span data-line="352">
+</span><span data-line="353">        <span class="c1"># Create document</span>
+</span><span data-line="354">        <span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
+</span><span data-line="355">            <span class="nb">id</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
+</span><span data-line="356">            <span class="n">text</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"text"</span><span class="p">],</span>
+</span><span data-line="357">            <span class="n">vector</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"vector"</span><span class="p">),</span>
+</span><span data-line="358">            <span class="n">metadata</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"metadata"</span><span class="p">,</span> <span class="p">{}),</span>
+</span><span data-line="359">        <span class="p">)</span>
+</span><span data-line="360">
+</span><span data-line="361">        <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</span><span data-line="362">        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span data-line="363">
+</span><span data-line="364">        <span class="c1"># Flush batch</span>
+</span><span data-line="365">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">batch_size</span><span class="p">:</span>
+</span><span data-line="366">            <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+</span><span data-line="367">            <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="368">
+</span><span data-line="369">    <span class="c1"># Flush remaining</span>
+</span><span data-line="370">    <span class="k">if</span> <span class="n">batch</span><span class="p">:</span>
+</span><span data-line="371">        <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+</span><span data-line="372">
+</span><span data-line="373">    <span class="k">return</span> <span class="n">count</span></div>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    collection : Collection</span>
-<span class="sd">        Collection to import into</span>
-<span class="sd">    input_dir : str or Path</span>
-<span class="sd">        Input directory path</span>
-<span class="sd">    batch_size : int, default 100</span>
-<span class="sd">        Batch size for adding documents</span>
-<span class="sd">    skip_existing : bool, default False</span>
-<span class="sd">        If True, skip documents with IDs that already exist</span>
-<span class="sd">    pattern : str, default &#39;*.json&#39;</span>
-<span class="sd">        File pattern to match</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    int</span>
-<span class="sd">        Number of documents imported</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">input_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_dir</span><span class="p">)</span>
-    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">input_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
-        <span class="c1"># Skip metadata file</span>
-        <span class="k">if</span> <span class="n">file_path</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;_metadata.json&quot;</span><span class="p">:</span>
-            <span class="k">continue</span>
-
-        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">file_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
-
-        <span class="c1"># Check if we should skip</span>
-        <span class="k">if</span> <span class="n">skip_existing</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
-            <span class="k">continue</span>
-
-        <span class="c1"># Create document</span>
-        <span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
-            <span class="nb">id</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-            <span class="n">text</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">],</span>
-            <span class="n">vector</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;vector&quot;</span><span class="p">),</span>
-            <span class="n">metadata</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="p">{}),</span>
-        <span class="p">)</span>
-
-        <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
-        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="c1"># Flush batch</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">batch_size</span><span class="p">:</span>
-            <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-            <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="c1"># Flush remaining</span>
-    <span class="k">if</span> <span class="n">batch</span><span class="p">:</span>
-        <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">count</span></div>
-
-
-
-<span class="c1"># Convenience functions to add to Collection (can be monkey-patched or used via helper)</span>
-
-
+</span><span data-line="374">
+</span><span data-line="375">
+</span><span data-line="376"><span class="c1"># Convenience functions to add to Collection (can be monkey-patched or used via helper)</span>
+</span><span data-line="377">
+</span><span data-line="378">
 <div class="viewcode-block" id="export_collection">
-<a class="viewcode-back" href="../../module_docs/vd/io.html#vd.export_collection">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">export_collection</span><span class="p">(</span>
-    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
-    <span class="n">output_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;jsonl&quot;</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Export a collection to a file in the specified format.</span>
+<a class="viewcode-back" href="../../_autosummary/vd.io.html#vd.export_collection">[docs]</a>
+</span><span data-line="379"><span class="k">def</span><span class="w"> </span><span class="nf">export_collection</span><span class="p">(</span>
+</span><span data-line="380">    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+</span><span data-line="381">    <span class="n">output_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+</span><span data-line="382">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="383">    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"jsonl"</span><span class="p">,</span>
+</span><span data-line="384">    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span data-line="385"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span data-line="386"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="387"><span class="sd">    Export a collection to a file in the specified format.</span>
+</span><span data-line="388">
+</span><span data-line="389"><span class="sd">    Parameters</span>
+</span><span data-line="390"><span class="sd">    ----------</span>
+</span><span data-line="391"><span class="sd">    collection : Collection</span>
+</span><span data-line="392"><span class="sd">        Collection to export</span>
+</span><span data-line="393"><span class="sd">    output_path : str or Path</span>
+</span><span data-line="394"><span class="sd">        Output file/directory path</span>
+</span><span data-line="395"><span class="sd">    format : str</span>
+</span><span data-line="396"><span class="sd">        Export format: 'jsonl', 'json', 'directory'</span>
+</span><span data-line="397"><span class="sd">    **kwargs</span>
+</span><span data-line="398"><span class="sd">        Additional format-specific options</span>
+</span><span data-line="399">
+</span><span data-line="400"><span class="sd">    Returns</span>
+</span><span data-line="401"><span class="sd">    -------</span>
+</span><span data-line="402"><span class="sd">    int</span>
+</span><span data-line="403"><span class="sd">        Number of documents exported</span>
+</span><span data-line="404">
+</span><span data-line="405"><span class="sd">    Examples</span>
+</span><span data-line="406"><span class="sd">    --------</span>
+</span><span data-line="407"><span class="sd">    &gt;&gt;&gt; import vd</span>
+</span><span data-line="408"><span class="sd">    &gt;&gt;&gt; client = vd.connect('memory')  # doctest: +SKIP</span>
+</span><span data-line="409"><span class="sd">    &gt;&gt;&gt; docs = client.create_collection('test')  # doctest: +SKIP</span>
+</span><span data-line="410"><span class="sd">    &gt;&gt;&gt; vd.export_collection(docs, 'backup.jsonl')  # doctest: +SKIP</span>
+</span><span data-line="411"><span class="sd">    """</span>
+</span><span data-line="412">    <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"jsonl"</span><span class="p">:</span>
+</span><span data-line="413">        <span class="k">return</span> <span class="n">export_to_jsonl</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="414">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"json"</span><span class="p">:</span>
+</span><span data-line="415">        <span class="k">return</span> <span class="n">export_to_json</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="416">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"directory"</span><span class="p">:</span>
+</span><span data-line="417">        <span class="k">return</span> <span class="n">export_to_directory</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="418">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="419">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown format: </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    collection : Collection</span>
-<span class="sd">        Collection to export</span>
-<span class="sd">    output_path : str or Path</span>
-<span class="sd">        Output file/directory path</span>
-<span class="sd">    format : str</span>
-<span class="sd">        Export format: &#39;jsonl&#39;, &#39;json&#39;, &#39;directory&#39;</span>
-<span class="sd">    **kwargs</span>
-<span class="sd">        Additional format-specific options</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    int</span>
-<span class="sd">        Number of documents exported</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import vd</span>
-<span class="sd">    &gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; docs = client.create_collection(&#39;test&#39;)  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; vd.export_collection(docs, &#39;backup.jsonl&#39;)  # doctest: +SKIP</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;jsonl&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">export_to_jsonl</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">export_to_json</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;directory&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">export_to_directory</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown format: </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
-
-
-
+</span><span data-line="420">
+</span><span data-line="421">
 <div class="viewcode-block" id="import_collection">
-<a class="viewcode-back" href="../../module_docs/vd/io.html#vd.import_collection">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">import_collection</span><span class="p">(</span>
-    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
-    <span class="n">input_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Import documents into a collection from a file.</span>
+<a class="viewcode-back" href="../../_autosummary/vd.io.html#vd.import_collection">[docs]</a>
+</span><span data-line="422"><span class="k">def</span><span class="w"> </span><span class="nf">import_collection</span><span class="p">(</span>
+</span><span data-line="423">    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+</span><span data-line="424">    <span class="n">input_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+</span><span data-line="425">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="426">    <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="427">    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span data-line="428"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span data-line="429"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="430"><span class="sd">    Import documents into a collection from a file.</span>
+</span><span data-line="431">
+</span><span data-line="432"><span class="sd">    Parameters</span>
+</span><span data-line="433"><span class="sd">    ----------</span>
+</span><span data-line="434"><span class="sd">    collection : Collection</span>
+</span><span data-line="435"><span class="sd">        Collection to import into</span>
+</span><span data-line="436"><span class="sd">    input_path : str or Path</span>
+</span><span data-line="437"><span class="sd">        Input file/directory path</span>
+</span><span data-line="438"><span class="sd">    format : str, optional</span>
+</span><span data-line="439"><span class="sd">        Import format: 'jsonl', 'json', 'directory'</span>
+</span><span data-line="440"><span class="sd">        If None, inferred from file extension</span>
+</span><span data-line="441"><span class="sd">    **kwargs</span>
+</span><span data-line="442"><span class="sd">        Additional format-specific options</span>
+</span><span data-line="443">
+</span><span data-line="444"><span class="sd">    Returns</span>
+</span><span data-line="445"><span class="sd">    -------</span>
+</span><span data-line="446"><span class="sd">    int</span>
+</span><span data-line="447"><span class="sd">        Number of documents imported</span>
+</span><span data-line="448">
+</span><span data-line="449"><span class="sd">    Examples</span>
+</span><span data-line="450"><span class="sd">    --------</span>
+</span><span data-line="451"><span class="sd">    &gt;&gt;&gt; import vd</span>
+</span><span data-line="452"><span class="sd">    &gt;&gt;&gt; client = vd.connect('memory')  # doctest: +SKIP</span>
+</span><span data-line="453"><span class="sd">    &gt;&gt;&gt; docs = client.create_collection('test')  # doctest: +SKIP</span>
+</span><span data-line="454"><span class="sd">    &gt;&gt;&gt; vd.import_collection(docs, 'backup.jsonl')  # doctest: +SKIP</span>
+</span><span data-line="455"><span class="sd">    """</span>
+</span><span data-line="456">    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+</span><span data-line="457">
+</span><span data-line="458">    <span class="c1"># Infer format if not specified</span>
+</span><span data-line="459">    <span class="k">if</span> <span class="nb">format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="460">        <span class="k">if</span> <span class="n">input_path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+</span><span data-line="461">            <span class="nb">format</span> <span class="o">=</span> <span class="s2">"directory"</span>
+</span><span data-line="462">        <span class="k">elif</span> <span class="n">input_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".jsonl"</span><span class="p">:</span>
+</span><span data-line="463">            <span class="nb">format</span> <span class="o">=</span> <span class="s2">"jsonl"</span>
+</span><span data-line="464">        <span class="k">elif</span> <span class="n">input_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".json"</span><span class="p">:</span>
+</span><span data-line="465">            <span class="nb">format</span> <span class="o">=</span> <span class="s2">"json"</span>
+</span><span data-line="466">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="467">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot infer format from path: </span><span class="si">{</span><span class="n">input_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="468">
+</span><span data-line="469">    <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"jsonl"</span><span class="p">:</span>
+</span><span data-line="470">        <span class="k">return</span> <span class="n">import_from_jsonl</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="471">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"json"</span><span class="p">:</span>
+</span><span data-line="472">        <span class="k">return</span> <span class="n">import_from_json</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="473">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"directory"</span><span class="p">:</span>
+</span><span data-line="474">        <span class="k">return</span> <span class="n">import_from_directory</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="475">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="476">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown format: </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    collection : Collection</span>
-<span class="sd">        Collection to import into</span>
-<span class="sd">    input_path : str or Path</span>
-<span class="sd">        Input file/directory path</span>
-<span class="sd">    format : str, optional</span>
-<span class="sd">        Import format: &#39;jsonl&#39;, &#39;json&#39;, &#39;directory&#39;</span>
-<span class="sd">        If None, inferred from file extension</span>
-<span class="sd">    **kwargs</span>
-<span class="sd">        Additional format-specific options</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    int</span>
-<span class="sd">        Number of documents imported</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; import vd</span>
-<span class="sd">    &gt;&gt;&gt; client = vd.connect(&#39;memory&#39;)  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; docs = client.create_collection(&#39;test&#39;)  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; vd.import_collection(docs, &#39;backup.jsonl&#39;)  # doctest: +SKIP</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
-
-    <span class="c1"># Infer format if not specified</span>
-    <span class="k">if</span> <span class="nb">format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">input_path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-            <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;directory&quot;</span>
-        <span class="k">elif</span> <span class="n">input_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.jsonl&quot;</span><span class="p">:</span>
-            <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;jsonl&quot;</span>
-        <span class="k">elif</span> <span class="n">input_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.json&quot;</span><span class="p">:</span>
-            <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot infer format from path: </span><span class="si">{</span><span class="n">input_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;jsonl&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">import_from_jsonl</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">import_from_json</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;directory&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">import_from_directory</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown format: </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
-
-</pre></div>
-
-           </div>
-          </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p></p>
+</span></pre></div>
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright">
+  <p>
+    Made with
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+  <a href="https://github.com/i2mint/vd" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
+    </div>
   </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
 </footer>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+      <script src="../../_static/documentation_options.js?v=29c81e07"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=fd10adb8"></script>
+      <script src="../../_static/shibuya.js?v=50760d75"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
 
-</body>
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script></body>
 </html>

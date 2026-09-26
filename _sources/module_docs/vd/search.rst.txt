@@ -1,4 +1,0 @@
-vd.search
-=========
-.. automodule:: vd.search
-   :members:

@@ -1,4 +1,0 @@
-vd.backends.faiss
-=================
-.. automodule:: vd.backends.faiss
-   :members:

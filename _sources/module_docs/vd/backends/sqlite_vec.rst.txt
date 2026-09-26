@@ -1,4 +1,0 @@
-vd.backends.sqlite_vec
-======================
-.. automodule:: vd.backends.sqlite_vec
-   :members:

@@ -1,0 +1,36 @@
+# vd
+
+> A facade over vector databases — one interface, ~15 backends
+
+
+## Pages
+
+- [vd](index.html.md): &#42;&#42;One Pythonic interface to ~15 vector databases.&#42;&#42; Store vectors, search them, filter by metadata, ...
+- [API reference](api.html.md): | &#96;vd&#96;   | &#96;vd&#96; — one Pythonic interface to every vector database.   |
+- [vd](_autosummary/vd.html.md): &#96;vd&#96; — one Pythonic interface to every vector database.
+- [vd.analytics](_autosummary/vd.analytics.html.md): Analytics and statistics for vd collections.
+- [vd.asynchronous](_autosummary/vd.asynchronous.html.md): Async support for &#96;vd&#96;: universal wrapper + opt-in native implementations.
+- [vd.backends](_autosummary/vd.backends.html.md): Backend adapters for the vector databases &#96;vd&#96; supports.
+- [vd.backends.memory](_autosummary/vd.backends.memory.html.md): In-memory backend — the reference adapter.
+- [vd.base](_autosummary/vd.base.html.md): Core contracts, data model, and abstract bases for the &#96;vd&#96; vectorDB facade.
+- [vd.cli](_autosummary/vd.cli.html.md): Command-line interface for vd.
+- [vd.config](_autosummary/vd.config.html.md): Configuration management for vd.
+- [vd.filters](_autosummary/vd.filters.html.md): The canonical metadata-filter language for &#96;vd&#96;.
+- [vd.health](_autosummary/vd.health.html.md): Health check and validation utilities for vd.
+- [vd.io](_autosummary/vd.io.html.md): Import/export utilities for vd collections.
+- [vd.migration](_autosummary/vd.migration.html.md): Migration utilities for moving data between backends.
+- [vd.requirements](_autosummary/vd.requirements.html.md): Setup assistance: turning provider metadata into actionable diagnostics.
+- [vd.search](_autosummary/vd.search.html.md): Advanced search utilities for vd.
+- [vd.text](_autosummary/vd.text.html.md): Text preprocessing and chunking utilities for vd.
+- [vd.time_indexed](_autosummary/vd.time_indexed.html.md): Time-indexed vector collection wrapper.
+- [vd.util](_autosummary/vd.util.html.md): The backend registry, the &#96;connect()&#96; factory, and small shared utilities.
+- [For AI agents](ai-agents.html.md): &#96;vd&#96; ships artifacts for coding agents alongside its code. This page lists
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-09-26 10:53 UTC&#42;&#42; from commit &lt;a href="https://github.com/i2m...
+
+## Optional
+
+- [vd.md](vd.md): Complete documentation in a single file.
+
+## Build
+
+- [build_info.json](build_info.json): build provenance (commit, version, tool versions, whether the docs match the package)

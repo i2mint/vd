@@ -1,4 +1,0 @@
-vd.backends.pinecone
-====================
-.. automodule:: vd.backends.pinecone
-   :members:

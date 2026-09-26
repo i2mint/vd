@@ -1,452 +1,454 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html lang="en" data-accent-color="teal" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to vd’s documentation! &mdash; vd 0.2.10 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>vd</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="API reference" href="api.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d88b86f9" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=2ceb65ce" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="vd"/>
+    <meta name="twitter:card" content="summary"/>
   
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=8db09a1e"></script>
+<link rel="alternate" type="text/markdown" href="index.html.md">
+<link rel="describedby" href="llms.txt" type="text/markdown">
+</head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="#">
+      
+      
+      <strong>vd</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/i2mint/vd" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/vd.html">vd</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.analytics.html">vd.analytics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.asynchronous.html">vd.asynchronous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.backends.html">vd.backends</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="_autosummary/vd.backends.memory.html">vd.backends.memory</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.base.html">vd.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.cli.html">vd.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.config.html">vd.config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.filters.html">vd.filters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.health.html">vd.health</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.io.html">vd.io</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.migration.html">vd.migration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.requirements.html">vd.requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.search.html">vd.search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.text.html">vd.text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.time_indexed.html">vd.time_indexed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/vd.util.html">vd.util</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ai-agents.html">For AI agents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#for-ai-agents">For AI agents</a></li>
+<li><a class="reference internal" href="#install">Install</a></li>
+<li><a class="reference internal" href="#the-mental-model">The mental model</a></li>
+<li><a class="reference internal" href="#the-api">The API</a><ul>
+<li><a class="reference internal" href="#metadata-filtering">Metadata filtering</a></li>
+<li><a class="reference internal" href="#hybrid-search">Hybrid search</a></li>
+<li><a class="reference internal" href="#async">Async</a></li>
+<li><a class="reference internal" href="#escape-hatches">Escape hatches</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#choosing-and-setting-up-a-backend">Choosing and setting up a backend</a></li>
+<li><a class="reference internal" href="#the-toolkit">The toolkit</a></li>
+<li><a class="reference internal" href="#for-artisanal-hand-typed-contributions">For artisanal, hand-typed contributions</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="#"><span itemprop="name">vd</span></a>
+        <meta itemprop="position" content="1" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue dark-code" role="main">
+          <!-- generated by epythet -->
+<section id="vd">
+<h1>vd<a class="headerlink" href="#vd" title="Link to this heading">#</a></h1>
+<p><strong>One Pythonic interface to ~15 vector databases.</strong> Store vectors, search them, filter by metadata, and switch between databases (memory, Chroma, Qdrant, pgvector, LanceDB, Pinecone, …) by changing one word.</p>
+<p><em>Still typing code with your own ten fingers? <a class="reference internal" href="#for-artisanal-hand-typed-contributions">Your artisanal corner is at the bottom</a>.</em></p>
+<section id="for-ai-agents">
+<h2>For AI agents<a class="headerlink" href="#for-ai-agents" title="Link to this heading">#</a></h2>
+<p><strong>Skills.</strong> <code class="docutils literal notranslate"><span class="pre">vd</span></code> ships agent skills in <a class="reference internal" href="#vd/data/skills/"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">vd/data/skills/</span></code></span></a>. They install into any agent host with <a class="reference external" href="https://cli.github.com/manual/gh_skill"><code class="docutils literal notranslate"><span class="pre">gh</span> <span class="pre">skill</span></code></a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-quickstart<span class="w"> </span>--agent<span class="w"> </span>claude-code
+</span><span data-line="2">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-backend-choose
+</span><span data-line="3">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-setup-backend
+</span><span data-line="4">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-ingest
+</span><span data-line="5">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-search
+</span><span data-line="6">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-ops
+</span><span data-line="7">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-add-backend
+</span></pre></div>
+</div>
+<p>They also ship inside the wheel, so after <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">vd</span></code> you can link them without GitHub:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">mkdir<span class="w"> </span>-p<span class="w"> </span>~/.claude/skills
+</span><span data-line="2">ln<span class="w"> </span>-s<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">'import vd; print(vd.skills_dir())'</span><span class="k">)</span><span class="s2">"</span>/vd-*<span class="w"> </span>~/.claude/skills/
+</span></pre></div>
+</div>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Skill</p></th>
+<th class="head"><p>Use it when…</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vd-quickstart</span></code></p></td>
+<td><p>doing basic vector search: connect, create a collection, add docs, query</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vd-backend-choose</span></code></p></td>
+<td><p>picking a vector DB and weighing trade-offs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vd-setup-backend</span></code></p></td>
+<td><p>installing, starting and verifying a backend (pip, Docker, API keys)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vd-ingest</span></code></p></td>
+<td><p>loading documents: cleaning, chunking, metadata, bulk insert</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vd-search</span></code></p></td>
+<td><p>filters, hybrid (keyword + vector) search, multi-query, RRF, similar-to, dedup</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vd-ops</span></code></p></td>
+<td><p>export/import, migration, stats, integrity, health checks, benchmarks</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vd-add-backend</span></code></p></td>
+<td><p>(developer) implementing or reviewing a backend adapter</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Project instructions</strong> for coding agents working <em>on</em> <code class="docutils literal notranslate"><span class="pre">vd</span></code> live in <a class="reference internal" href="#.claude/CLAUDE.md"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">.claude/CLAUDE.md</span></code></span></a>: architecture, test commands, conventions and the refactor roadmap.</p>
+<p><strong>What an agent can do with <code class="docutils literal notranslate"><span class="pre">vd</span></code>:</strong> recommend and set up a vector database for a user, index their documents, run filtered or hybrid searches, and move a collection between databases. The whole surface is two <code class="docutils literal notranslate"><span class="pre">Mapping</span></code>s plus <code class="docutils literal notranslate"><span class="pre">search</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="n">client</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">)</span>          <span class="c1"># switch DB = change this one word</span>
+</span><span data-line="4"><span class="n">col</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s2">"docs"</span><span class="p">)</span>
+</span><span data-line="5"><span class="n">col</span><span class="p">[</span><span class="s2">"a"</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"a"</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"cats"</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"pet"</span><span class="p">})</span>
+</span><span data-line="6"><span class="n">col</span><span class="p">[</span><span class="s2">"b"</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"b"</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"pizza"</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"food"</span><span class="p">})</span>
+</span><span data-line="7">
+</span><span data-line="8"><span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">col</span><span class="o">.</span><span class="n">search</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+</span><span data-line="9">    <span class="nb">print</span><span class="p">(</span><span class="n">hit</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">round</span><span class="p">(</span><span class="n">hit</span><span class="p">[</span><span class="s2">"score"</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span>
+</span><span data-line="10"><span class="c1"># a 1.0</span>
+</span><span data-line="11"><span class="c1"># b 0.123</span>
+</span></pre></div>
+</div>
+</section>
+<section id="install">
+<h2>Install<a class="headerlink" href="#install" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">pip<span class="w"> </span>install<span class="w"> </span>vd<span class="w">                    </span><span class="c1"># core (stdlib + pyyaml) and the memory backend</span>
+</span><span data-line="2">pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"vd[chroma]"</span><span class="w">          </span><span class="c1"># plus one backend's client</span>
+</span><span data-line="3">pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"vd[embedded]"</span><span class="w">        </span><span class="c1"># plus chroma, qdrant, faiss, lancedb, sqlite_vec, duckdb</span>
+</span><span data-line="4">pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"vd[all-backends]"</span><span class="w">    </span><span class="c1"># plus every backend client</span>
+</span></pre></div>
+</div>
+<p>Each backend’s client is an optional extra named after the backend. Keep the quotes: zsh treats <code class="docutils literal notranslate"><span class="pre">[...]</span></code> as a glob.</p>
+</section>
+<section id="the-mental-model">
+<h2>The mental model<a class="headerlink" href="#the-mental-model" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">vd</span></code> stores and searches <strong>vectors</strong>. Turning text into vectors, <em>embedding</em>, is deliberately <strong>external</strong>: <code class="docutils literal notranslate"><span class="pre">vd</span></code> never embeds on its own. Hand it <code class="docutils literal notranslate"><span class="pre">Document</span></code>s that carry a <code class="docutils literal notranslate"><span class="pre">vector</span></code>, and search with a query vector.</p>
+<p>For convenience, pass any <code class="docutils literal notranslate"><span class="pre">text</span> <span class="pre">-&gt;</span> <span class="pre">vector</span></code> function as <code class="docutils literal notranslate"><span class="pre">embedder</span></code>, and raw text then works too:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="k">def</span><span class="w"> </span><span class="nf">embed</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>                       <span class="c1"># stand-in; use a real embedding model</span>
+</span><span data-line="4">    <span class="k">return</span> <span class="p">[</span><span class="n">text</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="s2">"aeiou"</span><span class="p">]</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="n">col</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">,</span> <span class="n">embedder</span><span class="o">=</span><span class="n">embed</span><span class="p">)</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s2">"notes"</span><span class="p">)</span>
+</span><span data-line="7"><span class="n">col</span><span class="p">[</span><span class="s2">"k1"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"cats and kittens"</span>                          <span class="c1"># embedded for you</span>
+</span><span data-line="8"><span class="n">col</span><span class="p">[</span><span class="s2">"k2"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"dogs and puppies"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"dog"</span><span class="p">})</span>       <span class="c1"># text + metadata</span>
+</span><span data-line="9"><span class="nb">print</span><span class="p">([</span><span class="n">h</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">col</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">"a kitten"</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)])</span>
+</span><span data-line="10"><span class="c1"># ['k1']</span>
+</span></pre></div>
+</div>
+<p>Without an embedder, passing text raises <code class="docutils literal notranslate"><span class="pre">EmbeddingRequiredError</span></code>: loud, never a silent wrong-model embedding.</p>
+</section>
+<section id="the-api">
+<h2>The API<a class="headerlink" href="#the-api" title="Link to this heading">#</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Is a</p></th>
+<th class="head"><p>Plus</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Client</span></code> (from <code class="docutils literal notranslate"><span class="pre">connect</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mapping[str,</span> <span class="pre">Collection]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">create_collection</span></code>, <code class="docutils literal notranslate"><span class="pre">get_collection</span></code>, <code class="docutils literal notranslate"><span class="pre">delete_collection</span></code>, <code class="docutils literal notranslate"><span class="pre">get_or_create_collection</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Collection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">MutableMapping[str,</span> <span class="pre">Document]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">search(...)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Document</span></code></p></td>
+<td><p>dataclass</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">vector</span></code>, <code class="docutils literal notranslate"><span class="pre">metadata</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="n">col</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">)</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s2">"api"</span><span class="p">)</span>
+</span><span data-line="4"><span class="n">col</span><span class="p">[</span><span class="s2">"k"</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"hello"</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"year"</span><span class="p">:</span> <span class="mi">2024</span><span class="p">})</span>
+</span><span data-line="5"><span class="n">doc</span> <span class="o">=</span> <span class="n">col</span><span class="p">[</span><span class="s2">"k"</span><span class="p">]</span>                          <span class="c1"># get</span>
+</span><span data-line="6"><span class="nb">print</span><span class="p">(</span><span class="s2">"k"</span> <span class="ow">in</span> <span class="n">col</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">col</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">col</span><span class="p">))</span>  <span class="c1"># membership, count, keys</span>
+</span><span data-line="7"><span class="c1"># True 1 ['k']</span>
+</span><span data-line="8"><span class="k">del</span> <span class="n">col</span><span class="p">[</span><span class="s2">"k"</span><span class="p">]</span>                            <span class="c1"># delete</span>
+</span></pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">search(query,</span> <span class="pre">*,</span> <span class="pre">limit=10,</span> <span class="pre">filter=None,</span> <span class="pre">egress=None)</span></code> yields dicts <code class="docutils literal notranslate"><span class="pre">{&quot;id&quot;,</span> <span class="pre">&quot;text&quot;,</span> <span class="pre">&quot;score&quot;,</span> <span class="pre">&quot;metadata&quot;}</span></code> where <code class="docutils literal notranslate"><span class="pre">score</span></code> is higher-is-better. Transform results with an <code class="docutils literal notranslate"><span class="pre">egress</span></code> such as <code class="docutils literal notranslate"><span class="pre">vd.id_only</span></code>, <code class="docutils literal notranslate"><span class="pre">vd.id_and_score</span></code>, <code class="docutils literal notranslate"><span class="pre">vd.text_only</span></code>, <code class="docutils literal notranslate"><span class="pre">vd.id_text_score</span></code>, or your own function.</p>
+<section id="metadata-filtering">
+<h3>Metadata filtering<a class="headerlink" href="#metadata-filtering" title="Link to this heading">#</a></h3>
+<p>One backend-agnostic, MongoDB-style filter language: <code class="docutils literal notranslate"><span class="pre">$eq</span> <span class="pre">$ne</span> <span class="pre">$gt</span> <span class="pre">$gte</span> <span class="pre">$lt</span> <span class="pre">$lte</span> <span class="pre">$in</span> <span class="pre">$nin</span> <span class="pre">$exists</span> <span class="pre">$and</span> <span class="pre">$or</span> <span class="pre">$not</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="n">col</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">)</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s2">"posts"</span><span class="p">)</span>
+</span><span data-line="4"><span class="n">col</span><span class="p">[</span><span class="s2">"a"</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"a"</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"year"</span><span class="p">:</span> <span class="mi">2023</span><span class="p">,</span> <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"news"</span><span class="p">})</span>
+</span><span data-line="5"><span class="n">col</span><span class="p">[</span><span class="s2">"b"</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"b"</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"year"</span><span class="p">:</span> <span class="mi">2019</span><span class="p">,</span> <span class="s2">"kind"</span><span class="p">:</span> <span class="s2">"blog"</span><span class="p">})</span>
+</span><span data-line="6"><span class="n">hits</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">search</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">"year"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"$gte"</span><span class="p">:</span> <span class="mi">2020</span><span class="p">},</span> <span class="s2">"kind"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"$in"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"news"</span><span class="p">,</span> <span class="s2">"blog"</span><span class="p">]}})</span>
+</span><span data-line="7"><span class="nb">print</span><span class="p">([</span><span class="n">h</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hits</span><span class="p">])</span>
+</span><span data-line="8"><span class="c1"># ['a']</span>
+</span></pre></div>
+</div>
+<p>Each backend declares which operators it honors. An unsupported one raises <code class="docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code> instead of silently mis-filtering. Backends with rich native filtering (Qdrant, Pinecone, MongoDB) translate the filter; the rest apply it client-side with the same semantics.</p>
+</section>
+<section id="hybrid-search">
+<h3>Hybrid search<a class="headerlink" href="#hybrid-search" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">vd.hybrid_search</span></code> fuses a vector search with a keyword (BM25) search using Reciprocal Rank Fusion, on any backend:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="n">col</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">)</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s2">"hybrid"</span><span class="p">)</span>
+</span><span data-line="4"><span class="n">col</span><span class="p">[</span><span class="s2">"a"</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"a"</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"error code E1234 in the parser"</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span>
+</span><span data-line="5"><span class="n">col</span><span class="p">[</span><span class="s2">"b"</span><span class="p">]</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"b"</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"parser overview"</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>
+</span><span data-line="6"><span class="n">hits</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">hybrid_search</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="n">query_text</span><span class="o">=</span><span class="s2">"E1234"</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span><span data-line="7"><span class="nb">print</span><span class="p">([</span><span class="n">h</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hits</span><span class="p">])</span>
+</span><span data-line="8"><span class="c1"># ['a', 'b']</span>
+</span></pre></div>
+</div>
+<p>Weaviate, Elasticsearch, Redis and LanceDB run the keyword side on their own text index (<code class="docutils literal notranslate"><span class="pre">isinstance(col,</span> <span class="pre">vd.SupportsHybrid)</span></code>); other backends use a client-side BM25 scan.</p>
+</section>
+<section id="async">
+<h3>Async<a class="headerlink" href="#async" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+</span><span data-line="2"><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+</span><span data-line="5">    <span class="k">async</span> <span class="k">with</span> <span class="k">await</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect_async</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+</span><span data-line="6">        <span class="n">col</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s2">"docs"</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span><span data-line="7">        <span class="k">await</span> <span class="n">col</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="n">vd</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"a"</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+</span><span data-line="8">        <span class="k">return</span> <span class="p">[</span><span class="n">h</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="k">async</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">col</span><span class="o">.</span><span class="n">search</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+</span><span data-line="9">
+</span><span data-line="10"><span class="nb">print</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">()))</span>
+</span><span data-line="11"><span class="c1"># ['a']</span>
+</span></pre></div>
+</div>
+<p>Every backend works through a thread-pool wrapper. Backends listed by <code class="docutils literal notranslate"><span class="pre">vd.list_async_backends()</span></code> can return a native async client that does real non-blocking I/O: currently <code class="docutils literal notranslate"><span class="pre">qdrant</span></code> when connected to a server with <code class="docutils literal notranslate"><span class="pre">url=</span></code>. Check <code class="docutils literal notranslate"><span class="pre">client.native_async</span></code>.</p>
+</section>
+<section id="escape-hatches">
+<h3>Escape hatches<a class="headerlink" href="#escape-hatches" title="Link to this heading">#</a></h3>
+<p>The facade never traps you. <code class="docutils literal notranslate"><span class="pre">client.client</span></code> is the raw backend client and <code class="docutils literal notranslate"><span class="pre">collection.native</span></code> is the raw backend collection. Both are supported, documented API for reaching backend-specific features.</p>
+</section>
+</section>
+<section id="choosing-and-setting-up-a-backend">
+<h2>Choosing and setting up a backend<a class="headerlink" href="#choosing-and-setting-up-a-backend" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="n">vd</span><span class="o">.</span><span class="n">print_recommendation</span><span class="p">(</span><span class="n">corpus_size</span><span class="o">=</span><span class="s2">"medium"</span><span class="p">,</span> <span class="n">persistence</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">can_run_docker</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cloud_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">budget</span><span class="o">=</span><span class="s2">"free"</span><span class="p">,</span> <span class="n">needs_hybrid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span data-line="4"><span class="n">vd</span><span class="o">.</span><span class="n">print_backends_table</span><span class="p">()</span>              <span class="c1"># the whole landscape</span>
+</span><span data-line="5"><span class="n">vd</span><span class="o">.</span><span class="n">compare_backends</span><span class="p">([</span><span class="s2">"chroma"</span><span class="p">,</span> <span class="s2">"qdrant"</span><span class="p">,</span> <span class="s2">"pgvector"</span><span class="p">])</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="n">vd</span><span class="o">.</span><span class="n">check_requirements</span><span class="p">(</span><span class="s2">"qdrant"</span><span class="p">)</span>        <span class="c1"># diagnoses readiness and prints the next step</span>
+</span><span data-line="8"><span class="nb">print</span><span class="p">(</span><span class="n">vd</span><span class="o">.</span><span class="n">setup_guide</span><span class="p">(</span><span class="s2">"qdrant"</span><span class="p">))</span>        <span class="c1"># pip / docker / env-var playbook</span>
+</span><span data-line="9"><span class="n">vd</span><span class="o">.</span><span class="n">install_command</span><span class="p">(</span><span class="s2">"qdrant"</span><span class="p">)</span>           <span class="c1"># 'pip install "vd[qdrant]"'</span>
+</span></pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">check_requirements</span></code> is deployment-aware. It checks the client library for embedded backends, whether a server answers for self-hosted ones, and the required environment variables for managed ones, and always ends with one concrete next action.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Archetype</p></th>
+<th class="head"><p>Backends</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Embedded</strong> (pip-only)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">memory</span></code>, <code class="docutils literal notranslate"><span class="pre">chroma</span></code>, <code class="docutils literal notranslate"><span class="pre">lancedb</span></code>, <code class="docutils literal notranslate"><span class="pre">sqlite_vec</span></code>, <code class="docutils literal notranslate"><span class="pre">duckdb</span></code>, <code class="docutils literal notranslate"><span class="pre">faiss</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Server</strong> (also embedded)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">qdrant</span></code>, <code class="docutils literal notranslate"><span class="pre">milvus</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Server</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">weaviate</span></code>, <code class="docutils literal notranslate"><span class="pre">redis</span></code>, <code class="docutils literal notranslate"><span class="pre">elasticsearch</span></code>, <code class="docutils literal notranslate"><span class="pre">pgvector</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Managed</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pinecone</span></code>, <code class="docutils literal notranslate"><span class="pre">mongodb</span></code> (Atlas), <code class="docutils literal notranslate"><span class="pre">turbopuffer</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">vd.list_backends()</span></code> shows which adapters are installed and ready now.</p>
+</section>
+<section id="the-toolkit">
+<h2>The toolkit<a class="headerlink" href="#the-toolkit" title="Link to this heading">#</a></h2>
+<p>Beyond the facade, <code class="docutils literal notranslate"><span class="pre">vd</span></code> bundles the composite operations people actually do:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">vd.search</span></code></strong>: <code class="docutils literal notranslate"><span class="pre">multi_query_search</span></code>, <code class="docutils literal notranslate"><span class="pre">reciprocal_rank_fusion</span></code>, <code class="docutils literal notranslate"><span class="pre">hybrid_search</span></code>, <code class="docutils literal notranslate"><span class="pre">BM25Index</span></code>, <code class="docutils literal notranslate"><span class="pre">search_similar_to_document</span></code>, <code class="docutils literal notranslate"><span class="pre">deduplicate_results</span></code>.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">vd.io</span></code></strong>: <code class="docutils literal notranslate"><span class="pre">export_collection</span></code> / <code class="docutils literal notranslate"><span class="pre">import_collection</span></code> (JSONL, JSON, directory).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">vd.migration</span></code></strong>: <code class="docutils literal notranslate"><span class="pre">migrate_collection</span></code>, <code class="docutils literal notranslate"><span class="pre">migrate_client</span></code>, <code class="docutils literal notranslate"><span class="pre">copy_collection</span></code> to move data between any two backends.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">vd.analytics</span></code></strong>: <code class="docutils literal notranslate"><span class="pre">collection_stats</span></code>, <code class="docutils literal notranslate"><span class="pre">find_duplicates</span></code>, <code class="docutils literal notranslate"><span class="pre">find_outliers</span></code>, <code class="docutils literal notranslate"><span class="pre">validate_collection</span></code>.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">vd.health</span></code></strong>: <code class="docutils literal notranslate"><span class="pre">health_check_backend</span></code>, <code class="docutils literal notranslate"><span class="pre">benchmark_search</span></code>.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">vd.text</span></code></strong>: convenience text cleaning and chunking.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">vd.TimeIndexedCollection</span></code></strong>: a time-windowed wrapper over any collection.</p></li>
+<li><p><strong>CLI</strong>: <code class="docutils literal notranslate"><span class="pre">vd</span> <span class="pre">backends</span></code>, <code class="docutils literal notranslate"><span class="pre">vd</span> <span class="pre">install</span></code>, <code class="docutils literal notranslate"><span class="pre">vd</span> <span class="pre">export</span></code>, <code class="docutils literal notranslate"><span class="pre">vd</span> <span class="pre">import</span></code>, <code class="docutils literal notranslate"><span class="pre">vd</span> <span class="pre">migrate</span></code>, …</p></li>
+</ul>
+</section>
+<section id="for-artisanal-hand-typed-contributions">
+<h2>For artisanal, hand-typed contributions<a class="headerlink" href="#for-artisanal-hand-typed-contributions" title="Link to this heading">#</a></h2>
+<p>Welcome, fellow keyboard enthusiast. Here is what the sections above don’t already cover.</p>
+<p><strong>Dev setup and tests.</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">git<span class="w"> </span>clone<span class="w"> </span>https://github.com/i2mint/vd<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>vd
+</span><span data-line="2">uv<span class="w"> </span>venv<span class="w"> </span>.venv<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>.<span class="w"> </span>.venv/bin/activate
+</span><span data-line="3">uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[test,dev]"</span>
+</span><span data-line="4">python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>--doctest-modules<span class="w"> </span>-o<span class="w"> </span><span class="nv">doctest_optionflags</span><span class="o">=</span><span class="s1">'ELLIPSIS IGNORE_EXCEPTION_DETAIL'</span>
+</span></pre></div>
+</div>
+<p>That is exactly what CI runs; package doctests are included. The backend-parametrized suites skip server backends that aren’t running. To exercise them, start the containers with <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">compose</span> <span class="pre">-f</span> <span class="pre">tests/docker-compose.yml</span> <span class="pre">up</span> <span class="pre">-d</span></code> and install their clients with <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">&quot;.[pgvector,redis,elasticsearch,weaviate,mongodb,milvus]&quot;</span></code>.</p>
+<p><strong>Design rationale.</strong></p>
+<ul class="simple">
+<li><p><strong>Embedding is external.</strong> The core operates on vectors; an <code class="docutils literal notranslate"><span class="pre">embedder</span></code> is an injected, optional convenience, never a hard dependency.</p></li>
+<li><p><strong>Two mappings.</strong> A <code class="docutils literal notranslate"><span class="pre">Client</span></code> is a <code class="docutils literal notranslate"><span class="pre">Mapping</span></code> of collections; a <code class="docutils literal notranslate"><span class="pre">Collection</span></code> is a <code class="docutils literal notranslate"><span class="pre">MutableMapping</span></code> of documents plus <code class="docutils literal notranslate"><span class="pre">search</span></code>. Idiomatic, minimal, familiar.</p></li>
+<li><p><strong>Thin adapters.</strong> <code class="docutils literal notranslate"><span class="pre">AbstractClient</span></code> / <code class="docutils literal notranslate"><span class="pre">AbstractCollection</span></code> implement everything users see; a backend supplies a handful of raw primitives. Adding a backend is about 150 lines, and the <code class="docutils literal notranslate"><span class="pre">vd-add-backend</span></code> skill walks through it.</p></li>
+<li><p><strong>Capabilities, not a fat base.</strong> Optional features (<code class="docutils literal notranslate"><span class="pre">SupportsBatch</span></code>, <code class="docutils literal notranslate"><span class="pre">SupportsHybrid</span></code>, <code class="docutils literal notranslate"><span class="pre">SupportsNativeAsync</span></code>) are <code class="docutils literal notranslate"><span class="pre">&#64;runtime_checkable</span></code> protocols you feature-discover.</p></li>
+</ul>
+<p>The longer design notes are in <a class="reference internal" href="#misc/docs/vd_design_notes.md"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">misc/docs/vd_design_notes.md</span></code></span></a>, and the backend-selection research report is in <a class="reference internal" href="#misc/docs/"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">misc/docs/</span></code></span></a>.</p>
+<p><strong>Contributing.</strong> Open an issue or a pull request at <a class="reference external" href="https://github.com/i2mint/vd/issues">github.com/i2mint/vd</a>. Releases are automated: merging to <code class="docutils literal notranslate"><span class="pre">master</span></code> bumps the version and publishes to PyPI.</p>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading">#</a></h2>
+<p>MIT</p>
+<p class="epythet-aggregates">This documentation as a single file: <a href="vd.md">vd.md</a> (Markdown, for agents).</p>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-09-26 10:53 UTC from <a href="https://github.com/i2mint/vd/commit/ee58c419c2f7d2e6c91db53bfa0ff0eec9b99cce">ee58c41</a> (master) · vd 0.2.11 · <a href="about-this-build.html">about this build</a></p>
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-next">
+    <a href="api.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">API reference</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright">
+  <p>
+    Made with
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+  <a href="https://github.com/i2mint/vd" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=29c81e07"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="vd" href="module_docs/vd.html" /> 
-</head>
-
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-
-          
-          
-          <a href="#" class="icon icon-home">
-            vd
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd.html">vd</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/analytics.html">vd.analytics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/asynchronous.html">vd.asynchronous</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends.html">vd.backends</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/_helpers.html">vd.backends._helpers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/duckdb.html">vd.backends.duckdb</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/elasticsearch.html">vd.backends.elasticsearch</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/faiss.html">vd.backends.faiss</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/lancedb.html">vd.backends.lancedb</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/milvus.html">vd.backends.milvus</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/mongodb.html">vd.backends.mongodb</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/pgvector.html">vd.backends.pgvector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/pinecone.html">vd.backends.pinecone</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/qdrant.html">vd.backends.qdrant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/redis.html">vd.backends.redis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/sqlite_vec.html">vd.backends.sqlite_vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/turbopuffer.html">vd.backends.turbopuffer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/weaviate.html">vd.backends.weaviate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/base.html">vd.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/cli.html">vd.cli</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/config.html">vd.config</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/filters.html">vd.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/health.html">vd.health</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/io.html">vd.io</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/migration.html">vd.migration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/providers.html">vd.providers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/requirements.html">vd.requirements</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/search.html">vd.search</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/text.html">vd.text</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/time_indexed.html">vd.time_indexed</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/util.html">vd.util</a></li>
-</ul>
-
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">vd</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Welcome to vd’s documentation!</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="welcome-to-vd-s-documentation">
-<h1>Welcome to vd’s documentation!<a class="headerlink" href="#welcome-to-vd-s-documentation" title="Link to this heading"></a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd.html">vd</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#quick-start">Quick start</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#embedding-is-external">Embedding is external</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.AbstractClient"><code class="docutils literal notranslate"><span class="pre">AbstractClient</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.AbstractCollection"><code class="docutils literal notranslate"><span class="pre">AbstractCollection</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.AsyncClient"><code class="docutils literal notranslate"><span class="pre">AsyncClient</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.AsyncClientWrapper"><code class="docutils literal notranslate"><span class="pre">AsyncClientWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.AsyncCollection"><code class="docutils literal notranslate"><span class="pre">AsyncCollection</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.AsyncCollectionWrapper"><code class="docutils literal notranslate"><span class="pre">AsyncCollectionWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.BM25Index"><code class="docutils literal notranslate"><span class="pre">BM25Index</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.BackendNotInstalledError"><code class="docutils literal notranslate"><span class="pre">BackendNotInstalledError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.Client"><code class="docutils literal notranslate"><span class="pre">Client</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.Collection"><code class="docutils literal notranslate"><span class="pre">Collection</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.Document"><code class="docutils literal notranslate"><span class="pre">Document</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.EmbeddingRequiredError"><code class="docutils literal notranslate"><span class="pre">EmbeddingRequiredError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.StaticIndexError"><code class="docutils literal notranslate"><span class="pre">StaticIndexError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.SupportsBatch"><code class="docutils literal notranslate"><span class="pre">SupportsBatch</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.SupportsHybrid"><code class="docutils literal notranslate"><span class="pre">SupportsHybrid</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.SupportsNativeAsync"><code class="docutils literal notranslate"><span class="pre">SupportsNativeAsync</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.TimeIndexedCollection"><code class="docutils literal notranslate"><span class="pre">TimeIndexedCollection</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.UnsupportedCapabilityError"><code class="docutils literal notranslate"><span class="pre">UnsupportedCapabilityError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.UnsupportedFilterError"><code class="docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.VdError"><code class="docutils literal notranslate"><span class="pre">VdError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.WindowSlice"><code class="docutils literal notranslate"><span class="pre">WindowSlice</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.benchmark_insert"><code class="docutils literal notranslate"><span class="pre">benchmark_insert()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.benchmark_search"><code class="docutils literal notranslate"><span class="pre">benchmark_search()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.bm25_lexical_search"><code class="docutils literal notranslate"><span class="pre">bm25_lexical_search()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.check_requirements"><code class="docutils literal notranslate"><span class="pre">check_requirements()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.chunk_documents"><code class="docutils literal notranslate"><span class="pre">chunk_documents()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.chunk_text"><code class="docutils literal notranslate"><span class="pre">chunk_text()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.clean_text"><code class="docutils literal notranslate"><span class="pre">clean_text()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.collection_stats"><code class="docutils literal notranslate"><span class="pre">collection_stats()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.compare_backends"><code class="docutils literal notranslate"><span class="pre">compare_backends()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.connect"><code class="docutils literal notranslate"><span class="pre">connect()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.connect_async"><code class="docutils literal notranslate"><span class="pre">connect_async()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.connect_from_config"><code class="docutils literal notranslate"><span class="pre">connect_from_config()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.copy_collection"><code class="docutils literal notranslate"><span class="pre">copy_collection()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.cosine_similarity"><code class="docutils literal notranslate"><span class="pre">cosine_similarity()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.count_docs"><code class="docutils literal notranslate"><span class="pre">count_docs()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.create_example_config"><code class="docutils literal notranslate"><span class="pre">create_example_config()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.deduplicate_results"><code class="docutils literal notranslate"><span class="pre">deduplicate_results()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.euclidean_distance"><code class="docutils literal notranslate"><span class="pre">euclidean_distance()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.export_collection"><code class="docutils literal notranslate"><span class="pre">export_collection()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.export_to_directory"><code class="docutils literal notranslate"><span class="pre">export_to_directory()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.export_to_json"><code class="docutils literal notranslate"><span class="pre">export_to_json()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.export_to_jsonl"><code class="docutils literal notranslate"><span class="pre">export_to_jsonl()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.extract_metadata"><code class="docutils literal notranslate"><span class="pre">extract_metadata()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.find_duplicates"><code class="docutils literal notranslate"><span class="pre">find_duplicates()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.find_outliers"><code class="docutils literal notranslate"><span class="pre">find_outliers()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.get_backend_characteristics"><code class="docutils literal notranslate"><span class="pre">get_backend_characteristics()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.get_backend_info"><code class="docutils literal notranslate"><span class="pre">get_backend_info()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.get_install_instructions"><code class="docutils literal notranslate"><span class="pre">get_install_instructions()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.health_check_backend"><code class="docutils literal notranslate"><span class="pre">health_check_backend()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.health_check_collection"><code class="docutils literal notranslate"><span class="pre">health_check_collection()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.hybrid_search"><code class="docutils literal notranslate"><span class="pre">hybrid_search()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.hybrid_search_async"><code class="docutils literal notranslate"><span class="pre">hybrid_search_async()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.id_and_score"><code class="docutils literal notranslate"><span class="pre">id_and_score()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.id_only"><code class="docutils literal notranslate"><span class="pre">id_only()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.id_text_score"><code class="docutils literal notranslate"><span class="pre">id_text_score()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.import_collection"><code class="docutils literal notranslate"><span class="pre">import_collection()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.import_from_directory"><code class="docutils literal notranslate"><span class="pre">import_from_directory()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.import_from_json"><code class="docutils literal notranslate"><span class="pre">import_from_json()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.import_from_jsonl"><code class="docutils literal notranslate"><span class="pre">import_from_jsonl()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.install_backend"><code class="docutils literal notranslate"><span class="pre">install_backend()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.install_command"><code class="docutils literal notranslate"><span class="pre">install_command()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.list_all_backends"><code class="docutils literal notranslate"><span class="pre">list_all_backends()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.list_available_backends"><code class="docutils literal notranslate"><span class="pre">list_available_backends()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.list_backends"><code class="docutils literal notranslate"><span class="pre">list_backends()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.load_config"><code class="docutils literal notranslate"><span class="pre">load_config()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.matches_filter"><code class="docutils literal notranslate"><span class="pre">matches_filter()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.mean_vector"><code class="docutils literal notranslate"><span class="pre">mean_vector()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.metadata_distribution"><code class="docutils literal notranslate"><span class="pre">metadata_distribution()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.migrate_client"><code class="docutils literal notranslate"><span class="pre">migrate_client()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.migrate_collection"><code class="docutils literal notranslate"><span class="pre">migrate_collection()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.multi_query_search"><code class="docutils literal notranslate"><span class="pre">multi_query_search()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.normalize_document_input"><code class="docutils literal notranslate"><span class="pre">normalize_document_input()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.normalize_whitespace"><code class="docutils literal notranslate"><span class="pre">normalize_whitespace()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.parse_window"><code class="docutils literal notranslate"><span class="pre">parse_window()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.print_backends_table"><code class="docutils literal notranslate"><span class="pre">print_backends_table()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.print_comparison"><code class="docutils literal notranslate"><span class="pre">print_comparison()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.print_recommendation"><code class="docutils literal notranslate"><span class="pre">print_recommendation()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.provider"><code class="docutils literal notranslate"><span class="pre">provider()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.providers"><code class="docutils literal notranslate"><span class="pre">providers()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.reciprocal_rank_fusion"><code class="docutils literal notranslate"><span class="pre">reciprocal_rank_fusion()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.recommend_backend"><code class="docutils literal notranslate"><span class="pre">recommend_backend()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.register_backend"><code class="docutils literal notranslate"><span class="pre">register_backend()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.sample_collection"><code class="docutils literal notranslate"><span class="pre">sample_collection()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.save_config"><code class="docutils literal notranslate"><span class="pre">save_config()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.search_similar_to_document"><code class="docutils literal notranslate"><span class="pre">search_similar_to_document()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.setup_guide"><code class="docutils literal notranslate"><span class="pre">setup_guide()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.skills_dir"><code class="docutils literal notranslate"><span class="pre">skills_dir()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.text_only"><code class="docutils literal notranslate"><span class="pre">text_only()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.to_datetime"><code class="docutils literal notranslate"><span class="pre">to_datetime()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.to_iso"><code class="docutils literal notranslate"><span class="pre">to_iso()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.truncate_text"><code class="docutils literal notranslate"><span class="pre">truncate_text()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.validate_collection"><code class="docutils literal notranslate"><span class="pre">validate_collection()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd.html#vd.validate_filter"><code class="docutils literal notranslate"><span class="pre">validate_filter()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/analytics.html">vd.analytics</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/analytics.html#vd.analytics.collection_stats"><code class="docutils literal notranslate"><span class="pre">collection_stats()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/analytics.html#vd.analytics.find_duplicates"><code class="docutils literal notranslate"><span class="pre">find_duplicates()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/analytics.html#vd.analytics.find_outliers"><code class="docutils literal notranslate"><span class="pre">find_outliers()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/analytics.html#vd.analytics.metadata_distribution"><code class="docutils literal notranslate"><span class="pre">metadata_distribution()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/analytics.html#vd.analytics.sample_collection"><code class="docutils literal notranslate"><span class="pre">sample_collection()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/analytics.html#vd.analytics.validate_collection"><code class="docutils literal notranslate"><span class="pre">validate_collection()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/asynchronous.html">vd.asynchronous</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncClientWrapper"><code class="docutils literal notranslate"><span class="pre">AsyncClientWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/asynchronous.html#vd.asynchronous.AsyncCollectionWrapper"><code class="docutils literal notranslate"><span class="pre">AsyncCollectionWrapper</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/asynchronous.html#vd.asynchronous.SupportsHybrid"><code class="docutils literal notranslate"><span class="pre">SupportsHybrid</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/asynchronous.html#vd.asynchronous.connect_async"><code class="docutils literal notranslate"><span class="pre">connect_async()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/asynchronous.html#vd.asynchronous.hybrid_search_async"><code class="docutils literal notranslate"><span class="pre">hybrid_search_async()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends.html">vd.backends</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/_helpers.html">vd.backends._helpers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/backends/_helpers.html#vd.backends._helpers.OVERFETCH_FACTOR"><code class="docutils literal notranslate"><span class="pre">OVERFETCH_FACTOR</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/backends/_helpers.html#vd.backends._helpers.apply_client_filter"><code class="docutils literal notranslate"><span class="pre">apply_client_filter()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/backends/_helpers.html#vd.backends._helpers.coerce_metadata"><code class="docutils literal notranslate"><span class="pre">coerce_metadata()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/backends/_helpers.html#vd.backends._helpers.overfetch_limit"><code class="docutils literal notranslate"><span class="pre">overfetch_limit()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/backends/_helpers.html#vd.backends._helpers.score_from_distance"><code class="docutils literal notranslate"><span class="pre">score_from_distance()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/duckdb.html">vd.backends.duckdb</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/elasticsearch.html">vd.backends.elasticsearch</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/faiss.html">vd.backends.faiss</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/lancedb.html">vd.backends.lancedb</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/memory.html">vd.backends.memory</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryClient"><code class="docutils literal notranslate"><span class="pre">MemoryClient</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/backends/memory.html#vd.backends.memory.MemoryCollection"><code class="docutils literal notranslate"><span class="pre">MemoryCollection</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/milvus.html">vd.backends.milvus</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/mongodb.html">vd.backends.mongodb</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/pgvector.html">vd.backends.pgvector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/pinecone.html">vd.backends.pinecone</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/qdrant.html">vd.backends.qdrant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/redis.html">vd.backends.redis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/sqlite_vec.html">vd.backends.sqlite_vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/turbopuffer.html">vd.backends.turbopuffer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/backends/weaviate.html">vd.backends.weaviate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/base.html">vd.base</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.AbstractClient"><code class="docutils literal notranslate"><span class="pre">AbstractClient</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.AbstractCollection"><code class="docutils literal notranslate"><span class="pre">AbstractCollection</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.AsyncClient"><code class="docutils literal notranslate"><span class="pre">AsyncClient</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.AsyncCollection"><code class="docutils literal notranslate"><span class="pre">AsyncCollection</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.BackendNotInstalledError"><code class="docutils literal notranslate"><span class="pre">BackendNotInstalledError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.Client"><code class="docutils literal notranslate"><span class="pre">Client</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.Collection"><code class="docutils literal notranslate"><span class="pre">Collection</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.Document"><code class="docutils literal notranslate"><span class="pre">Document</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.DocumentInput"><code class="docutils literal notranslate"><span class="pre">DocumentInput</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.EmbeddingRequiredError"><code class="docutils literal notranslate"><span class="pre">EmbeddingRequiredError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.METRICS"><code class="docutils literal notranslate"><span class="pre">METRICS</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.StaticIndexError"><code class="docutils literal notranslate"><span class="pre">StaticIndexError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.SupportsBatch"><code class="docutils literal notranslate"><span class="pre">SupportsBatch</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.SupportsHybrid"><code class="docutils literal notranslate"><span class="pre">SupportsHybrid</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.SupportsNativeAsync"><code class="docutils literal notranslate"><span class="pre">SupportsNativeAsync</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.UnsupportedCapabilityError"><code class="docutils literal notranslate"><span class="pre">UnsupportedCapabilityError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.UnsupportedFilterError"><code class="docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/base.html#vd.base.VdError"><code class="docutils literal notranslate"><span class="pre">VdError</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/cli.html">vd.cli</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_backends"><code class="docutils literal notranslate"><span class="pre">cmd_backends()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_benchmark"><code class="docutils literal notranslate"><span class="pre">cmd_benchmark()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_export"><code class="docutils literal notranslate"><span class="pre">cmd_export()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_health_check"><code class="docutils literal notranslate"><span class="pre">cmd_health_check()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_import"><code class="docutils literal notranslate"><span class="pre">cmd_import()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_install_info"><code class="docutils literal notranslate"><span class="pre">cmd_install_info()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_migrate"><code class="docutils literal notranslate"><span class="pre">cmd_migrate()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_stats"><code class="docutils literal notranslate"><span class="pre">cmd_stats()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.cmd_validate"><code class="docutils literal notranslate"><span class="pre">cmd_validate()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/cli.html#vd.cli.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/config.html">vd.config</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.apply_env_overrides"><code class="docutils literal notranslate"><span class="pre">apply_env_overrides()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.connect_from_config"><code class="docutils literal notranslate"><span class="pre">connect_from_config()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.create_example_config"><code class="docutils literal notranslate"><span class="pre">create_example_config()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.get_profile"><code class="docutils literal notranslate"><span class="pre">get_profile()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.load_config"><code class="docutils literal notranslate"><span class="pre">load_config()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.load_toml_config"><code class="docutils literal notranslate"><span class="pre">load_toml_config()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.load_yaml_config"><code class="docutils literal notranslate"><span class="pre">load_yaml_config()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/config.html#vd.config.save_config"><code class="docutils literal notranslate"><span class="pre">save_config()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/filters.html">vd.filters</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/filters.html#filter-syntax">Filter syntax</a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/filters.html#vd.filters.FIELD_OPERATORS"><code class="docutils literal notranslate"><span class="pre">FIELD_OPERATORS</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/filters.html#vd.filters.LOGICAL_OPERATORS"><code class="docutils literal notranslate"><span class="pre">LOGICAL_OPERATORS</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/filters.html#vd.filters.SUPPORTED_FILTER_OPERATORS"><code class="docutils literal notranslate"><span class="pre">SUPPORTED_FILTER_OPERATORS</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/filters.html#vd.filters.matches_filter"><code class="docutils literal notranslate"><span class="pre">matches_filter()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/filters.html#vd.filters.validate_filter"><code class="docutils literal notranslate"><span class="pre">validate_filter()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/health.html">vd.health</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/health.html#vd.health.benchmark_insert"><code class="docutils literal notranslate"><span class="pre">benchmark_insert()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/health.html#vd.health.benchmark_search"><code class="docutils literal notranslate"><span class="pre">benchmark_search()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/health.html#vd.health.health_check_backend"><code class="docutils literal notranslate"><span class="pre">health_check_backend()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/health.html#vd.health.health_check_collection"><code class="docutils literal notranslate"><span class="pre">health_check_collection()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/io.html">vd.io</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.export_collection"><code class="docutils literal notranslate"><span class="pre">export_collection()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.export_to_directory"><code class="docutils literal notranslate"><span class="pre">export_to_directory()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.export_to_json"><code class="docutils literal notranslate"><span class="pre">export_to_json()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.export_to_jsonl"><code class="docutils literal notranslate"><span class="pre">export_to_jsonl()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.import_collection"><code class="docutils literal notranslate"><span class="pre">import_collection()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.import_from_directory"><code class="docutils literal notranslate"><span class="pre">import_from_directory()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.import_from_json"><code class="docutils literal notranslate"><span class="pre">import_from_json()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/io.html#vd.io.import_from_jsonl"><code class="docutils literal notranslate"><span class="pre">import_from_jsonl()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/migration.html">vd.migration</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/migration.html#vd.migration.copy_collection"><code class="docutils literal notranslate"><span class="pre">copy_collection()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/migration.html#vd.migration.migrate_client"><code class="docutils literal notranslate"><span class="pre">migrate_client()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/migration.html#vd.migration.migrate_collection"><code class="docutils literal notranslate"><span class="pre">migrate_collection()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/providers.html">vd.providers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.compare_backends"><code class="docutils literal notranslate"><span class="pre">compare_backends()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.get_backend_characteristics"><code class="docutils literal notranslate"><span class="pre">get_backend_characteristics()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.get_backend_info"><code class="docutils literal notranslate"><span class="pre">get_backend_info()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.get_install_instructions"><code class="docutils literal notranslate"><span class="pre">get_install_instructions()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.has_adapter"><code class="docutils literal notranslate"><span class="pre">has_adapter()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.install_command"><code class="docutils literal notranslate"><span class="pre">install_command()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.is_installed"><code class="docutils literal notranslate"><span class="pre">is_installed()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.list_all_backends"><code class="docutils literal notranslate"><span class="pre">list_all_backends()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.list_available_backends"><code class="docutils literal notranslate"><span class="pre">list_available_backends()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.print_backends_table"><code class="docutils literal notranslate"><span class="pre">print_backends_table()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.print_comparison"><code class="docutils literal notranslate"><span class="pre">print_comparison()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.print_recommendation"><code class="docutils literal notranslate"><span class="pre">print_recommendation()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.provider"><code class="docutils literal notranslate"><span class="pre">provider()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.provider_names"><code class="docutils literal notranslate"><span class="pre">provider_names()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.providers"><code class="docutils literal notranslate"><span class="pre">providers()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.recommend_backend"><code class="docutils literal notranslate"><span class="pre">recommend_backend()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/providers.html#vd.providers.registry_as_of"><code class="docutils literal notranslate"><span class="pre">registry_as_of()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/requirements.html">vd.requirements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/requirements.html#vd.requirements.check_requirements"><code class="docutils literal notranslate"><span class="pre">check_requirements()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/requirements.html#vd.requirements.install_backend"><code class="docutils literal notranslate"><span class="pre">install_backend()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/requirements.html#vd.requirements.setup_guide"><code class="docutils literal notranslate"><span class="pre">setup_guide()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/search.html">vd.search</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.BM25Index"><code class="docutils literal notranslate"><span class="pre">BM25Index</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.bm25_lexical_search"><code class="docutils literal notranslate"><span class="pre">bm25_lexical_search()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.deduplicate_results"><code class="docutils literal notranslate"><span class="pre">deduplicate_results()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.hybrid_search"><code class="docutils literal notranslate"><span class="pre">hybrid_search()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.multi_query_search"><code class="docutils literal notranslate"><span class="pre">multi_query_search()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.reciprocal_rank_fusion"><code class="docutils literal notranslate"><span class="pre">reciprocal_rank_fusion()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.search_similar_to_document"><code class="docutils literal notranslate"><span class="pre">search_similar_to_document()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/search.html#vd.search.search_with_feedback"><code class="docutils literal notranslate"><span class="pre">search_with_feedback()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/text.html">vd.text</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/text.html#vd.text.chunk_documents"><code class="docutils literal notranslate"><span class="pre">chunk_documents()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/text.html#vd.text.chunk_text"><code class="docutils literal notranslate"><span class="pre">chunk_text()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/text.html#vd.text.clean_text"><code class="docutils literal notranslate"><span class="pre">clean_text()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/text.html#vd.text.extract_metadata"><code class="docutils literal notranslate"><span class="pre">extract_metadata()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/text.html#vd.text.normalize_whitespace"><code class="docutils literal notranslate"><span class="pre">normalize_whitespace()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/text.html#vd.text.truncate_text"><code class="docutils literal notranslate"><span class="pre">truncate_text()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/time_indexed.html">vd.time_indexed</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/time_indexed.html#vd.time_indexed.TimeIndexedCollection"><code class="docutils literal notranslate"><span class="pre">TimeIndexedCollection</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/time_indexed.html#vd.time_indexed.WindowSlice"><code class="docutils literal notranslate"><span class="pre">WindowSlice</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/time_indexed.html#vd.time_indexed.count_docs"><code class="docutils literal notranslate"><span class="pre">count_docs()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/time_indexed.html#vd.time_indexed.mean_vector"><code class="docutils literal notranslate"><span class="pre">mean_vector()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/time_indexed.html#vd.time_indexed.parse_window"><code class="docutils literal notranslate"><span class="pre">parse_window()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/time_indexed.html#vd.time_indexed.to_datetime"><code class="docutils literal notranslate"><span class="pre">to_datetime()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/time_indexed.html#vd.time_indexed.to_iso"><code class="docutils literal notranslate"><span class="pre">to_iso()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/vd/util.html">vd.util</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.connect"><code class="docutils literal notranslate"><span class="pre">connect()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.cosine_similarity"><code class="docutils literal notranslate"><span class="pre">cosine_similarity()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.euclidean_distance"><code class="docutils literal notranslate"><span class="pre">euclidean_distance()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.get_backend"><code class="docutils literal notranslate"><span class="pre">get_backend()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.id_and_score"><code class="docutils literal notranslate"><span class="pre">id_and_score()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.id_only"><code class="docutils literal notranslate"><span class="pre">id_only()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.id_text_score"><code class="docutils literal notranslate"><span class="pre">id_text_score()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.list_backends"><code class="docutils literal notranslate"><span class="pre">list_backends()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.mean_vector"><code class="docutils literal notranslate"><span class="pre">mean_vector()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.normalize_document_input"><code class="docutils literal notranslate"><span class="pre">normalize_document_input()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.register_backend"><code class="docutils literal notranslate"><span class="pre">register_backend()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/vd/util.html#vd.util.text_only"><code class="docutils literal notranslate"><span class="pre">text_only()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
-<section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
-<p>Release: 0.2.10</p>
-<p>Last change: Jun 21, 2026</p>
-</section>
-
-
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="module_docs/vd.html" class="btn btn-neutral float-right" title="vd" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p></p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+      <script src="_static/copybutton.js?v=fd10adb8"></script>
+      <script src="_static/shibuya.js?v=50760d75"></script></body>
 </html>

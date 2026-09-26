@@ -1,0 +1,28 @@
+# vd
+
+> A facade over vector databases — one interface, ~15 backends
+
+
+## Pages in this subsection
+
+- [vd](vd.html.md): &#96;vd&#96; — one Pythonic interface to every vector database.
+- [vd.analytics](vd.analytics.html.md): Analytics and statistics for vd collections.
+- [vd.asynchronous](vd.asynchronous.html.md): Async support for &#96;vd&#96;: universal wrapper + opt-in native implementations.
+- [vd.backends](vd.backends.html.md): Backend adapters for the vector databases &#96;vd&#96; supports.
+- [vd.backends.memory](vd.backends.memory.html.md): In-memory backend — the reference adapter.
+- [vd.base](vd.base.html.md): Core contracts, data model, and abstract bases for the &#96;vd&#96; vectorDB facade.
+- [vd.cli](vd.cli.html.md): Command-line interface for vd.
+- [vd.config](vd.config.html.md): Configuration management for vd.
+- [vd.filters](vd.filters.html.md): The canonical metadata-filter language for &#96;vd&#96;.
+- [vd.health](vd.health.html.md): Health check and validation utilities for vd.
+- [vd.io](vd.io.html.md): Import/export utilities for vd collections.
+- [vd.migration](vd.migration.html.md): Migration utilities for moving data between backends.
+- [vd.requirements](vd.requirements.html.md): Setup assistance: turning provider metadata into actionable diagnostics.
+- [vd.search](vd.search.html.md): Advanced search utilities for vd.
+- [vd.text](vd.text.html.md): Text preprocessing and chunking utilities for vd.
+- [vd.time_indexed](vd.time_indexed.html.md): Time-indexed vector collection wrapper.
+- [vd.util](vd.util.html.md): The backend registry, the &#96;connect()&#96; factory, and small shared utilities.
+
+## Optional
+
+- [Top-level llms.txt](../llms.txt): Complete documentation index.

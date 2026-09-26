@@ -1,0 +1,14 @@
+vd.migration
+============
+
+.. automodule:: vd.migration
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      copy_collection
+      migrate_client
+      migrate_collection
+   

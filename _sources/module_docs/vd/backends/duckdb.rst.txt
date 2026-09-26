@@ -1,4 +1,0 @@
-vd.backends.duckdb
-==================
-.. automodule:: vd.backends.duckdb
-   :members:

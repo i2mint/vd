@@ -1,0 +1,27 @@
+vd.backends
+===========
+
+.. automodule:: vd.backends
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   chroma
+   duckdb
+   elasticsearch
+   faiss
+   lancedb
+   memory
+   milvus
+   mongodb
+   pgvector
+   pinecone
+   qdrant
+   redis
+   sqlite_vec
+   turbopuffer
+   weaviate

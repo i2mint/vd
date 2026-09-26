@@ -1,480 +1,869 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
+<html lang="en" data-accent-color="teal" data-content_root="../../">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vd.util &mdash; vd 0.2.10 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
-
-  
-      <script src="../../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=8db09a1e"></script>
-      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
-      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
-      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
-</head>
-
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-
-          
-          
-          <a href="../../index.html" class="icon icon-home">
-            vd
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>vd.util - vd</title><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d88b86f9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=2ceb65ce" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="vd.util"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../index.html">
+      
+      
+      <strong>vd</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/i2mint/vd" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd.html">vd</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/analytics.html">vd.analytics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/asynchronous.html">vd.asynchronous</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends.html">vd.backends</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/_helpers.html">vd.backends._helpers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/chroma.html">vd.backends.chroma</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/duckdb.html">vd.backends.duckdb</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/elasticsearch.html">vd.backends.elasticsearch</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/faiss.html">vd.backends.faiss</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/lancedb.html">vd.backends.lancedb</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/memory.html">vd.backends.memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/milvus.html">vd.backends.milvus</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/mongodb.html">vd.backends.mongodb</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/pgvector.html">vd.backends.pgvector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/pinecone.html">vd.backends.pinecone</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/qdrant.html">vd.backends.qdrant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/redis.html">vd.backends.redis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/sqlite_vec.html">vd.backends.sqlite_vec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/turbopuffer.html">vd.backends.turbopuffer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/backends/weaviate.html">vd.backends.weaviate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/base.html">vd.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/cli.html">vd.cli</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/config.html">vd.config</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/filters.html">vd.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/health.html">vd.health</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/io.html">vd.io</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/migration.html">vd.migration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/providers.html">vd.providers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/requirements.html">vd.requirements</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/search.html">vd.search</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/text.html">vd.text</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/time_indexed.html">vd.time_indexed</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/vd/util.html">vd.util</a></li>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/vd.html">vd</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.analytics.html">vd.analytics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.asynchronous.html">vd.asynchronous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.backends.html">vd.backends</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/vd.backends.memory.html">vd.backends.memory</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.base.html">vd.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.cli.html">vd.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.config.html">vd.config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.filters.html">vd.filters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.health.html">vd.health</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.io.html">vd.io</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.migration.html">vd.migration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.requirements.html">vd.requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.search.html">vd.search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.text.html">vd.text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.time_indexed.html">vd.time_indexed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/vd.util.html">vd.util</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../ai-agents.html">For AI agents</a></li>
 </ul>
 
         </div>
       </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">vd</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
-          <li class="breadcrumb-item"><a href="../vd.html">vd</a></li>
-      <li class="breadcrumb-item active">vd.util</li>
-      <li class="wy-breadcrumbs-aside">
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <h1>Source code for vd.util</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">The backend registry, the :func:`connect` factory, and small shared utilities.</span>
-
-<span class="sd">This module is intentionally thin. It owns three things:</span>
-
-<span class="sd">- the **registry** mapping a backend name (``&quot;chroma&quot;``, ``&quot;qdrant&quot;``, ...) to</span>
-<span class="sd">  its adapter :class:`~vd.base.Client` class, via the :func:`register_backend`</span>
-<span class="sd">  decorator;</span>
-<span class="sd">- :func:`connect`, the one entry point users call to get a client;</span>
-<span class="sd">- backend-agnostic helpers: document-input normalization, search-result</span>
-<span class="sd">  ``egress`` functions, and vector math.</span>
-
-<span class="sd">Everything *descriptive* about a backend (pip package, license, docs URLs,</span>
-<span class="sd">deployment archetype, setup checks) lives in :mod:`vd.providers` and its</span>
-<span class="sd">data file, not here.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">BackendNotInstalledError</span><span class="p">,</span>
-    <span class="n">Client</span><span class="p">,</span>
-    <span class="n">Document</span><span class="p">,</span>
-    <span class="n">DocumentInput</span><span class="p">,</span>
-    <span class="n">SearchResult</span><span class="p">,</span>
-    <span class="n">Vector</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1"># --------------------------------------------------------------------------- #</span>
-<span class="c1"># Backend registry</span>
-<span class="c1"># --------------------------------------------------------------------------- #</span>
-
-<span class="c1">#: name -&gt; adapter Client class. Populated by the @register_backend decorator</span>
-<span class="c1">#: as each backend module is imported (see vd/backends/__init__.py).</span>
-<span class="n">_backends</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-
-
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">vd</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">Module code</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../vd.html"><span itemprop="name">vd</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">vd.util</strong>
+        <meta itemprop="position" content="4" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue dark-code" role="main">
+          <h1>Source code for vd.util</h1><div class="highlight"><pre>
+<span></span><span data-line="1"><span class="sd">"""</span>
+</span><span data-line="2"><span class="sd">The backend registry, the :func:`connect` factory, and small shared utilities.</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="sd">This module is intentionally thin. It owns three things:</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="sd">- the **registry** mapping a backend name (``"chroma"``, ``"qdrant"``, ...) to</span>
+</span><span data-line="7"><span class="sd">  its adapter :class:`~vd.base.Client` class, via the :func:`register_backend`</span>
+</span><span data-line="8"><span class="sd">  decorator;</span>
+</span><span data-line="9"><span class="sd">- :func:`connect`, the one entry point users call to get a client;</span>
+</span><span data-line="10"><span class="sd">- backend-agnostic helpers: document-input normalization, search-result</span>
+</span><span data-line="11"><span class="sd">  ``egress`` functions, and vector math.</span>
+</span><span data-line="12">
+</span><span data-line="13"><span class="sd">Everything *descriptive* about a backend (pip package, license, docs URLs,</span>
+</span><span data-line="14"><span class="sd">deployment archetype, setup checks) lives in :mod:`vd.providers` and its</span>
+</span><span data-line="15"><span class="sd">data file, not here.</span>
+</span><span data-line="16"><span class="sd">"""</span>
+</span><span data-line="17">
+</span><span data-line="18"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+</span><span data-line="19">
+</span><span data-line="20"><span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+</span><span data-line="21"><span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+</span><span data-line="22"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+</span><span data-line="23">
+</span><span data-line="24"><span class="kn">from</span><span class="w"> </span><span class="nn">vd.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="25">    <span class="n">BackendNotInstalledError</span><span class="p">,</span>
+</span><span data-line="26">    <span class="n">Client</span><span class="p">,</span>
+</span><span data-line="27">    <span class="n">Document</span><span class="p">,</span>
+</span><span data-line="28">    <span class="n">DocumentInput</span><span class="p">,</span>
+</span><span data-line="29">    <span class="n">SearchResult</span><span class="p">,</span>
+</span><span data-line="30">    <span class="n">Vector</span><span class="p">,</span>
+</span><span data-line="31"><span class="p">)</span>
+</span><span data-line="32">
+</span><span data-line="33"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="34"><span class="c1"># Backend registry</span>
+</span><span data-line="35"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="36">
+</span><span data-line="37"><span class="c1">#: name -&gt; adapter Client class. Populated by the @register_backend decorator</span>
+</span><span data-line="38"><span class="c1">#: as each backend module is imported (see vd/backends/__init__.py).</span>
+</span><span data-line="39"><span class="n">_backends</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span data-line="40">
+</span><span data-line="41">
 <div class="viewcode-block" id="register_backend">
-<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.register_backend">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">register_backend</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">type</span><span class="p">],</span> <span class="nb">type</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class decorator: register an adapter :class:`~vd.base.Client` under ``name``.</span>
+<a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.register_backend">[docs]</a>
+</span><span data-line="42"><span class="k">def</span><span class="w"> </span><span class="nf">register_backend</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">type</span><span class="p">],</span> <span class="nb">type</span><span class="p">]:</span>
+</span><span data-line="43"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="44"><span class="sd">    Class decorator: register an adapter :class:`~vd.base.Client` under ``name``.</span>
+</span><span data-line="45">
+</span><span data-line="46"><span class="sd">    Examples</span>
+</span><span data-line="47"><span class="sd">    --------</span>
+</span><span data-line="48"><span class="sd">    &gt;&gt;&gt; from vd.base import AbstractClient</span>
+</span><span data-line="49"><span class="sd">    &gt;&gt;&gt; @register_backend('example')           # doctest: +SKIP</span>
+</span><span data-line="50"><span class="sd">    ... class ExampleClient(AbstractClient):</span>
+</span><span data-line="51"><span class="sd">    ...     ...</span>
+</span><span data-line="52"><span class="sd">    """</span>
+</span><span data-line="53">
+</span><span data-line="54">    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">client_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
+</span><span data-line="55">        <span class="n">client_class</span><span class="o">.</span><span class="n">backend_name</span> <span class="o">=</span> <span class="n">name</span>
+</span><span data-line="56">        <span class="n">_backends</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">client_class</span>
+</span><span data-line="57">        <span class="k">return</span> <span class="n">client_class</span>
+</span><span data-line="58">
+</span><span data-line="59">    <span class="k">return</span> <span class="n">decorator</span></div>
 
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from vd.base import AbstractClient</span>
-<span class="sd">    &gt;&gt;&gt; @register_backend(&#39;example&#39;)           # doctest: +SKIP</span>
-<span class="sd">    ... class ExampleClient(AbstractClient):</span>
-<span class="sd">    ...     ...</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">client_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
-        <span class="n">client_class</span><span class="o">.</span><span class="n">backend_name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="n">_backends</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">client_class</span>
-        <span class="k">return</span> <span class="n">client_class</span>
-
-    <span class="k">return</span> <span class="n">decorator</span></div>
-
-
-
+</span><span data-line="60">
+</span><span data-line="61">
 <div class="viewcode-block" id="get_backend">
-<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.get_backend">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_backend</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return the adapter :class:`~vd.base.Client` class registered under ``name``.</span>
+<a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.get_backend">[docs]</a>
+</span><span data-line="62"><span class="k">def</span><span class="w"> </span><span class="nf">get_backend</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
+</span><span data-line="63"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="64"><span class="sd">    Return the adapter :class:`~vd.base.Client` class registered under ``name``.</span>
+</span><span data-line="65">
+</span><span data-line="66"><span class="sd">    Raises</span>
+</span><span data-line="67"><span class="sd">    ------</span>
+</span><span data-line="68"><span class="sd">    BackendNotInstalledError</span>
+</span><span data-line="69"><span class="sd">        If ``name`` is a known backend whose client library is not installed.</span>
+</span><span data-line="70"><span class="sd">    ValueError</span>
+</span><span data-line="71"><span class="sd">        If ``name`` is not a known backend at all.</span>
+</span><span data-line="72"><span class="sd">    """</span>
+</span><span data-line="73">    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_backends</span><span class="p">:</span>
+</span><span data-line="74">        <span class="k">return</span> <span class="n">_backends</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</span><span data-line="75">
+</span><span data-line="76">    <span class="c1"># Not registered: distinguish "known but unavailable" from "unknown".</span>
+</span><span data-line="77">    <span class="k">try</span><span class="p">:</span>
+</span><span data-line="78">        <span class="kn">from</span><span class="w"> </span><span class="nn">vd.providers</span><span class="w"> </span><span class="kn">import</span> <span class="n">install_command</span><span class="p">,</span> <span class="n">provider</span>
+</span><span data-line="79">
+</span><span data-line="80">        <span class="n">meta</span> <span class="o">=</span> <span class="n">provider</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="81">    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pragma: no cover - providers data missing</span>
+</span><span data-line="82">        <span class="n">meta</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="83">
+</span><span data-line="84">    <span class="k">if</span> <span class="n">meta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="85">        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">""</span>
+</span><span data-line="86">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="87">            <span class="n">cmd</span> <span class="o">=</span> <span class="n">install_command</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="88">        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+</span><span data-line="89">            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"pip install vd[</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">]"</span>
+</span><span data-line="90">        <span class="k">raise</span> <span class="n">BackendNotInstalledError</span><span class="p">(</span>
+</span><span data-line="91">            <span class="sa">f</span><span class="s2">"Backend </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'display_name'</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="s2">) is not "</span>
+</span><span data-line="92">            <span class="sa">f</span><span class="s2">"available — its client library is probably not installed.</span><span class="se">\n</span><span class="s2">"</span>
+</span><span data-line="93">            <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+</span><span data-line="94">            <span class="sa">f</span><span class="s2">"Then retry. Run  vd.check_requirements(</span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">)  for full "</span>
+</span><span data-line="95">            <span class="sa">f</span><span class="s2">"setup guidance."</span>
+</span><span data-line="96">        <span class="p">)</span>
+</span><span data-line="97">
+</span><span data-line="98">    <span class="n">registered</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_backends</span><span class="p">))</span> <span class="ow">or</span> <span class="s2">"none"</span>
+</span><span data-line="99">    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span data-line="100">        <span class="sa">f</span><span class="s2">"Unknown backend </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">. Registered backends: </span><span class="si">{</span><span class="n">registered</span><span class="si">}</span><span class="s2">. "</span>
+</span><span data-line="101">        <span class="sa">f</span><span class="s2">"Run  vd.print_backends_table()  to see every backend vd knows about."</span>
+</span><span data-line="102">    <span class="p">)</span></div>
 
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">    BackendNotInstalledError</span>
-<span class="sd">        If ``name`` is a known backend whose client library is not installed.</span>
-<span class="sd">    ValueError</span>
-<span class="sd">        If ``name`` is not a known backend at all.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_backends</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_backends</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-
-    <span class="c1"># Not registered: distinguish &quot;known but unavailable&quot; from &quot;unknown&quot;.</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">vd.providers</span><span class="w"> </span><span class="kn">import</span> <span class="n">install_command</span><span class="p">,</span> <span class="n">provider</span>
-
-        <span class="n">meta</span> <span class="o">=</span> <span class="n">provider</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pragma: no cover - providers data missing</span>
-        <span class="n">meta</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">if</span> <span class="n">meta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="n">install_command</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;pip install vd[</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">]&quot;</span>
-        <span class="k">raise</span> <span class="n">BackendNotInstalledError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Backend </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;display_name&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="s2">) is not &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;available — its client library is probably not installed.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Then retry. Run  vd.check_requirements(</span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">)  for full &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;setup guidance.&quot;</span>
-        <span class="p">)</span>
-
-    <span class="n">registered</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_backends</span><span class="p">))</span> <span class="ow">or</span> <span class="s2">&quot;none&quot;</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Unknown backend </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">. Registered backends: </span><span class="si">{</span><span class="n">registered</span><span class="si">}</span><span class="s2">. &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;Run  vd.print_backends_table()  to see every backend vd knows about.&quot;</span>
-    <span class="p">)</span></div>
-
-
-
+</span><span data-line="103">
+</span><span data-line="104">
 <div class="viewcode-block" id="list_backends">
-<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.list_backends">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">list_backends</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the names of all backends with a registered (importable) adapter.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_backends</span><span class="p">)</span></div>
+<a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.list_backends">[docs]</a>
+</span><span data-line="105"><span class="k">def</span><span class="w"> </span><span class="nf">list_backends</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span data-line="106"><span class="w">    </span><span class="sd">"""Return the names of all backends with a registered (importable) adapter."""</span>
+</span><span data-line="107">    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_backends</span><span class="p">)</span></div>
 
-
-
-<span class="c1"># --------------------------------------------------------------------------- #</span>
-<span class="c1"># connect — the entry point</span>
-<span class="c1"># --------------------------------------------------------------------------- #</span>
-
-
+</span><span data-line="108">
+</span><span data-line="109">
+</span><span data-line="110"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="111"><span class="c1"># connect — the entry point</span>
+</span><span data-line="112"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="113">
+</span><span data-line="114">
 <div class="viewcode-block" id="connect">
-<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.connect">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span>
-    <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">embedder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">backend_kwargs</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Client</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Connect to a vector database backend and return its :class:`~vd.base.Client`.</span>
+<a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.connect">[docs]</a>
+</span><span data-line="115"><span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span>
+</span><span data-line="116">    <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span data-line="117">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="118">    <span class="n">embedder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="119">    <span class="o">**</span><span class="n">backend_kwargs</span><span class="p">,</span>
+</span><span data-line="120"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Client</span><span class="p">:</span>
+</span><span data-line="121"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="122"><span class="sd">    Connect to a vector database backend and return its :class:`~vd.base.Client`.</span>
+</span><span data-line="123">
+</span><span data-line="124"><span class="sd">    This is the single entry point of ``vd``. Switching vector databases is a</span>
+</span><span data-line="125"><span class="sd">    one-argument change here.</span>
+</span><span data-line="126">
+</span><span data-line="127"><span class="sd">    Parameters</span>
+</span><span data-line="128"><span class="sd">    ----------</span>
+</span><span data-line="129"><span class="sd">    backend : str</span>
+</span><span data-line="130"><span class="sd">        Backend name: ``"memory"``, ``"chroma"``, ``"qdrant"``, ``"faiss"``,</span>
+</span><span data-line="131"><span class="sd">        ``"lancedb"``, ``"sqlite_vec"``, ``"duckdb"``, ``"pgvector"``,</span>
+</span><span data-line="132"><span class="sd">        ``"pinecone"``, ... Run :func:`vd.list_backends` for what is installed.</span>
+</span><span data-line="133"><span class="sd">    embedder : callable, optional</span>
+</span><span data-line="134"><span class="sd">        A ``text -&gt; vector`` function. Supply it only if you want the</span>
+</span><span data-line="135"><span class="sd">        *convenience* of passing raw text to ``collection[key] = "text"`` and</span>
+</span><span data-line="136"><span class="sd">        ``collection.search("query text")``. ``vd`` never embeds on its own —</span>
+</span><span data-line="137"><span class="sd">        with no embedder, pass :class:`~vd.base.Document` objects with vectors</span>
+</span><span data-line="138"><span class="sd">        and pre-computed query vectors.</span>
+</span><span data-line="139"><span class="sd">    **backend_kwargs</span>
+</span><span data-line="140"><span class="sd">        Backend-specific connection options (``persist_directory``, ``url``,</span>
+</span><span data-line="141"><span class="sd">        ``api_key``, ``path``, ...). See each adapter's docstring.</span>
+</span><span data-line="142">
+</span><span data-line="143"><span class="sd">    Returns</span>
+</span><span data-line="144"><span class="sd">    -------</span>
+</span><span data-line="145"><span class="sd">    Client</span>
+</span><span data-line="146"><span class="sd">        A connected client — a ``Mapping`` of collection name to collection.</span>
+</span><span data-line="147">
+</span><span data-line="148"><span class="sd">    Examples</span>
+</span><span data-line="149"><span class="sd">    --------</span>
+</span><span data-line="150"><span class="sd">    &gt;&gt;&gt; client = connect('memory')                                  # doctest: +SKIP</span>
+</span><span data-line="151"><span class="sd">    &gt;&gt;&gt; client = connect('chroma', persist_directory='./db')        # doctest: +SKIP</span>
+</span><span data-line="152"><span class="sd">    &gt;&gt;&gt; client = connect('qdrant', url='http://localhost:6333')     # doctest: +SKIP</span>
+</span><span data-line="153"><span class="sd">    """</span>
+</span><span data-line="154">    <span class="n">client_class</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+</span><span data-line="155">    <span class="k">return</span> <span class="n">client_class</span><span class="p">(</span><span class="n">embedder</span><span class="o">=</span><span class="n">embedder</span><span class="p">,</span> <span class="o">**</span><span class="n">backend_kwargs</span><span class="p">)</span></div>
 
-<span class="sd">    This is the single entry point of ``vd``. Switching vector databases is a</span>
-<span class="sd">    one-argument change here.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    backend : str</span>
-<span class="sd">        Backend name: ``&quot;memory&quot;``, ``&quot;chroma&quot;``, ``&quot;qdrant&quot;``, ``&quot;faiss&quot;``,</span>
-<span class="sd">        ``&quot;lancedb&quot;``, ``&quot;sqlite_vec&quot;``, ``&quot;duckdb&quot;``, ``&quot;pgvector&quot;``,</span>
-<span class="sd">        ``&quot;pinecone&quot;``, ... Run :func:`vd.list_backends` for what is installed.</span>
-<span class="sd">    embedder : callable, optional</span>
-<span class="sd">        A ``text -&gt; vector`` function. Supply it only if you want the</span>
-<span class="sd">        *convenience* of passing raw text to ``collection[key] = &quot;text&quot;`` and</span>
-<span class="sd">        ``collection.search(&quot;query text&quot;)``. ``vd`` never embeds on its own —</span>
-<span class="sd">        with no embedder, pass :class:`~vd.base.Document` objects with vectors</span>
-<span class="sd">        and pre-computed query vectors.</span>
-<span class="sd">    **backend_kwargs</span>
-<span class="sd">        Backend-specific connection options (``persist_directory``, ``url``,</span>
-<span class="sd">        ``api_key``, ``path``, ...). See each adapter&#39;s docstring.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    Client</span>
-<span class="sd">        A connected client — a ``Mapping`` of collection name to collection.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; client = connect(&#39;memory&#39;)                                  # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; client = connect(&#39;chroma&#39;, persist_directory=&#39;./db&#39;)        # doctest: +SKIP</span>
-<span class="sd">    &gt;&gt;&gt; client = connect(&#39;qdrant&#39;, url=&#39;http://localhost:6333&#39;)     # doctest: +SKIP</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">client_class</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">client_class</span><span class="p">(</span><span class="n">embedder</span><span class="o">=</span><span class="n">embedder</span><span class="p">,</span> <span class="o">**</span><span class="n">backend_kwargs</span><span class="p">)</span></div>
-
-
-
-<span class="c1"># --------------------------------------------------------------------------- #</span>
-<span class="c1"># Document-input normalization</span>
-<span class="c1"># --------------------------------------------------------------------------- #</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_generate_id</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;doc&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Generate a unique, mostly-deterministic id for a document.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; _generate_id(&quot;Hello world&quot;).startswith(&#39;doc_&#39;)</span>
-<span class="sd">    True</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">text_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="s2">&quot;replace&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">text_hash</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-
-
+</span><span data-line="156">
+</span><span data-line="157">
+</span><span data-line="158"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="159"><span class="c1"># Document-input normalization</span>
+</span><span data-line="160"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="161">
+</span><span data-line="162">
+</span><span data-line="163"><span class="k">def</span><span class="w"> </span><span class="nf">_generate_id</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"doc"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="164"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="165"><span class="sd">    Generate a unique, mostly-deterministic id for a document.</span>
+</span><span data-line="166">
+</span><span data-line="167"><span class="sd">    Examples</span>
+</span><span data-line="168"><span class="sd">    --------</span>
+</span><span data-line="169"><span class="sd">    &gt;&gt;&gt; _generate_id("Hello world").startswith('doc_')</span>
+</span><span data-line="170"><span class="sd">    True</span>
+</span><span data-line="171"><span class="sd">    """</span>
+</span><span data-line="172">    <span class="n">text_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="s2">"replace"</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
+</span><span data-line="173">    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">text_hash</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+</span><span data-line="174">
+</span><span data-line="175">
 <div class="viewcode-block" id="normalize_document_input">
-<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.normalize_document_input">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">normalize_document_input</span><span class="p">(</span>
-    <span class="n">doc_input</span><span class="p">:</span> <span class="n">DocumentInput</span><span class="p">,</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">auto_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Document</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Normalize a flexible document input to a :class:`~vd.base.Document`.</span>
+<a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.normalize_document_input">[docs]</a>
+</span><span data-line="176"><span class="k">def</span><span class="w"> </span><span class="nf">normalize_document_input</span><span class="p">(</span>
+</span><span data-line="177">    <span class="n">doc_input</span><span class="p">:</span> <span class="n">DocumentInput</span><span class="p">,</span>
+</span><span data-line="178">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="179">    <span class="n">auto_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="180"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Document</span><span class="p">:</span>
+</span><span data-line="181"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="182"><span class="sd">    Normalize a flexible document input to a :class:`~vd.base.Document`.</span>
+</span><span data-line="183">
+</span><span data-line="184"><span class="sd">    Accepted shapes: a :class:`~vd.base.Document`; a ``str`` (just text); a</span>
+</span><span data-line="185"><span class="sd">    tuple ``(text, id)``, ``(text, metadata)``, or ``(text, id, metadata)``.</span>
+</span><span data-line="186">
+</span><span data-line="187"><span class="sd">    Parameters</span>
+</span><span data-line="188"><span class="sd">    ----------</span>
+</span><span data-line="189"><span class="sd">    doc_input : DocumentInput</span>
+</span><span data-line="190"><span class="sd">        The input to normalize.</span>
+</span><span data-line="191"><span class="sd">    auto_id : bool</span>
+</span><span data-line="192"><span class="sd">        When the input carries no id, generate one (vs. leaving it empty).</span>
+</span><span data-line="193">
+</span><span data-line="194"><span class="sd">    Examples</span>
+</span><span data-line="195"><span class="sd">    --------</span>
+</span><span data-line="196"><span class="sd">    &gt;&gt;&gt; normalize_document_input(("Hello", "doc1")).id</span>
+</span><span data-line="197"><span class="sd">    'doc1'</span>
+</span><span data-line="198"><span class="sd">    &gt;&gt;&gt; normalize_document_input(("Hello", {"k": "v"})).metadata</span>
+</span><span data-line="199"><span class="sd">    {'k': 'v'}</span>
+</span><span data-line="200"><span class="sd">    &gt;&gt;&gt; normalize_document_input("Hello world").id.startswith('doc_')</span>
+</span><span data-line="201"><span class="sd">    True</span>
+</span><span data-line="202"><span class="sd">    """</span>
+</span><span data-line="203">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="n">Document</span><span class="p">):</span>
+</span><span data-line="204">        <span class="k">if</span> <span class="ow">not</span> <span class="n">doc_input</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="n">auto_id</span><span class="p">:</span>
+</span><span data-line="205">            <span class="n">doc_input</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">_generate_id</span><span class="p">(</span><span class="n">doc_input</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</span><span data-line="206">        <span class="k">return</span> <span class="n">doc_input</span>
+</span><span data-line="207">
+</span><span data-line="208">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span data-line="209">        <span class="n">doc_id</span> <span class="o">=</span> <span class="n">_generate_id</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="k">if</span> <span class="n">auto_id</span> <span class="k">else</span> <span class="s2">""</span>
+</span><span data-line="210">        <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">doc_input</span><span class="p">)</span>
+</span><span data-line="211">
+</span><span data-line="212">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span data-line="213">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+</span><span data-line="214">            <span class="n">text</span><span class="p">,</span> <span class="n">second</span> <span class="o">=</span> <span class="n">doc_input</span>
+</span><span data-line="215">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">second</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span data-line="216">                <span class="n">doc_id</span> <span class="o">=</span> <span class="n">_generate_id</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">if</span> <span class="n">auto_id</span> <span class="k">else</span> <span class="s2">""</span>
+</span><span data-line="217">                <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">second</span><span class="p">)</span>
+</span><span data-line="218">            <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">second</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+</span><span data-line="219">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+</span><span data-line="220">            <span class="n">text</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">doc_input</span>
+</span><span data-line="221">            <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{})</span>
+</span><span data-line="222">
+</span><span data-line="223">    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+</span><span data-line="224">        <span class="sa">f</span><span class="s2">"Cannot interpret </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> as a document input. "</span>
+</span><span data-line="225">        <span class="sa">f</span><span class="s2">"Use a str, a (text, id)/(text, metadata)/(text, id, metadata) tuple, "</span>
+</span><span data-line="226">        <span class="sa">f</span><span class="s2">"or a vd.Document."</span>
+</span><span data-line="227">    <span class="p">)</span></div>
 
-<span class="sd">    Accepted shapes: a :class:`~vd.base.Document`; a ``str`` (just text); a</span>
-<span class="sd">    tuple ``(text, id)``, ``(text, metadata)``, or ``(text, id, metadata)``.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    doc_input : DocumentInput</span>
-<span class="sd">        The input to normalize.</span>
-<span class="sd">    auto_id : bool</span>
-<span class="sd">        When the input carries no id, generate one (vs. leaving it empty).</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; normalize_document_input((&quot;Hello&quot;, &quot;doc1&quot;)).id</span>
-<span class="sd">    &#39;doc1&#39;</span>
-<span class="sd">    &gt;&gt;&gt; normalize_document_input((&quot;Hello&quot;, {&quot;k&quot;: &quot;v&quot;})).metadata</span>
-<span class="sd">    {&#39;k&#39;: &#39;v&#39;}</span>
-<span class="sd">    &gt;&gt;&gt; normalize_document_input(&quot;Hello world&quot;).id.startswith(&#39;doc_&#39;)</span>
-<span class="sd">    True</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="n">Document</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">doc_input</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="n">auto_id</span><span class="p">:</span>
-            <span class="n">doc_input</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">_generate_id</span><span class="p">(</span><span class="n">doc_input</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">doc_input</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">doc_id</span> <span class="o">=</span> <span class="n">_generate_id</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="k">if</span> <span class="n">auto_id</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">doc_input</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">text</span><span class="p">,</span> <span class="n">second</span> <span class="o">=</span> <span class="n">doc_input</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">second</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="n">doc_id</span> <span class="o">=</span> <span class="n">_generate_id</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">if</span> <span class="n">auto_id</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-                <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">second</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">second</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">text</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">doc_input</span>
-            <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{})</span>
-
-    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Cannot interpret </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> as a document input. &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;Use a str, a (text, id)/(text, metadata)/(text, id, metadata) tuple, &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;or a vd.Document.&quot;</span>
-    <span class="p">)</span></div>
-
-
-
-<span class="c1"># --------------------------------------------------------------------------- #</span>
-<span class="c1"># Egress functions — transform a search result on the way out</span>
-<span class="c1"># --------------------------------------------------------------------------- #</span>
-
-
+</span><span data-line="228">
+</span><span data-line="229">
+</span><span data-line="230"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="231"><span class="c1"># Egress functions — transform a search result on the way out</span>
+</span><span data-line="232"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="233">
+</span><span data-line="234">
 <div class="viewcode-block" id="text_only">
-<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.text_only">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">text_only</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Egress: keep only the text. ``&gt;&gt;&gt; text_only({&#39;text&#39;: &#39;hi&#39;})`` -&gt; ``&#39;hi&#39;``.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span></div>
+<a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.text_only">[docs]</a>
+</span><span data-line="235"><span class="k">def</span><span class="w"> </span><span class="nf">text_only</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="236"><span class="w">    </span><span class="sd">"""Egress: keep only the text. ``&gt;&gt;&gt; text_only({'text': 'hi'})`` -&gt; ``'hi'``."""</span>
+</span><span data-line="237">    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"text"</span><span class="p">]</span></div>
 
-
-
+</span><span data-line="238">
+</span><span data-line="239">
 <div class="viewcode-block" id="id_only">
-<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.id_only">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">id_only</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Egress: keep only the document id.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span></div>
+<a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.id_only">[docs]</a>
+</span><span data-line="240"><span class="k">def</span><span class="w"> </span><span class="nf">id_only</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="241"><span class="w">    </span><span class="sd">"""Egress: keep only the document id."""</span>
+</span><span data-line="242">    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span></div>
 
-
-
+</span><span data-line="243">
+</span><span data-line="244">
 <div class="viewcode-block" id="id_and_score">
-<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.id_and_score">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">id_and_score</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Egress: keep ``(id, score)``.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span></div>
+<a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.id_and_score">[docs]</a>
+</span><span data-line="245"><span class="k">def</span><span class="w"> </span><span class="nf">id_and_score</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+</span><span data-line="246"><span class="w">    </span><span class="sd">"""Egress: keep ``(id, score)``."""</span>
+</span><span data-line="247">    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span></div>
 
-
-
+</span><span data-line="248">
+</span><span data-line="249">
 <div class="viewcode-block" id="id_text_score">
-<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.id_text_score">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">id_text_score</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Egress: keep ``(id, text, score)``.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span></div>
+<a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.id_text_score">[docs]</a>
+</span><span data-line="250"><span class="k">def</span><span class="w"> </span><span class="nf">id_text_score</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+</span><span data-line="251"><span class="w">    </span><span class="sd">"""Egress: keep ``(id, text, score)``."""</span>
+</span><span data-line="252">    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"text"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span></div>
 
-
-
-<span class="c1"># --------------------------------------------------------------------------- #</span>
-<span class="c1"># Vector math</span>
-<span class="c1"># --------------------------------------------------------------------------- #</span>
-
-
+</span><span data-line="253">
+</span><span data-line="254">
+</span><span data-line="255"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="256"><span class="c1"># Vector math</span>
+</span><span data-line="257"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="258">
+</span><span data-line="259">
 <div class="viewcode-block" id="cosine_similarity">
-<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.cosine_similarity">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">vec1</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">vec2</span><span class="p">:</span> <span class="n">Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Cosine similarity of two vectors (1.0 identical, 0.0 orthogonal).</span>
+<a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.cosine_similarity">[docs]</a>
+</span><span data-line="260"><span class="k">def</span><span class="w"> </span><span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">vec1</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">vec2</span><span class="p">:</span> <span class="n">Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span data-line="261"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="262"><span class="sd">    Cosine similarity of two vectors (1.0 identical, 0.0 orthogonal).</span>
+</span><span data-line="263">
+</span><span data-line="264"><span class="sd">    Examples</span>
+</span><span data-line="265"><span class="sd">    --------</span>
+</span><span data-line="266"><span class="sd">    &gt;&gt;&gt; cosine_similarity([1.0, 0.0], [1.0, 0.0])</span>
+</span><span data-line="267"><span class="sd">    1.0</span>
+</span><span data-line="268"><span class="sd">    &gt;&gt;&gt; cosine_similarity([1.0, 0.0], [0.0, 1.0])</span>
+</span><span data-line="269"><span class="sd">    0.0</span>
+</span><span data-line="270"><span class="sd">    """</span>
+</span><span data-line="271">    <span class="n">dot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vec1</span><span class="p">,</span> <span class="n">vec2</span><span class="p">))</span>
+</span><span data-line="272">    <span class="n">mag1</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">vec1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+</span><span data-line="273">    <span class="n">mag2</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">vec2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+</span><span data-line="274">    <span class="k">if</span> <span class="n">mag1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">mag2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="275">        <span class="k">return</span> <span class="mf">0.0</span>
+</span><span data-line="276">    <span class="k">return</span> <span class="n">dot</span> <span class="o">/</span> <span class="p">(</span><span class="n">mag1</span> <span class="o">*</span> <span class="n">mag2</span><span class="p">)</span></div>
 
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; cosine_similarity([1.0, 0.0], [1.0, 0.0])</span>
-<span class="sd">    1.0</span>
-<span class="sd">    &gt;&gt;&gt; cosine_similarity([1.0, 0.0], [0.0, 1.0])</span>
-<span class="sd">    0.0</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">dot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vec1</span><span class="p">,</span> <span class="n">vec2</span><span class="p">))</span>
-    <span class="n">mag1</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">vec1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
-    <span class="n">mag2</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">vec2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
-    <span class="k">if</span> <span class="n">mag1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">mag2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mf">0.0</span>
-    <span class="k">return</span> <span class="n">dot</span> <span class="o">/</span> <span class="p">(</span><span class="n">mag1</span> <span class="o">*</span> <span class="n">mag2</span><span class="p">)</span></div>
-
-
-
+</span><span data-line="277">
+</span><span data-line="278">
 <div class="viewcode-block" id="euclidean_distance">
-<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.euclidean_distance">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">euclidean_distance</span><span class="p">(</span><span class="n">vec1</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">vec2</span><span class="p">:</span> <span class="n">Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Euclidean (L2) distance between two vectors.</span>
+<a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.euclidean_distance">[docs]</a>
+</span><span data-line="279"><span class="k">def</span><span class="w"> </span><span class="nf">euclidean_distance</span><span class="p">(</span><span class="n">vec1</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">vec2</span><span class="p">:</span> <span class="n">Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span data-line="280"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="281"><span class="sd">    Euclidean (L2) distance between two vectors.</span>
+</span><span data-line="282">
+</span><span data-line="283"><span class="sd">    Examples</span>
+</span><span data-line="284"><span class="sd">    --------</span>
+</span><span data-line="285"><span class="sd">    &gt;&gt;&gt; euclidean_distance([1.0, 0.0], [1.0, 0.0])</span>
+</span><span data-line="286"><span class="sd">    0.0</span>
+</span><span data-line="287"><span class="sd">    """</span>
+</span><span data-line="288">    <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vec1</span><span class="p">,</span> <span class="n">vec2</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span></div>
 
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; euclidean_distance([1.0, 0.0], [1.0, 0.0])</span>
-<span class="sd">    0.0</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vec1</span><span class="p">,</span> <span class="n">vec2</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span></div>
-
-
-
+</span><span data-line="289">
+</span><span data-line="290">
 <div class="viewcode-block" id="mean_vector">
-<a class="viewcode-back" href="../../module_docs/vd/util.html#vd.mean_vector">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">mean_vector</span><span class="p">(</span><span class="n">vectors</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Vector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Vector</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Component-wise mean of a non-empty iterable of equal-length vectors.</span>
+<a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.mean_vector">[docs]</a>
+</span><span data-line="291"><span class="k">def</span><span class="w"> </span><span class="nf">mean_vector</span><span class="p">(</span><span class="n">vectors</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Vector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Vector</span><span class="p">:</span>
+</span><span data-line="292"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="293"><span class="sd">    Component-wise mean of a non-empty iterable of equal-length vectors.</span>
+</span><span data-line="294">
+</span><span data-line="295"><span class="sd">    Examples</span>
+</span><span data-line="296"><span class="sd">    --------</span>
+</span><span data-line="297"><span class="sd">    &gt;&gt;&gt; mean_vector([[0.0, 2.0], [2.0, 4.0]])</span>
+</span><span data-line="298"><span class="sd">    [1.0, 3.0]</span>
+</span><span data-line="299"><span class="sd">    """</span>
+</span><span data-line="300">    <span class="n">vectors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">vectors</span><span class="p">)</span>
+</span><span data-line="301">    <span class="k">if</span> <span class="ow">not</span> <span class="n">vectors</span><span class="p">:</span>
+</span><span data-line="302">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"mean_vector requires at least one vector"</span><span class="p">)</span>
+</span><span data-line="303">    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vectors</span><span class="p">)</span>
+</span><span data-line="304">    <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vectors</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span data-line="305">    <span class="k">return</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vectors</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim</span><span class="p">)]</span></div>
 
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; mean_vector([[0.0, 2.0], [2.0, 4.0]])</span>
-<span class="sd">    [1.0, 3.0]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">vectors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">vectors</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">vectors</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mean_vector requires at least one vector&quot;</span><span class="p">)</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vectors</span><span class="p">)</span>
-    <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vectors</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="k">return</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vectors</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim</span><span class="p">)]</span></div>
-
-</pre></div>
-
-           </div>
-          </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p></p>
+</span></pre></div>
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright">
+  <p>
+    Made with
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+  <a href="https://github.com/i2mint/vd" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
+    </div>
   </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
 </footer>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+      <script src="../../_static/documentation_options.js?v=29c81e07"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=fd10adb8"></script>
+      <script src="../../_static/shibuya.js?v=50760d75"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
 
-</body>
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script></body>
 </html>

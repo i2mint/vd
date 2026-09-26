@@ -1,0 +1,24 @@
+vd.search
+=========
+
+.. automodule:: vd.search
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      bm25_lexical_search
+      deduplicate_results
+      hybrid_search
+      multi_query_search
+      reciprocal_rank_fusion
+      search_similar_to_document
+      search_with_feedback
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      BM25Index
+   

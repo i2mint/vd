@@ -1,0 +1,23 @@
+vd.time\_indexed
+================
+
+.. automodule:: vd.time_indexed
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      count_docs
+      mean_vector
+      parse_window
+      to_datetime
+      to_iso
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      TimeIndexedCollection
+      WindowSlice
+   

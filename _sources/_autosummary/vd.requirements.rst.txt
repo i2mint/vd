@@ -1,0 +1,14 @@
+vd.requirements
+===============
+
+.. automodule:: vd.requirements
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      check_requirements
+      install_backend
+      setup_guide
+   

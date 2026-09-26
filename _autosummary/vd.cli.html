@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="teal" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>vd.cli - vd</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="vd.config" href="vd.config.html" /><link rel="prev" title="vd.base" href="vd.base.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d88b86f9" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=2ceb65ce" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="vd.cli"/>
+    <meta name="twitter:card" content="summary"/>
+  
+<link rel="alternate" type="text/markdown" href="vd.cli.html.md">
+<link rel="describedby" href="../llms.txt" type="text/markdown">
+</head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
+      
+      
+      <strong>vd</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/i2mint/vd" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="vd.html">vd</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="vd.analytics.html">vd.analytics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.asynchronous.html">vd.asynchronous</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.backends.html">vd.backends</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="vd.backends.memory.html">vd.backends.memory</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="vd.base.html">vd.base</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">vd.cli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.config.html">vd.config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.filters.html">vd.filters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.health.html">vd.health</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.io.html">vd.io</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.migration.html">vd.migration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.requirements.html">vd.requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.search.html">vd.search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.text.html">vd.text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.time_indexed.html">vd.time_indexed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd.util.html">vd.util</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ai-agents.html">For AI agents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#vd.cli.cmd_backends"><code class="docutils literal notranslate"><span class="pre">cmd_backends()</span></code></a></li>
+<li><a class="reference internal" href="#vd.cli.cmd_benchmark"><code class="docutils literal notranslate"><span class="pre">cmd_benchmark()</span></code></a></li>
+<li><a class="reference internal" href="#vd.cli.cmd_export"><code class="docutils literal notranslate"><span class="pre">cmd_export()</span></code></a></li>
+<li><a class="reference internal" href="#vd.cli.cmd_health_check"><code class="docutils literal notranslate"><span class="pre">cmd_health_check()</span></code></a></li>
+<li><a class="reference internal" href="#vd.cli.cmd_import"><code class="docutils literal notranslate"><span class="pre">cmd_import()</span></code></a></li>
+<li><a class="reference internal" href="#vd.cli.cmd_install_info"><code class="docutils literal notranslate"><span class="pre">cmd_install_info()</span></code></a></li>
+<li><a class="reference internal" href="#vd.cli.cmd_migrate"><code class="docutils literal notranslate"><span class="pre">cmd_migrate()</span></code></a></li>
+<li><a class="reference internal" href="#vd.cli.cmd_stats"><code class="docutils literal notranslate"><span class="pre">cmd_stats()</span></code></a></li>
+<li><a class="reference internal" href="#vd.cli.cmd_validate"><code class="docutils literal notranslate"><span class="pre">cmd_validate()</span></code></a></li>
+<li><a class="reference internal" href="#vd.cli.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">vd</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../api.html"><span itemprop="name">API reference</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="vd.html"><span itemprop="name">vd</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">vd.cli</strong>
+        <meta itemprop="position" content="4" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue dark-code" role="main">
+          <section id="module-vd.cli">
+<span id="vd-cli"></span><h1>vd.cli<a class="headerlink" href="#module-vd.cli" title="Link to this heading">#</a></h1>
+<p>Command-line interface for vd.</p>
+<p>Provides a CLI tool for common vd operations like listing backends,
+exporting/importing collections, health checks, and more.</p>
+<p class="rubric">Functions</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.cli.cmd_backends" title="vd.cli.cmd_backends"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmd_backends</span></code></a>(args)</p></td>
+<td><p>List available backends.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vd.cli.cmd_benchmark" title="vd.cli.cmd_benchmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmd_benchmark</span></code></a>(args)</p></td>
+<td><p>Benchmark search performance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.cli.cmd_export" title="vd.cli.cmd_export"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmd_export</span></code></a>(args)</p></td>
+<td><p>Export a collection.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vd.cli.cmd_health_check" title="vd.cli.cmd_health_check"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmd_health_check</span></code></a>(args)</p></td>
+<td><p>Check backend health.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.cli.cmd_import" title="vd.cli.cmd_import"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmd_import</span></code></a>(args)</p></td>
+<td><p>Import into a collection.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vd.cli.cmd_install_info" title="vd.cli.cmd_install_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmd_install_info</span></code></a>(args)</p></td>
+<td><p>Get installation instructions for a backend.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.cli.cmd_migrate" title="vd.cli.cmd_migrate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmd_migrate</span></code></a>(args)</p></td>
+<td><p>Migrate a collection between backends.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vd.cli.cmd_stats" title="vd.cli.cmd_stats"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmd_stats</span></code></a>(args)</p></td>
+<td><p>Show collection statistics.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.cli.cmd_validate" title="vd.cli.cmd_validate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmd_validate</span></code></a>(args)</p></td>
+<td><p>Validate a collection.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vd.cli.main" title="vd.cli.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
+<td><p>Main CLI entry point.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.cli.cmd_backends">
+<span class="sig-prename descclassname"><span class="pre">vd.cli.</span></span><span class="sig-name descname"><span class="pre">cmd_backends</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/cli.html#cmd_backends"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.cli.cmd_backends" title="Link to this definition">#</a></dt>
+<dd><p>List available backends.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.cli.cmd_benchmark">
+<span class="sig-prename descclassname"><span class="pre">vd.cli.</span></span><span class="sig-name descname"><span class="pre">cmd_benchmark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/cli.html#cmd_benchmark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.cli.cmd_benchmark" title="Link to this definition">#</a></dt>
+<dd><p>Benchmark search performance.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.cli.cmd_export">
+<span class="sig-prename descclassname"><span class="pre">vd.cli.</span></span><span class="sig-name descname"><span class="pre">cmd_export</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/cli.html#cmd_export"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.cli.cmd_export" title="Link to this definition">#</a></dt>
+<dd><p>Export a collection.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.cli.cmd_health_check">
+<span class="sig-prename descclassname"><span class="pre">vd.cli.</span></span><span class="sig-name descname"><span class="pre">cmd_health_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/cli.html#cmd_health_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.cli.cmd_health_check" title="Link to this definition">#</a></dt>
+<dd><p>Check backend health.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.cli.cmd_import">
+<span class="sig-prename descclassname"><span class="pre">vd.cli.</span></span><span class="sig-name descname"><span class="pre">cmd_import</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/cli.html#cmd_import"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.cli.cmd_import" title="Link to this definition">#</a></dt>
+<dd><p>Import into a collection.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.cli.cmd_install_info">
+<span class="sig-prename descclassname"><span class="pre">vd.cli.</span></span><span class="sig-name descname"><span class="pre">cmd_install_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/cli.html#cmd_install_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.cli.cmd_install_info" title="Link to this definition">#</a></dt>
+<dd><p>Get installation instructions for a backend.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.cli.cmd_migrate">
+<span class="sig-prename descclassname"><span class="pre">vd.cli.</span></span><span class="sig-name descname"><span class="pre">cmd_migrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/cli.html#cmd_migrate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.cli.cmd_migrate" title="Link to this definition">#</a></dt>
+<dd><p>Migrate a collection between backends.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.cli.cmd_stats">
+<span class="sig-prename descclassname"><span class="pre">vd.cli.</span></span><span class="sig-name descname"><span class="pre">cmd_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/cli.html#cmd_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.cli.cmd_stats" title="Link to this definition">#</a></dt>
+<dd><p>Show collection statistics.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.cli.cmd_validate">
+<span class="sig-prename descclassname"><span class="pre">vd.cli.</span></span><span class="sig-name descname"><span class="pre">cmd_validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/cli.html#cmd_validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.cli.cmd_validate" title="Link to this definition">#</a></dt>
+<dd><p>Validate a collection.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.cli.main">
+<span class="sig-prename descclassname"><span class="pre">vd.cli.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/cli.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.cli.main" title="Link to this definition">#</a></dt>
+<dd><p>Main CLI entry point.</p>
+</dd></dl>
+
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="vd.base.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">vd.base</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="vd.config.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">vd.config</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright">
+  <p>
+    Made with
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+  <a href="https://github.com/i2mint/vd" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../_static/documentation_options.js?v=29c81e07"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=fd10adb8"></script>
+      <script src="../_static/shibuya.js?v=50760d75"></script></body>
+</html>
