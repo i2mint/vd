@@ -12,22 +12,31 @@ Document ids are arbitrary strings; Qdrant point ids must be UUIDs or
 unsigned ints, so each id is mapped to a deterministic UUID5 and the original
 is kept in the point payload.
 
+The backend is also **natively async**: :func:`vd.connect_async` returns a
+:class:`NativeAsyncQdrantClient` built on ``qdrant_client.AsyncQdrantClient``
+(same arguments as the sync client, embedded ``:memory:`` mode included).
+
 Requires: ``pip install qdrant-client``
 """
 
 from __future__ import annotations
 
 import uuid
-from typing import Any, Callable, Iterable, Iterator, Optional
+from typing import Any, AsyncIterator, Callable, Iterable, Iterator, Optional
 
 try:
-    from qdrant_client import QdrantClient, models
+    from qdrant_client import AsyncQdrantClient, QdrantClient, models
 except ImportError as e:  # pragma: no cover
     raise ImportError(
         "The qdrant backend needs the 'qdrant-client' package. "
         "Install it with: pip install qdrant-client"
     ) from e
 
+from vd.asynchronous import (
+    AsyncAbstractClient,
+    AsyncAbstractCollection,
+    register_async_backend,
+)
 from vd.base import (
     AbstractClient,
     AbstractCollection,
@@ -123,6 +132,55 @@ def _compile_field(qkey: str, cond: dict, must: list, must_not: list) -> None:
         must.append(models.FieldCondition(key=qkey, range=models.Range(**range_kw)))
 
 
+def _to_point(doc: Document) -> "models.PointStruct":
+    """Build the Qdrant point for ``doc`` (id mapped to a UUID, payload nested)."""
+    return models.PointStruct(
+        id=_point_id(doc.id),
+        vector=doc.vector,
+        payload={_ID_KEY: doc.id, _TEXT_KEY: doc.text, "metadata": doc.metadata or {}},
+    )
+
+
+def _point_to_result(point, metric: str) -> SearchResult:
+    """Convert a scored Qdrant point to a ``vd`` result dict."""
+    payload = point.payload or {}
+    score = point.score
+    # Qdrant `point.score` per metric (see vd.base "Score semantics"):
+    #   - cosine: cosine similarity in [-1, 1]  → matches vd canonical
+    #   - dot:    raw inner product              → matches vd canonical
+    #   - euclid: a *distance* value (lower-is-better); Qdrant's
+    #     own sort orders ascending in that case. The existing
+    #     transform 1/(1+d) matches vd's canonical l2 score directly
+    #     (no un-negation), so leave it as-is. If a future Qdrant
+    #     client version switches Euclid to higher-is-better, this
+    #     branch must be revisited.
+    return {
+        "id": payload.get(_ID_KEY, str(point.id)),
+        "text": payload.get(_TEXT_KEY, ""),
+        "score": 1.0 / (1.0 + score) if metric == "l2" else score,
+        "metadata": payload.get("metadata", {}),
+    }
+
+
+def _to_document(point) -> Document:
+    """Convert a retrieved Qdrant point (with payload and vector) to a Document."""
+    payload = point.payload or {}
+    vector = point.vector
+    return Document(
+        id=payload.get(_ID_KEY, str(point.id)),
+        text=payload.get(_TEXT_KEY, ""),
+        vector=list(vector) if vector is not None else None,
+        metadata=payload.get("metadata", {}),
+    )
+
+
+def _vectors_config(dimension: int, metric: str) -> "models.VectorParams":
+    """The Qdrant vector config for a collection of ``dimension`` and ``metric``."""
+    return models.VectorParams(
+        size=dimension, distance=_DISTANCE.get(metric, models.Distance.COSINE)
+    )
+
+
 class QdrantCollection(AbstractCollection):
     """A collection backed by one Qdrant collection. Native payload filtering."""
 
@@ -154,30 +212,18 @@ class QdrantCollection(AbstractCollection):
         if not self._client.collection_exists(self.name):
             self._client.create_collection(
                 collection_name=self.name,
-                vectors_config=models.VectorParams(
-                    size=self.dimension,
-                    distance=_DISTANCE.get(self.metric, models.Distance.COSINE),
-                ),
+                vectors_config=_vectors_config(self.dimension, self.metric),
             )
-
-    @staticmethod
-    def _payload(doc: Document) -> dict:
-        return {_ID_KEY: doc.id, _TEXT_KEY: doc.text, "metadata": doc.metadata or {}}
-
-    def _point(self, doc: Document) -> "models.PointStruct":
-        return models.PointStruct(
-            id=_point_id(doc.id), vector=doc.vector, payload=self._payload(doc)
-        )
 
     # ----- raw primitives ------------------------------------------------- #
 
     def _write(self, doc: Document) -> None:
         self._ensure_collection()
-        self._client.upsert(self.name, points=[self._point(doc)])
+        self._client.upsert(self.name, points=[_to_point(doc)])
 
     def _write_many(self, docs: list[Document]) -> None:
         self._ensure_collection()
-        self._client.upsert(self.name, points=[self._point(d) for d in docs])
+        self._client.upsert(self.name, points=[_to_point(d) for d in docs])
 
     def _read(self, key: str) -> Document:
         if not self._client.collection_exists(self.name):
@@ -187,7 +233,7 @@ class QdrantCollection(AbstractCollection):
         )
         if not points:
             raise KeyError(key)
-        return self._to_document(points[0])
+        return _to_document(points[0])
 
     def _drop(self, key: str) -> None:
         if not self._client.collection_exists(self.name) or not self._client.retrieve(
@@ -235,39 +281,7 @@ class QdrantCollection(AbstractCollection):
             with_payload=True,
             **kwargs,
         )
-        results = []
-        for point in response.points:
-            payload = point.payload or {}
-            score = point.score
-            # Qdrant `point.score` per metric (see vd.base "Score semantics"):
-            #   - cosine: cosine similarity in [-1, 1]  → matches vd canonical
-            #   - dot:    raw inner product              → matches vd canonical
-            #   - euclid: a *distance* value (lower-is-better); Qdrant's
-            #     own sort orders ascending in that case. The existing
-            #     transform 1/(1+d) matches vd's canonical l2 score directly
-            #     (no un-negation), so leave it as-is. If a future Qdrant
-            #     client version switches Euclid to higher-is-better, this
-            #     branch must be revisited.
-            results.append(
-                {
-                    "id": payload.get(_ID_KEY, str(point.id)),
-                    "text": payload.get(_TEXT_KEY, ""),
-                    "score": 1.0 / (1.0 + score) if self.metric == "l2" else score,
-                    "metadata": payload.get("metadata", {}),
-                }
-            )
-        return results
-
-    @staticmethod
-    def _to_document(point) -> Document:
-        payload = point.payload or {}
-        vector = point.vector
-        return Document(
-            id=payload.get(_ID_KEY, str(point.id)),
-            text=payload.get(_TEXT_KEY, ""),
-            vector=list(vector) if vector is not None else None,
-            metadata=payload.get("metadata", {}),
-        )
+        return [_point_to_result(point, self.metric) for point in response.points]
 
 
 @register_backend("qdrant")
@@ -301,12 +315,11 @@ class QdrantClientAdapter(AbstractClient):
         **config,
     ):
         super().__init__(embedder=embedder, **config)
-        if url is not None:
-            self._client = QdrantClient(url=url, api_key=api_key, **config)
-        elif path is not None:
-            self._client = QdrantClient(path=path)
-        else:
-            self._client = QdrantClient(location=location or ":memory:")
+        self._client = QdrantClient(
+            **_qdrant_client_kwargs(
+                path=path, url=url, api_key=api_key, location=location, config=config
+            )
+        )
         self._metrics: dict[str, str] = {}
 
     def create_collection(
@@ -356,3 +369,214 @@ class QdrantClientAdapter(AbstractClient):
     def close(self) -> None:
         """Close the underlying Qdrant client."""
         self._client.close()
+
+
+# --------------------------------------------------------------------------- #
+# Native async — qdrant_client.AsyncQdrantClient
+# --------------------------------------------------------------------------- #
+
+
+def _qdrant_client_kwargs(
+    *,
+    path: Optional[str],
+    url: Optional[str],
+    api_key: Optional[str],
+    location: Optional[str],
+    config: dict,
+) -> dict:
+    """Constructor kwargs shared by the sync and async Qdrant clients."""
+    if url is not None:
+        return {"url": url, "api_key": api_key, **config}
+    if path is not None:
+        return {"path": path}
+    return {"location": location or ":memory:"}
+
+
+class NativeAsyncQdrantCollection(AsyncAbstractCollection):
+    """
+    A Qdrant collection driven by ``AsyncQdrantClient`` — non-blocking I/O.
+
+    Same storage layout, filter translation and scores as
+    :class:`QdrantCollection`, so data written by either is readable by both.
+    """
+
+    supported_filter_operators = SUPPORTED_FILTER_OPERATORS
+
+    def __init__(
+        self,
+        name: str,
+        client: AsyncQdrantClient,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+    ):
+        self.name = name
+        self._client = client
+        self._embedder = embedder
+        self.dimension = dimension
+        self.metric = metric
+
+    @property
+    def native(self) -> AsyncQdrantClient:
+        """The raw ``AsyncQdrantClient`` (escape hatch)."""
+        return self._client
+
+    async def _ensure_collection(self) -> None:
+        """Create the Qdrant collection lazily, once the dimension is known."""
+        if not await self._client.collection_exists(self.name):
+            await self._client.create_collection(
+                collection_name=self.name,
+                vectors_config=_vectors_config(self.dimension, self.metric),
+            )
+
+    # ----- async raw primitives ------------------------------------------ #
+
+    async def _write_many(self, docs: list[Document]) -> None:
+        await self._ensure_collection()
+        await self._client.upsert(self.name, points=[_to_point(d) for d in docs])
+
+    async def _read(self, key: str) -> Document:
+        if not await self._client.collection_exists(self.name):
+            raise KeyError(key)
+        points = await self._client.retrieve(
+            self.name, ids=[_point_id(key)], with_payload=True, with_vectors=True
+        )
+        if not points:
+            raise KeyError(key)
+        return _to_document(points[0])
+
+    async def _drop(self, key: str) -> None:
+        if not await self._client.collection_exists(
+            self.name
+        ) or not await self._client.retrieve(self.name, ids=[_point_id(key)]):
+            raise KeyError(key)
+        await self._client.delete(
+            self.name, points_selector=models.PointIdsList(points=[_point_id(key)])
+        )
+
+    async def _keys(self) -> AsyncIterator[str]:
+        if not await self._client.collection_exists(self.name):
+            return
+        offset = None
+        while True:
+            points, offset = await self._client.scroll(
+                self.name, limit=256, offset=offset, with_payload=[_ID_KEY]
+            )
+            for point in points:
+                yield point.payload[_ID_KEY]
+            if offset is None:
+                break
+
+    async def _count(self) -> int:
+        if not await self._client.collection_exists(self.name):
+            return 0
+        return (await self._client.count(self.name)).count
+
+    async def _query(
+        self,
+        vector: Vector,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        if not await self._client.collection_exists(self.name):
+            return []
+        response = await self._client.query_points(
+            self.name,
+            query=vector,
+            limit=limit,
+            query_filter=_to_qdrant_filter(filter),
+            with_payload=True,
+            **kwargs,
+        )
+        return [_point_to_result(point, self.metric) for point in response.points]
+
+
+@register_async_backend("qdrant")
+class NativeAsyncQdrantClient(AsyncAbstractClient):
+    """
+    Native async Qdrant client — what ``await vd.connect_async("qdrant")`` returns.
+
+    Takes the same arguments as :class:`QdrantClientAdapter` (``path``,
+    ``url``, ``api_key``, ``location``, ``embedder``); with none of
+    ``path``/``url`` it runs Qdrant embedded in ``:memory:`` mode.
+
+    Examples
+    --------
+    >>> import asyncio, vd
+    >>> async def go():
+    ...     async with await vd.connect_async("qdrant") as client:
+    ...         col = await client.create_collection("docs", dimension=2)
+    ...         await col.set("a", vd.Document(id="a", text="x", vector=[1.0, 0.0]))
+    ...         return client.native_async, await col.count()
+    >>> asyncio.run(go())
+    (True, 1)
+    """
+
+    def __init__(
+        self,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        path: Optional[str] = None,
+        url: Optional[str] = None,
+        api_key: Optional[str] = None,
+        location: Optional[str] = None,
+        **config,
+    ):
+        super().__init__(embedder=embedder, **config)
+        self._client = AsyncQdrantClient(
+            **_qdrant_client_kwargs(
+                path=path, url=url, api_key=api_key, location=location, config=config
+            )
+        )
+        self._metrics: dict[str, str] = {}
+
+    def _collection(
+        self, name: str, *, dimension: Optional[int], metric: str
+    ) -> NativeAsyncQdrantCollection:
+        return NativeAsyncQdrantCollection(
+            name,
+            self._client,
+            embedder=self._embedder,
+            dimension=dimension,
+            metric=metric,
+        )
+
+    async def create_collection(
+        self,
+        name: str,
+        *,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
+    ) -> NativeAsyncQdrantCollection:
+        if await self._client.collection_exists(name) or name in self._metrics:
+            raise ValueError(f"Collection {name!r} already exists")
+        self._metrics[name] = metric
+        collection = self._collection(name, dimension=dimension, metric=metric)
+        if dimension is not None:  # eager create when the dimension is known
+            await collection._ensure_collection()
+        return collection
+
+    async def get_collection(self, name: str) -> NativeAsyncQdrantCollection:
+        if not await self._client.collection_exists(name) and name not in self._metrics:
+            raise KeyError(f"Collection {name!r} does not exist")
+        return self._collection(
+            name, dimension=None, metric=self._metrics.get(name, "cosine")
+        )
+
+    async def delete_collection(self, name: str) -> None:
+        exists = await self._client.collection_exists(name)
+        if not exists and name not in self._metrics:
+            raise KeyError(f"Collection {name!r} does not exist")
+        if exists:
+            await self._client.delete_collection(name)
+        self._metrics.pop(name, None)
+
+    async def list_collections(self) -> AsyncIterator[str]:
+        response = await self._client.get_collections()
+        names = {c.name for c in response.collections} | set(self._metrics)
+        for name in sorted(names):
+            yield name

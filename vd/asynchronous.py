@@ -2,22 +2,25 @@
 Async support for ``vd``: universal wrapper + opt-in native implementations.
 
 This module gives every ``vd`` backend an ``async``/``await`` surface day one,
-without forking the adapter hierarchy. Two pieces:
+without forking the adapter hierarchy. Three pieces:
 
 - :class:`AsyncCollectionWrapper` / :class:`AsyncClientWrapper` —
   thin adapters that take any sync :class:`vd.Collection` / :class:`vd.Client`
   and dispatch every method to :func:`asyncio.to_thread`. This is the
   **universal fallback**: every backend works through it.
-- :func:`connect_async` — the entry point. Mirrors :func:`vd.connect`. If a
-  backend ships a native async client (Phase 2 follow-ups: chroma, qdrant,
-  weaviate, elasticsearch, redis, mongodb, lancedb, milvus, pinecone,
-  turbopuffer), :func:`connect_async` returns *that*; otherwise it returns
-  the wrapper.
+- :class:`AsyncAbstractCollection` / :class:`AsyncAbstractClient` — bases for
+  **native** async adapters, which do real non-blocking I/O through a
+  backend's own async SDK. A backend implements a few ``async`` raw
+  primitives and registers its client with :func:`register_async_backend`.
+  Native today: ``qdrant`` (``qdrant_client.AsyncQdrantClient``).
+- :func:`connect_async` — the entry point. Mirrors :func:`vd.connect`. It
+  returns the backend's registered native client when there is one, and the
+  wrapper otherwise (or when called with ``native=False``).
 
-The asyncio.to_thread wrapper does **not** unblock the event loop — it just
-moves blocking calls off the main thread, freeing the loop. For real
-non-blocking I/O against a network backend, use a client that satisfies
-:class:`vd.SupportsNativeAsync`.
+The asyncio.to_thread wrapper does **not** make I/O non-blocking — it moves
+blocking calls off the event loop onto a worker thread. For real
+non-blocking I/O against a network backend, use a client whose
+``native_async`` attribute is ``True`` (see :class:`vd.SupportsNativeAsync`).
 
 The module name is ``vd.asynchronous`` (not ``vd.async``) because ``async``
 is a Python keyword.
@@ -26,16 +29,22 @@ is a Python keyword.
 from __future__ import annotations
 
 import asyncio
+import inspect
+from abc import ABCMeta, abstractmethod
 from typing import Any, AsyncIterator, Callable, Iterable, Optional, Union
 
 from vd.base import (
     AsyncClient,
     AsyncCollection,
     Document,
+    DocumentInput,
     Filter,
     SearchResult,
+    StaticIndexError,
     SupportsHybrid,
     Vector,
+    _coerce_document,
+    _CollectionPolicy,
 )
 
 # --------------------------------------------------------------------------- #
@@ -262,25 +271,326 @@ class AsyncClientWrapper:
 
 
 # --------------------------------------------------------------------------- #
+# Native async bases — for backends whose SDK ships an async client
+# --------------------------------------------------------------------------- #
+
+
+class AsyncAbstractCollection(_CollectionPolicy, metaclass=ABCMeta):
+    """
+    Base class for **native** async collections (the async sibling of
+    :class:`vd.AbstractCollection`).
+
+    A backend subclasses this and implements ``async`` raw primitives; the
+    user-facing :class:`~vd.AsyncCollection` surface is provided here, with
+    the same input coercion, embedding, dimension checks, filter validation
+    and ``egress`` handling as the sync base (both share one policy mixin).
+
+    Subclass responsibilities (async raw primitives)
+    ------------------------------------------------
+    ``async _write_many(docs)``
+        Upsert documents; each ``vector`` is set and dimension-checked.
+    ``async _read(key) -> Document``
+        Fetch one document; raise ``KeyError`` if absent.
+    ``async _drop(key)``
+        Delete one document; raise ``KeyError`` if absent.
+    ``_keys() -> AsyncIterator[str]``
+        An async generator of document ids.
+    ``async _count() -> int``
+        Number of documents.
+    ``async _query(vector, *, limit, filter, **kwargs) -> list[SearchResult]``
+        Raw nearest-neighbor search; ``filter`` is the canonical AST.
+    """
+
+    #: Real non-blocking I/O through the backend's async SDK.
+    native_async: bool = True
+
+    # ----- escape hatch --------------------------------------------------- #
+
+    @property
+    def native(self) -> Any:
+        """The raw backend handle (escape hatch), or ``None``."""
+        return getattr(self, "_native", None)
+
+    # ----- AsyncCollection contract --------------------------------------- #
+
+    async def get(self, key: str) -> Document:
+        """Fetch one document; raises ``KeyError`` if absent."""
+        return await self._read(key)
+
+    async def set(self, key: str, value: Union[str, tuple, Document]) -> None:
+        """Insert or replace a document (idempotent upsert)."""
+        self._check_writable()
+        doc = self._ensure_vector(_coerce_document(key, value))
+        await self._write_many([doc])
+
+    async def delete(self, key: str) -> None:
+        """Delete a document; raises ``KeyError`` if absent."""
+        self._check_writable()
+        await self._drop(key)
+
+    async def keys(self) -> AsyncIterator[str]:
+        """Yield document ids."""
+        async for key in self._keys():
+            yield key
+
+    async def count(self) -> int:
+        """Return the number of documents."""
+        return await self._count()
+
+    async def search(
+        self,
+        query: Union[str, Vector],
+        *,
+        limit: int = 10,
+        filter: Optional[Filter] = None,
+        egress: Optional[Callable[[SearchResult], Any]] = None,
+        **kwargs,
+    ) -> AsyncIterator[SearchResult]:
+        """Yield the ``limit`` documents most similar to ``query``.
+
+        Same contract as :meth:`vd.AbstractCollection.search`.
+        """
+        from vd.filters import validate_filter
+
+        validate_filter(filter, supported=self.supported_filter_operators)
+        vector = self._resolve_query(query)
+        for result in await self._query(vector, limit=limit, filter=filter, **kwargs):
+            yield egress(result) if egress is not None else result
+
+    # ----- batch convenience ---------------------------------------------- #
+
+    async def add_documents(
+        self,
+        documents: Iterable[DocumentInput],
+        *,
+        batch_size: int = 100,
+    ) -> None:
+        """Batch upsert — mirrors :meth:`vd.AbstractCollection.add_documents`."""
+        from vd.util import normalize_document_input
+
+        self._check_writable()
+        batch: list[Document] = []
+        for item in documents:
+            doc = normalize_document_input(item, auto_id=True)
+            self._ensure_vector(doc)
+            batch.append(doc)
+            if len(batch) >= batch_size:
+                await self._write_many(batch)
+                batch = []
+        if batch:
+            await self._write_many(batch)
+
+    async def upsert(self, document: Document) -> None:
+        """Insert or replace ``document``."""
+        await self.set(document.id, document)
+
+    def _check_writable(self) -> None:
+        if not self.supports_incremental_writes:
+            raise StaticIndexError(
+                f"Collection {self.name!r} uses a static index and cannot "
+                f"accept writes after creation. Rebuild it instead."
+            )
+
+    # ----- raw primitives — adapters MUST implement ----------------------- #
+
+    @abstractmethod
+    async def _write_many(self, docs: list[Document]) -> None:
+        """Upsert documents (vectors set and dimension-checked)."""
+
+    @abstractmethod
+    async def _read(self, key: str) -> Document:
+        """Fetch one document; raise ``KeyError`` if absent."""
+
+    @abstractmethod
+    async def _drop(self, key: str) -> None:
+        """Delete one document; raise ``KeyError`` if absent."""
+
+    @abstractmethod
+    def _keys(self) -> AsyncIterator[str]:
+        """Async-iterate document ids."""
+
+    @abstractmethod
+    async def _count(self) -> int:
+        """Number of documents."""
+
+    @abstractmethod
+    async def _query(
+        self,
+        vector: Vector,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        """Raw nearest-neighbor search."""
+
+
+class AsyncAbstractClient(metaclass=ABCMeta):
+    """
+    Base class for **native** async clients (the async sibling of
+    :class:`vd.AbstractClient`).
+
+    A backend implements :meth:`create_collection`, :meth:`get_collection`,
+    :meth:`delete_collection` and :meth:`list_collections` as coroutines /
+    async generators; :meth:`get_or_create_collection`, the ``client`` escape
+    hatch, :meth:`close` and ``async with`` support come for free. Register
+    the class with :func:`register_async_backend` so :func:`connect_async`
+    returns it.
+
+    Parameters
+    ----------
+    embedder : callable, optional
+        A ``text -> vector`` function handed to every collection.
+    **config
+        Backend-specific connection configuration.
+    """
+
+    #: Real non-blocking I/O through the backend's async SDK.
+    native_async: bool = True
+
+    #: The registry name of this backend (set by :func:`register_async_backend`).
+    backend_name: str = ""
+
+    def __init__(
+        self,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        **config,
+    ):
+        self._embedder = embedder
+        self.config = config
+
+    @property
+    def client(self) -> Any:
+        """The raw async backend client — a supported, documented escape hatch."""
+        return getattr(self, "_client", None)
+
+    @abstractmethod
+    async def create_collection(
+        self,
+        name: str,
+        *,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
+    ) -> AsyncAbstractCollection:
+        """Create a new collection; raise ``ValueError`` if it exists."""
+
+    @abstractmethod
+    async def get_collection(self, name: str) -> AsyncAbstractCollection:
+        """Return an existing collection; raise ``KeyError`` if absent."""
+
+    @abstractmethod
+    async def delete_collection(self, name: str) -> None:
+        """Drop a collection; raise ``KeyError`` if absent."""
+
+    @abstractmethod
+    def list_collections(self) -> AsyncIterator[str]:
+        """Async-iterate collection names."""
+
+    async def get_or_create_collection(
+        self,
+        name: str,
+        *,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
+    ) -> AsyncAbstractCollection:
+        """Return collection ``name``, creating it if missing."""
+        try:
+            return await self.get_collection(name)
+        except KeyError:
+            return await self.create_collection(
+                name, dimension=dimension, metric=metric, **index_config
+            )
+
+    async def close(self) -> None:
+        """Release backend resources (closes the raw client if it can)."""
+        close = getattr(self.client, "close", None)
+        if close is not None:
+            result = close()
+            if inspect.isawaitable(result):
+                await result
+
+    async def __aenter__(self) -> "AsyncAbstractClient":
+        return self
+
+    async def __aexit__(self, *exc) -> None:
+        await self.close()
+
+
+# --------------------------------------------------------------------------- #
+# Native async backend registry
+# --------------------------------------------------------------------------- #
+
+#: name -> factory returning a native async client (or an awaitable of one).
+_async_backends: dict[str, Callable[..., Any]] = {}
+
+
+def register_async_backend(name: str, factory: Optional[Callable[..., Any]] = None):
+    """
+    Register a native async client factory for backend ``name``.
+
+    Use as a class decorator on an :class:`AsyncAbstractClient` subclass, or
+    call it with a ``factory`` (a class or a function, sync or ``async``,
+    taking the :func:`connect_async` keyword arguments). Once registered,
+    :func:`connect_async` returns the factory's client instead of the
+    ``to_thread`` wrapper.
+
+    Examples
+    --------
+    >>> @register_async_backend('example')           # doctest: +SKIP
+    ... class ExampleAsyncClient(AsyncAbstractClient):
+    ...     ...
+    """
+
+    def decorator(factory: Callable[..., Any]) -> Callable[..., Any]:
+        if isinstance(factory, type):
+            factory.backend_name = name
+        _async_backends[name] = factory
+        return factory
+
+    return decorator(factory) if factory is not None else decorator
+
+
+def list_async_backends() -> list[str]:
+    """
+    Return the names of backends with a registered native async client.
+
+    Every other backend still works with :func:`connect_async`, through the
+    universal ``to_thread`` wrapper.
+    """
+    return sorted(_async_backends)
+
+
+# --------------------------------------------------------------------------- #
 # Entry point
 # --------------------------------------------------------------------------- #
 
 
-async def connect_async(backend: str, **kwargs) -> AsyncClient:
+async def connect_async(backend: str, *, native: bool = True, **kwargs) -> AsyncClient:
     """
     Async sibling of :func:`vd.connect`.
 
-    Returns an :class:`~vd.AsyncClient`. Today every backend goes through
-    the universal :class:`AsyncClientWrapper` (built on
-    :func:`asyncio.to_thread`); Phase 2 follow-ups will plug in native async
-    clients per backend, which :func:`connect_async` will return instead.
+    Returns an :class:`~vd.AsyncClient`. When the backend has a native async
+    client (see :func:`list_async_backends`; today ``qdrant``), that client
+    is returned and does real non-blocking I/O. Every other backend goes
+    through the universal :class:`AsyncClientWrapper`, built on
+    :func:`asyncio.to_thread`. Check ``client.native_async`` to tell them
+    apart.
 
     Parameters
     ----------
     backend : str
         Backend name — same vocabulary as :func:`vd.connect`.
+    native : bool
+        Use the backend's native async client when one is registered
+        (default). ``False`` forces the ``to_thread`` wrapper around the
+        sync adapter.
     **kwargs
-        Forwarded to :func:`vd.connect`.
+        Forwarded to the native client's constructor, or to
+        :func:`vd.connect` for the wrapper. Both take the same arguments
+        (``embedder``, ``url``, ``path``, ...).
 
     Returns
     -------
@@ -304,9 +614,12 @@ async def connect_async(backend: str, **kwargs) -> AsyncClient:
     # but keep it lazy so this module is safe to import standalone).
     from vd.util import connect
 
-    # Per-backend native async adapters can be wired here in Phase 2 by
-    # checking a registry for an async constructor before falling back. For
-    # Phase 1 every backend uses the universal wrapper.
+    factory = _async_backends.get(backend) if native else None
+    if factory is not None:
+        client = factory(**kwargs)
+        if inspect.isawaitable(client):
+            client = await client
+        return client
     sync_client = await asyncio.to_thread(connect, backend, **kwargs)
     return AsyncClientWrapper(sync_client)
 
@@ -333,11 +646,13 @@ async def hybrid_search_async(
     """
     Async sibling of :func:`vd.hybrid_search`.
 
-    If the wrapped sync collection's class supports native hybrid (i.e.
-    satisfies :class:`~vd.SupportsHybrid`), dispatches the whole fused call
-    to a worker thread. Otherwise runs the universal client-side BM25 + RRF
-    fallback in a worker thread too. In both cases the awaitable + async
-    iterator interface stays uniform.
+    For a wrapped sync collection, runs :func:`vd.hybrid_search` (native
+    hybrid if the backend has it, else the client-side BM25 + RRF fallback)
+    on a worker thread. For a native async collection it awaits the
+    collection's own ``hybrid_search`` if it has one, and otherwise fuses the
+    collection's async dense search with a client-side BM25 scan (O(N): it
+    reads every document) via RRF. Either way the awaitable + async iterator
+    interface stays uniform.
 
     Parameters mirror :func:`vd.hybrid_search` exactly; see that function for
     the full docs.
@@ -367,6 +682,23 @@ async def hybrid_search_async(
     """
     from vd.search import hybrid_search as sync_hybrid_search
 
+    if getattr(collection, "native_async", False):
+        async for hit in _native_hybrid_search_async(
+            collection,
+            query,
+            query_text=query_text,
+            limit=limit,
+            filter=filter,
+            k_dense=k_dense,
+            k_lexical=k_lexical,
+            rrf_k=rrf_k,
+            lexical_search=lexical_search,
+            egress=egress,
+            **kwargs,
+        ):
+            yield hit
+        return
+
     sync_collection = getattr(collection, "sync", collection)
 
     def _run() -> list[SearchResult]:
@@ -391,12 +723,82 @@ async def hybrid_search_async(
         yield hit
 
 
+async def _native_hybrid_search_async(
+    collection: Any,
+    query: Union[str, Vector],
+    *,
+    query_text: Optional[str],
+    limit: int,
+    filter: Optional[Filter],
+    k_dense: Optional[int],
+    k_lexical: Optional[int],
+    rrf_k: int,
+    lexical_search: Optional[Callable[..., Any]],
+    egress: Optional[Callable[[SearchResult], Any]],
+    **kwargs,
+) -> AsyncIterator[SearchResult]:
+    """Hybrid search over a native async collection (see :func:`hybrid_search_async`)."""
+    from vd.search import _HYBRID_OVERFETCH_FLOOR, BM25Index, _rrf_fuse
+
+    k_dense_eff = (
+        k_dense if k_dense is not None else max(4 * limit, _HYBRID_OVERFETCH_FLOOR)
+    )
+    k_lexical_eff = (
+        k_lexical if k_lexical is not None else max(4 * limit, _HYBRID_OVERFETCH_FLOOR)
+    )
+    native_hybrid = getattr(collection, "hybrid_search", None)
+    if native_hybrid is not None:
+        async for hit in native_hybrid(
+            query,
+            query_text=query_text,
+            limit=limit,
+            filter=filter,
+            k_dense=k_dense_eff,
+            k_lexical=k_lexical_eff,
+            rrf_k=rrf_k,
+            egress=egress,
+            **kwargs,
+        ):
+            yield hit
+        return
+
+    if isinstance(query, str):
+        text = query_text if query_text is not None else query
+    else:
+        if query_text is None:
+            raise ValueError(
+                "hybrid_search needs a `query_text` for the lexical side when "
+                "`query` is a vector. Either pass query_text=..., or pass "
+                "`query` as a string and let the embedder handle both."
+            )
+        text = query_text
+    if not text:
+        raise ValueError("hybrid_search needs a non-empty lexical query string.")
+
+    dense = [
+        hit async for hit in collection.search(query, limit=k_dense_eff, filter=filter)
+    ]
+    if lexical_search is not None:
+        lexical = lexical_search(collection, text, limit=k_lexical_eff, filter=filter)
+        if inspect.isawaitable(lexical):
+            lexical = await lexical
+    else:
+        docs = {key: await collection.get(key) async for key in collection.keys()}
+        lexical = BM25Index(docs, filter=filter).search(text, limit=k_lexical_eff)
+    for hit in _rrf_fuse([dense, list(lexical)], rrf_k=rrf_k, limit=limit):
+        yield egress(hit) if egress is not None else hit
+
+
 # Re-export SupportsHybrid so users importing from vd.asynchronous have the
 # whole hybrid surface in one place — even if their native-async adapter
 # decides to also satisfy SupportsHybrid directly.
 __all__ = [
     "AsyncCollectionWrapper",
     "AsyncClientWrapper",
+    "AsyncAbstractCollection",
+    "AsyncAbstractClient",
+    "register_async_backend",
+    "list_async_backends",
     "connect_async",
     "hybrid_search_async",
     "SupportsHybrid",

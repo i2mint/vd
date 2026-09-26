@@ -73,10 +73,14 @@ from vd.base import (  # noqa: E402
 
 # ----- async support ------------------------------------------------------- #
 from vd.asynchronous import (  # noqa: E402
+    AsyncAbstractClient,
+    AsyncAbstractCollection,
     AsyncClientWrapper,
     AsyncCollectionWrapper,
     connect_async,
     hybrid_search_async,
+    list_async_backends,
+    register_async_backend,
 )
 
 # ----- the entry point & registry ------------------------------------------ #
@@ -235,8 +239,12 @@ __all__ = [
     "AsyncCollection",
     "AsyncClientWrapper",
     "AsyncCollectionWrapper",
+    "AsyncAbstractClient",
+    "AsyncAbstractCollection",
     "connect_async",
     "hybrid_search_async",
+    "register_async_backend",
+    "list_async_backends",
     # filter language
     "matches_filter",
     "validate_filter",
