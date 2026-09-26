@@ -84,11 +84,27 @@ dev = [
 # Lightweight test-runner deps for CI (no backend extras — those live in
 # `dev`). Installed in CI via [tool.wads.ci.install].extras so the async
 # suite (tests/test_async.py) has pytest-asyncio.
-test = ["pytest>=7.0", "pytest-cov>=4.0", "pytest-asyncio>=0.23"]
+# hatchling: tests/test_package.py checks the sdist file list (#28).
+test = ["pytest>=7.0", "pytest-cov>=4.0", "pytest-asyncio>=0.23", "hatchling"]
 docs = ["sphinx>=6.0", "sphinx-rtd-theme>=1.0"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["vd"]
+
+[tool.hatch.build.targets.sdist]
+# Walk only these roots. `.claude/skills/*` are symlinks into `vd/data/skills/`
+# and hatch skips files whose real path it has already seen, so walking
+# `.claude` first (even with an `exclude`) dropped `vd/data/skills/` from the
+# sdist, and the wheel built from it shipped no skills.
+only-include = [
+    "vd",
+    "tests",
+    "conftest.py",
+    "misc",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+]
 
 [tool.ruff]
 line-length = 88
