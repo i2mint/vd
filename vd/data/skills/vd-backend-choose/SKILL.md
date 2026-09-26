@@ -53,7 +53,9 @@ Check with `isinstance(collection, vd.SupportsHybrid)`.
 
 `vd.connect_async` also works on every backend (a thread-pool wrapper), but
 only these do real non-blocking I/O through a native async SDK:
-`vd.list_async_backends()` → currently `qdrant`. Prefer it for
+`vd.list_async_backends()` → currently `qdrant`, when connected to a server
+(`url=`); embedded Qdrant uses the wrapper. `client.native_async` tells you
+which one you got. Prefer a native client for
 high-concurrency async apps (FastAPI, Starlette).
 
 ### Browse the landscape

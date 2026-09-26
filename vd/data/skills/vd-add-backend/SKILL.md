@@ -149,7 +149,11 @@ class NativeAsync<Name>Client(AsyncAbstractClient):
 `AsyncAbstractCollection` shares the sync base's embedding, dimension and
 filter-validation policy, so only I/O differs. `vd.connect_async("<name>")`
 then returns the native client (`native_async is True`); `native=False` still
-gives the `to_thread` wrapper. Share pure helpers (filter compiler, row ↔
+gives the `to_thread` wrapper. `register_async_backend(name, factory)` also accepts a
+function (sync or `async`) that picks per connection mode: qdrant's factory
+returns the native client only for `url=`, because qdrant-client's embedded
+async client runs blocking code on the event loop. Measure before claiming
+non-blocking. Share pure helpers (filter compiler, row ↔
 `Document` converters) between the sync and async classes rather than copying
 them — see `qdrant.py`, and its parity test in `tests/test_async_native.py`.
 

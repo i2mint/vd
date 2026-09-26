@@ -47,7 +47,9 @@ backends.
 - `asynchronous.py` — async surface: `connect_async`, the universal
   `asyncio.to_thread` wrappers, and **native** async bases
   (`AsyncAbstractClient` / `AsyncAbstractCollection`) plus a registry
-  (`register_async_backend`, `list_async_backends`). Native today: `qdrant`.
+  (`register_async_backend`, `list_async_backends`). Native today: `qdrant`
+  with `url=` (embedded Qdrant's async client blocks the loop, so its factory
+  returns the wrapper there).
   The I/O-free embed / dimension / query policy is shared with the sync base
   through `base._CollectionPolicy`.
 - Hybrid: `vd.hybrid_search` works everywhere (client-side BM25 + RRF

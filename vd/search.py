@@ -582,6 +582,21 @@ def _rrf_fuse(
     return fused[:limit]
 
 
+def _warn_lexical_search_ignored(collection: Any) -> None:
+    """Warn that a custom ``lexical_search`` is ignored on a native hybrid path."""
+    import warnings
+
+    warnings.warn(
+        f"lexical_search= is ignored: {type(collection).__name__} runs hybrid "
+        f"search natively (it satisfies vd.SupportsHybrid), so the backend's own "
+        f"text index is the lexical side. Call vd.bm25_lexical_search / your "
+        f"callable and vd.reciprocal_rank_fusion yourself to force a custom "
+        f"lexical side.",
+        UserWarning,
+        stacklevel=3,
+    )
+
+
 def hybrid_search(
     collection: Collection,
     query: Union[str, Vector],
@@ -633,7 +648,8 @@ def hybrid_search(
     lexical_search : callable, optional
         Custom ``lexical_search(collection, query_text, *, limit, filter,
         **kwargs) -> list[SearchResult]``. Defaults to
-        :func:`bm25_lexical_search`. Used only on the fallback path.
+        :func:`bm25_lexical_search`. Used only on the fallback path; on the
+        native path it is ignored with a ``UserWarning``.
     egress : callable, optional
         Per-result transform applied before yielding.
     **kwargs
@@ -670,6 +686,8 @@ def hybrid_search(
 
     # Native path.
     if isinstance(collection, SupportsHybrid):
+        if lexical_search is not None:
+            _warn_lexical_search_ignored(collection)
         for hit in collection.hybrid_search(
             query,
             query_text=query_text,

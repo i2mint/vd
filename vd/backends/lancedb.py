@@ -20,6 +20,7 @@ from __future__ import annotations
 import inspect
 import json
 import tempfile
+import threading
 from typing import Callable, Iterable, Iterator, Optional
 
 try:
@@ -44,6 +45,9 @@ from vd.base import (
     Vector,
 )
 from vd.util import register_backend
+
+#: Serializes FTS-index creation within the process (see ``_ensure_fts_index``).
+_FTS_INDEX_LOCK = threading.Lock()
 
 #: vd metric -> LanceDB distance-type name.
 _METRIC = {"cosine": "cosine", "l2": "l2", "dot": "dot"}
@@ -180,21 +184,42 @@ class LanceDBCollection(AbstractCollection):
 
     # ----- native hybrid: LanceDB FTS (BM25) + dense, fused with RRF ------ #
 
-    def _ensure_fts_index(self, table) -> None:
-        """Build LanceDB's native full-text index on ``text`` if it is missing."""
-        indexed = any(
+    @staticmethod
+    def _has_fts_index(table) -> bool:
+        """Whether ``table`` has LanceDB's full-text index on ``text``."""
+        return any(
             getattr(index, "index_type", None) == "FTS"
             and list(getattr(index, "columns", [])) == ["text"]
             for index in table.list_indices()
         )
-        if indexed:
-            return
-        if "config" in inspect.signature(table.create_index).parameters:
-            from lancedb.index import FTS
 
-            table.create_index("text", config=FTS(), replace=True)
-        else:  # pragma: no cover - lancedb releases before the FTS() config
-            table.create_fts_index("text", replace=True, use_tantivy=False)
+    def _ensure_fts_index(self, table) -> None:
+        """
+        Build LanceDB's native full-text index on ``text`` if it is missing.
+
+        Runs once per collection object (then cached). Creation is serialized
+        by a process-wide lock, and a commit conflict from a concurrent
+        creator elsewhere (another process) is tolerated when the index turns
+        out to exist afterwards.
+        """
+        if getattr(self, "_fts_ready", False):
+            return
+        with _FTS_INDEX_LOCK:
+            if not self._has_fts_index(table):
+                try:
+                    if "config" in inspect.signature(table.create_index).parameters:
+                        from lancedb.index import FTS
+
+                        table.create_index("text", config=FTS(), replace=False)
+                    else:  # pragma: no cover - lancedb before the FTS() config
+                        table.create_fts_index(
+                            "text", replace=False, use_tantivy=False
+                        )
+                except Exception:
+                    fresh = self._table
+                    if fresh is None or not self._has_fts_index(fresh):
+                        raise
+        self._fts_ready = True
 
     def _lexical_query(
         self,
@@ -210,8 +235,10 @@ class LanceDBCollection(AbstractCollection):
         The lexical side of :meth:`hybrid_search`. The index on ``text`` is
         built on the first call; rows written afterwards are still searched
         (LanceDB scans unindexed rows), so no rebuild is needed for
-        correctness. Call ``collection.native.optimize()`` after large
-        ingests to fold new rows into the index for speed. Metadata is
+        correctness. Building the index is a write, so on read-only storage
+        create it beforehand (``collection.native.create_index("text",
+        config=lancedb.index.FTS())``). Call ``collection.native.optimize()``
+        after large ingests to fold new rows into the index for speed. Metadata is
         filtered client-side, as in :meth:`_query`.
         """
         del kwargs
@@ -219,6 +246,7 @@ class LanceDBCollection(AbstractCollection):
         if table is None:
             return []
         self._ensure_fts_index(table)
+        table = self._table  # reopen: a handle from before the index misses it
         hits = (
             table.search(text, query_type="fts")
             .limit(overfetch_limit(limit, filter))

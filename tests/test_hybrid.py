@@ -376,3 +376,39 @@ def test_lancedb_hybrid_before_first_write():
     pytest.importorskip("lancedb")
     col = vd.connect("lancedb").create_collection("empty_hybrid", dimension=2)
     assert list(vd.hybrid_search(col, [1.0, 0.0], query_text="x", limit=3)) == []
+
+
+def test_lexical_search_on_native_path_warns(lance_col):
+    """A custom lexical_search can't be honoured natively; say so instead of ignoring it."""
+    calls = []
+
+    def my_lex(collection, text, *, limit, filter, **kwargs):
+        calls.append(text)
+        return []
+
+    with pytest.warns(UserWarning, match="lexical_search"):
+        list(vd.hybrid_search(lance_col, [1.0, 0.0], query_text="fox",
+                              limit=1, lexical_search=my_lex))
+    assert calls == []
+
+
+def test_lancedb_first_hybrid_calls_concurrently():
+    """Concurrent first hybrid calls must not race on creating the FTS index."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    pytest.importorskip("lancedb")
+    for round_ in range(3):  # a fresh table each round hits the creation window
+        client = vd.connect("lancedb")
+        col = client.create_collection(f"race{round_}", dimension=2)
+        col["a"] = vd.Document(id="a", text="the quick brown fox", vector=[1.0, 0.0])
+        col["b"] = vd.Document(id="b", text="lazy dog sleeps", vector=[0.0, 1.0])
+        # Each worker gets its own collection object, as separate requests would.
+        cols = [client.get_collection(f"race{round_}") for _ in range(8)]
+
+        def run(c):
+            return [h["id"] for h in vd.hybrid_search(
+                c, [1.0, 0.0], query_text="quick fox", limit=2)]
+
+        with ThreadPoolExecutor(8) as pool:
+            results = list(pool.map(run, cols))
+        assert all(r and r[0] == "a" for r in results), results

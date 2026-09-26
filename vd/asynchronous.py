@@ -12,7 +12,8 @@ without forking the adapter hierarchy. Three pieces:
   **native** async adapters, which do real non-blocking I/O through a
   backend's own async SDK. A backend implements a few ``async`` raw
   primitives and registers its client with :func:`register_async_backend`.
-  Native today: ``qdrant`` (``qdrant_client.AsyncQdrantClient``).
+  Native today: ``qdrant`` against a server (``url=``), on
+  ``qdrant_client.AsyncQdrantClient``.
 - :func:`connect_async` — the entry point. Mirrors :func:`vd.connect`. It
   returns the backend's registered native client when there is one, and the
   wrapper otherwise (or when called with ``native=False``).
@@ -573,8 +574,10 @@ async def connect_async(backend: str, *, native: bool = True, **kwargs) -> Async
     Async sibling of :func:`vd.connect`.
 
     Returns an :class:`~vd.AsyncClient`. When the backend has a native async
-    client (see :func:`list_async_backends`; today ``qdrant``), that client
-    is returned and does real non-blocking I/O. Every other backend goes
+    client (see :func:`list_async_backends`; today ``qdrant``), its registered
+    factory decides: it may return a native client doing real non-blocking
+    I/O (qdrant with ``url=``) or the wrapper (embedded qdrant, whose async
+    client would block the loop). Every other backend goes
     through the universal :class:`AsyncClientWrapper`, built on
     :func:`asyncio.to_thread`. Check ``client.native_async`` to tell them
     apart.
@@ -748,6 +751,10 @@ async def _native_hybrid_search_async(
     )
     native_hybrid = getattr(collection, "hybrid_search", None)
     if native_hybrid is not None:
+        if lexical_search is not None:
+            from vd.search import _warn_lexical_search_ignored
+
+            _warn_lexical_search_ignored(collection)
         async for hit in native_hybrid(
             query,
             query_text=query_text,
@@ -778,13 +785,23 @@ async def _native_hybrid_search_async(
     dense = [
         hit async for hit in collection.search(query, limit=k_dense_eff, filter=filter)
     ]
-    if lexical_search is not None:
-        lexical = lexical_search(collection, text, limit=k_lexical_eff, filter=filter)
-        if inspect.isawaitable(lexical):
-            lexical = await lexical
+    if lexical_search is not None and inspect.iscoroutinefunction(lexical_search):
+        # An ``async def`` lexical search gets the async collection itself.
+        lexical = await lexical_search(
+            collection, text, limit=k_lexical_eff, filter=filter
+        )
     else:
+        # The default BM25 scan and sync callables (e.g. vd.bm25_lexical_search)
+        # expect a sync ``id -> Document`` mapping: materialize one.
         docs = {key: await collection.get(key) async for key in collection.keys()}
-        lexical = BM25Index(docs, filter=filter).search(text, limit=k_lexical_eff)
+        if lexical_search is None:
+            lexical = BM25Index(docs, filter=filter).search(text, limit=k_lexical_eff)
+        else:
+            lexical = await asyncio.to_thread(
+                lexical_search, docs, text, limit=k_lexical_eff, filter=filter
+            )
+            if inspect.isawaitable(lexical):
+                lexical = await lexical
     for hit in _rrf_fuse([dense, list(lexical)], rrf_k=rrf_k, limit=limit):
         yield egress(hit) if egress is not None else hit
 

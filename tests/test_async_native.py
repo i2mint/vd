@@ -85,22 +85,50 @@ def qdrant_available():
         pytest.skip("qdrant backend not installed")
 
 
-async def test_qdrant_connect_async_is_native(qdrant_available):
+def _native(**kwargs):
+    """The native async qdrant client, in embedded mode (no server needed).
+
+    ``connect_async`` only picks it for a server (``url=``): qdrant-client's
+    embedded async client runs synchronous code and would block the event
+    loop. Constructing it directly is how these tests exercise its code
+    without a server.
+    """
+    from vd.backends.qdrant import NativeAsyncQdrantClient
+
+    return NativeAsyncQdrantClient(**kwargs)
+
+
+async def test_qdrant_connect_async_dispatch(qdrant_available):
     from qdrant_client import AsyncQdrantClient
 
-    async with await vd.connect_async("qdrant") as client:
+    from vd.backends.qdrant import NativeAsyncQdrantClient
+
+    # Embedded mode: the thread-pool wrapper (keeps the event loop free).
+    embedded = await vd.connect_async("qdrant")
+    assert isinstance(embedded, AsyncClientWrapper)
+    await embedded.close()
+    # Server mode: the native client (construction does not connect).
+    remote = await vd.connect_async("qdrant", url="http://localhost:6399",
+                                    check_compatibility=False)
+    assert isinstance(remote, NativeAsyncQdrantClient)
+    assert remote.native_async is True
+    assert isinstance(remote.client, AsyncQdrantClient)
+    await remote.close()
+    # native=False always gives the wrapper
+    wrapped = await vd.connect_async("qdrant", url="http://localhost:6399", check_compatibility=False,
+                                     native=False)
+    assert isinstance(wrapped, AsyncClientWrapper)
+    await wrapped.close()
+
+
+async def test_qdrant_native_client_surface_types(qdrant_available):
+    async with _native() as client:
         assert isinstance(client, vd.AsyncClient)
         assert isinstance(client, vd.SupportsNativeAsync)
-        assert client.native_async is True
-        assert isinstance(client.client, AsyncQdrantClient)
         col = await client.create_collection("docs", dimension=2)
         assert isinstance(col, vd.AsyncCollection)
         assert col.native_async is True
         assert col.native is client.client
-    # native=False still gives the universal wrapper
-    wrapped = await vd.connect_async("qdrant", native=False)
-    assert isinstance(wrapped, AsyncClientWrapper)
-    await wrapped.close()
 
 
 async def _populate(col):
@@ -119,7 +147,7 @@ async def _populate(col):
 
 
 async def test_qdrant_native_crud(qdrant_available):
-    async with await vd.connect_async("qdrant") as client:
+    async with _native() as client:
         col = await client.create_collection("crud", dimension=2)
         assert await col.count() == 0
         assert [k async for k in col.keys()] == []
@@ -149,7 +177,7 @@ async def test_qdrant_native_crud(qdrant_available):
 
 
 async def test_qdrant_native_search_filter_egress(qdrant_available):
-    async with await vd.connect_async("qdrant") as client:
+    async with _native() as client:
         col = await client.create_collection("srch", dimension=2)
         await _populate(col)
         hits = [h async for h in col.search([0.9, 0.1], limit=2)]
@@ -170,7 +198,8 @@ async def test_qdrant_native_matches_wrapped_sync(qdrant_available):
     """Native and wrapped-sync adapters return identical results."""
     results = []
     for native in (True, False):
-        async with await vd.connect_async("qdrant", native=native) as client:
+        client = _native() if native else await vd.connect_async("qdrant")
+        async with client:
             col = await client.create_collection("parity", dimension=2,
                                                  metric="l2")
             await _populate(col)
@@ -186,7 +215,7 @@ async def test_qdrant_native_matches_wrapped_sync(qdrant_available):
 
 async def test_qdrant_native_embedder_and_dimension_checks(qdrant_available):
     embed = make_embedder()
-    async with await vd.connect_async("qdrant", embedder=embed) as client:
+    async with _native(embedder=embed) as client:
         col = await client.create_collection("emb")
         await col.set("a", "cats and kittens")
         await col.set("b", ("dogs and puppies", {"kind": "dog"}))
@@ -200,7 +229,7 @@ async def test_qdrant_native_embedder_and_dimension_checks(qdrant_available):
             async for _ in col.search([1.0, 2.0]):
                 pass
 
-    async with await vd.connect_async("qdrant") as client:
+    async with _native() as client:
         col = await client.create_collection("noemb", dimension=2)
         with pytest.raises(vd.EmbeddingRequiredError):
             await col.set("a", "raw text needs an embedder")
@@ -210,7 +239,7 @@ async def test_qdrant_native_embedder_and_dimension_checks(qdrant_available):
 
 
 async def test_qdrant_native_batch_ops(qdrant_available):
-    async with await vd.connect_async("qdrant") as client:
+    async with _native() as client:
         col = await client.create_collection("batch", dimension=2)
         await col.upsert(vd.Document(id="x", text="x", vector=[1.0, 0.0]))
         await col.add_documents(
@@ -225,7 +254,7 @@ async def test_qdrant_native_batch_ops(qdrant_available):
 
 
 async def test_qdrant_native_keys_paginate(qdrant_available):
-    async with await vd.connect_async("qdrant") as client:
+    async with _native() as client:
         col = await client.create_collection("many", dimension=2)
         await col.add_documents(
             [vd.Document(id=f"d{i}", text="t", vector=[1.0, float(i)])
@@ -237,7 +266,7 @@ async def test_qdrant_native_keys_paginate(qdrant_available):
 
 
 async def test_qdrant_native_client_surface(qdrant_available):
-    async with await vd.connect_async("qdrant") as client:
+    async with _native() as client:
         assert [n async for n in client.list_collections()] == []
         await client.create_collection("one", dimension=2)
         lazy = await client.create_collection("lazy")  # no dimension yet
@@ -266,7 +295,7 @@ async def test_qdrant_native_client_surface(qdrant_available):
 
 
 async def test_hybrid_search_async_over_native_collection(qdrant_available):
-    async with await vd.connect_async("qdrant") as client:
+    async with _native() as client:
         col = await client.create_collection("hyb", dimension=2)
         await _populate(col)
         hits = [
@@ -292,7 +321,7 @@ async def test_hybrid_search_async_over_native_collection(qdrant_available):
 async def test_hybrid_search_async_native_custom_lexical_and_errors(
     qdrant_available,
 ):
-    async with await vd.connect_async("qdrant") as client:
+    async with _native() as client:
         col = await client.create_collection("hyb2", dimension=2)
         await _populate(col)
 
@@ -332,7 +361,7 @@ async def test_hybrid_search_async_delegates_to_native_hybrid():
 
 
 async def test_qdrant_native_lazy_collection_before_first_write(qdrant_available):
-    async with await vd.connect_async("qdrant") as client:
+    async with _native() as client:
         col = await client.create_collection("lazy")  # no dimension → not created
         assert await col.count() == 0
         assert [k async for k in col.keys()] == []
@@ -343,3 +372,20 @@ async def test_qdrant_native_lazy_collection_before_first_write(qdrant_available
             await col.delete("a")
         await client.delete_collection("lazy")  # registered but never created
         assert [n async for n in client.list_collections()] == []
+
+
+async def test_hybrid_search_async_native_accepts_sync_lexical_callable(
+    qdrant_available,
+):
+    """A sync lexical_search (e.g. vd.bm25_lexical_search) gets a mapping of docs."""
+    async with _native() as client:
+        col = await client.create_collection("hyb3", dimension=2)
+        await _populate(col)
+        ids = [
+            h["id"] async for h in vd.hybrid_search_async(
+                col, [0.0, 1.0], query_text="cats", limit=3,
+                lexical_search=vd.bm25_lexical_search,
+            )
+        ]
+        assert set(ids) == {"a", "b", "c"}
+        assert ids.index("a") < ids.index("b") or ids[0] == "b"

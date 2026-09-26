@@ -34,8 +34,8 @@ def test_sdist_ships_the_bundled_skills():
 
     sdist = pytest.importorskip("hatchling.builders.sdist")
     root = pathlib.Path(__file__).resolve().parent.parent
-    paths = {
-        f.distribution_path
+    paths = {  # hatchling joins with os.sep; compare POSIX-style (Windows CI)
+        f.distribution_path.replace("\\", "/")
         for f in sdist.SdistBuilder(str(root)).recurse_included_files()
     }
     expected = {

@@ -12,9 +12,11 @@ Document ids are arbitrary strings; Qdrant point ids must be UUIDs or
 unsigned ints, so each id is mapped to a deterministic UUID5 and the original
 is kept in the point payload.
 
-The backend is also **natively async**: :func:`vd.connect_async` returns a
-:class:`NativeAsyncQdrantClient` built on ``qdrant_client.AsyncQdrantClient``
-(same arguments as the sync client, embedded ``:memory:`` mode included).
+The backend is also **natively async** against a server:
+``vd.connect_async("qdrant", url=...)`` returns a :class:`NativeAsyncQdrantClient`
+built on ``qdrant_client.AsyncQdrantClient``. Embedded mode (no ``url``) gets
+the thread-pool wrapper, because qdrant-client's embedded async client would
+block the event loop.
 
 Requires: ``pip install qdrant-client``
 """
@@ -494,26 +496,31 @@ class NativeAsyncQdrantCollection(AsyncAbstractCollection):
         return [_point_to_result(point, self.metric) for point in response.points]
 
 
-@register_async_backend("qdrant")
 class NativeAsyncQdrantClient(AsyncAbstractClient):
     """
-    Native async Qdrant client — what ``await vd.connect_async("qdrant")`` returns.
+    Native async Qdrant client — what ``await vd.connect_async("qdrant", url=...)``
+    returns for a Qdrant server or cloud cluster.
 
     Takes the same arguments as :class:`QdrantClientAdapter` (``path``,
-    ``url``, ``api_key``, ``location``, ``embedder``); with none of
-    ``path``/``url`` it runs Qdrant embedded in ``:memory:`` mode.
+    ``url``, ``api_key``, ``location``, ``embedder``). It also works embedded
+    (no ``url``), but there qdrant-client's async client runs synchronous code
+    inside its coroutines and blocks the event loop, so
+    :func:`vd.connect_async` returns the thread-pool wrapper for embedded mode
+    instead (see :func:`_connect_async_qdrant`).
 
     Examples
     --------
     >>> import asyncio, vd
     >>> async def go():
-    ...     async with await vd.connect_async("qdrant") as client:
+    ...     async with NativeAsyncQdrantClient() as client:  # embedded, for the demo
     ...         col = await client.create_collection("docs", dimension=2)
     ...         await col.set("a", vd.Document(id="a", text="x", vector=[1.0, 0.0]))
     ...         return client.native_async, await col.count()
     >>> asyncio.run(go())
     (True, 1)
     """
+
+    backend_name = "qdrant"
 
     def __init__(
         self,
@@ -580,3 +587,26 @@ class NativeAsyncQdrantClient(AsyncAbstractClient):
         names = {c.name for c in response.collections} | set(self._metrics)
         for name in sorted(names):
             yield name
+
+
+async def _connect_async_qdrant(**kwargs) -> Any:
+    """
+    The :func:`vd.connect_async` factory for ``qdrant``.
+
+    With ``url=`` (a Qdrant server or cloud cluster) it returns
+    :class:`NativeAsyncQdrantClient`, which does real non-blocking network I/O.
+    Without it (embedded ``:memory:`` / ``path=`` mode), qdrant-client's local
+    async client would run blocking code on the event loop, so it returns the
+    ``asyncio.to_thread`` wrapper around the sync adapter instead.
+    """
+    if kwargs.get("url") is not None:
+        return NativeAsyncQdrantClient(**kwargs)
+    import asyncio
+
+    from vd.asynchronous import AsyncClientWrapper
+    from vd.util import connect
+
+    return AsyncClientWrapper(await asyncio.to_thread(connect, "qdrant", **kwargs))
+
+
+register_async_backend("qdrant", _connect_async_qdrant)
