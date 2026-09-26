@@ -85,10 +85,10 @@ The architecture cleanly separates:
 ```python
 @dataclass
 class Document:
-    id: str              # URI to original source
-    text: str            # The searchable text
+    id: str  # URI to original source
+    text: str  # The searchable text
     vector: list[float]  # Embedding (auto-generated if None)
-    metadata: dict       # Associated metadata
+    metadata: dict  # Associated metadata
 ```
 
 **Flexible Input Formats:**
@@ -110,13 +110,14 @@ Users can provide documents in multiple ways:
 ```python
 # Default: full results
 for result in collection.search(query):
-    print(result['id'], result['score'], result['text'][:50])
+    print(result["id"], result["score"], result["text"][:50])
 
 # Custom egress: extract only text
-texts = collection.search(query, egress=lambda r: r['text'])
+texts = collection.search(query, egress=lambda r: r["text"])
 
 # Predefined egress utilities
 from vd.util import text_only, id_and_score
+
 ids_scores = collection.search(query, egress=id_and_score)
 ```
 
@@ -130,12 +131,14 @@ ids_scores = collection.search(query, egress=id_and_score)
 ```python
 _backends = {}
 
-@register_backend('chroma')
+
+@register_backend("chroma")
 class ChromaBackend(BaseBackend):
     pass
 
+
 # Usage
-client = vd.connect('chroma', persist_directory='./data')
+client = vd.connect("chroma", persist_directory="./data")
 ```
 
 **Benefits:**
@@ -163,6 +166,7 @@ client = vd.connect('chroma', persist_directory='./data')
 ```python
 class StaticIndexError(Exception):
     """Raised when attempting write ops on static index."""
+
     pass
 ```
 
@@ -175,10 +179,11 @@ class StaticIndexError(Exception):
 ```python
 from imbed import Embed
 
+
 class Collection:
-    def __init__(self, embedding_model='text-embedding-3-small'):
+    def __init__(self, embedding_model="text-embedding-3-small"):
         self.embed = Embed(model=embedding_model)
-    
+
     def _get_vector(self, text: str):
         return self.embed(text)
 ```
@@ -193,9 +198,10 @@ class Collection:
 ```python
 from dol import Store, KvReader
 
+
 class Collection(Store):
     """Collection built on dol.Store for key/value transforms."""
-    
+
     def _id_of_key(self, k):
         """Transform store keys to document IDs."""
         return k
@@ -212,7 +218,8 @@ class Collection(Store):
 # When LangChain is available
 from langchain.vectorstores import Chroma
 
-@register_backend('chroma')
+
+@register_backend("chroma")
 class ChromaBackend:
     def __init__(self, **kwargs):
         self._store = Chroma(**kwargs)
@@ -232,10 +239,10 @@ class ChromaBackend:
 **Client → Collection pattern** (inspired by Pinecone, Weaviate):
 
 ```python
-client = vd.connect(backend='chroma')
-collection = client.get_collection('docs')
+client = vd.connect(backend="chroma")
+collection = client.get_collection("docs")
 # or
-collection = client.create_collection('docs')
+collection = client.create_collection("docs")
 ```
 
 **Rationale:** Clear separation between connection management and data operations.
@@ -260,12 +267,9 @@ collection.search([0.1, 0.2, ...])  # Pre-computed vector
 **Unified Filter Syntax** (MongoDB-style):
 ```python
 filter = {
-    'category': 'article',
-    'views': {'$gte': 1000},
-    '$and': [
-        {'published': True},
-        {'author': {'$in': ['Alice', 'Bob']}}
-    ]
+    "category": "article",
+    "views": {"$gte": 1000},
+    "$and": [{"published": True}, {"author": {"$in": ["Alice", "Bob"]}}],
 }
 
 results = collection.search(query, filter=filter)
@@ -283,10 +287,10 @@ results = collection.search(query, filter=filter)
 
 ```python
 # Works with in-memory backend for prototyping
-dev_client = vd.connect('memory')
+dev_client = vd.connect("memory")
 
 # Same code, different backend for production
-prod_client = vd.connect('pinecone', api_key=...)
+prod_client = vd.connect("pinecone", api_key=...)
 ```
 
 ### 8.2 Batch-First Design
@@ -373,13 +377,13 @@ collection.add_documents([doc1, doc2, doc3, ...])
 
 ```python
 # Minimal configuration
-client = vd.connect('chroma')
+client = vd.connect("chroma")
 
 # With overrides
 client = vd.connect(
-    'chroma',
-    embedding_model='text-embedding-3-large',
-    persist_directory='./custom_path'
+    "chroma",
+    embedding_model="text-embedding-3-large",
+    persist_directory="./custom_path",
 )
 ```
 
@@ -432,14 +436,11 @@ Support configuration via:
 **Proposed API:**
 ```python
 collection = client.create_collection(
-    'multi_model',
-    embeddings={
-        'semantic': 'text-embedding-3-small',
-        'code': 'code-search-model'
-    }
+    "multi_model",
+    embeddings={"semantic": "text-embedding-3-small", "code": "code-search-model"},
 )
 
-results = collection.search(query, embedding='code')
+results = collection.search(query, embedding="code")
 ```
 
 ### 13.2 Async Support
@@ -457,9 +458,9 @@ results = collection.search(query, embedding='code')
 **Proposed API:**
 ```python
 results = vd.search_all(
-    collections=['docs', 'articles', 'papers'],
+    collections=["docs", "articles", "papers"],
     query="machine learning",
-    aggregation='merge'  # or 'interleave', 'ranked'
+    aggregation="merge",  # or 'interleave', 'ranked'
 )
 ```
 

@@ -35,11 +35,11 @@ silent.
 ```python
 import vd
 
-client = vd.connect("memory")              # switch DB = change this one word
+client = vd.connect("memory")  # switch DB = change this one word
 col = client.create_collection("docs")
 
 col["a"] = vd.Document(id="a", text="cats and kittens", vector=[0.1, 0.9, 0.0])
-col["b"] = vd.Document(id="b", text="fresh pizza",       vector=[0.9, 0.0, 0.1])
+col["b"] = vd.Document(id="b", text="fresh pizza", vector=[0.9, 0.0, 0.1])
 
 for hit in col.search([0.1, 0.8, 0.0], limit=2):
     print(hit["id"], hit["score"], hit["text"])
@@ -50,9 +50,9 @@ for hit in col.search([0.1, 0.8, 0.0], limit=2):
 ```python
 client = vd.connect("memory", embedder=my_text_to_vector_fn)
 col = client.create_collection("docs")
-col["a"] = "cats and kittens"                 # embedded for you
+col["a"] = "cats and kittens"  # embedded for you
 col["b"] = ("fresh pizza", {"kind": "food"})  # (text, metadata) tuple
-hits = list(col.search("pets", limit=2))      # query text embedded for you
+hits = list(col.search("pets", limit=2))  # query text embedded for you
 ```
 
 ## The objects

@@ -22,33 +22,39 @@ The advanced helpers all live at the top level (`vd.multi_query_search`,
 
 ```python
 # Equality (sugar — these are equivalent)
-docs.search("query", filter={'category': 'tech'})
-docs.search("query", filter={'category': {'$eq': 'tech'}})
+docs.search("query", filter={"category": "tech"})
+docs.search("query", filter={"category": {"$eq": "tech"}})
 
 # Comparison
-docs.search("query", filter={'year': {'$gte': 2020}})
-docs.search("query", filter={'views': {'$lt': 1000}})
+docs.search("query", filter={"year": {"$gte": 2020}})
+docs.search("query", filter={"views": {"$lt": 1000}})
 
 # Membership
-docs.search("query", filter={'tags': {'$in': ['python', 'ai']}})
+docs.search("query", filter={"tags": {"$in": ["python", "ai"]}})
 
 # Negation
-docs.search("query", filter={'category': {'$ne': 'spam'}})
+docs.search("query", filter={"category": {"$ne": "spam"}})
 
 # Logical
-docs.search("query", filter={
-    '$and': [
-        {'year': {'$gte': 2020}},
-        {'category': 'tech'},
-    ],
-})
+docs.search(
+    "query",
+    filter={
+        "$and": [
+            {"year": {"$gte": 2020}},
+            {"category": "tech"},
+        ],
+    },
+)
 
-docs.search("query", filter={
-    '$or': [
-        {'priority': 'high'},
-        {'pinned': True},
-    ],
-})
+docs.search(
+    "query",
+    filter={
+        "$or": [
+            {"priority": "high"},
+            {"pinned": True},
+        ],
+    },
+)
 ```
 
 Supported operators:
@@ -79,7 +85,7 @@ A bare `{'field': value}` is sugar for `{'field': {'$eq': value}}`. Multiple
 top-level fields combine with implicit AND:
 
 ```python
-filter={'category': 'tech', 'year': {'$gte': 2020}}
+filter = {"category": "tech", "year": {"$gte": 2020}}
 # means: category == 'tech' AND year >= 2020
 ```
 
@@ -96,7 +102,7 @@ results = vd.multi_query_search(
     docs,
     queries=["machine learning", "neural networks", "deep learning"],
     limit=10,
-    combine='best',   # 'interleave' | 'concatenate' | 'union' | 'best'
+    combine="best",  # 'interleave' | 'concatenate' | 'union' | 'best'
     filter=None,
 )
 ```
@@ -144,10 +150,15 @@ rankings with RRF. It works on **every** backend:
 hits = list(vd.hybrid_search(docs, "neural networks", limit=10))
 
 # Pre-computed query vector: say what the keyword side should match.
-hits = list(vd.hybrid_search(
-    docs, query_vec, query_text="neural networks", limit=10,
-    filter={'year': {'$gte': 2017}},
-))
+hits = list(
+    vd.hybrid_search(
+        docs,
+        query_vec,
+        query_text="neural networks",
+        limit=10,
+        filter={"year": {"$gte": 2017}},
+    )
+)
 ```
 
 Result dicts have the usual shape; `score` is the fused RRF score.
@@ -160,7 +171,7 @@ Result dicts have the usual shape; `score` is the fused RRF score.
 - **Many queries, fallback backend?** Build the keyword index once:
 
   ```python
-  index = vd.BM25Index(docs)            # O(N) once
+  index = vd.BM25Index(docs)  # O(N) once
   index.search("neural networks", limit=5)
   ```
 
@@ -171,10 +182,10 @@ Result dicts have the usual shape; `score` is the fused RRF score.
 ```python
 similar = vd.search_similar_to_document(
     docs,
-    doc_id='doc1',
+    doc_id="doc1",
     limit=10,
-    exclude_self=True,    # default — don't return doc1 itself
-    filter={'category': 'tech'},   # optional metadata filter
+    exclude_self=True,  # default — don't return doc1 itself
+    filter={"category": "tech"},  # optional metadata filter
 )
 ```
 
@@ -186,7 +197,7 @@ check that the doc is in fact most similar to itself.
 
 ```python
 results = list(docs.search("query", limit=50))
-unique = vd.deduplicate_results(results, key='id', keep='first')
+unique = vd.deduplicate_results(results, key="id", keep="first")
 ```
 
 `key` defaults to `'id'`. Use a metadata key (e.g., `'parent_id'`) when
@@ -214,10 +225,10 @@ Every search-returning helper in `vd` accepts (or composes with) `egress` to
 project results before they're yielded. Built-ins:
 
 ```python
-vd.text_only(r)        # -> str
-vd.id_only(r)          # -> str
-vd.id_and_score(r)     # -> (id, score)
-vd.id_text_score(r)    # -> (id, text, score)
+vd.text_only(r)  # -> str
+vd.id_only(r)  # -> str
+vd.id_and_score(r)  # -> (id, score)
+vd.id_text_score(r)  # -> (id, text, score)
 ```
 
 Or pass any `Callable[[dict], Any]`. The `multi_query_search`,
@@ -230,24 +241,28 @@ them with `map(egress, ...)` if you need projection there.
 import vd
 
 # 1. Run a focused vector search
-vector_hits = list(docs.search(
-    "transformer attention mechanism",
-    limit=20,
-    filter={'year': {'$gte': 2017}},
-))
+vector_hits = list(
+    docs.search(
+        "transformer attention mechanism",
+        limit=20,
+        filter={"year": {"$gte": 2017}},
+    )
+)
 
 # 2. Run a broader paraphrase
-paraphrase_hits = list(docs.search(
-    "how do transformers attend to inputs",
-    limit=20,
-    filter={'year': {'$gte': 2017}},
-))
+paraphrase_hits = list(
+    docs.search(
+        "how do transformers attend to inputs",
+        limit=20,
+        filter={"year": {"$gte": 2017}},
+    )
+)
 
 # 3. Fuse the rankings
 merged = vd.reciprocal_rank_fusion([vector_hits, paraphrase_hits], k=60)
 
 # 4. Dedup by parent document
-final = list(vd.deduplicate_results(merged, key='id', keep='first'))[:10]
+final = list(vd.deduplicate_results(merged, key="id", keep="first"))[:10]
 ```
 
 ## Common gotchas

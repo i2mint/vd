@@ -199,12 +199,15 @@ docker run -p 8000:8000 -v ./chroma-data:/data chromadb/chroma
 Hello-world (embedded):
 ```python
 import chromadb
+
 client = chromadb.PersistentClient(path="./db")
 col = client.get_or_create_collection("docs", metadata={"hnsw:space": "cosine"})
-col.add(ids=["a","b","c"],
-        documents=["the cat sat","the dog ran","fresh pizza"],
-        metadatas=[{"k":"animal"},{"k":"animal"},{"k":"food"}])
-print(col.query(query_texts=["pet"], n_results=2, where={"k":"animal"}))
+col.add(
+    ids=["a", "b", "c"],
+    documents=["the cat sat", "the dog ran", "fresh pizza"],
+    metadatas=[{"k": "animal"}, {"k": "animal"}, {"k": "food"}],
+)
+print(col.query(query_texts=["pet"], n_results=2, where={"k": "animal"}))
 ```
 *Pitfalls:* default embedder is 384-dim; macOS Python sometimes hits SQLite extension limits → use Homebrew Python; telemetry → `os.environ["ANONYMIZED_TELEMETRY"]="False"` *before* the import.
 
@@ -214,11 +217,23 @@ pip install lancedb
 ```
 ```python
 import lancedb, numpy as np
+
 db = lancedb.connect("./mydb")
-tbl = db.create_table("docs", data=[
-    {"id":"a", "vector": np.random.rand(384).astype("float32").tolist(), "text":"the cat sat"},
-    {"id":"b", "vector": np.random.rand(384).astype("float32").tolist(), "text":"the dog ran"},
-])
+tbl = db.create_table(
+    "docs",
+    data=[
+        {
+            "id": "a",
+            "vector": np.random.rand(384).astype("float32").tolist(),
+            "text": "the cat sat",
+        },
+        {
+            "id": "b",
+            "vector": np.random.rand(384).astype("float32").tolist(),
+            "text": "the dog ran",
+        },
+    ],
+)
 print(tbl.search(np.random.rand(384).astype("float32").tolist()).limit(2).to_list())
 ```
 *Pitfalls:* a `.lance` directory is a single-writer dataset — coordinate writes; on S3 set `LANCE_*` AWS env vars.
@@ -229,12 +244,22 @@ pip install sqlite-vec
 ```
 ```python
 import sqlite3, sqlite_vec, struct
+
 db = sqlite3.connect(":memory:")
-db.enable_load_extension(True); sqlite_vec.load(db); db.enable_load_extension(False)
+db.enable_load_extension(True)
+sqlite_vec.load(db)
+db.enable_load_extension(False)
 db.execute("CREATE VIRTUAL TABLE v USING vec0(embedding float[4])")
-db.execute("INSERT INTO v(rowid, embedding) VALUES (1, ?)", [struct.pack("4f", 0.1,0.2,0.3,0.4)])
-print(db.execute("SELECT rowid, distance FROM v WHERE embedding MATCH ? ORDER BY distance LIMIT 1",
-                 [struct.pack("4f", 0.1,0.2,0.3,0.4)]).fetchall())
+db.execute(
+    "INSERT INTO v(rowid, embedding) VALUES (1, ?)",
+    [struct.pack("4f", 0.1, 0.2, 0.3, 0.4)],
+)
+print(
+    db.execute(
+        "SELECT rowid, distance FROM v WHERE embedding MATCH ? ORDER BY distance LIMIT 1",
+        [struct.pack("4f", 0.1, 0.2, 0.3, 0.4)],
+    ).fetchall()
+)
 ```
 *Pitfalls:* macOS system Python disables extensions — use `brew install python` or pysqlite3-binary; SQLite ≥3.41 strongly recommended.
 
@@ -244,12 +269,17 @@ pip install duckdb
 ```
 ```python
 import duckdb
+
 con = duckdb.connect("vec.duckdb")
 con.execute("INSTALL vss; LOAD vss;")
 con.execute("CREATE TABLE items(id INTEGER, embedding FLOAT[3])")
 con.execute("INSERT INTO items VALUES (1,[0.1,0.2,0.3]),(2,[0.4,0.5,0.6])")
 con.execute("CREATE INDEX idx ON items USING HNSW (embedding) WITH (metric='cosine')")
-print(con.execute("SELECT id FROM items ORDER BY array_cosine_distance(embedding, [0.1,0.2,0.3]::FLOAT[3]) LIMIT 1").fetchall())
+print(
+    con.execute(
+        "SELECT id FROM items ORDER BY array_cosine_distance(embedding, [0.1,0.2,0.3]::FLOAT[3]) LIMIT 1"
+    ).fetchall()
+)
 ```
 *Pitfalls:* persistent HNSW is opt-in — `SET hnsw_enable_experimental_persistence=true;`.
 
@@ -261,9 +291,11 @@ pip install faiss-cpu          # current 1.13.2 (Dec 2025), Python 3.10-3.14
 ```
 ```python
 import faiss, numpy as np
-xb = np.random.random((10000,128)).astype("float32")
-index = faiss.IndexFlatL2(128); index.add(xb)
-D,I = index.search(np.random.random((1,128)).astype("float32"), 5)
+
+xb = np.random.random((10000, 128)).astype("float32")
+index = faiss.IndexFlatL2(128)
+index.add(xb)
+D, I = index.search(np.random.random((1, 128)).astype("float32"), 5)
 ```
 
 **Qdrant** [7][8][9]
@@ -275,13 +307,19 @@ curl http://localhost:6333/healthz       # verify
 ```python
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
-c = QdrantClient(":memory:")            # or QdrantClient(url="http://localhost:6333")
-c.create_collection("test", vectors_config=VectorParams(size=4, distance=Distance.COSINE))
-c.upsert("test", points=[
-    PointStruct(id=1, vector=[0.05,0.61,0.76,0.74], payload={"city":"Berlin"}),
-    PointStruct(id=2, vector=[0.19,0.81,0.75,0.11], payload={"city":"London"}),
-])
-print(c.query_points("test", query=[0.2,0.1,0.9,0.7], limit=1).points)
+
+c = QdrantClient(":memory:")  # or QdrantClient(url="http://localhost:6333")
+c.create_collection(
+    "test", vectors_config=VectorParams(size=4, distance=Distance.COSINE)
+)
+c.upsert(
+    "test",
+    points=[
+        PointStruct(id=1, vector=[0.05, 0.61, 0.76, 0.74], payload={"city": "Berlin"}),
+        PointStruct(id=2, vector=[0.19, 0.81, 0.75, 0.11], payload={"city": "London"}),
+    ],
+)
+print(c.query_points("test", query=[0.2, 0.1, 0.9, 0.7], limit=1).points)
 ```
 *Cloud signup:* cloud.qdrant.io → create cluster (free tier) → copy URL + API key → `QdrantClient(url=URL, api_key=KEY)`. *Pitfalls:* Windows volume mounting needs a named Docker volume; default has no auth — set `QDRANT__SERVICE__API_KEY` for any exposed instance.
 
@@ -293,13 +331,16 @@ docker run -p 8080:8080 -p 50051:50051 -e AUTHENTICATION_ANONYMOUS_ACCESS_ENABLE
 ```python
 import weaviate
 from weaviate.classes.config import Property, DataType, Configure
+
 with weaviate.connect_to_local() as client:
-    client.collections.create("Article",
+    client.collections.create(
+        "Article",
         properties=[Property(name="title", data_type=DataType.TEXT)],
-        vector_config=Configure.Vectors.self_provided())
+        vector_config=Configure.Vectors.self_provided(),
+    )
     col = client.collections.use("Article")
-    col.data.insert({"title":"Hello"}, vector=[0.1]*768)
-    print(col.query.near_vector([0.1]*768, limit=2).objects)
+    col.data.insert({"title": "Hello"}, vector=[0.1] * 768)
+    print(col.query.near_vector([0.1] * 768, limit=2).objects)
 ```
 *Cloud signup:* console.weaviate.cloud → create sandbox (14 days only) → `weaviate.connect_to_weaviate_cloud(cluster_url=..., auth_credentials=Auth.api_key(...))`. *Pitfalls:* (1) you must `client.close()` or use the context manager since v4.4b7; (2) Configure.NamedVectors renamed to Configure.Vectors at v4.16.0; (3) v3 client is deprecated — migrate.
 
@@ -313,10 +354,13 @@ bash standalone_embed.sh start          # port 19530, WebUI on 9091
 ```
 ```python
 from pymilvus import MilvusClient
-client = MilvusClient("./milvus_demo.db")          # Lite — or MilvusClient(uri="http://localhost:19530")
+
+client = MilvusClient(
+    "./milvus_demo.db"
+)  # Lite — or MilvusClient(uri="http://localhost:19530")
 client.create_collection(collection_name="demo", dimension=8)
-client.insert("demo", [{"id":1, "vector":[0.1]*8, "city":"Berlin"}])
-print(client.search("demo", data=[[0.1]*8], limit=1, output_fields=["city"]))
+client.insert("demo", [{"id": 1, "vector": [0.1] * 8, "city": "Berlin"}])
+print(client.search("demo", data=[[0.1] * 8], limit=1, output_fields=["city"]))
 ```
 *Pitfalls:* (1) Lite is **not available on native Windows** — use WSL2; (2) on macOS allocate Docker ≥2 vCPU + 8 GB RAM; (3) older `milvus-lite` (C++/CGo) and the new pure-Python rewrite have incompatible `.db` formats — back up before upgrading.
 
@@ -329,12 +373,21 @@ pip install redis redisvl
 import numpy as np, redis
 from redis.commands.search.field import VectorField, TagField
 from redis.commands.search.index_definition import IndexDefinition, IndexType
+
 r = redis.Redis()
 r.ft("idx").create_index(
-    [TagField("tag"),
-     VectorField("v","HNSW",{"TYPE":"FLOAT32","DIM":4,"DISTANCE_METRIC":"COSINE"})],
-    definition=IndexDefinition(prefix=["doc:"], index_type=IndexType.HASH))
-r.hset("doc:1", mapping={"tag":"a","v":np.array([0.1,0.2,0.3,0.4],"float32").tobytes()})
+    [
+        TagField("tag"),
+        VectorField(
+            "v", "HNSW", {"TYPE": "FLOAT32", "DIM": 4, "DISTANCE_METRIC": "COSINE"}
+        ),
+    ],
+    definition=IndexDefinition(prefix=["doc:"], index_type=IndexType.HASH),
+)
+r.hset(
+    "doc:1",
+    mapping={"tag": "a", "v": np.array([0.1, 0.2, 0.3, 0.4], "float32").tobytes()},
+)
 ```
 *Pitfalls:* license change (AGPLv3/SSPLv1/RSALv2 since Redis 8) — verify with legal; HNSW lives in RAM.
 
@@ -345,11 +398,27 @@ docker run -p 9200:9200 -e "discovery.type=single-node" -e "xpack.security.enabl
 ```
 ```python
 from elasticsearch import Elasticsearch
+
 es = Elasticsearch("http://localhost:9200")
-es.indices.create(index="docs", mappings={"properties":{"v":{"type":"dense_vector","dims":4,"similarity":"cosine"}}})
-es.index(index="docs", document={"v":[0.1,0.2,0.3,0.4], "t":"hello"})
+es.indices.create(
+    index="docs",
+    mappings={
+        "properties": {"v": {"type": "dense_vector", "dims": 4, "similarity": "cosine"}}
+    },
+)
+es.index(index="docs", document={"v": [0.1, 0.2, 0.3, 0.4], "t": "hello"})
 es.indices.refresh(index="docs")
-print(es.search(index="docs", knn={"field":"v","query_vector":[0.1,0.2,0.3,0.4],"k":1,"num_candidates":10}))
+print(
+    es.search(
+        index="docs",
+        knn={
+            "field": "v",
+            "query_vector": [0.1, 0.2, 0.3, 0.4],
+            "k": 1,
+            "num_candidates": 10,
+        },
+    )
+)
 ```
 
 **pgvector** [30][31][32]
@@ -366,10 +435,17 @@ CREATE INDEX ON items USING hnsw (embedding vector_cosine_ops);
 ```python
 import psycopg
 from pgvector.psycopg import register_vector
+
 conn = psycopg.connect("postgresql://postgres:pw@localhost:5432/postgres")
 register_vector(conn)
-conn.execute("INSERT INTO items (embedding, tag) VALUES (%s, %s)", ([0.1]*1536, "demo"))
-print(conn.execute("SELECT id FROM items ORDER BY embedding <=> %s LIMIT 5", ([0.1]*1536,)).fetchall())
+conn.execute(
+    "INSERT INTO items (embedding, tag) VALUES (%s, %s)", ([0.1] * 1536, "demo")
+)
+print(
+    conn.execute(
+        "SELECT id FROM items ORDER BY embedding <=> %s LIMIT 5", ([0.1] * 1536,)
+    ).fetchall()
+)
 ```
 *Upgrade urgency:* pgvector 0.8.2 (Feb 2026) fixes **CVE-2026-3172**, a buffer overflow in parallel HNSW index builds; upgrade.
 
@@ -381,12 +457,17 @@ pip install pinecone                    # current v9.x as of May 2026, Python �
 ```python
 import os
 from pinecone import Pinecone, ServerlessSpec
+
 pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
-pc.create_index(name="demo", dimension=1536, metric="cosine",
-                spec=ServerlessSpec(cloud="aws", region="us-east-1"))
+pc.create_index(
+    name="demo",
+    dimension=1536,
+    metric="cosine",
+    spec=ServerlessSpec(cloud="aws", region="us-east-1"),
+)
 idx = pc.Index("demo")
-idx.upsert([("a",[0.1]*1536,{"k":"v"})])
-print(idx.query(vector=[0.1]*1536, top_k=1, include_metadata=True))
+idx.upsert([("a", [0.1] * 1536, {"k": "v"})])
+print(idx.query(vector=[0.1] * 1536, top_k=1, include_metadata=True))
 ```
 *Cloud signup:* app.pinecone.io → create project → API key → set `PINECONE_API_KEY`. *Pitfalls:* don't have both `pinecone-client` and `pinecone` installed.
 
@@ -398,10 +479,26 @@ Create an M0 (free) or Flex cluster in the Atlas UI; create a *vector search ind
 ```python
 import os
 from pymongo import MongoClient
+
 col = MongoClient(os.environ["MONGODB_URI"])["db"]["docs"]
-col.insert_one({"text":"hello","embedding":[0.1]*1536})
-print(list(col.aggregate([{"$vectorSearch":{"index":"vec_idx","path":"embedding",
-    "queryVector":[0.1]*1536,"numCandidates":50,"limit":3}}])))
+col.insert_one({"text": "hello", "embedding": [0.1] * 1536})
+print(
+    list(
+        col.aggregate(
+            [
+                {
+                    "$vectorSearch": {
+                        "index": "vec_idx",
+                        "path": "embedding",
+                        "queryVector": [0.1] * 1536,
+                        "numCandidates": 50,
+                        "limit": 3,
+                    }
+                }
+            ]
+        )
+    )
+)
 ```
 
 **Turbopuffer** [42][43][44]
@@ -411,9 +508,15 @@ pip install turbopuffer                 # current stable v2.1.0 (May 17, 2026)
 ```python
 import os
 from turbopuffer import Turbopuffer
+
 tpuf = Turbopuffer(region="gcp-us-central1", api_key=os.environ["TURBOPUFFER_API_KEY"])
-ns = tpuf.namespaces.write(namespace="demo", distance_metric="cosine_distance",
-    upsert_rows=[{"id":"a","vector":[0.1,0.2],"attributes":{"name":"Red boots"}}])
+ns = tpuf.namespaces.write(
+    namespace="demo",
+    distance_metric="cosine_distance",
+    upsert_rows=[
+        {"id": "a", "vector": [0.1, 0.2], "attributes": {"name": "Red boots"}}
+    ],
+)
 ```
 
 ### §6. Machine-usable provider metadata (lift into a backend registry)

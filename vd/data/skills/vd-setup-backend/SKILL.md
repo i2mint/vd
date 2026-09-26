@@ -24,7 +24,7 @@ one-liner, env vars, docs links), so read them from `vd` instead of guessing.
 ```python
 import vd
 
-report = vd.check_requirements("qdrant")   # prints a report; returns a dict
+report = vd.check_requirements("qdrant")  # prints a report; returns a dict
 report["ok"], report["next_step"]
 ```
 
@@ -111,15 +111,15 @@ as above, is for local development only.
 ## 5. Connect
 
 ```python
-vd.connect("redis", host="localhost", port=6379)            # or url="redis://..."
+vd.connect("redis", host="localhost", port=6379)  # or url="redis://..."
 vd.connect("elasticsearch", url="http://localhost:9200")
 vd.connect("pgvector", dsn="postgresql://user:pw@localhost:5432/db")
-vd.connect("qdrant", url="http://localhost:6333")           # server
+vd.connect("qdrant", url="http://localhost:6333")  # server
 vd.connect("qdrant", url=os.environ["QDRANT_URL"], api_key=os.environ["QDRANT_API_KEY"])
-vd.connect("weaviate")                                      # localhost:8080 + gRPC 50051
-vd.connect("milvus", uri="http://localhost:19530")          # server; path= for Lite
-vd.connect("pinecone")                                      # PINECONE_API_KEY from env
-vd.connect("mongodb")                                       # MONGODB_URI from env
+vd.connect("weaviate")  # localhost:8080 + gRPC 50051
+vd.connect("milvus", uri="http://localhost:19530")  # server; path= for Lite
+vd.connect("pinecone")  # PINECONE_API_KEY from env
+vd.connect("mongodb")  # MONGODB_URI from env
 ```
 
 Add `embedder=my_fn` only if you want to pass raw text (see **vd-quickstart**).
@@ -132,6 +132,7 @@ collection name and cleans up after itself:
 ```python
 import uuid
 import vd
+
 
 def smoke_test(client, dim=3):
     """Create, write, read, search and drop a scratch collection."""
@@ -146,6 +147,7 @@ def smoke_test(client, dim=3):
     finally:
         client.delete_collection(name)
     return "ok"
+
 
 smoke_test(vd.connect("memory"))
 ```

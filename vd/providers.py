@@ -147,9 +147,7 @@ def install_command(name: str) -> str:
         return f"{name} needs no installation (built into vd)"
     if meta.get("adapter"):
         return f'pip install "vd[{meta["adapter"]}]"'
-    return "pip install " + " ".join(
-        f'"{p}"' if "[" in p else p for p in packages
-    )
+    return "pip install " + " ".join(f'"{p}"' if "[" in p else p for p in packages)
 
 
 # --------------------------------------------------------------------------- #

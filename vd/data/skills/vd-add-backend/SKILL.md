@@ -105,14 +105,34 @@ primitive and let the shared orchestration fuse it with the dense side:
 
 ```python
 def _lexical_query(self, text, *, limit, filter, **kwargs):  # -> list[dict]
-    ...   # same result shape as _query; apply_client_filter if filtering client-side
+    ...  # same result shape as _query; apply_client_filter if filtering client-side
 
-def hybrid_search(self, query, *, query_text=None, limit=10, filter=None,
-                  k_dense=None, k_lexical=None, rrf_k=60, egress=None, **kwargs):
-    return self._hybrid_via_rrf(query, self._lexical_query, query_text=query_text,
-                                limit=limit, filter=filter, k_dense=k_dense,
-                                k_lexical=k_lexical, rrf_k=rrf_k, egress=egress,
-                                **kwargs)
+
+def hybrid_search(
+    self,
+    query,
+    *,
+    query_text=None,
+    limit=10,
+    filter=None,
+    k_dense=None,
+    k_lexical=None,
+    rrf_k=60,
+    egress=None,
+    **kwargs,
+):
+    return self._hybrid_via_rrf(
+        query,
+        self._lexical_query,
+        query_text=query_text,
+        limit=limit,
+        filter=filter,
+        k_dense=k_dense,
+        k_lexical=k_lexical,
+        rrf_k=rrf_k,
+        egress=egress,
+        **kwargs,
+    )
 ```
 
 Defining `hybrid_search` makes the collection satisfy `SupportsHybrid`, so

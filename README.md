@@ -42,10 +42,14 @@ ln -s "$(python -c 'import vd; print(vd.skills_dir())')"/vd-* ~/.claude/skills/
 ```python
 import vd
 
-client = vd.connect("memory")          # switch DB = change this one word
+client = vd.connect("memory")  # switch DB = change this one word
 col = client.create_collection("docs")
-col["a"] = vd.Document(id="a", text="cats", vector=[0.1, 0.9, 0.0], metadata={"kind": "pet"})
-col["b"] = vd.Document(id="b", text="pizza", vector=[0.9, 0.0, 0.1], metadata={"kind": "food"})
+col["a"] = vd.Document(
+    id="a", text="cats", vector=[0.1, 0.9, 0.0], metadata={"kind": "pet"}
+)
+col["b"] = vd.Document(
+    id="b", text="pizza", vector=[0.9, 0.0, 0.1], metadata={"kind": "food"}
+)
 
 for hit in col.search([0.1, 0.8, 0.0], limit=2):
     print(hit["id"], round(hit["score"], 3))
@@ -73,12 +77,14 @@ For convenience, pass any `text -> vector` function as `embedder`, and raw text 
 ```python
 import vd
 
-def embed(text):                       # stand-in; use a real embedding model
+
+def embed(text):  # stand-in; use a real embedding model
     return [text.count(c) / (len(text) or 1) for c in "aeiou"]
 
+
 col = vd.connect("memory", embedder=embed).create_collection("notes")
-col["k1"] = "cats and kittens"                          # embedded for you
-col["k2"] = ("dogs and puppies", {"kind": "dog"})       # text + metadata
+col["k1"] = "cats and kittens"  # embedded for you
+col["k2"] = ("dogs and puppies", {"kind": "dog"})  # text + metadata
 print([h["id"] for h in col.search("a kitten", limit=1)])
 # ['k1']
 ```
@@ -98,10 +104,10 @@ import vd
 
 col = vd.connect("memory").create_collection("api")
 col["k"] = vd.Document(id="k", text="hello", vector=[1.0, 0.0], metadata={"year": 2024})
-doc = col["k"]                          # get
+doc = col["k"]  # get
 print("k" in col, len(col), list(col))  # membership, count, keys
 # True 1 ['k']
-del col["k"]                            # delete
+del col["k"]  # delete
 ```
 
 `search(query, *, limit=10, filter=None, egress=None)` yields dicts `{"id", "text", "score", "metadata"}` where `score` is higher-is-better. Transform results with an `egress` such as `vd.id_only`, `vd.id_and_score`, `vd.text_only`, `vd.id_text_score`, or your own function.
@@ -114,9 +120,15 @@ One backend-agnostic, MongoDB-style filter language: `$eq $ne $gt $gte $lt $lte 
 import vd
 
 col = vd.connect("memory").create_collection("posts")
-col["a"] = vd.Document(id="a", text="", vector=[1.0, 0.0], metadata={"year": 2023, "kind": "news"})
-col["b"] = vd.Document(id="b", text="", vector=[0.9, 0.1], metadata={"year": 2019, "kind": "blog"})
-hits = col.search([1.0, 0.0], filter={"year": {"$gte": 2020}, "kind": {"$in": ["news", "blog"]}})
+col["a"] = vd.Document(
+    id="a", text="", vector=[1.0, 0.0], metadata={"year": 2023, "kind": "news"}
+)
+col["b"] = vd.Document(
+    id="b", text="", vector=[0.9, 0.1], metadata={"year": 2019, "kind": "blog"}
+)
+hits = col.search(
+    [1.0, 0.0], filter={"year": {"$gte": 2020}, "kind": {"$in": ["news", "blog"]}}
+)
 print([h["id"] for h in hits])
 # ['a']
 ```
@@ -146,11 +158,13 @@ Weaviate, Elasticsearch, Redis and LanceDB run the keyword side on their own tex
 import asyncio
 import vd
 
+
 async def main():
     async with await vd.connect_async("memory") as client:
         col = await client.create_collection("docs", dimension=2)
         await col.set("a", vd.Document(id="a", text="x", vector=[1.0, 0.0]))
         return [h["id"] async for h in col.search([1.0, 0.0], limit=1)]
+
 
 print(asyncio.run(main()))
 # ['a']
@@ -167,13 +181,20 @@ The facade never traps you. `client.client` is the raw backend client and `colle
 ```python
 import vd
 
-vd.print_recommendation(corpus_size="medium", persistence=True, can_run_docker=True, cloud_ok=True, budget="free", needs_hybrid=False)
-vd.print_backends_table()              # the whole landscape
+vd.print_recommendation(
+    corpus_size="medium",
+    persistence=True,
+    can_run_docker=True,
+    cloud_ok=True,
+    budget="free",
+    needs_hybrid=False,
+)
+vd.print_backends_table()  # the whole landscape
 vd.compare_backends(["chroma", "qdrant", "pgvector"])
 
-vd.check_requirements("qdrant")        # diagnoses readiness and prints the next step
-print(vd.setup_guide("qdrant"))        # pip / docker / env-var playbook
-vd.install_command("qdrant")           # 'pip install "vd[qdrant]"'
+vd.check_requirements("qdrant")  # diagnoses readiness and prints the next step
+print(vd.setup_guide("qdrant"))  # pip / docker / env-var playbook
+vd.install_command("qdrant")  # 'pip install "vd[qdrant]"'
 ```
 
 `check_requirements` is deployment-aware. It checks the client library for embedded backends, whether a server answers for self-hosted ones, and the required environment variables for managed ones, and always ends with one concrete next action.

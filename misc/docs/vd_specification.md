@@ -62,10 +62,10 @@ vd/
 Following the research findings, adopt a clean Client → Collection hierarchy:
 
 ```python
-client = vd.connect(backend='chroma', **config)
-collection = client.get_collection('my_docs')
+client = vd.connect(backend="chroma", **config)
+collection = client.get_collection("my_docs")
 # or
-collection = client.create_collection('my_docs', schema=...)
+collection = client.create_collection("my_docs", schema=...)
 ```
 
 ---
@@ -78,12 +78,12 @@ collection = client.create_collection('my_docs', schema=...)
 def connect(
     backend: str,
     *,
-    embedding_model: str | Callable = 'text-embedding-3-small',
-    **backend_kwargs
+    embedding_model: str | Callable = "text-embedding-3-small",
+    **backend_kwargs,
 ) -> Client:
     """
     Connect to a vector database backend.
-    
+
     Parameters
     ----------
     backend : str
@@ -92,12 +92,12 @@ def connect(
         Embedding model specification (from oa/imbed) or custom callable
     **backend_kwargs
         Backend-specific configuration (API keys, URLs, etc.)
-        
+
     Returns
     -------
     Client
         A client instance for the specified backend
-        
+
     Examples
     --------
     >>> client = vd.connect('chroma', persist_directory='./data')
@@ -110,24 +110,21 @@ def connect(
 ```python
 from typing import Protocol, Iterator, Optional
 
+
 class Client(Protocol):
     """Protocol for vector database clients."""
-    
+
     def create_collection(
-        self,
-        name: str,
-        *,
-        schema: Optional[dict] = None,
-        **kwargs
-    ) -> 'Collection':
+        self, name: str, *, schema: Optional[dict] = None, **kwargs
+    ) -> "Collection":
         """Create a new collection."""
-        
-    def get_collection(self, name: str) -> 'Collection':
+
+    def get_collection(self, name: str) -> "Collection":
         """Get an existing collection."""
-        
+
     def list_collections(self) -> Iterator[str]:
         """List all collection names."""
-        
+
     def delete_collection(self, name: str) -> None:
         """Delete a collection."""
 ```
@@ -140,45 +137,47 @@ Following your "Stores" pattern, a Collection should behave like a MutableMappin
 from typing import MutableMapping, Union, Iterable, Any
 from dataclasses import dataclass
 
+
 @dataclass
 class Document:
     """Standardized document representation."""
+
     id: str
     text: str
     vector: Optional[list[float]] = None  # Auto-generated if None
     metadata: dict[str, Any] = field(default_factory=dict)
 
+
 class Collection(MutableMapping[str, Document]):
     """
     A collection of searchable documents.
-    
+
     Implements MutableMapping for intuitive CRUD operations:
     - collection[doc_id] = document  # add/update
     - doc = collection[doc_id]        # retrieve
     - del collection[doc_id]          # delete
     - list(collection)                # iterate over doc IDs
     """
-    
+
     # MutableMapping methods
     def __setitem__(self, key: str, value: Union[str, Document]) -> None:
         """Add or update a document."""
-        
+
     def __getitem__(self, key: str) -> Document:
         """Retrieve a document by ID."""
-        
+
     def __delitem__(self, key: str) -> None:
         """Delete a document."""
-        
+
     def __iter__(self) -> Iterator[str]:
         """Iterate over document IDs."""
-        
+
     def __len__(self) -> int:
         """Number of documents in collection."""
-    
+
     # Enhanced retrieval (supporting multiple formats)
     def __getitem__(
-        self, 
-        key: Union[str, slice, list, Callable]
+        self, key: Union[str, slice, list, Callable]
     ) -> Union[Document, list[Document]]:
         """
         Enhanced retrieval supporting:
@@ -187,7 +186,7 @@ class Collection(MutableMapping[str, Document]):
         - Slice: collection[10:20]  # documents 10-20
         - Filter callable: collection[lambda d: d.metadata['type'] == 'article']
         """
-    
+
     # Search methods
     def search(
         self,
@@ -196,11 +195,11 @@ class Collection(MutableMapping[str, Document]):
         limit: int = 10,
         filter: Optional[dict] = None,
         egress: Optional[Callable] = None,
-        **kwargs
+        **kwargs,
     ) -> Iterator[dict]:
         """
         Search the collection.
-        
+
         Parameters
         ----------
         query : str | list[float]
@@ -213,32 +212,29 @@ class Collection(MutableMapping[str, Document]):
             Transform search results (default returns all info)
         **kwargs
             Backend-specific options (alpha for hybrid search, etc.)
-            
+
         Yields
         ------
         dict
             Search results with keys: id, text, score, metadata
             (transformed by egress if provided)
         """
-    
+
     # Batch operations
     def add_documents(
-        self,
-        documents: Iterable[Union[str, tuple, Document]],
-        *,
-        batch_size: int = 100
+        self, documents: Iterable[Union[str, tuple, Document]], *, batch_size: int = 100
     ) -> None:
         """
         Batch add documents.
-        
+
         Supports flexible input formats:
         - "text" → auto-generated ID
-        - ("text", "id") → specified ID  
+        - ("text", "id") → specified ID
         - ("text", {"meta": "data"}) → auto-generated ID with metadata
         - ("text", "id", {"meta": "data"}) → full specification
         - Document(...) → full control
         """
-    
+
     def upsert(self, document: Document) -> None:
         """Insert or update a single document (idempotent)."""
 ```
@@ -259,11 +255,11 @@ Metadata: TypeAlias = dict[str, Any]
 
 # Document can be specified in multiple ways
 DocumentInput: TypeAlias = Union[
-    str,                           # Just text
-    tuple[str, str],              # (text, id)
-    tuple[str, Metadata],         # (text, metadata)
-    tuple[str, str, Metadata],    # (text, id, metadata)
-    'Document'                     # Full document object
+    str,  # Just text
+    tuple[str, str],  # (text, id)
+    tuple[str, Metadata],  # (text, metadata)
+    tuple[str, str, Metadata],  # (text, id, metadata)
+    "Document",  # Full document object
 ]
 
 # Vector representations
@@ -279,11 +275,12 @@ SearchResult: TypeAlias = dict[str, Any]  # {id, text, score, metadata, ...}
 ```python
 from dataclasses import dataclass, field
 
+
 @dataclass
 class Document:
     """
     Standardized document representation.
-    
+
     Attributes
     ----------
     id : str
@@ -295,6 +292,7 @@ class Document:
     metadata : dict
         Associated metadata
     """
+
     id: str
     text: str
     vector: Optional[list[float]] = None
@@ -327,23 +325,30 @@ Use registry pattern for backend registration:
 # In vd/util.py
 _backends = {}
 
+
 def register_backend(name: str):
     """Decorator to register a backend implementation."""
+
     def decorator(backend_class):
         _backends[name] = backend_class
         return backend_class
+
     return decorator
 
+
 # In vd/backends/chroma.py
-@register_backend('chroma')
+@register_backend("chroma")
 class ChromaBackend(BaseBackend):
     """ChromaDB backend implementation."""
+
     pass
 
-# In vd/backends/memory.py  
-@register_backend('memory')
+
+# In vd/backends/memory.py
+@register_backend("memory")
 class MemoryBackend(BaseBackend):
     """In-memory backend for small datasets."""
+
     pass
 ```
 
@@ -352,30 +357,26 @@ class MemoryBackend(BaseBackend):
 ```python
 from abc import ABC, abstractmethod
 
+
 class BaseBackend(ABC):
     """Base class for vector database backends."""
-    
-    def __init__(
-        self,
-        *,
-        embedding_model: Callable,
-        **config
-    ):
+
+    def __init__(self, *, embedding_model: Callable, **config):
         self.embedding_model = embedding_model
         self.config = config
-    
+
     @abstractmethod
-    def create_collection(self, name: str, **kwargs) -> 'Collection':
+    def create_collection(self, name: str, **kwargs) -> "Collection":
         """Create a new collection."""
-    
-    @abstractmethod  
-    def get_collection(self, name: str) -> 'Collection':
+
+    @abstractmethod
+    def get_collection(self, name: str) -> "Collection":
         """Get existing collection."""
-    
+
     @abstractmethod
     def list_collections(self) -> Iterator[str]:
         """List collection names."""
-    
+
     @abstractmethod
     def delete_collection(self, name: str) -> None:
         """Delete a collection."""
@@ -388,11 +389,13 @@ For read-only/static backends:
 ```python
 class StaticIndexError(Exception):
     """Raised when attempting write operations on static index."""
+
     pass
+
 
 class FAISSBackend(BaseBackend):
     """FAISS backend - static index."""
-    
+
     def add_documents(self, documents):
         """Build index from documents (one-time operation)."""
         if self._index_built:
@@ -401,11 +404,10 @@ class FAISSBackend(BaseBackend):
             )
         # Build index...
         self._index_built = True
-    
+
     def __setitem__(self, key, value):
         raise StaticIndexError(
-            "Cannot modify FAISS index after build. "
-            "Create new index instead."
+            "Cannot modify FAISS index after build. Create new index instead."
         )
 ```
 
@@ -419,15 +421,16 @@ class FAISSBackend(BaseBackend):
 from imbed import Embed
 from imbed.base import DFLT_EMBEDDING_MODEL
 
+
 class Collection:
     def __init__(self, embedding_model=None, **kwargs):
         # Use imbed's Embed class
         self.embed = Embed(model=embedding_model or DFLT_EMBEDDING_MODEL)
-    
+
     def _get_vector(self, text: str) -> Vector:
         """Get embedding for text using imbed."""
         return self.embed(text)
-    
+
     def _get_vectors(self, texts: list[str]) -> list[Vector]:
         """Batch embed texts."""
         return list(self.embed(texts))
@@ -468,6 +471,7 @@ class Collection(Store):
 
 ```python
 from i2 import Sig
+
 
 # Ensure consistent signatures across backends
 def normalize_search_signature(backend_search):
@@ -521,27 +525,27 @@ def normalize_search_signature(backend_search):
 import vd
 
 # Connect to backend
-client = vd.connect('chroma', persist_directory='./my_data')
+client = vd.connect("chroma", persist_directory="./my_data")
 
 # Create/get collection
-docs = client.create_collection('articles')
+docs = client.create_collection("articles")
 
 # Add documents (multiple formats supported)
-docs['doc1'] = "This is a test document"
-docs['doc2'] = ("Another document", {'category': 'test'})
+docs["doc1"] = "This is a test document"
+docs["doc2"] = ("Another document", {"category": "test"})
 
 # Batch add
-docs.add_documents([
-    "First article about AI",
-    ("Second article", "doc3"),
-    ("Third article", {'category': 'tech'})
-])
+docs.add_documents(
+    [
+        "First article about AI",
+        ("Second article", "doc3"),
+        ("Third article", {"category": "tech"}),
+    ]
+)
 
 # Search
 results = docs.search(
-    "articles about artificial intelligence",
-    limit=5,
-    filter={'category': 'tech'}
+    "articles about artificial intelligence", limit=5, filter={"category": "tech"}
 )
 
 for result in results:
@@ -553,14 +557,11 @@ for result in results:
 ```python
 # Custom result transformation
 def extract_text_only(result):
-    return result['text']
+    return result["text"]
+
 
 # Get just the text
-texts = list(docs.search(
-    "machine learning",
-    limit=10,
-    egress=extract_text_only
-))
+texts = list(docs.search("machine learning", limit=10, egress=extract_text_only))
 
 # Or use predefined egress functions
 from vd.util import text_only, id_and_score
@@ -573,13 +574,14 @@ ids_and_scores = list(docs.search(query, egress=id_and_score))
 ```python
 # Create a "mall" of collections
 db_mall = {
-    'articles': client.get_collection('articles'),
-    'papers': client.get_collection('research_papers'),
-    'docs': client.get_collection('documentation')
+    "articles": client.get_collection("articles"),
+    "papers": client.get_collection("research_papers"),
+    "docs": client.get_collection("documentation"),
 }
 
 # Access
-db_mall['articles']['doc1']
+db_mall["articles"]["doc1"]
+
 
 # Or with custom Mapping that accepts tuples
 class VectorMall(Mapping):
@@ -589,8 +591,9 @@ class VectorMall(Mapping):
             return self._collections[collection_name][doc_id]
         return self._collections[key]
 
+
 mall = VectorMall(collections=db_mall)
-doc = mall['articles', 'doc1']  # Direct nested access
+doc = mall["articles", "doc1"]  # Direct nested access
 ```
 
 ### 8.4 Working with Pre-computed Vectors
@@ -599,17 +602,13 @@ doc = mall['articles', 'doc1']  # Direct nested access
 # When you already have embeddings
 from imbed import Embed
 
-embedder = Embed(model='text-embedding-3-small')
+embedder = Embed(model="text-embedding-3-small")
 texts = ["doc1 text", "doc2 text"]
 vectors = list(embedder(texts))
 
 # Add with pre-computed vectors
 for i, (text, vector) in enumerate(zip(texts, vectors)):
-    docs[f'doc{i}'] = Document(
-        id=f'doc{i}',
-        text=text,
-        vector=vector
-    )
+    docs[f"doc{i}"] = Document(id=f"doc{i}", text=text, vector=vector)
 ```
 
 ---
@@ -649,17 +648,12 @@ Support optional configuration via `~/.config/vd/config.py`:
 
 ```python
 # ~/.config/vd/config.py
-DEFAULT_BACKEND = 'chroma'
-DEFAULT_EMBEDDING_MODEL = 'text-embedding-3-small'
+DEFAULT_BACKEND = "chroma"
+DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
 
 BACKEND_CONFIGS = {
-    'chroma': {
-        'persist_directory': '~/.vd/chroma_data'
-    },
-    'pinecone': {
-        'api_key': 'env:PINECONE_API_KEY',
-        'environment': 'us-east1-gcp'
-    }
+    "chroma": {"persist_directory": "~/.vd/chroma_data"},
+    "pinecone": {"api_key": "env:PINECONE_API_KEY", "environment": "us-east1-gcp"},
 }
 ```
 
@@ -691,11 +685,11 @@ def search(
     limit: int = 10,
     filter: Optional[dict] = None,
     egress: Optional[Callable] = None,
-    **kwargs
+    **kwargs,
 ) -> Iterator[dict]:
     """
     Search the collection for similar documents.
-    
+
     Parameters
     ----------
     query : str or list of float
@@ -708,25 +702,25 @@ def search(
         Function to transform results. If None, returns full result dict.
     **kwargs
         Backend-specific options (e.g., alpha=0.5 for hybrid search)
-    
+
     Yields
     ------
     dict
         Search results with keys: 'id', 'text', 'score', 'metadata'
         (or transformed by egress function)
-    
+
     Examples
     --------
     >>> docs = collection.search("machine learning", limit=5)
     >>> for doc in docs:
     ...     print(doc['id'], doc['score'])
-    
+
     >>> # With metadata filter
     >>> docs = collection.search(
     ...     "AI research",
     ...     filter={'year': {'$gte': 2020}}
     ... )
-    
+
     >>> # With custom egress
     >>> texts = collection.search(
     ...     "neural networks",
@@ -745,25 +739,18 @@ Allow collections to use multiple embedding models:
 
 ```python
 collection = client.create_collection(
-    'multi_model',
-    embeddings={
-        'semantic': 'text-embedding-3-small',
-        'code': 'code-embedding-model'
-    }
+    "multi_model",
+    embeddings={"semantic": "text-embedding-3-small", "code": "code-embedding-model"},
 )
 
 # Search with specific embedding
-results = collection.search(query, embedding='code')
+results = collection.search(query, embedding="code")
 ```
 
 ### 12.2 Async Support
 
 ```python
-async def search_async(
-    self,
-    query: str,
-    **kwargs
-) -> AsyncIterator[dict]:
+async def search_async(self, query: str, **kwargs) -> AsyncIterator[dict]:
     """Async version of search."""
 ```
 
@@ -773,9 +760,9 @@ Support searching across multiple collections:
 
 ```python
 results = vd.search_all(
-    collections=['docs', 'articles', 'papers'],
+    collections=["docs", "articles", "papers"],
     query="machine learning",
-    aggregation='merge'  # or 'interleave'
+    aggregation="merge",  # or 'interleave'
 )
 ```
 

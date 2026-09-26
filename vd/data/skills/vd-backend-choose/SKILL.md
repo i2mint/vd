@@ -27,13 +27,13 @@ Answer a few facts; it returns a primary pick, a runner-up, and the reasoning.
 import vd
 
 vd.print_recommendation(
-    corpus_size="medium",     # tiny<100k | small<10M | medium | large<100M | huge>100M
+    corpus_size="medium",  # tiny<100k | small<10M | medium | large<100M | huge>100M
     persistence=True,
     can_run_docker=True,
     cloud_ok=True,
-    budget="free",            # "free" | "paid"
-    existing_db=None,         # "postgres"|"redis"|"elastic"|"mongo"|"sqlite"|"duckdb"
-    needs_hybrid=False,       # keyword + vector fused in one query?
+    budget="free",  # "free" | "paid"
+    existing_db=None,  # "postgres"|"redis"|"elastic"|"mongo"|"sqlite"|"duckdb"
+    needs_hybrid=False,  # keyword + vector fused in one query?
     air_gapped=False,
 )
 # vd.recommend_backend(...) returns the same as a dict.
@@ -61,10 +61,10 @@ high-concurrency async apps (FastAPI, Starlette).
 ### Browse the landscape
 
 ```python
-vd.print_backends_table()              # every backend, grouped by archetype
-vd.list_backends()                     # adapters installed & ready right now
-vd.providers()                         # full registry: {name: metadata}
-vd.provider("qdrant")                  # one backend's metadata
+vd.print_backends_table()  # every backend, grouped by archetype
+vd.list_backends()  # adapters installed & ready right now
+vd.providers()  # full registry: {name: metadata}
+vd.provider("qdrant")  # one backend's metadata
 vd.compare_backends(["chroma", "qdrant", "pgvector"])
 vd.print_comparison(["chroma", "qdrant", "pgvector"])
 ```
@@ -90,18 +90,18 @@ and stores **URLs** to live pricing/docs (never cached prices — they drift).
 Hand over to **vd-setup-backend**. In short:
 
 ```python
-vd.check_requirements("qdrant")   # diagnoses readiness, prints the NEXT STEP
-print(vd.setup_guide("qdrant"))   # full copy-pasteable playbook (pip/docker/env)
+vd.check_requirements("qdrant")  # diagnoses readiness, prints the NEXT STEP
+print(vd.setup_guide("qdrant"))  # full copy-pasteable playbook (pip/docker/env)
 ```
 
 ## 3. Connect
 
 ```python
-vd.connect("memory")                                    # embedded, no persistence
-vd.connect("chroma", persist_directory="./db")          # embedded, on disk
-vd.connect("qdrant", url="http://localhost:6333")       # server
-vd.connect("qdrant")                                    # qdrant embedded (:memory:)
-vd.connect("pinecone", api_key=...)                     # managed
+vd.connect("memory")  # embedded, no persistence
+vd.connect("chroma", persist_directory="./db")  # embedded, on disk
+vd.connect("qdrant", url="http://localhost:6333")  # server
+vd.connect("qdrant")  # qdrant embedded (:memory:)
+vd.connect("pinecone", api_key=...)  # managed
 ```
 
 Pass `embedder=` only if you want text-input convenience (see **vd-quickstart**).

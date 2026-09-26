@@ -36,7 +36,8 @@ from collections.abc import MutableMapping
 Key: TypeAlias = str
 Vector: TypeAlias = "list[float] | numpy.ndarray"
 Metadata: TypeAlias = Mapping[str, "str|int|float|bool|list|None"]
-FilterAST: TypeAlias = "Mapping[str, object]"   # MongoDB-style JSON
+FilterAST: TypeAlias = "Mapping[str, object]"  # MongoDB-style JSON
+
 
 class SearchHit(NamedTuple):
     key: Key
@@ -44,6 +45,7 @@ class SearchHit(NamedTuple):
     metadata: Metadata
     # vd's richer SearchResult dict also carries `text`; keep both — NamedTuple
     # for the typed path, dict for the egress-friendly path.
+
 
 @runtime_checkable
 class VectorStore(MutableMapping[Key, "Document"], Protocol):
@@ -53,11 +55,13 @@ class VectorStore(MutableMapping[Key, "Document"], Protocol):
                          for k in store / len / k in store
     Retrieval (the only addition): search(query, k, filter=None) -> list[SearchHit]
     """
+
     dimension: int
     distance: str  # "cosine" | "dot" | "l2"
 
-    def search(self, query: Vector, k: int = 10,
-               filter: Optional[FilterAST] = None) -> list[SearchHit]: ...
+    def search(
+        self, query: Vector, k: int = 10, filter: Optional[FilterAST] = None
+    ) -> list[SearchHit]: ...
 ```
 
 ### Capability protocols (opt-in, `@runtime_checkable`)
@@ -65,15 +69,24 @@ class VectorStore(MutableMapping[Key, "Document"], Protocol):
 ```python
 @runtime_checkable
 class SupportsHybrid(Protocol):
-    def hybrid_search(self, query: Vector, query_text: str, k: int = 10,
-                      filter: Optional[FilterAST] = None,
-                      alpha: float = 0.5,                  # 0=sparse, 1=dense
-                      fusion: str = "rrf") -> list[SearchHit]: ...
+    def hybrid_search(
+        self,
+        query: Vector,
+        query_text: str,
+        k: int = 10,
+        filter: Optional[FilterAST] = None,
+        alpha: float = 0.5,  # 0=sparse, 1=dense
+        fusion: str = "rrf",
+    ) -> list[SearchHit]: ...
+
 
 @runtime_checkable
 class SupportsBatch(Protocol):
     def upsert_many(self, items: Mapping[Key, "Document"]) -> None: ...
-    def search_many(self, queries: list[Vector], k: int = 10) -> list[list[SearchHit]]: ...
+    def search_many(
+        self, queries: list[Vector], k: int = 10
+    ) -> list[list[SearchHit]]: ...
+
 
 @runtime_checkable
 class SupportsExport(Protocol):
@@ -101,23 +114,35 @@ supported subset raises `UnsupportedFilterError`. Each adapter ships a
 
 ```python
 def _match(meta, flt):  # tiny MongoDB-style filter evaluator
-    if flt is None: return True
+    if flt is None:
+        return True
     for k, v in flt.items():
-        if k == "$and": return all(_match(meta, f) for f in v)
-        if k == "$or":  return any(_match(meta, f) for f in v)
+        if k == "$and":
+            return all(_match(meta, f) for f in v)
+        if k == "$or":
+            return any(_match(meta, f) for f in v)
         actual = meta.get(k)
         if isinstance(v, dict):
             for op, val in v.items():
-                if op == "$eq"  and actual != val: return False
-                if op == "$ne"  and actual == val: return False
-                if op == "$gt"  and not (actual is not None and actual >  val): return False
-                if op == "$gte" and not (actual is not None and actual >= val): return False
-                if op == "$lt"  and not (actual is not None and actual <  val): return False
-                if op == "$lte" and not (actual is not None and actual <= val): return False
-                if op == "$in"  and actual not in val: return False
-                if op == "$nin" and actual in val: return False
+                if op == "$eq" and actual != val:
+                    return False
+                if op == "$ne" and actual == val:
+                    return False
+                if op == "$gt" and not (actual is not None and actual > val):
+                    return False
+                if op == "$gte" and not (actual is not None and actual >= val):
+                    return False
+                if op == "$lt" and not (actual is not None and actual < val):
+                    return False
+                if op == "$lte" and not (actual is not None and actual <= val):
+                    return False
+                if op == "$in" and actual not in val:
+                    return False
+                if op == "$nin" and actual in val:
+                    return False
         else:
-            if actual != v: return False
+            if actual != v:
+                return False
     return True
 ```
 
@@ -125,20 +150,30 @@ def _match(meta, flt):  # tiny MongoDB-style filter evaluator
 
 ```python
 def _filter_to_qdrant(flt):
-    if flt is None: return None
+    if flt is None:
+        return None
     must, must_not, should = [], [], []
     for k, v in flt.items():
-        if   k == "$and": must   += [_filter_to_qdrant(f) for f in v]
-        elif k == "$or":  should += [_filter_to_qdrant(f) for f in v]
+        if k == "$and":
+            must += [_filter_to_qdrant(f) for f in v]
+        elif k == "$or":
+            should += [_filter_to_qdrant(f) for f in v]
         elif isinstance(v, dict):
             for op, val in v.items():
-                if   op == "$eq":  must.append(FieldCondition(key=k, match=MatchValue(value=val)))
-                elif op == "$ne":  must_not.append(FieldCondition(key=k, match=MatchValue(value=val)))
-                elif op == "$gt":  must.append(FieldCondition(key=k, range=Range(gt=val)))
-                elif op == "$gte": must.append(FieldCondition(key=k, range=Range(gte=val)))
-                elif op == "$lt":  must.append(FieldCondition(key=k, range=Range(lt=val)))
-                elif op == "$lte": must.append(FieldCondition(key=k, range=Range(lte=val)))
-                else: raise UnsupportedFilterError(f"qdrant: op {op}")
+                if op == "$eq":
+                    must.append(FieldCondition(key=k, match=MatchValue(value=val)))
+                elif op == "$ne":
+                    must_not.append(FieldCondition(key=k, match=MatchValue(value=val)))
+                elif op == "$gt":
+                    must.append(FieldCondition(key=k, range=Range(gt=val)))
+                elif op == "$gte":
+                    must.append(FieldCondition(key=k, range=Range(gte=val)))
+                elif op == "$lt":
+                    must.append(FieldCondition(key=k, range=Range(lt=val)))
+                elif op == "$lte":
+                    must.append(FieldCondition(key=k, range=Range(lte=val)))
+                else:
+                    raise UnsupportedFilterError(f"qdrant: op {op}")
         else:
             must.append(FieldCondition(key=k, match=MatchValue(value=v)))
     return Filter(must=must or None, must_not=must_not or None, should=should or None)
@@ -244,12 +279,25 @@ canonical segment schema so segment→index is a trivial map:
 
 ```python
 def index_and_search(store: VectorStore):
-    store["a"] = Document(id="a", text="...", vector=[0.1,0.2,0.3],
-                          metadata={"src":"wiki","year":2024})
-    store["b"] = Document(id="b", text="...", vector=[0.9,0.1,0.0],
-                          metadata={"src":"blog","year":2025})
-    return store.search([0.1,0.2,0.25], k=2,
-                        filter={"year":{"$gte":2024}, "src":{"$in":["wiki","blog"]}})
+    store["a"] = Document(
+        id="a",
+        text="...",
+        vector=[0.1, 0.2, 0.3],
+        metadata={"src": "wiki", "year": 2024},
+    )
+    store["b"] = Document(
+        id="b",
+        text="...",
+        vector=[0.9, 0.1, 0.0],
+        metadata={"src": "blog", "year": 2025},
+    )
+    return store.search(
+        [0.1, 0.2, 0.25],
+        k=2,
+        filter={"year": {"$gte": 2024}, "src": {"$in": ["wiki", "blog"]}},
+    )
+
+
 # Must produce equivalent results for memory, chroma, qdrant, lancedb, ...
 ```
 

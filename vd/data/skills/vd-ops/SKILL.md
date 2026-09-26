@@ -26,13 +26,15 @@ Both are listed below — pick the surface that matches the user's workflow.
 import vd
 
 # Export
-vd.export_collection(docs, 'backup.jsonl', format='jsonl')   # default — best for big sets
-vd.export_collection(docs, 'backup.json',  format='json')    # single file
-vd.export_collection(docs, './backup_dir', format='directory')  # one file per doc
+vd.export_collection(
+    docs, "backup.jsonl", format="jsonl"
+)  # default — best for big sets
+vd.export_collection(docs, "backup.json", format="json")  # single file
+vd.export_collection(docs, "./backup_dir", format="directory")  # one file per doc
 
 # Import
-vd.import_collection(docs, 'backup.jsonl')
-vd.import_collection(docs, 'backup.jsonl', skip_existing=True)  # don't overwrite
+vd.import_collection(docs, "backup.jsonl")
+vd.import_collection(docs, "backup.jsonl", skip_existing=True)  # don't overwrite
 ```
 
 `export_collection`/`import_collection` auto-detect format from extension when
@@ -65,17 +67,17 @@ Use this when the user wants to move a collection from one backend to another
 disk.
 
 ```python
-source_client = vd.connect('memory')
-target_client = vd.connect('chroma', persist_directory='./vector_db')
+source_client = vd.connect("memory")
+target_client = vd.connect("chroma", persist_directory="./vector_db")
 
-source = source_client.get_collection('docs')
-target = target_client.create_collection('docs')
+source = source_client.get_collection("docs")
+target = target_client.create_collection("docs")
 
 stats = vd.migrate_collection(
     source,
     target,
     batch_size=100,
-    preserve_vectors=True,   # reuse existing embeddings — no re-embed cost
+    preserve_vectors=True,  # reuse existing embeddings — no re-embed cost
     progress_callback=lambda cur, tot: print(f"{cur}/{tot}"),
     skip_existing=False,
 )
@@ -87,7 +89,7 @@ For migrating *all* collections of a client at once:
 vd.migrate_client(
     source_client,
     target_client,
-    collection_names=['docs1', 'docs2'],   # None = all source collections
+    collection_names=["docs1", "docs2"],  # None = all source collections
     batch_size=100,
     preserve_vectors=True,
 )
@@ -99,8 +101,8 @@ that build the args dynamically:
 
 ```python
 vd.copy_collection(
-    source=('memory', 'docs'),
-    target=('chroma', 'docs', {'persist_directory': './vector_db'}),
+    source=("memory", "docs"),
+    target=("chroma", "docs", {"persist_directory": "./vector_db"}),
     batch_size=100,
 )
 ```
@@ -122,17 +124,17 @@ stats = vd.collection_stats(docs)
 # {'total_documents': N, 'avg_text_length': ..., 'metadata_fields': [...], ...}
 
 # Distribution of values for one metadata field
-dist = vd.metadata_distribution(docs, 'category', top_n=10)
+dist = vd.metadata_distribution(docs, "category", top_n=10)
 # {'tech': 412, 'science': 277, ...}
 
 # Validate integrity (missing fields, weird metadata, etc.)
 report = vd.validate_collection(docs)
-if not report['valid']:
-    for issue in report['issues']:
+if not report["valid"]:
+    for issue in report["issues"]:
         print(f"Issue: {issue}")
 
 # Find near-duplicate or duplicate docs
-dupes = vd.find_duplicates(docs, threshold=0.95, method='cosine')
+dupes = vd.find_duplicates(docs, threshold=0.95, method="cosine")
 # list of (id_a, id_b, similarity)
 
 # Find outliers — docs dissimilar to their nearest neighbors
@@ -140,8 +142,8 @@ out = vd.find_outliers(docs, n_neighbors=5, threshold=0.3)
 # list of (id, mean_similarity_to_neighbors)
 
 # Sample documents
-random_ids  = vd.sample_collection(docs, n=10, method='random', seed=42)
-diverse_ids = vd.sample_collection(docs, n=10, method='diverse')
+random_ids = vd.sample_collection(docs, n=10, method="random", seed=42)
+diverse_ids = vd.sample_collection(docs, n=10, method="diverse")
 ```
 
 CLI:
@@ -170,7 +172,7 @@ When to use which:
 
 ```python
 # Check that a backend is reachable / configured
-health = vd.health_check_backend('chroma', persist_directory='./vector_db')
+health = vd.health_check_backend("chroma", persist_directory="./vector_db")
 # {'status': 'healthy' | 'unhealthy', 'available': True, 'error': ...}
 
 # Check that a specific collection is accessible

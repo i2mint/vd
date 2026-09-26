@@ -33,8 +33,8 @@ import vd
 
 clean = vd.clean_text(
     raw,
-    lowercase=False,                # default — keep case unless asked
-    remove_extra_whitespace=True,   # default
+    lowercase=False,  # default — keep case unless asked
+    remove_extra_whitespace=True,  # default
     remove_urls=False,
     remove_emails=False,
     remove_numbers=False,
@@ -50,8 +50,8 @@ search quality (e.g. "AI" vs. "ai", or sentence boundaries).
 For a lighter touch, just normalize whitespace:
 
 ```python
-vd.normalize_whitespace(text)   # collapse repeated spaces / newlines
-vd.truncate_text(text, max_length=2000, suffix='...')
+vd.normalize_whitespace(text)  # collapse repeated spaces / newlines
+vd.truncate_text(text, max_length=2000, suffix="...")
 ```
 
 ## Chunking text
@@ -62,10 +62,10 @@ context around 8k tokens, and similarity is more meaningful on focused chunks.
 ```python
 chunks: list[str] = vd.chunk_text(
     text,
-    chunk_size=500,             # positional or kw
-    overlap=50,                 # kw — chars overlap between consecutive chunks
-    strategy='chars',           # 'chars' | 'words' | 'sentences' | 'paragraphs'
-    preserve_sentences=True,    # try to break on sentence boundary
+    chunk_size=500,  # positional or kw
+    overlap=50,  # kw — chars overlap between consecutive chunks
+    strategy="chars",  # 'chars' | 'words' | 'sentences' | 'paragraphs'
+    preserve_sentences=True,  # try to break on sentence boundary
 )
 ```
 
@@ -88,17 +88,17 @@ output with metadata preserved, use `chunk_documents`:
 
 ```python
 documents = [
-    ('article_1', 'Long article text ...'),
-    ('article_2', ('Another long body...', {'author': 'Alice', 'year': 2024})),
+    ("article_1", "Long article text ..."),
+    ("article_2", ("Another long body...", {"author": "Alice", "year": 2024})),
 ]
 
 chunked = vd.chunk_documents(
     documents,
     chunk_size=500,
     overlap=50,
-    strategy='sentences',
-    id_template='{doc_id}_chunk_{chunk_num}',  # how to mint chunk IDs
-    preserve_metadata=True,                    # default — copy parent metadata
+    strategy="sentences",
+    id_template="{doc_id}_chunk_{chunk_num}",  # how to mint chunk IDs
+    preserve_metadata=True,  # default — copy parent metadata
 )
 # chunked yields tuples of (chunk_id, chunk_text, metadata_dict)
 ```
@@ -113,10 +113,10 @@ fields added so downstream queries can reassemble or filter.
 ```python
 meta = vd.extract_metadata(
     text,
-    extract_title=True,        # first heading or first line
-    extract_length=True,       # character count
+    extract_title=True,  # first heading or first line
+    extract_length=True,  # character count
     extract_word_count=True,
-    extract_language=False,    # off by default — can be slow / requires deps
+    extract_language=False,  # off by default — can be slow / requires deps
 )
 # {'title': '...', 'length': 12345, 'word_count': 2102, ...}
 ```
@@ -131,8 +131,8 @@ the result through.
 ```python
 import vd
 
-client = vd.connect('memory')
-docs = client.create_collection('articles')
+client = vd.connect("memory")
+docs = client.create_collection("articles")
 
 raw_documents = load_my_corpus()  # iterable of (doc_id, text, metadata)
 
@@ -147,8 +147,8 @@ chunked = vd.chunk_documents(
     ((doc_id, (text, meta)) for doc_id, text, meta in prepared),
     chunk_size=800,
     overlap=80,
-    strategy='sentences',
-    id_template='{doc_id}#{chunk_num}',
+    strategy="sentences",
+    id_template="{doc_id}#{chunk_num}",
 )
 
 # 3. Convert to add_documents inputs and batch-insert
