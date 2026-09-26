@@ -272,7 +272,7 @@ def test_hybrid_search_honors_filter(populated_collection):
 def test_native_vs_fallback_path_is_observable(populated_collection, backend_name):
     """isinstance(c, SupportsHybrid) cleanly splits the two paths."""
     is_native = isinstance(populated_collection, vd.SupportsHybrid)
-    if backend_name in {"weaviate", "elasticsearch", "redis"}:
+    if backend_name in {"weaviate", "elasticsearch", "redis", "lancedb"}:
         assert is_native, (
             f"{backend_name} should be SupportsHybrid in this PR; got {is_native}"
         )
@@ -314,3 +314,65 @@ def test_hybrid_search_custom_lexical_callable(populated_collection):
     assert calls["count"] == 1
     ids = [h["id"] for h in hits]
     assert "noise_1" in ids, "the custom lexical search's hit should fuse in"
+
+
+# ---------- LanceDB: native lexical side via its built-in FTS index -------- #
+
+
+@pytest.fixture
+def lance_col():
+    pytest.importorskip("lancedb")
+    col = vd.connect("lancedb").create_collection("lance_hybrid", dimension=2)
+    col["a"] = vd.Document(id="a", text="the quick brown fox", vector=[1.0, 0.0])
+    col["b"] = vd.Document(id="b", text="lazy dog sleeps", vector=[0.0, 1.0])
+    return col
+
+
+def _fts_indexed_columns(col) -> list:
+    return [
+        list(i.columns) for i in col.native.list_indices() if i.index_type == "FTS"
+    ]
+
+
+def test_lancedb_hybrid_uses_native_fts_index(lance_col):
+    """The first hybrid call builds a LanceDB FTS index on ``text`` and uses it."""
+    assert isinstance(lance_col, vd.SupportsHybrid)
+    assert _fts_indexed_columns(lance_col) == []
+    hits = list(
+        vd.hybrid_search(lance_col, [0.0, 1.0], query_text="quick fox", limit=2)
+    )
+    assert {h["id"] for h in hits} == {"a", "b"}
+    assert _fts_indexed_columns(lance_col) == [["text"]]
+    # The lexical primitive alone finds only the term match.
+    assert [h["id"] for h in lance_col._lexical_query("quick fox", limit=5,
+                                                      filter=None)] == ["a"]
+
+
+def test_lancedb_lexical_sees_writes_after_index_build(lance_col):
+    """Upserts and deletes after the FTS index exists are reflected."""
+    list(vd.hybrid_search(lance_col, [1.0, 0.0], query_text="fox", limit=1))
+    lance_col["c"] = vd.Document(id="c", text="a fox runs", vector=[0.5, 0.5])
+    lance_col["a"] = vd.Document(id="a", text="nothing here", vector=[1.0, 0.0])
+    ids = [h["id"] for h in lance_col._lexical_query("fox", limit=5, filter=None)]
+    assert ids == ["c"]
+    del lance_col["c"]
+    assert lance_col._lexical_query("fox", limit=5, filter=None) == []
+
+
+def test_lancedb_lexical_filter_and_odd_queries(lance_col):
+    """Metadata filters apply; query-syntax characters don't raise."""
+    lance_col["c"] = vd.Document(
+        id="c", text="fox on the hill", vector=[0.5, 0.5], metadata={"k": 1}
+    )
+    hits = lance_col._lexical_query("fox", limit=5, filter={"k": 1})
+    assert [h["id"] for h in hits] == ["c"]
+    assert {"id", "text", "score", "metadata"} <= set(hits[0])
+    for odd in ['a "quote', "(", "title:x", "C++?"]:
+        lance_col._lexical_query(odd, limit=5, filter=None)
+
+
+def test_lancedb_hybrid_before_first_write():
+    """A created-but-empty collection returns no hits instead of raising."""
+    pytest.importorskip("lancedb")
+    col = vd.connect("lancedb").create_collection("empty_hybrid", dimension=2)
+    assert list(vd.hybrid_search(col, [1.0, 0.0], query_text="x", limit=3)) == []

@@ -8,11 +8,16 @@ S3-native. Each ``vd`` collection is one Lance table with columns
 ``(id, text, vector, metadata)``; metadata travels as a JSON string and the
 canonical filter is applied client-side (over-fetching candidates first).
 
+Collections satisfy :class:`vd.SupportsHybrid`: the lexical side runs on
+LanceDB's built-in BM25 full-text index over ``text`` (no extra package),
+created on the first :meth:`~LanceDBCollection.hybrid_search` call.
+
 Requires: ``pip install lancedb``
 """
 
 from __future__ import annotations
 
+import inspect
 import json
 import tempfile
 from typing import Callable, Iterable, Iterator, Optional
@@ -172,6 +177,101 @@ class LanceDBCollection(AbstractCollection):
                 }
             )
         return apply_client_filter(results, filter, limit=limit)
+
+    # ----- native hybrid: LanceDB FTS (BM25) + dense, fused with RRF ------ #
+
+    def _ensure_fts_index(self, table) -> None:
+        """Build LanceDB's native full-text index on ``text`` if it is missing."""
+        indexed = any(
+            getattr(index, "index_type", None) == "FTS"
+            and list(getattr(index, "columns", [])) == ["text"]
+            for index in table.list_indices()
+        )
+        if indexed:
+            return
+        if "config" in inspect.signature(table.create_index).parameters:
+            from lancedb.index import FTS
+
+            table.create_index("text", config=FTS(), replace=True)
+        else:  # pragma: no cover - lancedb releases before the FTS() config
+            table.create_fts_index("text", replace=True, use_tantivy=False)
+
+    def _lexical_query(
+        self,
+        text: str,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        """
+        BM25 lexical search through LanceDB's built-in full-text index.
+
+        The lexical side of :meth:`hybrid_search`. The index on ``text`` is
+        built on the first call; rows written afterwards are still searched
+        (LanceDB scans unindexed rows), so no rebuild is needed for
+        correctness. Call ``collection.native.optimize()`` after large
+        ingests to fold new rows into the index for speed. Metadata is
+        filtered client-side, as in :meth:`_query`.
+        """
+        del kwargs
+        table = self._table
+        if table is None:
+            return []
+        self._ensure_fts_index(table)
+        hits = (
+            table.search(text, query_type="fts")
+            .limit(overfetch_limit(limit, filter))
+            .to_list()
+        )
+        results = []
+        for hit in hits:
+            doc = self._to_document(hit)
+            results.append(
+                {
+                    "id": doc.id,
+                    "text": doc.text,
+                    "score": float(hit.get("_score", 0.0)),
+                    "metadata": doc.metadata,
+                }
+            )
+        return apply_client_filter(results, filter, limit=limit)
+
+    def hybrid_search(
+        self,
+        query,
+        *,
+        query_text=None,
+        limit: int = 10,
+        filter: Optional[Filter] = None,
+        k_dense: Optional[int] = None,
+        k_lexical: Optional[int] = None,
+        rrf_k: int = 60,
+        egress=None,
+        **kwargs,
+    ):
+        """
+        Hybrid (dense + native FTS) search, fused client-side with RRF.
+
+        See :class:`vd.SupportsHybrid` for the canonical contract. The dense
+        side is :meth:`_query`; the lexical side is :meth:`_lexical_query`
+        (LanceDB's BM25 full-text index, built on first use). Fusion is done
+        by ``vd`` rather than LanceDB's own ``query_type="hybrid"`` so the
+        fused score is the same RRF score on every backend. Pass
+        ``query_text=...`` when ``query`` is a vector.
+        """
+        return self._hybrid_via_rrf(
+            query,
+            self._lexical_query,
+            query_text=query_text,
+            limit=limit,
+            filter=filter,
+            k_dense=k_dense,
+            k_lexical=k_lexical,
+            rrf_k=rrf_k,
+            egress=egress,
+            **kwargs,
+        )
 
     @staticmethod
     def _to_document(row: dict) -> Document:

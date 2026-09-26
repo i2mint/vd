@@ -383,7 +383,7 @@ class BM25Index:
     Construction is **O(N)** in the collection size; each :meth:`search` is
     O(matching documents). Fine for prototypes and collections up to ~100k
     documents; for larger workloads switch to a backend with a native text
-    index (weaviate, elasticsearch, redis, …).
+    index (weaviate, elasticsearch, redis, lancedb, …).
 
     Parameters
     ----------
@@ -516,7 +516,7 @@ def bm25_lexical_search(
     :meth:`BM25Index.search` **per query** instead of calling this function in a
     loop — the term statistics are then computed once rather than on every call.
     For larger workloads, switch to a backend with native hybrid search
-    (weaviate, elasticsearch, redis, …) or pass a custom ``lexical_search``
+    (weaviate, elasticsearch, redis, lancedb, …) or pass a custom ``lexical_search``
     callable to :func:`hybrid_search` that consults a real text index.
 
     Parameters
