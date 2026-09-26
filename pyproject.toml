@@ -17,7 +17,7 @@ keywords = [
     "similarity search",
     "RAG",
 ]
-authors = []
+authors = [{ name = "Thor Whalen" }]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
