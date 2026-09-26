@@ -412,3 +412,23 @@ def test_lancedb_first_hybrid_calls_concurrently():
         with ThreadPoolExecutor(8) as pool:
             results = list(pool.map(run, cols))
         assert all(r and r[0] == "a" for r in results), results
+
+
+def test_lancedb_hybrid_after_table_dropped_and_recreated(lance_col):
+    """A dropped-and-recreated table gets a fresh FTS index (no stale cache)."""
+    client_like = lance_col._db
+    list(vd.hybrid_search(lance_col, [1.0, 0.0], query_text="fox", limit=1))
+    client_like.drop_table(lance_col.name)            # dropped behind vd's back
+    lance_col["c"] = vd.Document(id="c", text="a fox again", vector=[1.0, 0.0])
+    hits = list(vd.hybrid_search(lance_col, [1.0, 0.0], query_text="fox", limit=1))
+    assert [h["id"] for h in hits] == ["c"]
+    # and through the client API, with a fresh collection object
+    client = vd.connect("lancedb")
+    col = client.create_collection("recreated", dimension=2)
+    col["a"] = vd.Document(id="a", text="red fox", vector=[1.0, 0.0])
+    list(vd.hybrid_search(col, [1.0, 0.0], query_text="fox", limit=1))
+    client.delete_collection("recreated")
+    col2 = client.create_collection("recreated", dimension=2)
+    col2["b"] = vd.Document(id="b", text="blue fox", vector=[1.0, 0.0])
+    assert [h["id"] for h in vd.hybrid_search(
+        col2, [1.0, 0.0], query_text="fox", limit=1)] == ["b"]

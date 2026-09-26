@@ -114,6 +114,10 @@ async def test_qdrant_connect_async_dispatch(qdrant_available):
     assert remote.native_async is True
     assert isinstance(remote.client, AsyncQdrantClient)
     await remote.close()
+    remote2 = await vd.connect_async("qdrant", location="http://localhost:6399",
+                                     check_compatibility=False)
+    assert isinstance(remote2, NativeAsyncQdrantClient)
+    await remote2.close()
     # native=False always gives the wrapper
     wrapped = await vd.connect_async("qdrant", url="http://localhost:6399", check_compatibility=False,
                                      native=False)

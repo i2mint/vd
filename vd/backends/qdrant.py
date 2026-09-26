@@ -391,6 +391,8 @@ def _qdrant_client_kwargs(
         return {"url": url, "api_key": api_key, **config}
     if path is not None:
         return {"path": path}
+    if location and location.startswith(("http://", "https://")):
+        return {"location": location, "api_key": api_key, **config}
     return {"location": location or ":memory:"}
 
 
@@ -593,13 +595,15 @@ async def _connect_async_qdrant(**kwargs) -> Any:
     """
     The :func:`vd.connect_async` factory for ``qdrant``.
 
-    With ``url=`` (a Qdrant server or cloud cluster) it returns
+    With ``url=`` (or an ``http(s)://`` ``location=``: a Qdrant server or
+    cloud cluster) it returns
     :class:`NativeAsyncQdrantClient`, which does real non-blocking network I/O.
     Without it (embedded ``:memory:`` / ``path=`` mode), qdrant-client's local
     async client would run blocking code on the event loop, so it returns the
     ``asyncio.to_thread`` wrapper around the sync adapter instead.
     """
-    if kwargs.get("url") is not None:
+    location = str(kwargs.get("location") or "")
+    if kwargs.get("url") is not None or location.startswith(("http://", "https://")):
         return NativeAsyncQdrantClient(**kwargs)
     import asyncio
 

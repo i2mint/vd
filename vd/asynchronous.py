@@ -654,7 +654,10 @@ async def hybrid_search_async(
     on a worker thread. For a native async collection it awaits the
     collection's own ``hybrid_search`` if it has one, and otherwise fuses the
     collection's async dense search with a client-side BM25 scan (O(N): it
-    reads every document) via RRF. Either way the awaitable + async iterator
+    reads every document) via RRF. On a native collection, an ``async def``
+    ``lexical_search`` receives the async collection; a sync one receives a
+    materialized ``{id: Document}`` dict (every document is read per call)
+    and runs on a worker thread. Either way the awaitable + async iterator
     interface stays uniform.
 
     Parameters mirror :func:`vd.hybrid_search` exactly; see that function for

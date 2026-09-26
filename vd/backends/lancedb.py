@@ -49,6 +49,10 @@ from vd.util import register_backend
 #: Serializes FTS-index creation within the process (see ``_ensure_fts_index``).
 _FTS_INDEX_LOCK = threading.Lock()
 
+#: ``(database uri, table name)`` pairs known to have the FTS index on ``text``.
+#: Shared by every collection object; entries are dropped when the table is.
+_FTS_READY: set = set()
+
 #: vd metric -> LanceDB distance-type name.
 _METRIC = {"cosine": "cosine", "l2": "l2", "dot": "dot"}
 
@@ -193,33 +197,40 @@ class LanceDBCollection(AbstractCollection):
             for index in table.list_indices()
         )
 
+    def _fts_key(self) -> tuple:
+        return (getattr(self._db, "uri", id(self._db)), self.name)
+
     def _ensure_fts_index(self, table) -> None:
         """
         Build LanceDB's native full-text index on ``text`` if it is missing.
 
-        Runs once per collection object (then cached). Creation is serialized
-        by a process-wide lock, and a commit conflict from a concurrent
-        creator elsewhere (another process) is tolerated when the index turns
-        out to exist afterwards.
+        Known-indexed tables are cached per ``(database, table)``, so the
+        check costs nothing after the first call. Creation is serialized by a
+        process-wide lock (taken only when the index is missing), and a
+        failed create is tolerated when the index turns out to exist
+        afterwards (a concurrent creator in another process).
         """
-        if getattr(self, "_fts_ready", False):
+        key = self._fts_key()
+        if key in _FTS_READY:
             return
-        with _FTS_INDEX_LOCK:
-            if not self._has_fts_index(table):
-                try:
-                    if "config" in inspect.signature(table.create_index).parameters:
-                        from lancedb.index import FTS
+        if not self._has_fts_index(table):
+            with _FTS_INDEX_LOCK:
+                table = self._table or table
+                if not self._has_fts_index(table):
+                    try:
+                        if "config" in inspect.signature(table.create_index).parameters:
+                            from lancedb.index import FTS
 
-                        table.create_index("text", config=FTS(), replace=False)
-                    else:  # pragma: no cover - lancedb before the FTS() config
-                        table.create_fts_index(
-                            "text", replace=False, use_tantivy=False
-                        )
-                except Exception:
-                    fresh = self._table
-                    if fresh is None or not self._has_fts_index(fresh):
-                        raise
-        self._fts_ready = True
+                            table.create_index("text", config=FTS(), replace=False)
+                        else:  # pragma: no cover - lancedb before the FTS() config
+                            table.create_fts_index(
+                                "text", replace=False, use_tantivy=False
+                            )
+                    except Exception:
+                        fresh = self._table
+                        if fresh is None or not self._has_fts_index(fresh):
+                            raise
+        _FTS_READY.add(key)
 
     def _lexical_query(
         self,
@@ -242,16 +253,27 @@ class LanceDBCollection(AbstractCollection):
         filtered client-side, as in :meth:`_query`.
         """
         del kwargs
-        table = self._table
-        if table is None:
-            return []
-        self._ensure_fts_index(table)
-        table = self._table  # reopen: a handle from before the index misses it
-        hits = (
-            table.search(text, query_type="fts")
-            .limit(overfetch_limit(limit, filter))
-            .to_list()
-        )
+        for attempt in range(2):
+            table = self._table
+            if table is None:
+                return []
+            self._ensure_fts_index(table)
+            table = self._table  # reopen: a handle from before the index misses it
+            if table is None:  # dropped in the meantime
+                return []
+            try:
+                hits = (
+                    table.search(text, query_type="fts")
+                    .limit(overfetch_limit(limit, filter))
+                    .to_list()
+                )
+                break
+            except ValueError:
+                # The table was dropped and recreated since the index was
+                # cached: forget it and build the index again, once.
+                if attempt:
+                    raise
+                _FTS_READY.discard(self._fts_key())
         results = []
         for hit in hits:
             doc = self._to_document(hit)
@@ -375,6 +397,7 @@ class LanceDBClient(AbstractClient):
         if name in set(_table_names(self._client)):
             self._client.drop_table(name)
         self._metrics.pop(name, None)
+        _FTS_READY.discard((getattr(self._client, "uri", id(self._client)), name))
 
     def list_collections(self) -> Iterator[str]:
         names = set(_table_names(self._client)) | set(self._metrics)
