@@ -240,7 +240,7 @@ providers:
     requires_server: false   # Milvus Lite is embedded
     embedded_mode: true
     managed_free_tier: true  # Zilliz free cluster
-    pip_packages: [pymilvus]
+    pip_packages: [pymilvus, milvus-lite]   # milvus-lite = embedded mode (not native Windows)
     extras: "[milvus-lite]"
     license: Apache-2.0
     hybrid_search: true
@@ -512,7 +512,7 @@ providers:
     requires_server: true
     embedded_mode: false
     managed_free_tier: false   # depends on the Postgres host
-    pip_packages: [pgvector, psycopg]
+    pip_packages: [pgvector, "psycopg[binary]"]
     extras: "psycopg[binary]"
     license: PostgreSQL-permissive
     hybrid_search: false       # manual SQL hybrid

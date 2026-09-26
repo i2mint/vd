@@ -6,7 +6,8 @@ description: >-
   a backend, creating a collection, adding documents, and running a query. Also
   trigger on mentions of "vector database", "embeddings + search", or any time
   the user imports `vd` for a new task and needs the basic happy-path setup.
-audience: users
+metadata:
+  audience: users
 ---
 
 # vd — quickstart

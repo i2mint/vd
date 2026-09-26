@@ -3,10 +3,11 @@ name: vd-search
 description: >-
   Advanced-search tooling for the vd package. Use this skill when the user goes
   beyond a single basic .search() call with vd — metadata filters with
-  MongoDB-style operators, multi-query searches, reciprocal rank fusion,
-  finding documents similar to an existing one, deduplicating result sets, or
-  searching by a pre-computed query vector.
-audience: users
+  MongoDB-style operators, hybrid (keyword + vector) search, BM25, multi-query
+  searches, reciprocal rank fusion, finding documents similar to an existing
+  one, deduplicating result sets, or searching by a pre-computed query vector.
+metadata:
+  audience: users
 ---
 
 # Advanced search with vd
@@ -131,6 +132,40 @@ merged = vd.reciprocal_rank_fusion([list_a, list_b], k=60)
 is rank-based, so it doesn't care that scores from different lists aren't
 comparable. Prefer RRF over a hand-rolled score average.
 
+## Hybrid search (keyword + vector)
+
+Dense vectors miss exact terms (product codes, names, rare jargon); keyword
+search misses paraphrases. `vd.hybrid_search` runs both and fuses the two
+rankings with RRF. It works on **every** backend:
+
+```python
+# Text query: the collection's embedder handles the dense side,
+# the same text drives the keyword side.
+hits = list(vd.hybrid_search(docs, "neural networks", limit=10))
+
+# Pre-computed query vector: say what the keyword side should match.
+hits = list(vd.hybrid_search(
+    docs, query_vec, query_text="neural networks", limit=10,
+    filter={'year': {'$gte': 2017}},
+))
+```
+
+Result dicts have the usual shape; `score` is the fused RRF score.
+
+- **Native vs fallback.** `weaviate`, `elasticsearch`, `redis` and `lancedb`
+  run the keyword side on their own text index
+  (`isinstance(docs, vd.SupportsHybrid)` is `True`). Every other backend uses
+  a client-side BM25 scan that reads the whole collection on each call:
+  fine up to ~100k documents, slow beyond.
+- **Many queries, fallback backend?** Build the keyword index once:
+
+  ```python
+  index = vd.BM25Index(docs)            # O(N) once
+  index.search("neural networks", limit=5)
+  ```
+
+- Async code: `vd.hybrid_search_async` takes the same arguments.
+
 ## Finding documents similar to an existing document
 
 ```python
@@ -230,9 +265,10 @@ final = list(vd.deduplicate_results(merged, key='id', keep='first'))[:10]
 - **Vector queries must match dimension.** A vector from a different embedding
   model than the collection's will either error or silently return garbage
   matches.
-- **Don't mistake "score" for "probability".** It's a similarity score, scale
-  depends on the backend (cosine ∈ [-1, 1] for memory; chroma may return a
-  distance instead of a similarity). Don't threshold across backends without
+- **Don't mistake "score" for "probability".** It's a higher-is-better
+  similarity on every backend, but its scale depends on the metric (cosine in
+  [-1, 1], dot unbounded, l2 squashed to (0, 1]) and hybrid results carry an
+  RRF score instead. Don't threshold across metrics or search types without
   checking.
 
 ## See also

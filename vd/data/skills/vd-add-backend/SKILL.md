@@ -7,7 +7,8 @@ description: >-
   AbstractClient/AbstractCollection raw-primitive contract, filter handling,
   capability protocols, the escape hatch, and the provider registry. Trigger on
   "add a backend to vd", "implement the X backend", "vd adapter".
-audience: developers
+metadata:
+  audience: developers
 ---
 
 # Implementing a `vd` backend

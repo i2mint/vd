@@ -55,8 +55,50 @@ def test_unknown_provider_is_none():
 
 
 def test_install_command():
-    assert install_command("qdrant") == "pip install qdrant-client"
+    # Backends with a vd adapter install through vd's own extra, so the
+    # printed command installs exactly what the adapter needs.
+    assert install_command("qdrant") == 'pip install "vd[qdrant]"'
+    assert install_command("pgvector") == 'pip install "vd[pgvector]"'
+    # Providers vd has no adapter for fall back to their raw client package.
+    assert install_command("opensearch") == "pip install opensearch-py"
     assert "no installation" in install_command("memory")
+
+
+def _normalize_extra(name: str) -> str:
+    import re
+
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def test_every_adapter_has_a_matching_vd_extra():
+    """install_command's `vd[<adapter>]` must name a real extra of this package."""
+    import importlib.metadata
+
+    extras = {
+        _normalize_extra(e)
+        for e in importlib.metadata.metadata("vd").get_all("Provides-Extra") or []
+    }
+    for name in provider_names():
+        meta = provider(name)
+        if meta.get("adapter") and meta.get("pip_packages"):
+            assert _normalize_extra(meta["adapter"]) in extras, name
+
+
+def test_install_backend_runs_pip_without_shell_quotes(monkeypatch):
+    import subprocess
+    import sys
+
+    calls = []
+    monkeypatch.setattr(subprocess, "run", lambda args, **kw: calls.append(args))
+    cmd = vd.install_backend("qdrant", run=True)
+    assert cmd == 'pip install "vd[qdrant]"'
+    assert calls == [[sys.executable, "-m", "pip", "install", "vd[qdrant]"]]
+    calls.clear()
+    vd.install_backend("opensearch", run=True)
+    assert calls == [[sys.executable, "-m", "pip", "install", "opensearch-py"]]
+    calls.clear()
+    vd.install_backend("memory", run=True)
+    assert calls == []
 
 
 def test_memory_always_installed():
