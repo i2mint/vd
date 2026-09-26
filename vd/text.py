@@ -50,7 +50,7 @@ def clean_text(
     >>> clean_text(text, remove_urls=True)
     'Hello World! Visit'
     >>> clean_text(text, lowercase=True, remove_punctuation=True)
-    'hello world visit https examplecom'
+    'hello world visit httpsexamplecom'
     """
     if remove_urls:
         text = re.sub(r"https?://\S+|www\.\S+", "", text)
@@ -296,7 +296,7 @@ def extract_metadata(
     >>> meta['title']
     'My Title'
     >>> meta['char_count']
-    28
+    30
     """
     metadata = {}
 

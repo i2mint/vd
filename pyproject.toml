@@ -118,7 +118,9 @@ convention = "google"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-testpaths = ["tests"]
+# `vd` is listed so the package's own doctests run under `--doctest-modules`;
+# the root conftest.py skips backend modules whose optional SDK is missing.
+testpaths = ["tests", "vd"]
 doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS"]
 # Make every `async def test_*` run automatically — no per-test decorator
 # needed. Used by tests/test_async.py.
