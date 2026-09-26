@@ -44,11 +44,22 @@ backends.
 - `providers.py` + `data/providers.yaml` — the ~21-provider registry +
   `recommend_backend` decision framework. `requirements.py` —
   `check_requirements` / `setup_guide` / `install_backend`.
-- Modules: `analytics`, `config`, `health`, `io`, `migration`, `search`,
-  `text`, `time_indexed`, `util`, `cli`. (`compare.py` was folded into
-  `providers.py`.)
-- 5 user-facing skills in `vd/data/skills/`; `vd-add-backend` dev skill in
-  `.claude/skills/`.
+- `asynchronous.py` — async surface: `connect_async`, the universal
+  `asyncio.to_thread` wrappers, and **native** async bases
+  (`AsyncAbstractClient` / `AsyncAbstractCollection`) plus a registry
+  (`register_async_backend`, `list_async_backends`). Native today: `qdrant`.
+  The I/O-free embed / dimension / query policy is shared with the sync base
+  through `base._CollectionPolicy`.
+- Hybrid: `vd.hybrid_search` works everywhere (client-side BM25 + RRF
+  fallback, `search.BM25Index`); `weaviate`, `elasticsearch`, `redis` and
+  `lancedb` satisfy `SupportsHybrid` with a native lexical side.
+- Modules: `analytics`, `config`, `filters`, `health`, `io`, `migration`,
+  `search`, `text`, `time_indexed`, `util`, `cli`. (`compare.py` was folded
+  into `providers.py`.) `providers.install_command` returns
+  `pip install "vd[<backend>]"` — the `pyproject.toml` extras are the SSOT
+  for what each adapter needs.
+- 7 skills in `vd/data/skills/` (6 user-facing incl. `vd-setup-backend`, plus
+  the `vd-add-backend` dev skill), each symlinked from `.claude/skills/`.
 
 **Embedding is external.** The core operates on vectors; an `embedder` passed
 to `connect` is an optional convenience. `vd` has **no `dol`/`imbed`
@@ -56,6 +67,24 @@ dependency** — the core is stdlib + `pyyaml` only.
 
 The first consumer, `ef`, was adapted on its `adapt-to-vd-0.2` branch (it
 dropped its dummy-embedder workaround); merge that only after vd 0.2 publishes.
+
+### Running the tests
+
+```bash
+uv venv .venv && . .venv/bin/activate
+uv pip install -e ".[test,dev]"      # dev = the embedded backends the suite sweeps
+python -m pytest --doctest-modules -o doctest_optionflags='ELLIPSIS IGNORE_EXCEPTION_DETAIL'
+```
+
+This is CI's command. `testpaths = ["tests", "vd"]`, so package doctests run
+too; the root `conftest.py` skips backend modules whose SDK is missing.
+Parametrized suites (`tests/test_core.py`, `tests/test_hybrid.py`) run every
+reachable backend via the `client` fixture in `tests/conftest.py`: embedded
+backends always, server backends only when their port answers. Bring the
+servers up with `docker compose -f tests/docker-compose.yml up -d` and install
+their clients (`uv pip install -e ".[pgvector,redis,elasticsearch,weaviate,mongodb,milvus]"`).
+CI installs only the `test` extra, so backend-specific tests skip there —
+run them locally before changing an adapter.
 
 ## 3. Core contracts (the design the refactor should converge on)
 
@@ -133,7 +162,10 @@ fallback engine (`reciprocal_rank_fusion` already exists in `search.py`).
 
 ## 4. Refactor priorities (gaps to fill)
 
-In rough order:
+In rough order. Status as of 2026-09: done — 2, 3, 4, 7; partly done — 1
+(the `F(...)` builder is missing), 6 (native async: `qdrant` only; issue #20
+tracks the rest), 9 (dimension checks are loud and early; `model_id` is not
+stored); open — 5, 8. Native hybrid for the remaining backends is issue #17.
 
 1. **`UnsupportedFilterError`** + per-adapter documented filter subset + a
    `_compile_filter` translator per adapter (memory evaluates in Python;
