@@ -268,10 +268,11 @@ class LanceDBCollection(AbstractCollection):
                     .to_list()
                 )
                 break
-            except ValueError:
+            except (ValueError, RuntimeError) as error:
                 # The table was dropped and recreated since the index was
-                # cached: forget it and build the index again, once.
-                if attempt:
+                # cached: forget it and build the index again, once. (Newer
+                # lancedb raises ValueError here, older releases RuntimeError.)
+                if attempt or "INVERTED index" not in str(error):
                     raise
                 _FTS_READY.discard(self._fts_key())
         results = []
