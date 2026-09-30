@@ -238,6 +238,73 @@ def _to_pinecone_filter(ast: Optional[Filter]) -> Optional[dict]:
     return out
 
 
+#: Pinecone index names: lowercase letters, digits and hyphens, max 45 chars.
+_PINECONE_NAME_MAX = 45
+
+
+def _index_name(name: str) -> str:
+    """
+    Map a ``vd`` collection name to a Pinecone index name.
+
+    Pinecone allows only ``[a-z0-9-]`` while other backends (Milvus, SQL
+    tables) reject hyphens, so portable ``vd`` names use underscores. Each
+    ``_`` becomes ``--`` here and :func:`_collection_name` maps it back, so
+    ``"my_docs"`` is stored as the index ``"my--docs"``. A name that already
+    contains ``--`` would be ambiguous and is rejected.
+
+    >>> _index_name("my_docs")
+    'my--docs'
+    >>> _collection_name(_index_name("my_docs"))
+    'my_docs'
+    """
+    import re
+
+    if "--" in name or not re.fullmatch(r"[a-z0-9_-]+", name):
+        raise ValueError(
+            f"Invalid Pinecone collection name {name!r}: use lowercase letters, "
+            f"digits, '_' and '-' (not '--'). vd stores '_' as '--' because "
+            f"Pinecone index names allow only [a-z0-9-]."
+        )
+    mapped = name.replace("_", "--")
+    if _collection_name(mapped) != name:  # e.g. "a-_b" and "a_-b" -> "a---b"
+        raise ValueError(
+            f"Invalid Pinecone collection name {name!r}: '-_' is ambiguous "
+            f"once '_' is stored as '--'. Write it as '_-' or separate them."
+        )
+    if len(mapped) > _PINECONE_NAME_MAX:
+        raise ValueError(
+            f"Pinecone collection name {name!r} is too long: it maps to the "
+            f"{len(mapped)}-character index name {mapped!r} (max "
+            f"{_PINECONE_NAME_MAX}; each '_' counts twice)."
+        )
+    return mapped
+
+
+def _collection_name(index_name: str) -> str:
+    """Map a Pinecone index name back to its ``vd`` collection name."""
+    return index_name.replace("--", "_")
+
+
+def _ids_from_list_page(page) -> list[str]:
+    """
+    Extract document ids from one item yielded by ``Index.list()``.
+
+    Depending on the SDK version an item is a list of ids, a response with
+    ``.vectors`` (each with ``.id``), or a page with ``.ids``.
+    """
+    if isinstance(page, str):
+        return [page]
+    if isinstance(page, list):
+        return [x if isinstance(x, str) else getattr(x, "id", x) for x in page]
+    vectors = getattr(page, "vectors", None)
+    if vectors is not None:
+        return [getattr(v, "id", v) for v in vectors]
+    ids = getattr(page, "ids", None)
+    if ids is not None:
+        return list(ids)
+    return [getattr(x, "id", x) for x in page]
+
+
 def _index_is_ready(index_description) -> bool:
     """
     Return ``True`` when a Pinecone index description's status is ``"Ready"``.
@@ -307,9 +374,12 @@ class PineconeCollection(AbstractCollection):
         metric: str = "cosine",
         cloud: str = "aws",
         region: str = "us-east-1",
+        plain_http: bool = False,
     ):
         self.name = name
+        self._index_name = _index_name(name)
         self._pc = pc
+        self._plain_http = plain_http
         self._embedder = embedder
         self.dimension = dimension
         self.metric = metric
@@ -328,7 +398,14 @@ class PineconeCollection(AbstractCollection):
     def _get_index(self):
         """Return the Pinecone ``Index`` handle, resolving it once."""
         if self._index is None:
-            self._index = self._pc.Index(self.name)
+            if self._plain_http:
+                # Pinecone Local serves each index over plain HTTP but reports
+                # its host as https://…; open it on the http:// address.
+                host = self._pc.describe_index(self._index_name).host
+                host = "http://" + host.split("://", 1)[-1]
+                self._index = self._pc.Index(host=host)
+            else:
+                self._index = self._pc.Index(self._index_name)
         return self._index
 
     def _ensure_index(self) -> None:
@@ -354,9 +431,9 @@ class PineconeCollection(AbstractCollection):
                 f"dimension= to create_collection."
             )
         existing_names = {idx.name for idx in self._pc.list_indexes()}
-        if self.name not in existing_names:
+        if self._index_name not in existing_names:
             self._pc.create_index(
-                name=self.name,
+                name=self._index_name,
                 dimension=self.dimension,
                 metric=_pinecone_metric(self.metric),
                 spec=ServerlessSpec(cloud=self._cloud, region=self._region),
@@ -470,20 +547,7 @@ class PineconeCollection(AbstractCollection):
             return iter(())
         ids: list[str] = []
         for page in index.list():
-            # ``page`` may be a list of ids or a list-like page object with an
-            # ``ids`` attribute, depending on the SDK version.
-            if isinstance(page, list):
-                ids.extend(page)
-            else:
-                page_ids = getattr(page, "ids", None)
-                if page_ids:
-                    ids.extend(page_ids)
-                else:
-                    # Fall back: treat the object itself as iterable.
-                    try:
-                        ids.extend(list(page))
-                    except TypeError:
-                        pass
+            ids.extend(_ids_from_list_page(page))
         return iter(ids)
 
     def _count(self) -> int:
@@ -586,6 +650,15 @@ class PineconeClient(AbstractClient):
     region : str
         Cloud region for serverless indexes, e.g. ``"us-east-1"`` (the default
         and the only region available on the Starter free tier).
+    host : str, optional
+        Control-plane URL. Omit for Pinecone's cloud. Set it to reach
+        **Pinecone Local**, the official in-memory emulator that needs no
+        account: ``docker run -p 5080-5090:5080-5090 -e PORT=5080
+        -e PINECONE_HOST=localhost ghcr.io/pinecone-io/pinecone-local``, then
+        ``vd.connect("pinecone", api_key="pclocal",
+        host="http://localhost:5080")``. With an ``http://`` host, indexes
+        are opened over plain HTTP too. (Pinecone Local speaks the pre-2026-07
+        API, so it needs the ``pinecone`` SDK < 10.)
     **config
         Additional keyword arguments passed through to :class:`AbstractClient`.
 
@@ -610,6 +683,7 @@ class PineconeClient(AbstractClient):
         api_key: Optional[str] = None,
         cloud: str = "aws",
         region: str = "us-east-1",
+        host: Optional[str] = None,
         **config,
     ):
         super().__init__(embedder=embedder, **config)
@@ -620,15 +694,23 @@ class PineconeClient(AbstractClient):
                 "PINECONE_API_KEY environment variable. Get a key at "
                 "https://app.pinecone.io."
             )
-        self._client = Pinecone(api_key=resolved_key)
+        self._client = (
+            Pinecone(api_key=resolved_key, host=host)
+            if host
+            else Pinecone(api_key=resolved_key)
+        )
         self._cloud = cloud
         self._region = region
+        self._plain_http = bool(host) and host.startswith("http://")
+        #: Collections created without a dimension: no index exists until the
+        #: first write, but the name is taken (vd name -> metric).
+        self._pending: dict[str, str] = {}
 
     # ----- helpers ---------------------------------------------------------- #
 
     def _existing_index_names(self) -> set[str]:
-        """Return the set of index names currently registered in this account."""
-        return {idx.name for idx in self._client.list_indexes()}
+        """Return the ``vd`` names of the indexes registered in this account."""
+        return {_collection_name(idx.name) for idx in self._client.list_indexes()}
 
     # ----- AbstractClient interface ----------------------------------------- #
 
@@ -671,7 +753,8 @@ class PineconeClient(AbstractClient):
         ValueError
             If a collection (index) with that name already exists in the account.
         """
-        if name in self._existing_index_names():
+        _index_name(name)  # validate before touching the account
+        if name in self._existing_index_names() or name in self._pending:
             raise ValueError(
                 f"Collection {name!r} already exists in this Pinecone account."
             )
@@ -683,10 +766,13 @@ class PineconeClient(AbstractClient):
             metric=metric,
             cloud=self._cloud,
             region=self._region,
+            plain_http=self._plain_http,
         )
         if dimension is not None:
             # Eager index creation when the dimension is known up front.
             collection._ensure_index()
+        else:
+            self._pending[name] = metric
         return collection
 
     def get_collection(self, name: str) -> PineconeCollection:
@@ -703,10 +789,23 @@ class PineconeClient(AbstractClient):
         KeyError
             If no index with that name exists in the account.
         """
-        indexes = {idx.name: idx for idx in self._client.list_indexes()}
+        indexes = {
+            _collection_name(idx.name): idx for idx in self._client.list_indexes()
+        }
+        if name not in indexes and name in self._pending:
+            return PineconeCollection(
+                name,
+                self._client,
+                embedder=self._embedder,
+                metric=self._pending[name],
+                cloud=self._cloud,
+                region=self._region,
+                plain_http=self._plain_http,
+            )
         if name not in indexes:
             raise KeyError(
-                f"Collection {name!r} does not exist. "
+                f"Collection {name!r} does not exist (vd lists a Pinecone index "
+                f"named 'a--b' as collection 'a_b'). "
                 f"Existing collections: {sorted(indexes)}"
             )
         idx_info = indexes[name]
@@ -727,6 +826,7 @@ class PineconeClient(AbstractClient):
             metric=vd_metric,
             cloud=self._cloud,
             region=self._region,
+            plain_http=self._plain_http,
         )
 
     def delete_collection(self, name: str) -> None:
@@ -743,9 +843,12 @@ class PineconeClient(AbstractClient):
         KeyError
             If no index with that name exists in the account.
         """
-        if name not in self._existing_index_names():
+        exists = name in self._existing_index_names()
+        if not exists and name not in self._pending:
             raise KeyError(f"Collection {name!r} does not exist and cannot be deleted.")
-        self._client.delete_index(name)
+        if exists:
+            self._client.delete_index(_index_name(name))
+        self._pending.pop(name, None)
 
     def list_collections(self) -> Iterator[str]:
         """
@@ -754,6 +857,8 @@ class PineconeClient(AbstractClient):
         Returns
         -------
         Iterator[str]
-            Index names in the order returned by ``Pinecone.list_indexes()``.
+            ``vd`` collection names (index names with ``--`` mapped back to
+            ``_``), sorted, including collections not yet written to.
         """
-        return (idx.name for idx in self._client.list_indexes())
+        names = self._existing_index_names() | set(self._pending)
+        return iter(sorted(names))

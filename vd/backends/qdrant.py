@@ -176,6 +176,21 @@ def _to_document(point) -> Document:
     )
 
 
+def _metric_and_dimension(info, default_metric: str = "cosine") -> tuple:
+    """
+    Read ``(vd metric, dimension)`` from a Qdrant ``CollectionInfo``.
+
+    A collection created by another client (or process) is only known to
+    this one through the server, so the metric that decides score semantics
+    must come from there, not from local bookkeeping.
+    """
+    vectors = getattr(getattr(info.config, "params", None), "vectors", None)
+    if not isinstance(vectors, models.VectorParams):  # named / multi-vector
+        return default_metric, None
+    reverse = {distance: metric for metric, distance in _DISTANCE.items()}
+    return reverse.get(vectors.distance, default_metric), vectors.size
+
+
 def _vectors_config(dimension: int, metric: str) -> "models.VectorParams":
     """The Qdrant vector config for a collection of ``dimension`` and ``metric``."""
     return models.VectorParams(
@@ -347,13 +362,20 @@ class QdrantClientAdapter(AbstractClient):
         return collection
 
     def get_collection(self, name: str) -> QdrantCollection:
-        if not self._client.collection_exists(name) and name not in self._metrics:
+        exists = self._client.collection_exists(name)
+        if not exists and name not in self._metrics:
             raise KeyError(f"Collection {name!r} does not exist")
+        metric, dimension = self._metrics.get(name, "cosine"), None
+        if exists:
+            metric, dimension = _metric_and_dimension(
+                self._client.get_collection(name), metric
+            )
         return QdrantCollection(
             name,
             self._client,
             embedder=self._embedder,
-            metric=self._metrics.get(name, "cosine"),
+            dimension=dimension,
+            metric=metric,
         )
 
     def delete_collection(self, name: str) -> None:
@@ -570,11 +592,15 @@ class NativeAsyncQdrantClient(AsyncAbstractClient):
         return collection
 
     async def get_collection(self, name: str) -> NativeAsyncQdrantCollection:
-        if not await self._client.collection_exists(name) and name not in self._metrics:
+        exists = await self._client.collection_exists(name)
+        if not exists and name not in self._metrics:
             raise KeyError(f"Collection {name!r} does not exist")
-        return self._collection(
-            name, dimension=None, metric=self._metrics.get(name, "cosine")
-        )
+        metric, dimension = self._metrics.get(name, "cosine"), None
+        if exists:
+            metric, dimension = _metric_and_dimension(
+                await self._client.get_collection(name), metric
+            )
+        return self._collection(name, dimension=dimension, metric=metric)
 
     async def delete_collection(self, name: str) -> None:
         exists = await self._client.collection_exists(name)

@@ -11,10 +11,17 @@
 #
 # milvus is intentionally absent: the milvus adapter is verified against the
 # embedded Milvus Lite engine (no server), which exercises the same code path.
+#
+# No accounts needed: pinecone runs as Pinecone Local (the official in-memory
+# emulator) and mongodb as MongoDB Atlas Local. turbopuffer has no emulator.
+#
+# Docker Hub rate-limits anonymous pulls. Set DOCKERHUB_MIRROR=mirror.gcr.io
+# (Google's public Docker Hub mirror) to pull the Docker Hub images from there:
+#   DOCKERHUB_MIRROR=mirror.gcr.io docker compose -f tests/docker-compose.yml up -d
 
 services:
   pgvector:
-    image: pgvector/pgvector:pg17
+    image: ${DOCKERHUB_MIRROR:-docker.io}/pgvector/pgvector:pg17
     environment:
       POSTGRES_USER: vd
       POSTGRES_PASSWORD: vd
@@ -28,7 +35,7 @@ services:
       retries: 20
 
   redis:
-    image: redis/redis-stack-server:latest
+    image: ${DOCKERHUB_MIRROR:-docker.io}/redis/redis-stack-server:latest
     ports:
       - "6379:6379"
     healthcheck:
@@ -52,7 +59,7 @@ services:
       retries: 30
 
   weaviate:
-    image: cr.weaviate.io/semitechnologies/weaviate:1.28.4
+    image: ${DOCKERHUB_MIRROR:-docker.io}/semitechnologies/weaviate:1.28.4
     command: ["--host", "0.0.0.0", "--port", "8080", "--scheme", "http"]
     environment:
       AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
@@ -70,7 +77,7 @@ services:
       retries: 30
 
   mongodb:
-    image: mongodb/mongodb-atlas-local:latest
+    image: ${DOCKERHUB_MIRROR:-docker.io}/mongodb/mongodb-atlas-local:latest
     # Host port 27018 (not 27017) to avoid colliding with a developer's
     # native mongod. The container still listens on 27017 internally.
     ports:
@@ -80,3 +87,21 @@ services:
       interval: 5s
       timeout: 5s
       retries: 30
+
+  qdrant:
+    # The qdrant adapter with url= (the "qdrant_server" test entry). Embedded
+    # qdrant needs no container and is always tested.
+    image: ${DOCKERHUB_MIRROR:-docker.io}/qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+
+  pinecone:
+    # Pinecone Local: in-memory, no account (api_key="pclocal"). It speaks the
+    # pre-2026-07 API, so run the pinecone tests with the pinecone SDK < 10.
+    image: ghcr.io/pinecone-io/pinecone-local:latest
+    environment:
+      PORT: "5080"
+      PINECONE_HOST: localhost
+    ports:
+      - "5080-5090:5080-5090"

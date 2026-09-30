@@ -234,7 +234,15 @@ uv pip install -e ".[test,dev]"
 python -m pytest --doctest-modules -o doctest_optionflags='ELLIPSIS IGNORE_EXCEPTION_DETAIL'
 ```
 
-That is exactly what CI runs; package doctests are included. The backend-parametrized suites skip server backends that aren't running. To exercise them, start the containers with `docker compose -f tests/docker-compose.yml up -d` and install their clients with `uv pip install -e ".[pgvector,redis,elasticsearch,weaviate,mongodb,milvus]"`.
+That is what CI runs (CI also installs the `ci-backends` extra); package doctests are included. The backend-parametrized suites skip server backends that aren't running. Every server backend except turbopuffer runs locally without an account, Pinecone and MongoDB Atlas included, through their official emulators:
+
+```bash
+DOCKERHUB_MIRROR=mirror.gcr.io docker compose -f tests/docker-compose.yml up -d
+uv pip install -e ".[test,dev,pgvector,redis,elasticsearch,weaviate,mongodb,milvus,pinecone]" "pinecone<10"
+python -m pytest
+```
+
+See [`tests/README.md`](tests/README.md) for connection settings and caveats.
 
 **Design rationale.**
 

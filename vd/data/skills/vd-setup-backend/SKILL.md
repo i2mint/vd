@@ -108,6 +108,26 @@ as above, is for local development only.
 | `milvus` / Zilliz | `MILVUS_URI`, `MILVUS_TOKEN` | no — pass `uri=`, `token=` |
 | `elasticsearch` | `ELASTICSEARCH_URL`, `ELASTIC_API_KEY` | no — pass `url=`, `api_key=` |
 
+**Managed, but no account for development:** two managed backends have
+official local stand-ins, so you can build and test before signing up.
+
+```bash
+# Pinecone Local: in-memory emulator, any api_key works (use "pclocal").
+docker run -d -p 5080-5090:5080-5090 -e PORT=5080 -e PINECONE_HOST=localhost ghcr.io/pinecone-io/pinecone-local
+# MongoDB Atlas Local: real $vectorSearch, on host port 27018 here.
+docker run -d -p 27018:27017 mongodb/mongodb-atlas-local
+```
+
+```python
+vd.connect("pinecone", api_key="pclocal", host="http://localhost:5080")
+vd.connect("mongodb", uri="mongodb://localhost:27018/?directConnection=true")
+```
+
+Pinecone Local speaks the pre-2026-07 API, so it needs `pip install "pinecone<10"`
+for now. turbopuffer has no emulator: use a throwaway namespace on a real
+account. If Docker Hub refuses anonymous pulls (rate limit), prefix Docker Hub
+images with Google's mirror, e.g. `mirror.gcr.io/mongodb/mongodb-atlas-local`.
+
 ## 5. Connect
 
 ```python
@@ -171,5 +191,6 @@ smoke_test(vd.connect("memory"))
   the live pricing pages; re-check there rather than quoting numbers.
 
 For contributors, the repo's `tests/docker-compose.yml` brings up pgvector,
-Redis Stack, Elasticsearch, Weaviate and MongoDB Atlas Local together for the
-live test suite.
+Redis Stack, Elasticsearch, Weaviate, MongoDB Atlas Local, a Qdrant server and
+Pinecone Local together for the live test suite, with no accounts
+(`DOCKERHUB_MIRROR=mirror.gcr.io docker compose -f tests/docker-compose.yml up -d`).

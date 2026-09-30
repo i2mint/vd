@@ -13,13 +13,16 @@ Two kinds of backend run:
   ``sqlite3`` lacks loadable-extension support; ``milvus`` runs against the
   embedded Milvus Lite engine and is skipped if ``milvus-lite`` is absent.
 - **Server backends** (``pgvector``, ``redis``, ``elasticsearch``,
-  ``weaviate``, ``mongodb``) need a running container — see
-  ``tests/docker-compose.yml``. Each is TCP-probed and **skipped** when its
+  ``weaviate``, ``mongodb``, ``pinecone`` via Pinecone Local, and
+  ``qdrant_server``: the qdrant adapter with ``url=``) need a running
+  container — see ``tests/docker-compose.yml``; none needs an account. Each is TCP-probed and **skipped** when its
   container is down, so the suite stays green in a plain CI environment.
 
 Connection settings for the server backends are environment-overridable
 (``VD_PGVECTOR_DSN``, ``VD_REDIS_HOST``/``VD_REDIS_PORT``,
-``VD_ELASTICSEARCH_URL``, ``VD_WEAVIATE_HOST``, ``VD_MONGODB_URI``).
+``VD_ELASTICSEARCH_URL``, ``VD_WEAVIATE_HOST``, ``VD_MONGODB_URI``,
+``VD_PINECONE_HOST``/``VD_PINECONE_API_KEY``, ``VD_QDRANT_URL``). An entry may
+set ``"backend"`` to test another entry's adapter under a different setup.
 """
 
 import hashlib
@@ -48,7 +51,10 @@ EMBEDDED_BACKENDS = [
 ]
 
 #: Server backends — each needs a container (``tests/docker-compose.yml``).
-#: ``probe`` is TCP-probed; the backend is skipped when the port is closed.
+#: The server address (from ``connect_kwargs``, falling back to ``probe``) is
+#: TCP-probed; the backend is skipped when the port is closed. Only local
+#: servers are used unless ``VD_ALLOW_REMOTE_TESTS=1``: the ``client`` fixture
+#: deletes every collection it can see, which would wipe a real account.
 #: ``connect_kwargs`` builds the :func:`vd.connect` arguments (env-overridable).
 SERVER_BACKENDS = {
     "pgvector": {
@@ -76,6 +82,26 @@ SERVER_BACKENDS = {
         "probe": ("localhost", 8080),
         "connect_kwargs": lambda: {
             "host": os.environ.get("VD_WEAVIATE_HOST", "localhost")
+        },
+    },
+    "pinecone": {
+        # Pinecone Local, the official in-memory emulator (no account):
+        # ghcr.io/pinecone-io/pinecone-local. It speaks the pre-2026-07 API, so
+        # these tests need the pinecone SDK < 10 until the emulator catches up.
+        "probe": ("localhost", 5080),
+        "connect_kwargs": lambda: {
+            "api_key": os.environ.get("VD_PINECONE_API_KEY", "pclocal"),
+            "host": os.environ.get("VD_PINECONE_HOST", "http://localhost:5080"),
+        },
+    },
+    "qdrant_server": {
+        # The qdrant adapter against a real Qdrant server (url=), next to the
+        # embedded "qdrant" entry above: exercises the network client paths.
+        "backend": "qdrant",
+        "probe": ("localhost", 6333),
+        "connect_kwargs": lambda: {
+            "url": os.environ.get("VD_QDRANT_URL", "http://localhost:6333"),
+            "check_compatibility": False,
         },
     },
     "mongodb": {
@@ -119,20 +145,84 @@ def _sqlite_ext_supported() -> bool:
         return False
 
 
+_LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1"}
+
+
+def server_address(name: str) -> tuple:
+    """
+    The ``(host, port)`` a server entry will connect to.
+
+    ``host`` is ``None`` when it can't be determined (a keyword-style or
+    multi-host DSN, ...); callers must then treat the target as remote.
+    """
+    import re
+    from urllib.parse import parse_qs, urlsplit
+
+    entry = SERVER_BACKENDS[name]
+    default_host, default_port = entry["probe"]
+    kwargs = entry["connect_kwargs"]()
+    for key in ("url", "dsn", "uri", "host"):
+        value = kwargs.get(key)
+        if not isinstance(value, str):
+            continue
+        if "://" in value:
+            parts = urlsplit(value)
+            if "," in parts.netloc:  # multi-host URI
+                return None, default_port
+            query_host = parse_qs(parts.query).get("host")
+            try:
+                port = parts.port or default_port
+            except ValueError:
+                return None, default_port
+            if query_host:
+                return None, port  # host given in the query string
+            return parts.hostname or default_host, port
+        if key == "dsn":  # keyword DSN, e.g. "host=db port=5432 dbname=vd"
+            found = re.search(r"\bhost(?:addr)?\s*=\s*'?([^\s']+)", value)
+            port = re.search(r"\bport\s*=\s*'?(\d+)", value)
+            if not found or "," in found.group(1):
+                return None, default_port
+            return found.group(1), int(port.group(1)) if port else default_port
+        if key == "host":
+            return value, int(kwargs.get("port", default_port))
+    return default_host, default_port
+
+
 def _unavailable_reason(name: str) -> str | None:
     """Return a skip reason for backend ``name``, or ``None`` if it can run."""
     if name == "sqlite_vec" and not _sqlite_ext_supported():
         return "sqlite3 was built without loadable-extension support"
     if name == "milvus" and importlib.util.find_spec("milvus_lite") is None:
         return "milvus-lite not installed (embedded Milvus engine unavailable)"
+    if name == "pinecone":
+        import pinecone
+
+        major = str(getattr(pinecone, "__version__", "0")).split(".")[0]
+        if major.isdigit() and int(major) >= 10:
+            return (
+                "Pinecone Local speaks the pre-2026-07 API; the pinecone SDK "
+                ">= 10 cannot drive it. Install 'pinecone<10' to run these."
+            )
     if name in SERVER_BACKENDS:
-        host, port = SERVER_BACKENDS[name]["probe"]
-        if not _tcp_open(host, port):
+        host, port = server_address(name)
+        if host not in _LOCAL_HOSTS and os.environ.get("VD_ALLOW_REMOTE_TESTS") != "1":
+            return (
+                f"{name!r} points at {host or 'a host that could not be parsed'}, "
+                f"not a local server; the tests "
+                f"delete every collection they see. Set VD_ALLOW_REMOTE_TESTS=1 "
+                f"to allow it."
+            )
+        if host is None or not _tcp_open(host, port):
             return (
                 f"{name!r} server unreachable at {host}:{port} "
                 f"— start it with tests/docker-compose.yml"
             )
     return None
+
+
+def backend_of(name: str) -> str:
+    """The ``vd.connect`` backend for a fixture entry (entries may alias one)."""
+    return SERVER_BACKENDS.get(name, {}).get("backend", name)
 
 
 def _connect_kwargs(name: str) -> dict:
@@ -194,7 +284,7 @@ def embedder():
 def backend_name(request):
     """Each reachable backend, one at a time; unreachable ones are skipped."""
     name = request.param
-    if name not in vd.list_backends():
+    if backend_of(name) not in vd.list_backends():
         pytest.skip(f"backend {name!r} is not installed")
     reason = _unavailable_reason(name)
     if reason:
@@ -206,7 +296,7 @@ def backend_name(request):
 def client(backend_name, embedder):
     """A fresh, connected client for each backend (with an embedder)."""
     connection = vd.connect(
-        backend_name, embedder=embedder, **_connect_kwargs(backend_name)
+        backend_of(backend_name), embedder=embedder, **_connect_kwargs(backend_name)
     )
     _drop_all_collections(connection)
     yield connection
