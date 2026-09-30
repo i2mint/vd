@@ -149,19 +149,42 @@ _LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1"}
 
 
 def server_address(name: str) -> tuple:
-    """The ``(host, port)`` a server entry will actually connect to."""
-    from urllib.parse import urlsplit
+    """
+    The ``(host, port)`` a server entry will connect to.
+
+    ``host`` is ``None`` when it can't be determined (a keyword-style or
+    multi-host DSN, ...); callers must then treat the target as remote.
+    """
+    import re
+    from urllib.parse import parse_qs, urlsplit
 
     entry = SERVER_BACKENDS[name]
     default_host, default_port = entry["probe"]
     kwargs = entry["connect_kwargs"]()
     for key in ("url", "dsn", "uri", "host"):
         value = kwargs.get(key)
-        if isinstance(value, str) and "://" in value:
+        if not isinstance(value, str):
+            continue
+        if "://" in value:
             parts = urlsplit(value)
-            return parts.hostname or default_host, parts.port or default_port
-    if "host" in kwargs:
-        return kwargs["host"], int(kwargs.get("port", default_port))
+            if "," in parts.netloc:  # multi-host URI
+                return None, default_port
+            query_host = parse_qs(parts.query).get("host")
+            try:
+                port = parts.port or default_port
+            except ValueError:
+                return None, default_port
+            if query_host:
+                return None, port  # host given in the query string
+            return parts.hostname or default_host, port
+        if key == "dsn":  # keyword DSN, e.g. "host=db port=5432 dbname=vd"
+            found = re.search(r"\bhost(?:addr)?\s*=\s*'?([^\s']+)", value)
+            port = re.search(r"\bport\s*=\s*'?(\d+)", value)
+            if not found or "," in found.group(1):
+                return None, default_port
+            return found.group(1), int(port.group(1)) if port else default_port
+        if key == "host":
+            return value, int(kwargs.get("port", default_port))
     return default_host, default_port
 
 
@@ -172,9 +195,10 @@ def _unavailable_reason(name: str) -> str | None:
     if name == "milvus" and importlib.util.find_spec("milvus_lite") is None:
         return "milvus-lite not installed (embedded Milvus engine unavailable)"
     if name == "pinecone":
-        from importlib.metadata import version
+        import pinecone
 
-        if int(version("pinecone").split(".")[0]) >= 10:
+        major = str(getattr(pinecone, "__version__", "0")).split(".")[0]
+        if major.isdigit() and int(major) >= 10:
             return (
                 "Pinecone Local speaks the pre-2026-07 API; the pinecone SDK "
                 ">= 10 cannot drive it. Install 'pinecone<10' to run these."
@@ -183,11 +207,12 @@ def _unavailable_reason(name: str) -> str | None:
         host, port = server_address(name)
         if host not in _LOCAL_HOSTS and os.environ.get("VD_ALLOW_REMOTE_TESTS") != "1":
             return (
-                f"{name!r} points at {host}, not a local server; the tests "
+                f"{name!r} points at {host or 'a host that could not be parsed'}, "
+                f"not a local server; the tests "
                 f"delete every collection they see. Set VD_ALLOW_REMOTE_TESTS=1 "
                 f"to allow it."
             )
-        if not _tcp_open(host, port):
+        if host is None or not _tcp_open(host, port):
             return (
                 f"{name!r} server unreachable at {host}:{port} "
                 f"— start it with tests/docker-compose.yml"

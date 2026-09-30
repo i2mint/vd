@@ -268,9 +268,8 @@ def _index_name(name: str) -> str:
     mapped = name.replace("_", "--")
     if _collection_name(mapped) != name:  # e.g. "a-_b" and "a_-b" -> "a---b"
         raise ValueError(
-            f"Invalid Pinecone collection name {name!r}: '_' next to '-' is "
-            f"ambiguous once '_' is stored as '--'. Use '_' or '-', not both "
-            f"side by side."
+            f"Invalid Pinecone collection name {name!r}: '-_' is ambiguous "
+            f"once '_' is stored as '--'. Write it as '_-' or separate them."
         )
     if len(mapped) > _PINECONE_NAME_MAX:
         raise ValueError(
