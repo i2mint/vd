@@ -94,6 +94,9 @@ _METRIC_TO_ATLAS_SIMILARITY = {
     "l2": "euclidean",
 }
 
+#: Search-index statuses Atlas reports for an index that is gone or going.
+_GONE_INDEX_STATUSES = frozenset({"DOES_NOT_EXIST", "DELETING"})
+
 
 # ---------------------------------------------------------------------------
 # Helper: build a $vectorSearch aggregation pipeline
@@ -283,7 +286,7 @@ class MongoDBCollection(AbstractCollection):
         if self._index_ready:
             return
         try:
-            existing = {idx["name"] for idx in self._coll.list_search_indexes()}
+            existing = self._live_search_index_names()
         except OperationFailure as exc:
             raise RuntimeError(
                 "This MongoDB deployment does not support Atlas Vector Search. "
@@ -298,9 +301,31 @@ class MongoDBCollection(AbstractCollection):
                     f"Write a document first, or pass dimension= to "
                     f"create_collection."
                 )
-            from pymongo.operations import SearchIndexModel
+            self._create_vector_index()
+        self._wait_until_queryable()
+        self._index_ready = True
 
-            similarity = _METRIC_TO_ATLAS_SIMILARITY.get(self.metric, "cosine")
+    def _live_search_index_names(self) -> set:
+        """
+        Names of this collection's search indexes that actually exist.
+
+        Right after a collection is dropped, Atlas still lists its search
+        indexes for a moment with status ``DOES_NOT_EXIST`` (or ``DELETING``).
+        A same-named collection created in that window must not mistake them
+        for its own (#29).
+        """
+        return {
+            idx["name"]
+            for idx in self._coll.list_search_indexes()
+            if idx.get("status") not in _GONE_INDEX_STATUSES
+        }
+
+    def _create_vector_index(self) -> None:
+        """Submit the Atlas vector search index definition for this collection."""
+        from pymongo.operations import SearchIndexModel
+
+        similarity = _METRIC_TO_ATLAS_SIMILARITY.get(self.metric, "cosine")
+        try:
             self._coll.create_search_index(
                 SearchIndexModel(
                     definition={
@@ -317,8 +342,10 @@ class MongoDBCollection(AbstractCollection):
                     type="vectorSearch",
                 )
             )
-        self._wait_until_queryable()
-        self._index_ready = True
+        except OperationFailure as exc:
+            # A concurrent creator won the race; the wait loop takes over.
+            if "already exists" not in str(exc).lower():
+                raise
 
     def _wait_until_queryable(
         self, *, timeout: float = 120.0, poll_interval: float = 1.0
@@ -328,9 +355,17 @@ class MongoDBCollection(AbstractCollection):
 
         deadline = time.monotonic() + timeout
         while time.monotonic() < deadline:
-            for idx in self._coll.list_search_indexes(self._vector_index):
-                if idx.get("queryable"):
-                    return
+            listed = [
+                idx
+                for idx in self._coll.list_search_indexes(self._vector_index)
+                if idx.get("status") not in _GONE_INDEX_STATUSES
+            ]
+            if any(idx.get("queryable") for idx in listed):
+                return
+            if not listed and self.dimension is not None:
+                # The index we waited on belonged to a dropped, same-named
+                # collection and has vanished: create ours (#29).
+                self._create_vector_index()
             time.sleep(poll_interval)
         raise RuntimeError(
             f"Atlas vector search index {self._vector_index!r} for collection "
