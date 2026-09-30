@@ -64,6 +64,10 @@ The server backends use these defaults; override with environment variables:
 | `pinecone`      | `VD_PINECONE_HOST` / `VD_PINECONE_API_KEY` | `http://localhost:5080` / `pclocal` |
 | `qdrant_server` | `VD_QDRANT_URL`       | `http://localhost:6333`                              |
 
+Only local servers are used: an override pointing elsewhere is skipped, because
+the suite deletes every collection it can see. Set `VD_ALLOW_REMOTE_TESTS=1` to
+run against a remote server you are happy to wipe.
+
 `mongodb` maps to host port **27018** (not 27017) to avoid colliding with a
 developer's native `mongod`. It uses the `mongodb-atlas-local` image because
 `$vectorSearch` requires an Atlas-capable deployment.

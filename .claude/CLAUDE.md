@@ -38,7 +38,8 @@ backends.
   `UnsupportedCapabilityError`, `EmbeddingRequiredError`,
   `BackendNotInstalledError`); capability protocols.
 - `backends/` — 15 adapters: `memory`, `chroma`, `faiss`, `sqlite_vec`,
-  `duckdb`, `lancedb`, `qdrant`, `milvus` (embedded, always tested) and
+  `duckdb`, `lancedb`, `qdrant`, `milvus` (embedded; tested whenever their
+  client is installed, milvus via milvus-lite) and
   `pgvector`, `pinecone`, `weaviate`, `redis`, `elasticsearch`, `mongodb`
   (tested against local containers, no accounts) and `turbopuffer`
   (correct-by-construction: no local emulator exists).

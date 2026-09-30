@@ -266,6 +266,12 @@ def _index_name(name: str) -> str:
             f"Pinecone index names allow only [a-z0-9-]."
         )
     mapped = name.replace("_", "--")
+    if _collection_name(mapped) != name:  # e.g. "a-_b" and "a_-b" -> "a---b"
+        raise ValueError(
+            f"Invalid Pinecone collection name {name!r}: '_' next to '-' is "
+            f"ambiguous once '_' is stored as '--'. Use '_' or '-', not both "
+            f"side by side."
+        )
     if len(mapped) > _PINECONE_NAME_MAX:
         raise ValueError(
             f"Pinecone collection name {name!r} is too long: it maps to the "
@@ -799,7 +805,8 @@ class PineconeClient(AbstractClient):
             )
         if name not in indexes:
             raise KeyError(
-                f"Collection {name!r} does not exist. "
+                f"Collection {name!r} does not exist (vd lists a Pinecone index "
+                f"named 'a--b' as collection 'a_b'). "
                 f"Existing collections: {sorted(indexes)}"
             )
         idx_info = indexes[name]

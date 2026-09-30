@@ -51,7 +51,10 @@ EMBEDDED_BACKENDS = [
 ]
 
 #: Server backends — each needs a container (``tests/docker-compose.yml``).
-#: ``probe`` is TCP-probed; the backend is skipped when the port is closed.
+#: The server address (from ``connect_kwargs``, falling back to ``probe``) is
+#: TCP-probed; the backend is skipped when the port is closed. Only local
+#: servers are used unless ``VD_ALLOW_REMOTE_TESTS=1``: the ``client`` fixture
+#: deletes every collection it can see, which would wipe a real account.
 #: ``connect_kwargs`` builds the :func:`vd.connect` arguments (env-overridable).
 SERVER_BACKENDS = {
     "pgvector": {
@@ -142,14 +145,48 @@ def _sqlite_ext_supported() -> bool:
         return False
 
 
+_LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1"}
+
+
+def server_address(name: str) -> tuple:
+    """The ``(host, port)`` a server entry will actually connect to."""
+    from urllib.parse import urlsplit
+
+    entry = SERVER_BACKENDS[name]
+    default_host, default_port = entry["probe"]
+    kwargs = entry["connect_kwargs"]()
+    for key in ("url", "dsn", "uri", "host"):
+        value = kwargs.get(key)
+        if isinstance(value, str) and "://" in value:
+            parts = urlsplit(value)
+            return parts.hostname or default_host, parts.port or default_port
+    if "host" in kwargs:
+        return kwargs["host"], int(kwargs.get("port", default_port))
+    return default_host, default_port
+
+
 def _unavailable_reason(name: str) -> str | None:
     """Return a skip reason for backend ``name``, or ``None`` if it can run."""
     if name == "sqlite_vec" and not _sqlite_ext_supported():
         return "sqlite3 was built without loadable-extension support"
     if name == "milvus" and importlib.util.find_spec("milvus_lite") is None:
         return "milvus-lite not installed (embedded Milvus engine unavailable)"
+    if name == "pinecone":
+        from importlib.metadata import version
+
+        if int(version("pinecone").split(".")[0]) >= 10:
+            return (
+                "Pinecone Local speaks the pre-2026-07 API; the pinecone SDK "
+                ">= 10 cannot drive it. Install 'pinecone<10' to run these."
+            )
     if name in SERVER_BACKENDS:
-        host, port = SERVER_BACKENDS[name]["probe"]
+        host, port = server_address(name)
+        if host not in _LOCAL_HOSTS and os.environ.get("VD_ALLOW_REMOTE_TESTS") != "1":
+            return (
+                f"{name!r} points at {host}, not a local server; the tests "
+                f"delete every collection they see. Set VD_ALLOW_REMOTE_TESTS=1 "
+                f"to allow it."
+            )
         if not _tcp_open(host, port):
             return (
                 f"{name!r} server unreachable at {host}:{port} "

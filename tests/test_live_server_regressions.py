@@ -9,15 +9,15 @@ parametrized contract suites only hit by accident of test ordering.
 import pytest
 
 import vd
-from tests.conftest import SERVER_BACKENDS, _connect_kwargs, _tcp_open, backend_of
+from tests.conftest import _connect_kwargs, _unavailable_reason, backend_of
 
 
 def _live_client(name):
     if backend_of(name) not in vd.list_backends():
         pytest.skip(f"backend {name!r} is not installed")
-    host, port = SERVER_BACKENDS[name]["probe"]
-    if not _tcp_open(host, port):
-        pytest.skip(f"{name!r} server unreachable at {host}:{port}")
+    reason = _unavailable_reason(name)
+    if reason:
+        pytest.skip(reason)
     return vd.connect(backend_of(name), **_connect_kwargs(name))
 
 

@@ -397,10 +397,11 @@ async def test_hybrid_search_async_native_accepts_sync_lexical_callable(
 
 async def test_qdrant_native_against_live_server(qdrant_available):
     """With a Qdrant server up, connect_async(url=) is native and matches sync."""
-    from tests.conftest import _connect_kwargs, _tcp_open
+    from tests.conftest import _connect_kwargs, _unavailable_reason
 
-    if not _tcp_open("localhost", 6333):
-        pytest.skip("no Qdrant server on localhost:6333")
+    reason = _unavailable_reason("qdrant_server")
+    if reason:
+        pytest.skip(reason)
     kwargs = _connect_kwargs("qdrant_server")
     sync = vd.connect("qdrant", **kwargs)
     name = "vd_async_live"
