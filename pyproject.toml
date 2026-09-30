@@ -86,6 +86,10 @@ dev = [
 # suite (tests/test_async.py) has pytest-asyncio.
 # hatchling: tests/test_package.py checks the sdist file list (#28).
 test = ["pytest>=7.0", "pytest-cov>=4.0", "pytest-asyncio>=0.23", "hatchling"]
+# Server-free backend clients CI installs so their tests run instead of
+# skipping: qdrant (embedded :memory: + native async), lancedb (embedded, FTS
+# hybrid), and pgvector's client for its server-free unit test.
+ci-backends = ["qdrant-client", "lancedb", "pgvector", "psycopg[binary]"]
 docs = ["sphinx>=6.0", "sphinx-rtd-theme>=1.0"]
 
 [tool.hatch.build.targets.wheel]
@@ -149,7 +153,7 @@ installer = "uv"
 # Install the `test` extra so CI has the async test runner (pytest-asyncio);
 # without it tests/test_async.py errors with "async def functions are not
 # natively supported" and every async test fails.
-extras = "test"
+extras = "test,ci-backends"
 
 [tool.wads.ci.testing]
 python_versions = ["3.10", "3.12"]

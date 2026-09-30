@@ -85,8 +85,10 @@ reachable backend via the `client` fixture in `tests/conftest.py`: embedded
 backends always, server backends only when their port answers. Bring the
 servers up with `docker compose -f tests/docker-compose.yml up -d` and install
 their clients (`uv pip install -e ".[pgvector,redis,elasticsearch,weaviate,mongodb,milvus]"`).
-CI installs only the `test` extra, so backend-specific tests skip there —
-run them locally before changing an adapter.
+CI installs the `test` and `ci-backends` extras (qdrant-client, lancedb,
+pgvector's client), so the embedded qdrant and LanceDB suites run there;
+server backends still skip in CI — run them locally before changing an
+adapter.
 
 ## 3. Core contracts (the design the refactor should converge on)
 
