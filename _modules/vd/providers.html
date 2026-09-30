@@ -291,406 +291,404 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="147">        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> needs no installation (built into vd)"</span>
 </span><span data-line="148">    <span class="k">if</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"adapter"</span><span class="p">):</span>
 </span><span data-line="149">        <span class="k">return</span> <span class="sa">f</span><span class="s1">'pip install "vd[</span><span class="si">{</span><span class="n">meta</span><span class="p">[</span><span class="s2">"adapter"</span><span class="p">]</span><span class="si">}</span><span class="s1">]"'</span>
-</span><span data-line="150">    <span class="k">return</span> <span class="s2">"pip install "</span> <span class="o">+</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-</span><span data-line="151">        <span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s1">"'</span> <span class="k">if</span> <span class="s2">"["</span> <span class="ow">in</span> <span class="n">p</span> <span class="k">else</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">packages</span>
-</span><span data-line="152">    <span class="p">)</span></div>
+</span><span data-line="150">    <span class="k">return</span> <span class="s2">"pip install "</span> <span class="o">+</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s1">"'</span> <span class="k">if</span> <span class="s2">"["</span> <span class="ow">in</span> <span class="n">p</span> <span class="k">else</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">packages</span><span class="p">)</span></div>
 
-</span><span data-line="153">
-</span><span data-line="154">
+</span><span data-line="151">
+</span><span data-line="152">
+</span><span data-line="153"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="154"><span class="c1"># Inventory</span>
 </span><span data-line="155"><span class="c1"># --------------------------------------------------------------------------- #</span>
-</span><span data-line="156"><span class="c1"># Inventory</span>
-</span><span data-line="157"><span class="c1"># --------------------------------------------------------------------------- #</span>
-</span><span data-line="158">
-</span><span data-line="159">
+</span><span data-line="156">
+</span><span data-line="157">
 <div class="viewcode-block" id="list_all_backends">
 <a class="viewcode-back" href="../../_autosummary/vd.html#vd.list_all_backends">[docs]</a>
-</span><span data-line="160"><span class="k">def</span><span class="w"> </span><span class="nf">list_all_backends</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-</span><span data-line="161"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="162"><span class="sd">    Return every provider with live ``installed`` / ``has_adapter`` flags added.</span>
-</span><span data-line="163"><span class="sd">    """</span>
-</span><span data-line="164">    <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span data-line="165">    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">_registry</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span data-line="166">        <span class="n">info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
-</span><span data-line="167">        <span class="n">info</span><span class="p">[</span><span class="s2">"installed"</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_installed</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-</span><span data-line="168">        <span class="n">info</span><span class="p">[</span><span class="s2">"has_adapter"</span><span class="p">]</span> <span class="o">=</span> <span class="n">has_adapter</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-</span><span data-line="169">        <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span>
-</span><span data-line="170">    <span class="k">return</span> <span class="n">out</span></div>
+</span><span data-line="158"><span class="k">def</span><span class="w"> </span><span class="nf">list_all_backends</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+</span><span data-line="159"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="160"><span class="sd">    Return every provider with live ``installed`` / ``has_adapter`` flags added.</span>
+</span><span data-line="161"><span class="sd">    """</span>
+</span><span data-line="162">    <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span data-line="163">    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">_registry</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="164">        <span class="n">info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+</span><span data-line="165">        <span class="n">info</span><span class="p">[</span><span class="s2">"installed"</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_installed</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="166">        <span class="n">info</span><span class="p">[</span><span class="s2">"has_adapter"</span><span class="p">]</span> <span class="o">=</span> <span class="n">has_adapter</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="167">        <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span>
+</span><span data-line="168">    <span class="k">return</span> <span class="n">out</span></div>
 
-</span><span data-line="171">
-</span><span data-line="172">
+</span><span data-line="169">
+</span><span data-line="170">
 <div class="viewcode-block" id="list_available_backends">
 <a class="viewcode-back" href="../../_autosummary/vd.html#vd.list_available_backends">[docs]</a>
-</span><span data-line="173"><span class="k">def</span><span class="w"> </span><span class="nf">list_available_backends</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span data-line="174"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="175"><span class="sd">    Return providers ``vd`` can :func:`~vd.connect` *right now*.</span>
-</span><span data-line="176">
-</span><span data-line="177"><span class="sd">    A backend is available iff its adapter module imported successfully — which</span>
-</span><span data-line="178"><span class="sd">    happens only when its client library is installed. This is exactly the set</span>
-</span><span data-line="179"><span class="sd">    of registered backends.</span>
-</span><span data-line="180"><span class="sd">    """</span>
-</span><span data-line="181">    <span class="kn">from</span><span class="w"> </span><span class="nn">vd.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_backends</span>
-</span><span data-line="182">
-</span><span data-line="183">    <span class="k">return</span> <span class="n">list_backends</span><span class="p">()</span></div>
+</span><span data-line="171"><span class="k">def</span><span class="w"> </span><span class="nf">list_available_backends</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span data-line="172"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="173"><span class="sd">    Return providers ``vd`` can :func:`~vd.connect` *right now*.</span>
+</span><span data-line="174">
+</span><span data-line="175"><span class="sd">    A backend is available iff its adapter module imported successfully — which</span>
+</span><span data-line="176"><span class="sd">    happens only when its client library is installed. This is exactly the set</span>
+</span><span data-line="177"><span class="sd">    of registered backends.</span>
+</span><span data-line="178"><span class="sd">    """</span>
+</span><span data-line="179">    <span class="kn">from</span><span class="w"> </span><span class="nn">vd.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_backends</span>
+</span><span data-line="180">
+</span><span data-line="181">    <span class="k">return</span> <span class="n">list_backends</span><span class="p">()</span></div>
 
-</span><span data-line="184">
-</span><span data-line="185">
+</span><span data-line="182">
+</span><span data-line="183">
 <div class="viewcode-block" id="get_backend_info">
 <a class="viewcode-back" href="../../_autosummary/vd.html#vd.get_backend_info">[docs]</a>
-</span><span data-line="186"><span class="k">def</span><span class="w"> </span><span class="nf">get_backend_info</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span data-line="187"><span class="w">    </span><span class="sd">"""Return one provider's metadata with ``installed``/``has_adapter`` flags."""</span>
-</span><span data-line="188">    <span class="n">meta</span> <span class="o">=</span> <span class="n">provider</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-</span><span data-line="189">    <span class="k">if</span> <span class="n">meta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="190">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span data-line="191">            <span class="sa">f</span><span class="s2">"Unknown provider </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">. Known: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">provider_names</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span>
-</span><span data-line="192">        <span class="p">)</span>
-</span><span data-line="193">    <span class="n">info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
-</span><span data-line="194">    <span class="n">info</span><span class="p">[</span><span class="s2">"installed"</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_installed</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-</span><span data-line="195">    <span class="n">info</span><span class="p">[</span><span class="s2">"has_adapter"</span><span class="p">]</span> <span class="o">=</span> <span class="n">has_adapter</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-</span><span data-line="196">    <span class="k">return</span> <span class="n">info</span></div>
+</span><span data-line="184"><span class="k">def</span><span class="w"> </span><span class="nf">get_backend_info</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span data-line="185"><span class="w">    </span><span class="sd">"""Return one provider's metadata with ``installed``/``has_adapter`` flags."""</span>
+</span><span data-line="186">    <span class="n">meta</span> <span class="o">=</span> <span class="n">provider</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="187">    <span class="k">if</span> <span class="n">meta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="188">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span data-line="189">            <span class="sa">f</span><span class="s2">"Unknown provider </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">. Known: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">provider_names</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span>
+</span><span data-line="190">        <span class="p">)</span>
+</span><span data-line="191">    <span class="n">info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+</span><span data-line="192">    <span class="n">info</span><span class="p">[</span><span class="s2">"installed"</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_installed</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="193">    <span class="n">info</span><span class="p">[</span><span class="s2">"has_adapter"</span><span class="p">]</span> <span class="o">=</span> <span class="n">has_adapter</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="194">    <span class="k">return</span> <span class="n">info</span></div>
 
-</span><span data-line="197">
-</span><span data-line="198">
+</span><span data-line="195">
+</span><span data-line="196">
 <div class="viewcode-block" id="get_backend_characteristics">
 <a class="viewcode-back" href="../../_autosummary/vd.html#vd.get_backend_characteristics">[docs]</a>
-</span><span data-line="199"><span class="k">def</span><span class="w"> </span><span class="nf">get_backend_characteristics</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-</span><span data-line="200"><span class="w">    </span><span class="sd">"""Return a compact ``{name: characteristics}`` map for comparison tooling."""</span>
-</span><span data-line="201">    <span class="n">keys</span> <span class="o">=</span> <span class="p">(</span>
-</span><span data-line="202">        <span class="s2">"display_name"</span><span class="p">,</span>
-</span><span data-line="203">        <span class="s2">"archetype"</span><span class="p">,</span>
-</span><span data-line="204">        <span class="s2">"license"</span><span class="p">,</span>
-</span><span data-line="205">        <span class="s2">"embedded_mode"</span><span class="p">,</span>
-</span><span data-line="206">        <span class="s2">"requires_server"</span><span class="p">,</span>
-</span><span data-line="207">        <span class="s2">"managed_free_tier"</span><span class="p">,</span>
-</span><span data-line="208">        <span class="s2">"hybrid_search"</span><span class="p">,</span>
-</span><span data-line="209">        <span class="s2">"filter_dialect"</span><span class="p">,</span>
-</span><span data-line="210">        <span class="s2">"scale"</span><span class="p">,</span>
-</span><span data-line="211">        <span class="s2">"sweet_spot"</span><span class="p">,</span>
-</span><span data-line="212">    <span class="p">)</span>
-</span><span data-line="213">    <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">}</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">_registry</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+</span><span data-line="197"><span class="k">def</span><span class="w"> </span><span class="nf">get_backend_characteristics</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+</span><span data-line="198"><span class="w">    </span><span class="sd">"""Return a compact ``{name: characteristics}`` map for comparison tooling."""</span>
+</span><span data-line="199">    <span class="n">keys</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="200">        <span class="s2">"display_name"</span><span class="p">,</span>
+</span><span data-line="201">        <span class="s2">"archetype"</span><span class="p">,</span>
+</span><span data-line="202">        <span class="s2">"license"</span><span class="p">,</span>
+</span><span data-line="203">        <span class="s2">"embedded_mode"</span><span class="p">,</span>
+</span><span data-line="204">        <span class="s2">"requires_server"</span><span class="p">,</span>
+</span><span data-line="205">        <span class="s2">"managed_free_tier"</span><span class="p">,</span>
+</span><span data-line="206">        <span class="s2">"hybrid_search"</span><span class="p">,</span>
+</span><span data-line="207">        <span class="s2">"filter_dialect"</span><span class="p">,</span>
+</span><span data-line="208">        <span class="s2">"scale"</span><span class="p">,</span>
+</span><span data-line="209">        <span class="s2">"sweet_spot"</span><span class="p">,</span>
+</span><span data-line="210">    <span class="p">)</span>
+</span><span data-line="211">    <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">}</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">_registry</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
 
-</span><span data-line="214">
-</span><span data-line="215">
+</span><span data-line="212">
+</span><span data-line="213">
 <div class="viewcode-block" id="get_install_instructions">
 <a class="viewcode-back" href="../../_autosummary/vd.html#vd.get_install_instructions">[docs]</a>
-</span><span data-line="216"><span class="k">def</span><span class="w"> </span><span class="nf">get_install_instructions</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="217"><span class="w">    </span><span class="sd">"""Return a human-readable setup blurb for one provider."""</span>
-</span><span data-line="218">    <span class="n">info</span> <span class="o">=</span> <span class="n">get_backend_info</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-</span><span data-line="219">    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">'display_name'</span><span class="p">]</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span> <span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">]</span>
-</span><span data-line="220">    <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s2">"installed"</span><span class="p">]:</span>
-</span><span data-line="221">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Status: client library is installed."</span><span class="p">)</span>
-</span><span data-line="222">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="223">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Status: NOT installed."</span><span class="p">)</span>
-</span><span data-line="224">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">install_command</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span data-line="225">    <span class="k">if</span> <span class="ow">not</span> <span class="n">info</span><span class="p">[</span><span class="s2">"has_adapter"</span><span class="p">]:</span>
-</span><span data-line="226">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Note: vd has no facade adapter for this provider yet —"</span><span class="p">)</span>
-</span><span data-line="227">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"      it appears here for backend-selection guidance only."</span><span class="p">)</span>
-</span><span data-line="228">    <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span>
-</span><span data-line="229">        <span class="s2">""</span><span class="p">,</span>
-</span><span data-line="230">        <span class="sa">f</span><span class="s2">"Archetype     : </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'archetype'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-</span><span data-line="231">        <span class="sa">f</span><span class="s2">"License       : </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'license'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-</span><span data-line="232">        <span class="sa">f</span><span class="s2">"Hybrid search : </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'hybrid_search'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-</span><span data-line="233">        <span class="sa">f</span><span class="s2">"Sweet spot    : </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'sweet_spot'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-</span><span data-line="234">    <span class="p">]</span>
-</span><span data-line="235">    <span class="n">docs</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"docs"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
-</span><span data-line="236">    <span class="k">if</span> <span class="n">docs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"install"</span><span class="p">):</span>
-</span><span data-line="237">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Install docs  : </span><span class="si">{</span><span class="n">docs</span><span class="p">[</span><span class="s1">'install'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span data-line="238">    <span class="k">if</span> <span class="n">docs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"pricing"</span><span class="p">):</span>
-</span><span data-line="239">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Pricing       : </span><span class="si">{</span><span class="n">docs</span><span class="p">[</span><span class="s1">'pricing'</span><span class="p">]</span><span class="si">}</span><span class="s2">  (verify — prices drift)"</span><span class="p">)</span>
-</span><span data-line="240">    <span class="n">env_vars</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"env_vars"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
-</span><span data-line="241">    <span class="k">if</span> <span class="n">env_vars</span><span class="p">:</span>
-</span><span data-line="242">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Env vars      : </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">env_vars</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span data-line="243">    <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"notes"</span><span class="p">):</span>
-</span><span data-line="244">        <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">""</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Notes: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">'notes'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span>
-</span><span data-line="245">    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+</span><span data-line="214"><span class="k">def</span><span class="w"> </span><span class="nf">get_install_instructions</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="215"><span class="w">    </span><span class="sd">"""Return a human-readable setup blurb for one provider."""</span>
+</span><span data-line="216">    <span class="n">info</span> <span class="o">=</span> <span class="n">get_backend_info</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="217">    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">'display_name'</span><span class="p">]</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span> <span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">]</span>
+</span><span data-line="218">    <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s2">"installed"</span><span class="p">]:</span>
+</span><span data-line="219">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Status: client library is installed."</span><span class="p">)</span>
+</span><span data-line="220">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="221">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Status: NOT installed."</span><span class="p">)</span>
+</span><span data-line="222">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">install_command</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="223">    <span class="k">if</span> <span class="ow">not</span> <span class="n">info</span><span class="p">[</span><span class="s2">"has_adapter"</span><span class="p">]:</span>
+</span><span data-line="224">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Note: vd has no facade adapter for this provider yet —"</span><span class="p">)</span>
+</span><span data-line="225">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"      it appears here for backend-selection guidance only."</span><span class="p">)</span>
+</span><span data-line="226">    <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span>
+</span><span data-line="227">        <span class="s2">""</span><span class="p">,</span>
+</span><span data-line="228">        <span class="sa">f</span><span class="s2">"Archetype     : </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'archetype'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+</span><span data-line="229">        <span class="sa">f</span><span class="s2">"License       : </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'license'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+</span><span data-line="230">        <span class="sa">f</span><span class="s2">"Hybrid search : </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'hybrid_search'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+</span><span data-line="231">        <span class="sa">f</span><span class="s2">"Sweet spot    : </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'sweet_spot'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+</span><span data-line="232">    <span class="p">]</span>
+</span><span data-line="233">    <span class="n">docs</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"docs"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+</span><span data-line="234">    <span class="k">if</span> <span class="n">docs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"install"</span><span class="p">):</span>
+</span><span data-line="235">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Install docs  : </span><span class="si">{</span><span class="n">docs</span><span class="p">[</span><span class="s1">'install'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="236">    <span class="k">if</span> <span class="n">docs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"pricing"</span><span class="p">):</span>
+</span><span data-line="237">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Pricing       : </span><span class="si">{</span><span class="n">docs</span><span class="p">[</span><span class="s1">'pricing'</span><span class="p">]</span><span class="si">}</span><span class="s2">  (verify — prices drift)"</span><span class="p">)</span>
+</span><span data-line="238">    <span class="n">env_vars</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"env_vars"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
+</span><span data-line="239">    <span class="k">if</span> <span class="n">env_vars</span><span class="p">:</span>
+</span><span data-line="240">        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Env vars      : </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">env_vars</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="241">    <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"notes"</span><span class="p">):</span>
+</span><span data-line="242">        <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">""</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Notes: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">'notes'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span>
+</span><span data-line="243">    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
 
-</span><span data-line="246">
-</span><span data-line="247">
+</span><span data-line="244">
+</span><span data-line="245">
 <div class="viewcode-block" id="print_backends_table">
 <a class="viewcode-back" href="../../_autosummary/vd.html#vd.print_backends_table">[docs]</a>
-</span><span data-line="248"><span class="k">def</span><span class="w"> </span><span class="nf">print_backends_table</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="249"><span class="w">    </span><span class="sd">"""Print every known vector database, grouped by deployment archetype."""</span>
-</span><span data-line="250">    <span class="n">all_backends</span> <span class="o">=</span> <span class="n">list_all_backends</span><span class="p">()</span>
-</span><span data-line="251">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Vector databases vd knows about  (registry as of </span><span class="si">{</span><span class="n">registry_as_of</span><span class="p">()</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
-</span><span data-line="252">    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">78</span><span class="p">)</span>
-</span><span data-line="253">    <span class="k">for</span> <span class="n">archetype</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"embedded"</span><span class="p">,</span> <span class="s2">"library"</span><span class="p">,</span> <span class="s2">"server"</span><span class="p">,</span> <span class="s2">"managed"</span><span class="p">):</span>
-</span><span data-line="254">        <span class="n">group</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="255">            <span class="n">n</span><span class="p">:</span> <span class="n">m</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">all_backends</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"archetype"</span><span class="p">)</span> <span class="o">==</span> <span class="n">archetype</span>
-</span><span data-line="256">        <span class="p">}</span>
-</span><span data-line="257">        <span class="k">if</span> <span class="ow">not</span> <span class="n">group</span><span class="p">:</span>
-</span><span data-line="258">            <span class="k">continue</span>
-</span><span data-line="259">        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">archetype</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span data-line="260">        <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">78</span><span class="p">)</span>
-</span><span data-line="261">        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-</span><span data-line="262">            <span class="n">flags</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="263">            <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="s2">"has_adapter"</span><span class="p">]:</span>
-</span><span data-line="264">                <span class="n">flags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"adapter"</span> <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="s2">"installed"</span><span class="p">]</span> <span class="k">else</span> <span class="s2">"adapter(not installed)"</span><span class="p">)</span>
-</span><span data-line="265">            <span class="k">else</span><span class="p">:</span>
-</span><span data-line="266">                <span class="n">flags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"registry-only"</span><span class="p">)</span>
-</span><span data-line="267">            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">16</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">'display_name'</span><span class="p">]</span><span class="si">:</span><span class="s2">30</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
-</span><span data-line="268">            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="s1">''</span><span class="si">:</span><span class="s2">16</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'sweet_spot'</span><span class="p">,</span><span class="w"> </span><span class="s1">''</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span data-line="269">    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"="</span> <span class="o">*</span> <span class="mi">78</span><span class="p">)</span>
-</span><span data-line="270">    <span class="nb">print</span><span class="p">(</span><span class="s2">"Legend: 'adapter' = vd.connect() works · 'registry-only' = listed for"</span><span class="p">)</span>
-</span><span data-line="271">    <span class="nb">print</span><span class="p">(</span><span class="s2">"        backend-selection guidance, no facade adapter yet.</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span></div>
+</span><span data-line="246"><span class="k">def</span><span class="w"> </span><span class="nf">print_backends_table</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="247"><span class="w">    </span><span class="sd">"""Print every known vector database, grouped by deployment archetype."""</span>
+</span><span data-line="248">    <span class="n">all_backends</span> <span class="o">=</span> <span class="n">list_all_backends</span><span class="p">()</span>
+</span><span data-line="249">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Vector databases vd knows about  (registry as of </span><span class="si">{</span><span class="n">registry_as_of</span><span class="p">()</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+</span><span data-line="250">    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">78</span><span class="p">)</span>
+</span><span data-line="251">    <span class="k">for</span> <span class="n">archetype</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"embedded"</span><span class="p">,</span> <span class="s2">"library"</span><span class="p">,</span> <span class="s2">"server"</span><span class="p">,</span> <span class="s2">"managed"</span><span class="p">):</span>
+</span><span data-line="252">        <span class="n">group</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="253">            <span class="n">n</span><span class="p">:</span> <span class="n">m</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">all_backends</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"archetype"</span><span class="p">)</span> <span class="o">==</span> <span class="n">archetype</span>
+</span><span data-line="254">        <span class="p">}</span>
+</span><span data-line="255">        <span class="k">if</span> <span class="ow">not</span> <span class="n">group</span><span class="p">:</span>
+</span><span data-line="256">            <span class="k">continue</span>
+</span><span data-line="257">        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">archetype</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="258">        <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">78</span><span class="p">)</span>
+</span><span data-line="259">        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+</span><span data-line="260">            <span class="n">flags</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="261">            <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="s2">"has_adapter"</span><span class="p">]:</span>
+</span><span data-line="262">                <span class="n">flags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"adapter"</span> <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="s2">"installed"</span><span class="p">]</span> <span class="k">else</span> <span class="s2">"adapter(not installed)"</span><span class="p">)</span>
+</span><span data-line="263">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="264">                <span class="n">flags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"registry-only"</span><span class="p">)</span>
+</span><span data-line="265">            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">16</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">'display_name'</span><span class="p">]</span><span class="si">:</span><span class="s2">30</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
+</span><span data-line="266">            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="s1">''</span><span class="si">:</span><span class="s2">16</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'sweet_spot'</span><span class="p">,</span><span class="w"> </span><span class="s1">''</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="267">    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"="</span> <span class="o">*</span> <span class="mi">78</span><span class="p">)</span>
+</span><span data-line="268">    <span class="nb">print</span><span class="p">(</span><span class="s2">"Legend: 'adapter' = vd.connect() works · 'registry-only' = listed for"</span><span class="p">)</span>
+</span><span data-line="269">    <span class="nb">print</span><span class="p">(</span><span class="s2">"        backend-selection guidance, no facade adapter yet.</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span></div>
 
-</span><span data-line="272">
-</span><span data-line="273">
+</span><span data-line="270">
+</span><span data-line="271">
+</span><span data-line="272"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="273"><span class="c1"># Comparison</span>
 </span><span data-line="274"><span class="c1"># --------------------------------------------------------------------------- #</span>
-</span><span data-line="275"><span class="c1"># Comparison</span>
-</span><span data-line="276"><span class="c1"># --------------------------------------------------------------------------- #</span>
-</span><span data-line="277">
-</span><span data-line="278">
+</span><span data-line="275">
+</span><span data-line="276">
 <div class="viewcode-block" id="compare_backends">
 <a class="viewcode-back" href="../../_autosummary/vd.html#vd.compare_backends">[docs]</a>
-</span><span data-line="279"><span class="k">def</span><span class="w"> </span><span class="nf">compare_backends</span><span class="p">(</span>
-</span><span data-line="280">    <span class="n">names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-</span><span data-line="281">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="282">    <span class="n">characteristics</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="283"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-</span><span data-line="284"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="285"><span class="sd">    Return a ``{name: {characteristic: value}}`` table for the given providers.</span>
-</span><span data-line="286"><span class="sd">    """</span>
-</span><span data-line="287">    <span class="n">chars</span> <span class="o">=</span> <span class="n">characteristics</span> <span class="ow">or</span> <span class="p">[</span>
-</span><span data-line="288">        <span class="s2">"display_name"</span><span class="p">,</span>
-</span><span data-line="289">        <span class="s2">"archetype"</span><span class="p">,</span>
-</span><span data-line="290">        <span class="s2">"license"</span><span class="p">,</span>
-</span><span data-line="291">        <span class="s2">"embedded_mode"</span><span class="p">,</span>
-</span><span data-line="292">        <span class="s2">"managed_free_tier"</span><span class="p">,</span>
-</span><span data-line="293">        <span class="s2">"hybrid_search"</span><span class="p">,</span>
-</span><span data-line="294">        <span class="s2">"filter_dialect"</span><span class="p">,</span>
-</span><span data-line="295">        <span class="s2">"scale"</span><span class="p">,</span>
-</span><span data-line="296">    <span class="p">]</span>
-</span><span data-line="297">    <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span data-line="298">    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
-</span><span data-line="299">        <span class="n">meta</span> <span class="o">=</span> <span class="n">provider</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-</span><span data-line="300">        <span class="k">if</span> <span class="n">meta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="301">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown provider </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
-</span><span data-line="302">        <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chars</span><span class="p">}</span>
-</span><span data-line="303">    <span class="k">return</span> <span class="n">out</span></div>
+</span><span data-line="277"><span class="k">def</span><span class="w"> </span><span class="nf">compare_backends</span><span class="p">(</span>
+</span><span data-line="278">    <span class="n">names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+</span><span data-line="279">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="280">    <span class="n">characteristics</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="281"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+</span><span data-line="282"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="283"><span class="sd">    Return a ``{name: {characteristic: value}}`` table for the given providers.</span>
+</span><span data-line="284"><span class="sd">    """</span>
+</span><span data-line="285">    <span class="n">chars</span> <span class="o">=</span> <span class="n">characteristics</span> <span class="ow">or</span> <span class="p">[</span>
+</span><span data-line="286">        <span class="s2">"display_name"</span><span class="p">,</span>
+</span><span data-line="287">        <span class="s2">"archetype"</span><span class="p">,</span>
+</span><span data-line="288">        <span class="s2">"license"</span><span class="p">,</span>
+</span><span data-line="289">        <span class="s2">"embedded_mode"</span><span class="p">,</span>
+</span><span data-line="290">        <span class="s2">"managed_free_tier"</span><span class="p">,</span>
+</span><span data-line="291">        <span class="s2">"hybrid_search"</span><span class="p">,</span>
+</span><span data-line="292">        <span class="s2">"filter_dialect"</span><span class="p">,</span>
+</span><span data-line="293">        <span class="s2">"scale"</span><span class="p">,</span>
+</span><span data-line="294">    <span class="p">]</span>
+</span><span data-line="295">    <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span data-line="296">    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+</span><span data-line="297">        <span class="n">meta</span> <span class="o">=</span> <span class="n">provider</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="298">        <span class="k">if</span> <span class="n">meta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="299">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown provider </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="300">        <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chars</span><span class="p">}</span>
+</span><span data-line="301">    <span class="k">return</span> <span class="n">out</span></div>
 
-</span><span data-line="304">
-</span><span data-line="305">
+</span><span data-line="302">
+</span><span data-line="303">
 <div class="viewcode-block" id="print_comparison">
 <a class="viewcode-back" href="../../_autosummary/vd.html#vd.print_comparison">[docs]</a>
-</span><span data-line="306"><span class="k">def</span><span class="w"> </span><span class="nf">print_comparison</span><span class="p">(</span><span class="n">names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="307"><span class="w">    </span><span class="sd">"""Print a side-by-side comparison table of the given providers."""</span>
-</span><span data-line="308">    <span class="n">table</span> <span class="o">=</span> <span class="n">compare_backends</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
-</span><span data-line="309">    <span class="n">chars</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-</span><span data-line="310">    <span class="n">col_w</span> <span class="o">=</span> <span class="mi">22</span>
-</span><span data-line="311">    <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'characteristic'</span><span class="si">:</span><span class="s2">&lt;18</span><span class="si">}</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">col_w</span><span class="si">}}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">names</span><span class="p">)</span>
-</span><span data-line="312">    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">header</span><span class="p">)</span>
-</span><span data-line="313">    <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">))</span>
-</span><span data-line="314">    <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">chars</span><span class="p">:</span>
-</span><span data-line="315">        <span class="n">row</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">char</span><span class="si">:</span><span class="s2">&lt;18</span><span class="si">}</span><span class="s2">"</span>
-</span><span data-line="316">        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
-</span><span data-line="317">            <span class="n">row</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">char</span><span class="p">])[:</span><span class="w"> </span><span class="n">col_w</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">col_w</span><span class="si">}}</span><span class="s2">"</span>
-</span><span data-line="318">        <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
-</span><span data-line="319">    <span class="nb">print</span><span class="p">()</span></div>
+</span><span data-line="304"><span class="k">def</span><span class="w"> </span><span class="nf">print_comparison</span><span class="p">(</span><span class="n">names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="305"><span class="w">    </span><span class="sd">"""Print a side-by-side comparison table of the given providers."""</span>
+</span><span data-line="306">    <span class="n">table</span> <span class="o">=</span> <span class="n">compare_backends</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+</span><span data-line="307">    <span class="n">chars</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</span><span data-line="308">    <span class="n">col_w</span> <span class="o">=</span> <span class="mi">22</span>
+</span><span data-line="309">    <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'characteristic'</span><span class="si">:</span><span class="s2">&lt;18</span><span class="si">}</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">col_w</span><span class="si">}}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">names</span><span class="p">)</span>
+</span><span data-line="310">    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">header</span><span class="p">)</span>
+</span><span data-line="311">    <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">))</span>
+</span><span data-line="312">    <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">chars</span><span class="p">:</span>
+</span><span data-line="313">        <span class="n">row</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">char</span><span class="si">:</span><span class="s2">&lt;18</span><span class="si">}</span><span class="s2">"</span>
+</span><span data-line="314">        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+</span><span data-line="315">            <span class="n">row</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">char</span><span class="p">])[:</span><span class="w"> </span><span class="n">col_w</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">col_w</span><span class="si">}}</span><span class="s2">"</span>
+</span><span data-line="316">        <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</span><span data-line="317">    <span class="nb">print</span><span class="p">()</span></div>
 
-</span><span data-line="320">
-</span><span data-line="321">
+</span><span data-line="318">
+</span><span data-line="319">
+</span><span data-line="320"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="321"><span class="c1"># Recommendation — the decision framework (report §4)</span>
 </span><span data-line="322"><span class="c1"># --------------------------------------------------------------------------- #</span>
-</span><span data-line="323"><span class="c1"># Recommendation — the decision framework (report §4)</span>
-</span><span data-line="324"><span class="c1"># --------------------------------------------------------------------------- #</span>
-</span><span data-line="325">
-</span><span data-line="326"><span class="c1"># Sizes, smallest to largest. Index used for ordered comparisons.</span>
-</span><span data-line="327"><span class="n">_SIZES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"tiny"</span><span class="p">,</span> <span class="s2">"small"</span><span class="p">,</span> <span class="s2">"medium"</span><span class="p">,</span> <span class="s2">"large"</span><span class="p">,</span> <span class="s2">"huge"</span><span class="p">)</span>
-</span><span data-line="328">
-</span><span data-line="329">
+</span><span data-line="323">
+</span><span data-line="324"><span class="c1"># Sizes, smallest to largest. Index used for ordered comparisons.</span>
+</span><span data-line="325"><span class="n">_SIZES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"tiny"</span><span class="p">,</span> <span class="s2">"small"</span><span class="p">,</span> <span class="s2">"medium"</span><span class="p">,</span> <span class="s2">"large"</span><span class="p">,</span> <span class="s2">"huge"</span><span class="p">)</span>
+</span><span data-line="326">
+</span><span data-line="327">
 <div class="viewcode-block" id="recommend_backend">
 <a class="viewcode-back" href="../../_autosummary/vd.html#vd.recommend_backend">[docs]</a>
-</span><span data-line="330"><span class="k">def</span><span class="w"> </span><span class="nf">recommend_backend</span><span class="p">(</span>
-</span><span data-line="331">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="332">    <span class="n">corpus_size</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"medium"</span><span class="p">,</span>
-</span><span data-line="333">    <span class="n">persistence</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="334">    <span class="n">can_run_docker</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="335">    <span class="n">cloud_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="336">    <span class="n">budget</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"free"</span><span class="p">,</span>
-</span><span data-line="337">    <span class="n">existing_db</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="338">    <span class="n">needs_hybrid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span data-line="339">    <span class="n">air_gapped</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span data-line="340"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span data-line="341"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="342"><span class="sd">    Recommend a vector database from a few yes/no facts about the situation.</span>
-</span><span data-line="343">
-</span><span data-line="344"><span class="sd">    A direct encoding of the decision framework in the report's §4. Returns a</span>
-</span><span data-line="345"><span class="sd">    primary pick, a runner-up, and the reasoning trail.</span>
-</span><span data-line="346">
-</span><span data-line="347"><span class="sd">    Parameters</span>
-</span><span data-line="348"><span class="sd">    ----------</span>
-</span><span data-line="349"><span class="sd">    corpus_size : {'tiny', 'small', 'medium', 'large', 'huge'}</span>
-</span><span data-line="350"><span class="sd">        Rough vector count: tiny &lt;100k, small &lt;10M, medium ~10M, large &lt;100M,</span>
-</span><span data-line="351"><span class="sd">        huge &gt;100M.</span>
-</span><span data-line="352"><span class="sd">    persistence : bool</span>
-</span><span data-line="353"><span class="sd">        Must data survive a process restart?</span>
-</span><span data-line="354"><span class="sd">    can_run_docker : bool</span>
-</span><span data-line="355"><span class="sd">        Can the user run Docker / operate a server process?</span>
-</span><span data-line="356"><span class="sd">    cloud_ok : bool</span>
-</span><span data-line="357"><span class="sd">        Is a managed cloud service acceptable (vs. on-prem only)?</span>
-</span><span data-line="358"><span class="sd">    budget : {'free', 'paid'}</span>
-</span><span data-line="359"><span class="sd">        Free-tier-only, or is paid acceptable?</span>
-</span><span data-line="360"><span class="sd">    existing_db : {'postgres', 'redis', 'elastic', 'mongo', 'sqlite', 'duckdb', None}</span>
-</span><span data-line="361"><span class="sd">        A database the user already operates — strongly biases the pick.</span>
-</span><span data-line="362"><span class="sd">    needs_hybrid : bool</span>
-</span><span data-line="363"><span class="sd">        Need keyword + vector ranking fused in one query?</span>
-</span><span data-line="364"><span class="sd">    air_gapped : bool</span>
-</span><span data-line="365"><span class="sd">        Must run with zero network / zero telemetry?</span>
-</span><span data-line="366">
-</span><span data-line="367"><span class="sd">    Returns</span>
-</span><span data-line="368"><span class="sd">    -------</span>
-</span><span data-line="369"><span class="sd">    dict</span>
-</span><span data-line="370"><span class="sd">        ``{"primary", "runner_up", "reasoning", "alternatives"}``.</span>
-</span><span data-line="371">
-</span><span data-line="372"><span class="sd">    Examples</span>
-</span><span data-line="373"><span class="sd">    --------</span>
-</span><span data-line="374"><span class="sd">    &gt;&gt;&gt; rec = recommend_backend(corpus_size='tiny', persistence=False)</span>
-</span><span data-line="375"><span class="sd">    &gt;&gt;&gt; rec['primary']</span>
-</span><span data-line="376"><span class="sd">    'memory'</span>
-</span><span data-line="377"><span class="sd">    &gt;&gt;&gt; rec = recommend_backend(existing_db='postgres')</span>
-</span><span data-line="378"><span class="sd">    &gt;&gt;&gt; rec['primary']</span>
-</span><span data-line="379"><span class="sd">    'pgvector'</span>
-</span><span data-line="380"><span class="sd">    """</span>
-</span><span data-line="381">    <span class="n">reasoning</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="382">
-</span><span data-line="383">    <span class="c1"># Q1/Q2 — do you even need a vector DB?</span>
-</span><span data-line="384">    <span class="k">if</span> <span class="n">corpus_size</span> <span class="o">==</span> <span class="s2">"tiny"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">persistence</span><span class="p">:</span>
-</span><span data-line="385">        <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span data-line="386">            <span class="s2">"Tiny corpus (&lt;100k) with no persistence: a real vector DB is "</span>
-</span><span data-line="387">            <span class="s2">"overkill — brute force in memory is the right answer."</span>
-</span><span data-line="388">        <span class="p">)</span>
-</span><span data-line="389">        <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">,</span> <span class="s2">"faiss"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"chroma"</span><span class="p">])</span>
-</span><span data-line="390">
-</span><span data-line="391">    <span class="c1"># Q6 — already running a database? Don't add a second one.</span>
-</span><span data-line="392">    <span class="k">if</span> <span class="n">existing_db</span><span class="p">:</span>
-</span><span data-line="393">        <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="394">            <span class="s2">"postgres"</span><span class="p">:</span> <span class="p">(</span>
-</span><span data-line="395">                <span class="s2">"pgvector"</span><span class="p">,</span>
-</span><span data-line="396">                <span class="s2">"vectorchord"</span><span class="p">,</span>
-</span><span data-line="397">                <span class="s2">"Postgres already runs — "</span>
-</span><span data-line="398">                <span class="s2">"pgvector adds vectors with no second database."</span><span class="p">,</span>
-</span><span data-line="399">            <span class="p">),</span>
-</span><span data-line="400">            <span class="s2">"redis"</span><span class="p">:</span> <span class="p">(</span>
-</span><span data-line="401">                <span class="s2">"redis"</span><span class="p">,</span>
-</span><span data-line="402">                <span class="s2">"qdrant"</span><span class="p">,</span>
-</span><span data-line="403">                <span class="s2">"Redis already runs — use its native "</span>
-</span><span data-line="404">                <span class="s2">"vector index (mind the AGPL/RSAL license change)."</span><span class="p">,</span>
-</span><span data-line="405">            <span class="p">),</span>
-</span><span data-line="406">            <span class="s2">"elastic"</span><span class="p">:</span> <span class="p">(</span>
-</span><span data-line="407">                <span class="s2">"elasticsearch"</span><span class="p">,</span>
-</span><span data-line="408">                <span class="s2">"opensearch"</span><span class="p">,</span>
-</span><span data-line="409">                <span class="s2">"Elastic already runs — use kNN + RRF in place."</span><span class="p">,</span>
-</span><span data-line="410">            <span class="p">),</span>
-</span><span data-line="411">            <span class="s2">"mongo"</span><span class="p">:</span> <span class="p">(</span>
-</span><span data-line="412">                <span class="s2">"mongodb"</span><span class="p">,</span>
-</span><span data-line="413">                <span class="s2">"qdrant"</span><span class="p">,</span>
-</span><span data-line="414">                <span class="s2">"MongoDB already runs — use Atlas $vectorSearch."</span><span class="p">,</span>
-</span><span data-line="415">            <span class="p">),</span>
-</span><span data-line="416">            <span class="s2">"sqlite"</span><span class="p">:</span> <span class="p">(</span>
-</span><span data-line="417">                <span class="s2">"sqlite_vec"</span><span class="p">,</span>
-</span><span data-line="418">                <span class="s2">"duckdb"</span><span class="p">,</span>
-</span><span data-line="419">                <span class="s2">"SQLite already in the app — "</span>
-</span><span data-line="420">                <span class="s2">"sqlite-vec embeds vector search in the same file."</span><span class="p">,</span>
-</span><span data-line="421">            <span class="p">),</span>
-</span><span data-line="422">            <span class="s2">"duckdb"</span><span class="p">:</span> <span class="p">(</span>
-</span><span data-line="423">                <span class="s2">"duckdb"</span><span class="p">,</span>
-</span><span data-line="424">                <span class="s2">"lancedb"</span><span class="p">,</span>
-</span><span data-line="425">                <span class="s2">"DuckDB already in use — the VSS "</span>
-</span><span data-line="426">                <span class="s2">"extension does ANN in the same SQL engine."</span><span class="p">,</span>
-</span><span data-line="427">            <span class="p">),</span>
-</span><span data-line="428">        <span class="p">}</span>
-</span><span data-line="429">        <span class="k">if</span> <span class="n">existing_db</span> <span class="ow">in</span> <span class="n">mapping</span><span class="p">:</span>
-</span><span data-line="430">            <span class="n">primary</span><span class="p">,</span> <span class="n">runner</span><span class="p">,</span> <span class="n">why</span> <span class="o">=</span> <span class="n">mapping</span><span class="p">[</span><span class="n">existing_db</span><span class="p">]</span>
-</span><span data-line="431">            <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">why</span><span class="p">)</span>
-</span><span data-line="432">            <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="n">runner</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[])</span>
-</span><span data-line="433">
-</span><span data-line="434">    <span class="c1"># Q3 — can't run a server: embedded only.</span>
-</span><span data-line="435">    <span class="k">if</span> <span class="ow">not</span> <span class="n">can_run_docker</span><span class="p">:</span>
-</span><span data-line="436">        <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"No Docker / server: restricted to embedded backends."</span><span class="p">)</span>
-</span><span data-line="437">        <span class="k">if</span> <span class="n">needs_hybrid</span><span class="p">:</span>
-</span><span data-line="438">            <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"LanceDB is the embedded backend with native hybrid."</span><span class="p">)</span>
-</span><span data-line="439">            <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"lancedb"</span><span class="p">,</span> <span class="s2">"chroma"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"sqlite_vec"</span><span class="p">,</span> <span class="s2">"duckdb"</span><span class="p">])</span>
-</span><span data-line="440">        <span class="k">if</span> <span class="n">corpus_size</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"large"</span><span class="p">,</span> <span class="s2">"huge"</span><span class="p">):</span>
-</span><span data-line="441">            <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Large corpus, embedded: LanceDB scales on local/S3."</span><span class="p">)</span>
-</span><span data-line="442">            <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"lancedb"</span><span class="p">,</span> <span class="s2">"faiss"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"chroma"</span><span class="p">])</span>
-</span><span data-line="443">        <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Chroma is the fastest embedded path to a working app."</span><span class="p">)</span>
-</span><span data-line="444">        <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"chroma"</span><span class="p">,</span> <span class="s2">"lancedb"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"sqlite_vec"</span><span class="p">,</span> <span class="s2">"duckdb"</span><span class="p">])</span>
-</span><span data-line="445">
-</span><span data-line="446">    <span class="c1"># Q4 — air-gapped: self-hostable, no telemetry, permissive license.</span>
-</span><span data-line="447">    <span class="k">if</span> <span class="n">air_gapped</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">cloud_ok</span><span class="p">:</span>
-</span><span data-line="448">        <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span data-line="449">            <span class="s2">"On-prem / air-gapped: pick a self-hostable, permissively licensed "</span>
-</span><span data-line="450">            <span class="s2">"backend with no mandatory telemetry."</span>
-</span><span data-line="451">        <span class="p">)</span>
-</span><span data-line="452">        <span class="k">if</span> <span class="n">corpus_size</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"large"</span><span class="p">,</span> <span class="s2">"huge"</span><span class="p">):</span>
-</span><span data-line="453">            <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"milvus"</span><span class="p">,</span> <span class="s2">"qdrant"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"weaviate"</span><span class="p">,</span> <span class="s2">"pgvector"</span><span class="p">])</span>
-</span><span data-line="454">        <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"qdrant"</span><span class="p">,</span> <span class="s2">"chroma"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"milvus"</span><span class="p">,</span> <span class="s2">"weaviate"</span><span class="p">,</span> <span class="s2">"lancedb"</span><span class="p">])</span>
-</span><span data-line="455">
-</span><span data-line="456">    <span class="c1"># Q7 — native hybrid wanted.</span>
-</span><span data-line="457">    <span class="k">if</span> <span class="n">needs_hybrid</span><span class="p">:</span>
-</span><span data-line="458">        <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Native hybrid (keyword + vector) wanted in one query."</span><span class="p">)</span>
-</span><span data-line="459">        <span class="k">return</span> <span class="n">_result</span><span class="p">(</span>
-</span><span data-line="460">            <span class="s2">"weaviate"</span><span class="p">,</span> <span class="s2">"elasticsearch"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"qdrant"</span><span class="p">,</span> <span class="s2">"redis"</span><span class="p">,</span> <span class="s2">"pinecone"</span><span class="p">]</span>
-</span><span data-line="461">        <span class="p">)</span>
-</span><span data-line="462">
-</span><span data-line="463">    <span class="c1"># Q1 — huge scale.</span>
-</span><span data-line="464">    <span class="k">if</span> <span class="n">corpus_size</span> <span class="o">==</span> <span class="s2">"huge"</span><span class="p">:</span>
-</span><span data-line="465">        <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Billion-scale: DiskANN-class engines keep RAM bounded."</span><span class="p">)</span>
-</span><span data-line="466">        <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"milvus"</span><span class="p">,</span> <span class="s2">"pinecone"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"qdrant"</span><span class="p">,</span> <span class="s2">"turbopuffer"</span><span class="p">])</span>
-</span><span data-line="467">
-</span><span data-line="468">    <span class="c1"># Q5 — budget.</span>
-</span><span data-line="469">    <span class="k">if</span> <span class="n">budget</span> <span class="o">==</span> <span class="s2">"free"</span><span class="p">:</span>
-</span><span data-line="470">        <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span data-line="471">            <span class="s2">"Free tier only: Qdrant Cloud has a permanent free 1 GB cluster "</span>
-</span><span data-line="472">            <span class="s2">"and the cleanest exit path."</span>
-</span><span data-line="473">        <span class="p">)</span>
-</span><span data-line="474">        <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"qdrant"</span><span class="p">,</span> <span class="s2">"pinecone"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"chroma"</span><span class="p">,</span> <span class="s2">"milvus"</span><span class="p">])</span>
-</span><span data-line="475">
-</span><span data-line="476">    <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span data-line="477">        <span class="s2">"Paid OK, managed, no special constraints: Pinecone serverless is the "</span>
-</span><span data-line="478">        <span class="s2">"zero-ops canonical; Qdrant Cloud is the open runner-up."</span>
-</span><span data-line="479">    <span class="p">)</span>
-</span><span data-line="480">    <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"pinecone"</span><span class="p">,</span> <span class="s2">"qdrant"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"turbopuffer"</span><span class="p">,</span> <span class="s2">"weaviate"</span><span class="p">])</span></div>
+</span><span data-line="328"><span class="k">def</span><span class="w"> </span><span class="nf">recommend_backend</span><span class="p">(</span>
+</span><span data-line="329">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="330">    <span class="n">corpus_size</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"medium"</span><span class="p">,</span>
+</span><span data-line="331">    <span class="n">persistence</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="332">    <span class="n">can_run_docker</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="333">    <span class="n">cloud_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="334">    <span class="n">budget</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"free"</span><span class="p">,</span>
+</span><span data-line="335">    <span class="n">existing_db</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="336">    <span class="n">needs_hybrid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="337">    <span class="n">air_gapped</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="338"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span data-line="339"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="340"><span class="sd">    Recommend a vector database from a few yes/no facts about the situation.</span>
+</span><span data-line="341">
+</span><span data-line="342"><span class="sd">    A direct encoding of the decision framework in the report's §4. Returns a</span>
+</span><span data-line="343"><span class="sd">    primary pick, a runner-up, and the reasoning trail.</span>
+</span><span data-line="344">
+</span><span data-line="345"><span class="sd">    Parameters</span>
+</span><span data-line="346"><span class="sd">    ----------</span>
+</span><span data-line="347"><span class="sd">    corpus_size : {'tiny', 'small', 'medium', 'large', 'huge'}</span>
+</span><span data-line="348"><span class="sd">        Rough vector count: tiny &lt;100k, small &lt;10M, medium ~10M, large &lt;100M,</span>
+</span><span data-line="349"><span class="sd">        huge &gt;100M.</span>
+</span><span data-line="350"><span class="sd">    persistence : bool</span>
+</span><span data-line="351"><span class="sd">        Must data survive a process restart?</span>
+</span><span data-line="352"><span class="sd">    can_run_docker : bool</span>
+</span><span data-line="353"><span class="sd">        Can the user run Docker / operate a server process?</span>
+</span><span data-line="354"><span class="sd">    cloud_ok : bool</span>
+</span><span data-line="355"><span class="sd">        Is a managed cloud service acceptable (vs. on-prem only)?</span>
+</span><span data-line="356"><span class="sd">    budget : {'free', 'paid'}</span>
+</span><span data-line="357"><span class="sd">        Free-tier-only, or is paid acceptable?</span>
+</span><span data-line="358"><span class="sd">    existing_db : {'postgres', 'redis', 'elastic', 'mongo', 'sqlite', 'duckdb', None}</span>
+</span><span data-line="359"><span class="sd">        A database the user already operates — strongly biases the pick.</span>
+</span><span data-line="360"><span class="sd">    needs_hybrid : bool</span>
+</span><span data-line="361"><span class="sd">        Need keyword + vector ranking fused in one query?</span>
+</span><span data-line="362"><span class="sd">    air_gapped : bool</span>
+</span><span data-line="363"><span class="sd">        Must run with zero network / zero telemetry?</span>
+</span><span data-line="364">
+</span><span data-line="365"><span class="sd">    Returns</span>
+</span><span data-line="366"><span class="sd">    -------</span>
+</span><span data-line="367"><span class="sd">    dict</span>
+</span><span data-line="368"><span class="sd">        ``{"primary", "runner_up", "reasoning", "alternatives"}``.</span>
+</span><span data-line="369">
+</span><span data-line="370"><span class="sd">    Examples</span>
+</span><span data-line="371"><span class="sd">    --------</span>
+</span><span data-line="372"><span class="sd">    &gt;&gt;&gt; rec = recommend_backend(corpus_size='tiny', persistence=False)</span>
+</span><span data-line="373"><span class="sd">    &gt;&gt;&gt; rec['primary']</span>
+</span><span data-line="374"><span class="sd">    'memory'</span>
+</span><span data-line="375"><span class="sd">    &gt;&gt;&gt; rec = recommend_backend(existing_db='postgres')</span>
+</span><span data-line="376"><span class="sd">    &gt;&gt;&gt; rec['primary']</span>
+</span><span data-line="377"><span class="sd">    'pgvector'</span>
+</span><span data-line="378"><span class="sd">    """</span>
+</span><span data-line="379">    <span class="n">reasoning</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="380">
+</span><span data-line="381">    <span class="c1"># Q1/Q2 — do you even need a vector DB?</span>
+</span><span data-line="382">    <span class="k">if</span> <span class="n">corpus_size</span> <span class="o">==</span> <span class="s2">"tiny"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">persistence</span><span class="p">:</span>
+</span><span data-line="383">        <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span data-line="384">            <span class="s2">"Tiny corpus (&lt;100k) with no persistence: a real vector DB is "</span>
+</span><span data-line="385">            <span class="s2">"overkill — brute force in memory is the right answer."</span>
+</span><span data-line="386">        <span class="p">)</span>
+</span><span data-line="387">        <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">,</span> <span class="s2">"faiss"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"chroma"</span><span class="p">])</span>
+</span><span data-line="388">
+</span><span data-line="389">    <span class="c1"># Q6 — already running a database? Don't add a second one.</span>
+</span><span data-line="390">    <span class="k">if</span> <span class="n">existing_db</span><span class="p">:</span>
+</span><span data-line="391">        <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="392">            <span class="s2">"postgres"</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="393">                <span class="s2">"pgvector"</span><span class="p">,</span>
+</span><span data-line="394">                <span class="s2">"vectorchord"</span><span class="p">,</span>
+</span><span data-line="395">                <span class="s2">"Postgres already runs — "</span>
+</span><span data-line="396">                <span class="s2">"pgvector adds vectors with no second database."</span><span class="p">,</span>
+</span><span data-line="397">            <span class="p">),</span>
+</span><span data-line="398">            <span class="s2">"redis"</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="399">                <span class="s2">"redis"</span><span class="p">,</span>
+</span><span data-line="400">                <span class="s2">"qdrant"</span><span class="p">,</span>
+</span><span data-line="401">                <span class="s2">"Redis already runs — use its native "</span>
+</span><span data-line="402">                <span class="s2">"vector index (mind the AGPL/RSAL license change)."</span><span class="p">,</span>
+</span><span data-line="403">            <span class="p">),</span>
+</span><span data-line="404">            <span class="s2">"elastic"</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="405">                <span class="s2">"elasticsearch"</span><span class="p">,</span>
+</span><span data-line="406">                <span class="s2">"opensearch"</span><span class="p">,</span>
+</span><span data-line="407">                <span class="s2">"Elastic already runs — use kNN + RRF in place."</span><span class="p">,</span>
+</span><span data-line="408">            <span class="p">),</span>
+</span><span data-line="409">            <span class="s2">"mongo"</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="410">                <span class="s2">"mongodb"</span><span class="p">,</span>
+</span><span data-line="411">                <span class="s2">"qdrant"</span><span class="p">,</span>
+</span><span data-line="412">                <span class="s2">"MongoDB already runs — use Atlas $vectorSearch."</span><span class="p">,</span>
+</span><span data-line="413">            <span class="p">),</span>
+</span><span data-line="414">            <span class="s2">"sqlite"</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="415">                <span class="s2">"sqlite_vec"</span><span class="p">,</span>
+</span><span data-line="416">                <span class="s2">"duckdb"</span><span class="p">,</span>
+</span><span data-line="417">                <span class="s2">"SQLite already in the app — "</span>
+</span><span data-line="418">                <span class="s2">"sqlite-vec embeds vector search in the same file."</span><span class="p">,</span>
+</span><span data-line="419">            <span class="p">),</span>
+</span><span data-line="420">            <span class="s2">"duckdb"</span><span class="p">:</span> <span class="p">(</span>
+</span><span data-line="421">                <span class="s2">"duckdb"</span><span class="p">,</span>
+</span><span data-line="422">                <span class="s2">"lancedb"</span><span class="p">,</span>
+</span><span data-line="423">                <span class="s2">"DuckDB already in use — the VSS "</span>
+</span><span data-line="424">                <span class="s2">"extension does ANN in the same SQL engine."</span><span class="p">,</span>
+</span><span data-line="425">            <span class="p">),</span>
+</span><span data-line="426">        <span class="p">}</span>
+</span><span data-line="427">        <span class="k">if</span> <span class="n">existing_db</span> <span class="ow">in</span> <span class="n">mapping</span><span class="p">:</span>
+</span><span data-line="428">            <span class="n">primary</span><span class="p">,</span> <span class="n">runner</span><span class="p">,</span> <span class="n">why</span> <span class="o">=</span> <span class="n">mapping</span><span class="p">[</span><span class="n">existing_db</span><span class="p">]</span>
+</span><span data-line="429">            <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">why</span><span class="p">)</span>
+</span><span data-line="430">            <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="n">runner</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[])</span>
+</span><span data-line="431">
+</span><span data-line="432">    <span class="c1"># Q3 — can't run a server: embedded only.</span>
+</span><span data-line="433">    <span class="k">if</span> <span class="ow">not</span> <span class="n">can_run_docker</span><span class="p">:</span>
+</span><span data-line="434">        <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"No Docker / server: restricted to embedded backends."</span><span class="p">)</span>
+</span><span data-line="435">        <span class="k">if</span> <span class="n">needs_hybrid</span><span class="p">:</span>
+</span><span data-line="436">            <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"LanceDB is the embedded backend with native hybrid."</span><span class="p">)</span>
+</span><span data-line="437">            <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"lancedb"</span><span class="p">,</span> <span class="s2">"chroma"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"sqlite_vec"</span><span class="p">,</span> <span class="s2">"duckdb"</span><span class="p">])</span>
+</span><span data-line="438">        <span class="k">if</span> <span class="n">corpus_size</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"large"</span><span class="p">,</span> <span class="s2">"huge"</span><span class="p">):</span>
+</span><span data-line="439">            <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Large corpus, embedded: LanceDB scales on local/S3."</span><span class="p">)</span>
+</span><span data-line="440">            <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"lancedb"</span><span class="p">,</span> <span class="s2">"faiss"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"chroma"</span><span class="p">])</span>
+</span><span data-line="441">        <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Chroma is the fastest embedded path to a working app."</span><span class="p">)</span>
+</span><span data-line="442">        <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"chroma"</span><span class="p">,</span> <span class="s2">"lancedb"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"sqlite_vec"</span><span class="p">,</span> <span class="s2">"duckdb"</span><span class="p">])</span>
+</span><span data-line="443">
+</span><span data-line="444">    <span class="c1"># Q4 — air-gapped: self-hostable, no telemetry, permissive license.</span>
+</span><span data-line="445">    <span class="k">if</span> <span class="n">air_gapped</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">cloud_ok</span><span class="p">:</span>
+</span><span data-line="446">        <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span data-line="447">            <span class="s2">"On-prem / air-gapped: pick a self-hostable, permissively licensed "</span>
+</span><span data-line="448">            <span class="s2">"backend with no mandatory telemetry."</span>
+</span><span data-line="449">        <span class="p">)</span>
+</span><span data-line="450">        <span class="k">if</span> <span class="n">corpus_size</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"large"</span><span class="p">,</span> <span class="s2">"huge"</span><span class="p">):</span>
+</span><span data-line="451">            <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"milvus"</span><span class="p">,</span> <span class="s2">"qdrant"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"weaviate"</span><span class="p">,</span> <span class="s2">"pgvector"</span><span class="p">])</span>
+</span><span data-line="452">        <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"qdrant"</span><span class="p">,</span> <span class="s2">"chroma"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"milvus"</span><span class="p">,</span> <span class="s2">"weaviate"</span><span class="p">,</span> <span class="s2">"lancedb"</span><span class="p">])</span>
+</span><span data-line="453">
+</span><span data-line="454">    <span class="c1"># Q7 — native hybrid wanted.</span>
+</span><span data-line="455">    <span class="k">if</span> <span class="n">needs_hybrid</span><span class="p">:</span>
+</span><span data-line="456">        <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Native hybrid (keyword + vector) wanted in one query."</span><span class="p">)</span>
+</span><span data-line="457">        <span class="k">return</span> <span class="n">_result</span><span class="p">(</span>
+</span><span data-line="458">            <span class="s2">"weaviate"</span><span class="p">,</span> <span class="s2">"elasticsearch"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"qdrant"</span><span class="p">,</span> <span class="s2">"redis"</span><span class="p">,</span> <span class="s2">"pinecone"</span><span class="p">]</span>
+</span><span data-line="459">        <span class="p">)</span>
+</span><span data-line="460">
+</span><span data-line="461">    <span class="c1"># Q1 — huge scale.</span>
+</span><span data-line="462">    <span class="k">if</span> <span class="n">corpus_size</span> <span class="o">==</span> <span class="s2">"huge"</span><span class="p">:</span>
+</span><span data-line="463">        <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Billion-scale: DiskANN-class engines keep RAM bounded."</span><span class="p">)</span>
+</span><span data-line="464">        <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"milvus"</span><span class="p">,</span> <span class="s2">"pinecone"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"qdrant"</span><span class="p">,</span> <span class="s2">"turbopuffer"</span><span class="p">])</span>
+</span><span data-line="465">
+</span><span data-line="466">    <span class="c1"># Q5 — budget.</span>
+</span><span data-line="467">    <span class="k">if</span> <span class="n">budget</span> <span class="o">==</span> <span class="s2">"free"</span><span class="p">:</span>
+</span><span data-line="468">        <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span data-line="469">            <span class="s2">"Free tier only: Qdrant Cloud has a permanent free 1 GB cluster "</span>
+</span><span data-line="470">            <span class="s2">"and the cleanest exit path."</span>
+</span><span data-line="471">        <span class="p">)</span>
+</span><span data-line="472">        <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"qdrant"</span><span class="p">,</span> <span class="s2">"pinecone"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"chroma"</span><span class="p">,</span> <span class="s2">"milvus"</span><span class="p">])</span>
+</span><span data-line="473">
+</span><span data-line="474">    <span class="n">reasoning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span data-line="475">        <span class="s2">"Paid OK, managed, no special constraints: Pinecone serverless is the "</span>
+</span><span data-line="476">        <span class="s2">"zero-ops canonical; Qdrant Cloud is the open runner-up."</span>
+</span><span data-line="477">    <span class="p">)</span>
+</span><span data-line="478">    <span class="k">return</span> <span class="n">_result</span><span class="p">(</span><span class="s2">"pinecone"</span><span class="p">,</span> <span class="s2">"qdrant"</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">,</span> <span class="p">[</span><span class="s2">"turbopuffer"</span><span class="p">,</span> <span class="s2">"weaviate"</span><span class="p">])</span></div>
 
-</span><span data-line="481">
-</span><span data-line="482">
-</span><span data-line="483"><span class="k">def</span><span class="w"> </span><span class="nf">_result</span><span class="p">(</span>
-</span><span data-line="484">    <span class="n">primary</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span data-line="485">    <span class="n">runner_up</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span data-line="486">    <span class="n">reasoning</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-</span><span data-line="487">    <span class="n">alternatives</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-</span><span data-line="488"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span data-line="489"><span class="w">    </span><span class="sd">"""Assemble a recommendation dict, attaching a one-line note per backend."""</span>
-</span><span data-line="490">
-</span><span data-line="491">    <span class="k">def</span><span class="w"> </span><span class="nf">note</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="492">        <span class="n">meta</span> <span class="o">=</span> <span class="n">provider</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
-</span><span data-line="493">        <span class="k">return</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sweet_spot"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
-</span><span data-line="494">
-</span><span data-line="495">    <span class="k">return</span> <span class="p">{</span>
-</span><span data-line="496">        <span class="s2">"primary"</span><span class="p">:</span> <span class="n">primary</span><span class="p">,</span>
-</span><span data-line="497">        <span class="s2">"primary_note"</span><span class="p">:</span> <span class="n">note</span><span class="p">(</span><span class="n">primary</span><span class="p">),</span>
-</span><span data-line="498">        <span class="s2">"runner_up"</span><span class="p">:</span> <span class="n">runner_up</span><span class="p">,</span>
-</span><span data-line="499">        <span class="s2">"runner_up_note"</span><span class="p">:</span> <span class="n">note</span><span class="p">(</span><span class="n">runner_up</span><span class="p">),</span>
-</span><span data-line="500">        <span class="s2">"alternatives"</span><span class="p">:</span> <span class="n">alternatives</span><span class="p">,</span>
-</span><span data-line="501">        <span class="s2">"reasoning"</span><span class="p">:</span> <span class="n">reasoning</span><span class="p">,</span>
-</span><span data-line="502">    <span class="p">}</span>
-</span><span data-line="503">
-</span><span data-line="504">
+</span><span data-line="479">
+</span><span data-line="480">
+</span><span data-line="481"><span class="k">def</span><span class="w"> </span><span class="nf">_result</span><span class="p">(</span>
+</span><span data-line="482">    <span class="n">primary</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span data-line="483">    <span class="n">runner_up</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span data-line="484">    <span class="n">reasoning</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+</span><span data-line="485">    <span class="n">alternatives</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+</span><span data-line="486"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span data-line="487"><span class="w">    </span><span class="sd">"""Assemble a recommendation dict, attaching a one-line note per backend."""</span>
+</span><span data-line="488">
+</span><span data-line="489">    <span class="k">def</span><span class="w"> </span><span class="nf">note</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="490">        <span class="n">meta</span> <span class="o">=</span> <span class="n">provider</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+</span><span data-line="491">        <span class="k">return</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sweet_spot"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+</span><span data-line="492">
+</span><span data-line="493">    <span class="k">return</span> <span class="p">{</span>
+</span><span data-line="494">        <span class="s2">"primary"</span><span class="p">:</span> <span class="n">primary</span><span class="p">,</span>
+</span><span data-line="495">        <span class="s2">"primary_note"</span><span class="p">:</span> <span class="n">note</span><span class="p">(</span><span class="n">primary</span><span class="p">),</span>
+</span><span data-line="496">        <span class="s2">"runner_up"</span><span class="p">:</span> <span class="n">runner_up</span><span class="p">,</span>
+</span><span data-line="497">        <span class="s2">"runner_up_note"</span><span class="p">:</span> <span class="n">note</span><span class="p">(</span><span class="n">runner_up</span><span class="p">),</span>
+</span><span data-line="498">        <span class="s2">"alternatives"</span><span class="p">:</span> <span class="n">alternatives</span><span class="p">,</span>
+</span><span data-line="499">        <span class="s2">"reasoning"</span><span class="p">:</span> <span class="n">reasoning</span><span class="p">,</span>
+</span><span data-line="500">    <span class="p">}</span>
+</span><span data-line="501">
+</span><span data-line="502">
 <div class="viewcode-block" id="print_recommendation">
 <a class="viewcode-back" href="../../_autosummary/vd.html#vd.print_recommendation">[docs]</a>
-</span><span data-line="505"><span class="k">def</span><span class="w"> </span><span class="nf">print_recommendation</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="506"><span class="w">    </span><span class="sd">"""Run :func:`recommend_backend` and print the recommendation readably."""</span>
-</span><span data-line="507">    <span class="n">rec</span> <span class="o">=</span> <span class="n">recommend_backend</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="508">    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Vector database recommendation"</span><span class="p">)</span>
-</span><span data-line="509">    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-</span><span data-line="510">    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">rec</span><span class="p">[</span><span class="s2">"reasoning"</span><span class="p">]:</span>
-</span><span data-line="511">        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span data-line="512">    <span class="nb">print</span><span class="p">()</span>
-</span><span data-line="513">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  PRIMARY    : </span><span class="si">{</span><span class="n">rec</span><span class="p">[</span><span class="s1">'primary'</span><span class="p">]</span><span class="si">}</span><span class="s2">  — </span><span class="si">{</span><span class="n">rec</span><span class="p">[</span><span class="s1">'primary_note'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span data-line="514">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  RUNNER-UP  : </span><span class="si">{</span><span class="n">rec</span><span class="p">[</span><span class="s1">'runner_up'</span><span class="p">]</span><span class="si">}</span><span class="s2">  — </span><span class="si">{</span><span class="n">rec</span><span class="p">[</span><span class="s1">'runner_up_note'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span data-line="515">    <span class="k">if</span> <span class="n">rec</span><span class="p">[</span><span class="s2">"alternatives"</span><span class="p">]:</span>
-</span><span data-line="516">        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ALSO OK    : </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s1">'alternatives'</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span data-line="517">    <span class="nb">print</span><span class="p">()</span>
-</span><span data-line="518">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Next: vd.check_requirements(</span><span class="si">{</span><span class="n">rec</span><span class="p">[</span><span class="s1">'primary'</span><span class="p">]</span><span class="si">!r}</span><span class="s2">) for setup steps."</span><span class="p">)</span>
-</span><span data-line="519">    <span class="nb">print</span><span class="p">()</span></div>
+</span><span data-line="503"><span class="k">def</span><span class="w"> </span><span class="nf">print_recommendation</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="504"><span class="w">    </span><span class="sd">"""Run :func:`recommend_backend` and print the recommendation readably."""</span>
+</span><span data-line="505">    <span class="n">rec</span> <span class="o">=</span> <span class="n">recommend_backend</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="506">    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Vector database recommendation"</span><span class="p">)</span>
+</span><span data-line="507">    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+</span><span data-line="508">    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">rec</span><span class="p">[</span><span class="s2">"reasoning"</span><span class="p">]:</span>
+</span><span data-line="509">        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="510">    <span class="nb">print</span><span class="p">()</span>
+</span><span data-line="511">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  PRIMARY    : </span><span class="si">{</span><span class="n">rec</span><span class="p">[</span><span class="s1">'primary'</span><span class="p">]</span><span class="si">}</span><span class="s2">  — </span><span class="si">{</span><span class="n">rec</span><span class="p">[</span><span class="s1">'primary_note'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="512">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  RUNNER-UP  : </span><span class="si">{</span><span class="n">rec</span><span class="p">[</span><span class="s1">'runner_up'</span><span class="p">]</span><span class="si">}</span><span class="s2">  — </span><span class="si">{</span><span class="n">rec</span><span class="p">[</span><span class="s1">'runner_up_note'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="513">    <span class="k">if</span> <span class="n">rec</span><span class="p">[</span><span class="s2">"alternatives"</span><span class="p">]:</span>
+</span><span data-line="514">        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ALSO OK    : </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s1">'alternatives'</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="515">    <span class="nb">print</span><span class="p">()</span>
+</span><span data-line="516">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Next: vd.check_requirements(</span><span class="si">{</span><span class="n">rec</span><span class="p">[</span><span class="s1">'primary'</span><span class="p">]</span><span class="si">!r}</span><span class="s2">) for setup steps."</span><span class="p">)</span>
+</span><span data-line="517">    <span class="nb">print</span><span class="p">()</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">
@@ -719,7 +717,7 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="../../_static/documentation_options.js?v=29c81e07"></script>
+      <script src="../../_static/documentation_options.js?v=1e30946d"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

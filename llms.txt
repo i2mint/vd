@@ -25,7 +25,7 @@
 - [vd.time_indexed](_autosummary/vd.time_indexed.html.md): Time-indexed vector collection wrapper.
 - [vd.util](_autosummary/vd.util.html.md): The backend registry, the &#96;connect()&#96; factory, and small shared utilities.
 - [For AI agents](ai-agents.html.md): &#96;vd&#96; ships artifacts for coding agents alongside its code. This page lists
-- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-09-26 10:53 UTC&#42;&#42; from commit &lt;a href="https://github.com/i2m...
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-09-30 06:44 UTC&#42;&#42; from commit &lt;a href="https://github.com/i2m...
 
 ## Optional
 
