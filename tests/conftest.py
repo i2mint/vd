@@ -78,6 +78,16 @@ SERVER_BACKENDS = {
             "host": os.environ.get("VD_WEAVIATE_HOST", "localhost")
         },
     },
+    "pinecone": {
+        # Pinecone Local, the official in-memory emulator (no account):
+        # ghcr.io/pinecone-io/pinecone-local. It speaks the pre-2026-07 API, so
+        # these tests need the pinecone SDK < 10 until the emulator catches up.
+        "probe": ("localhost", 5080),
+        "connect_kwargs": lambda: {
+            "api_key": os.environ.get("VD_PINECONE_API_KEY", "pclocal"),
+            "host": os.environ.get("VD_PINECONE_HOST", "http://localhost:5080"),
+        },
+    },
     "mongodb": {
         # Host port 27018 — see tests/docker-compose.yml (avoids colliding
         # with a developer's native mongod on the default 27017).
