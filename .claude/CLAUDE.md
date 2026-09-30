@@ -38,9 +38,10 @@ backends.
   `UnsupportedCapabilityError`, `EmbeddingRequiredError`,
   `BackendNotInstalledError`); capability protocols.
 - `backends/` — 15 adapters: `memory`, `chroma`, `faiss`, `sqlite_vec`,
-  `duckdb`, `lancedb`, `qdrant` (all tested here) and `pgvector`, `pinecone`,
-  `weaviate`, `milvus`, `redis`, `elasticsearch`, `mongodb`, `turbopuffer`
-  (correct-by-construction; need a server/account to exercise).
+  `duckdb`, `lancedb`, `qdrant`, `milvus` (embedded, always tested) and
+  `pgvector`, `pinecone`, `weaviate`, `redis`, `elasticsearch`, `mongodb`
+  (tested against local containers, no accounts) and `turbopuffer`
+  (correct-by-construction: no local emulator exists).
 - `providers.py` + `data/providers.yaml` — the ~21-provider registry +
   `recommend_backend` decision framework. `requirements.py` —
   `check_requirements` / `setup_guide` / `install_backend`.
@@ -83,8 +84,12 @@ too; the root `conftest.py` skips backend modules whose SDK is missing.
 Parametrized suites (`tests/test_core.py`, `tests/test_hybrid.py`) run every
 reachable backend via the `client` fixture in `tests/conftest.py`: embedded
 backends always, server backends only when their port answers. Bring the
-servers up with `docker compose -f tests/docker-compose.yml up -d` and install
-their clients (`uv pip install -e ".[pgvector,redis,elasticsearch,weaviate,mongodb,milvus]"`).
+servers up with `DOCKERHUB_MIRROR=mirror.gcr.io docker compose -f tests/docker-compose.yml up -d`
+(the mirror avoids Docker Hub's anonymous pull limit) and install their clients
+(`uv pip install -e ".[pgvector,redis,elasticsearch,weaviate,mongodb,milvus,pinecone]" "pinecone<10"`).
+No server backend needs an account: pinecone runs on Pinecone Local (which
+needs the pinecone SDK < 10) and mongodb on MongoDB Atlas Local. Only
+turbopuffer has no emulator. See `tests/README.md`.
 CI installs the `test` and `ci-backends` extras (qdrant-client, lancedb,
 pgvector's client), so the embedded qdrant and LanceDB suites run there;
 server backends still skip in CI — run them locally before changing an

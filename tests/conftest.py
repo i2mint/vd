@@ -13,13 +13,16 @@ Two kinds of backend run:
   ``sqlite3`` lacks loadable-extension support; ``milvus`` runs against the
   embedded Milvus Lite engine and is skipped if ``milvus-lite`` is absent.
 - **Server backends** (``pgvector``, ``redis``, ``elasticsearch``,
-  ``weaviate``, ``mongodb``) need a running container — see
-  ``tests/docker-compose.yml``. Each is TCP-probed and **skipped** when its
+  ``weaviate``, ``mongodb``, ``pinecone`` via Pinecone Local, and
+  ``qdrant_server``: the qdrant adapter with ``url=``) need a running
+  container — see ``tests/docker-compose.yml``; none needs an account. Each is TCP-probed and **skipped** when its
   container is down, so the suite stays green in a plain CI environment.
 
 Connection settings for the server backends are environment-overridable
 (``VD_PGVECTOR_DSN``, ``VD_REDIS_HOST``/``VD_REDIS_PORT``,
-``VD_ELASTICSEARCH_URL``, ``VD_WEAVIATE_HOST``, ``VD_MONGODB_URI``).
+``VD_ELASTICSEARCH_URL``, ``VD_WEAVIATE_HOST``, ``VD_MONGODB_URI``,
+``VD_PINECONE_HOST``/``VD_PINECONE_API_KEY``, ``VD_QDRANT_URL``). An entry may
+set ``"backend"`` to test another entry's adapter under a different setup.
 """
 
 import hashlib
