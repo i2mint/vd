@@ -88,6 +88,16 @@ SERVER_BACKENDS = {
             "host": os.environ.get("VD_PINECONE_HOST", "http://localhost:5080"),
         },
     },
+    "qdrant_server": {
+        # The qdrant adapter against a real Qdrant server (url=), next to the
+        # embedded "qdrant" entry above: exercises the network client paths.
+        "backend": "qdrant",
+        "probe": ("localhost", 6333),
+        "connect_kwargs": lambda: {
+            "url": os.environ.get("VD_QDRANT_URL", "http://localhost:6333"),
+            "check_compatibility": False,
+        },
+    },
     "mongodb": {
         # Host port 27018 — see tests/docker-compose.yml (avoids colliding
         # with a developer's native mongod on the default 27017).
@@ -143,6 +153,11 @@ def _unavailable_reason(name: str) -> str | None:
                 f"— start it with tests/docker-compose.yml"
             )
     return None
+
+
+def backend_of(name: str) -> str:
+    """The ``vd.connect`` backend for a fixture entry (entries may alias one)."""
+    return SERVER_BACKENDS.get(name, {}).get("backend", name)
 
 
 def _connect_kwargs(name: str) -> dict:
@@ -204,7 +219,7 @@ def embedder():
 def backend_name(request):
     """Each reachable backend, one at a time; unreachable ones are skipped."""
     name = request.param
-    if name not in vd.list_backends():
+    if backend_of(name) not in vd.list_backends():
         pytest.skip(f"backend {name!r} is not installed")
     reason = _unavailable_reason(name)
     if reason:
@@ -216,7 +231,7 @@ def backend_name(request):
 def client(backend_name, embedder):
     """A fresh, connected client for each backend (with an embedder)."""
     connection = vd.connect(
-        backend_name, embedder=embedder, **_connect_kwargs(backend_name)
+        backend_of(backend_name), embedder=embedder, **_connect_kwargs(backend_name)
     )
     _drop_all_collections(connection)
     yield connection

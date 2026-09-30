@@ -9,16 +9,16 @@ parametrized contract suites only hit by accident of test ordering.
 import pytest
 
 import vd
-from tests.conftest import SERVER_BACKENDS, _connect_kwargs, _tcp_open
+from tests.conftest import SERVER_BACKENDS, _connect_kwargs, _tcp_open, backend_of
 
 
 def _live_client(name):
-    if name not in vd.list_backends():
+    if backend_of(name) not in vd.list_backends():
         pytest.skip(f"backend {name!r} is not installed")
     host, port = SERVER_BACKENDS[name]["probe"]
     if not _tcp_open(host, port):
         pytest.skip(f"{name!r} server unreachable at {host}:{port}")
-    return vd.connect(name, **_connect_kwargs(name))
+    return vd.connect(backend_of(name), **_connect_kwargs(name))
 
 
 def test_mongodb_search_after_drop_and_recreate_same_name():
@@ -40,3 +40,31 @@ def test_mongodb_search_after_drop_and_recreate_same_name():
         if name in list(client.list_collections()):
             client.delete_collection(name)
         client.close()
+
+
+def test_qdrant_get_collection_recovers_metric_from_server():
+    """A client that didn't create an l2 collection must still score it as l2.
+
+    get_collection used to assume cosine for collections created elsewhere,
+    returning raw Euclidean distances as (lower-is-better) scores.
+    """
+    maker = _live_client("qdrant_server")
+    name = "vd_regress_metric"
+    try:
+        if name in maker:
+            maker.delete_collection(name)
+        col = maker.create_collection(name, dimension=2, metric="l2")
+        col["a"] = vd.Document(id="a", text="x", vector=[1.0, 0.0])
+        col["b"] = vd.Document(id="b", text="y", vector=[0.0, 1.0])
+        expected = [(h["id"], round(h["score"], 6)) for h in col.search([0.9, 0.1])]
+        reader = _live_client("qdrant_server")
+        other = reader.get_collection(name)
+        assert (other.metric, other.dimension) == ("l2", 2)
+        got = [(h["id"], round(h["score"], 6)) for h in other.search([0.9, 0.1])]
+        assert got == expected
+        assert all(0 < s <= 1 for _, s in got)  # canonical l2 score range
+        reader.close()
+    finally:
+        if name in maker:
+            maker.delete_collection(name)
+        maker.close()

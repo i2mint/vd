@@ -393,3 +393,37 @@ async def test_hybrid_search_async_native_accepts_sync_lexical_callable(
         ]
         assert set(ids) == {"a", "b", "c"}
         assert ids.index("a") < ids.index("b") or ids[0] == "b"
+
+
+async def test_qdrant_native_against_live_server(qdrant_available):
+    """With a Qdrant server up, connect_async(url=) is native and matches sync."""
+    from tests.conftest import _connect_kwargs, _tcp_open
+
+    if not _tcp_open("localhost", 6333):
+        pytest.skip("no Qdrant server on localhost:6333")
+    kwargs = _connect_kwargs("qdrant_server")
+    sync = vd.connect("qdrant", **kwargs)
+    name = "vd_async_live"
+    if name in sync:
+        sync.delete_collection(name)
+    try:
+        async with await vd.connect_async("qdrant", **kwargs) as client:
+            assert client.native_async is True
+            col = await client.create_collection(name, dimension=2, metric="l2")
+            await _populate(col)
+            await col.add_documents(
+                [vd.Document(id=f"d{i}", text="t", vector=[0.1, 0.01 * i])
+                 for i in range(300)], batch_size=128)
+            assert await col.count() == 303
+            assert len({k async for k in col.keys()}) == 303
+            native_hits = [(h["id"], round(h["score"], 6)) async for h in
+                           col.search([0.7, 0.3], limit=3,
+                                      filter={"k": {"$in": [1, 3]}})]
+        sync_hits = [(h["id"], round(h["score"], 6)) for h in
+                     sync.get_collection(name).search(
+                         [0.7, 0.3], limit=3, filter={"k": {"$in": [1, 3]}})]
+        assert native_hits == sync_hits and [i for i, _ in native_hits] == ["a", "c"]
+    finally:
+        if name in sync:
+            sync.delete_collection(name)
+        sync.close()
