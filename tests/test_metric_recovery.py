@@ -124,6 +124,7 @@ def test_turbopuffer_without_a_readable_schema_records_no_metric():
 
 def test_a_chroma_collection_whose_embedder_cannot_be_built_still_opens():
     """Review finding: reading ``configuration`` builds the embedding function."""
+    pytest.importorskip("chromadb")
     from vd.backends.chroma import _recorded_metric
 
     class Collection:
