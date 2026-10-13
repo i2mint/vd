@@ -1,39 +1,39 @@
 {
   "schema_version": 1,
-  "built_at": "2026-09-30T06:44:10Z",
+  "built_at": "2026-10-13T11:12:32Z",
   "package": {
     "name": "vd",
-    "version": "0.2.12",
+    "version": "0.2.13",
     "display_name": "vd",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "986a59d32d82ad17ffa6e7970db1a1c7ffc24e58",
-    "short_commit": "986a59d",
+    "commit": "dfed7d98db46b9af8253a9f79f21c538c8fbca17",
+    "short_commit": "dfed7d9",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/vd",
-    "commit_url": "https://github.com/i2mint/vd/commit/986a59d32d82ad17ffa6e7970db1a1c7ffc24e58",
+    "commit_url": "https://github.com/i2mint/vd/commit/dfed7d98db46b9af8253a9f79f21c538c8fbca17",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/vd",
-    "sha": "986a59d32d82ad17ffa6e7970db1a1c7ffc24e58",
+    "sha": "dfed7d98db46b9af8253a9f79f21c538c8fbca17",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "36679623261",
-    "run_url": "https://github.com/i2mint/vd/actions/runs/36679623261",
+    "run_id": "38388421725",
+    "run_url": "https://github.com/i2mint/vd/actions/runs/38388421725",
     "server_url": "https://github.com"
   },
   "tools": {
-    "epythet": "0.2.12",
+    "epythet": "0.2.15",
     "sphinx": "9.1.0",
     "docutils": "0.22.4",
-    "python": "3.12.14"
+    "python": "3.12.15"
   },
   "config": {
     "theme": "auto",
@@ -60,11 +60,11 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.2.12",
+    "latest": "0.2.13",
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/vd && cd vd\ngit checkout 986a59d32d82ad17ffa6e7970db1a1c7ffc24e58\npip install \"epythet==0.2.12\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/vd && cd vd\ngit checkout dfed7d98db46b9af8253a9f79f21c538c8fbca17\npip install \"epythet==0.2.15\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,

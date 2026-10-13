@@ -204,7 +204,7 @@ without forking the adapter hierarchy. Three pieces:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#vd.asynchronous.AsyncCollectionWrapper" title="vd.asynchronous.AsyncCollectionWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncCollectionWrapper</span></code></a> / <a class="reference internal" href="#vd.asynchronous.AsyncClientWrapper" title="vd.asynchronous.AsyncClientWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncClientWrapper</span></code></a> —
 thin adapters that take any sync <a class="reference internal" href="vd.html#vd.Collection" title="vd.Collection"><code class="xref py py-class docutils literal notranslate"><span class="pre">vd.Collection</span></code></a> / <a class="reference internal" href="vd.html#vd.Client" title="vd.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">vd.Client</span></code></a>
-and dispatch every method to <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.to_thread()</span></code></a>. This is the
+and dispatch every method to <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread" title="(in Python v3.15)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.to_thread()</span></code></a>. This is the
 <strong>universal fallback</strong>: every backend works through it.</p></li>
 <li><p><a class="reference internal" href="#vd.asynchronous.AsyncAbstractCollection" title="vd.asynchronous.AsyncAbstractCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncAbstractCollection</span></code></a> / <a class="reference internal" href="#vd.asynchronous.AsyncAbstractClient" title="vd.asynchronous.AsyncAbstractClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncAbstractClient</span></code></a> — bases for
 <strong>native</strong> async adapters, which do real non-blocking I/O through a
@@ -246,10 +246,10 @@ is a Python keyword.</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#vd.asynchronous.AsyncCollectionWrapper" title="vd.asynchronous.AsyncCollectionWrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AsyncCollectionWrapper</span></code></a>(sync_collection)</p></td>
-<td><p>Adapt a sync <a class="reference internal" href="vd.html#vd.Collection" title="vd.Collection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code></a> to the <a class="reference internal" href="vd.html#vd.AsyncCollection" title="vd.AsyncCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncCollection</span></code></a> contract by dispatching every method to <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.to_thread()</span></code></a>.</p></td>
+<td><p>Adapt a sync <a class="reference internal" href="vd.html#vd.Collection" title="vd.Collection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code></a> to the <a class="reference internal" href="vd.html#vd.AsyncCollection" title="vd.AsyncCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncCollection</span></code></a> contract by dispatching every method to <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread" title="(in Python v3.15)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.to_thread()</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#vd.asynchronous.AsyncClientWrapper" title="vd.asynchronous.AsyncClientWrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AsyncClientWrapper</span></code></a>(sync_client)</p></td>
-<td><p>Adapt a sync <a class="reference internal" href="vd.html#vd.Client" title="vd.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> to the <a class="reference internal" href="vd.html#vd.AsyncClient" title="vd.AsyncClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncClient</span></code></a> contract by dispatching every method to <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.to_thread()</span></code></a>.</p></td>
+<td><p>Adapt a sync <a class="reference internal" href="vd.html#vd.Client" title="vd.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> to the <a class="reference internal" href="vd.html#vd.AsyncClient" title="vd.AsyncClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncClient</span></code></a> contract by dispatching every method to <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread" title="(in Python v3.15)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.to_thread()</span></code></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#vd.asynchronous.AsyncAbstractCollection" title="vd.asynchronous.AsyncAbstractCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AsyncAbstractCollection</span></code></a>()</p></td>
 <td><p>Base class for <strong>native</strong> async collections (the async sibling of <a class="reference internal" href="vd.html#vd.AbstractCollection" title="vd.AbstractCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">vd.AbstractCollection</span></code></a>).</p></td>
@@ -266,7 +266,7 @@ is a Python keyword.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="vd.asynchronous.AsyncAbstractClient">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.asynchronous.</span></span><span class="sig-name descname"><span class="pre">AsyncAbstractClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/asynchronous.html#AsyncAbstractClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.asynchronous.AsyncAbstractClient" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Base class for <strong>native</strong> async clients (the async sibling of
 <a class="reference internal" href="vd.html#vd.AbstractClient" title="vd.AbstractClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">vd.AbstractClient</span></code></a>).</p>
 <p>A backend implements <a class="reference internal" href="#vd.asynchronous.AsyncAbstractClient.create_collection" title="vd.asynchronous.AsyncAbstractClient.create_collection"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_collection()</span></code></a>, <a class="reference internal" href="#vd.asynchronous.AsyncAbstractClient.get_collection" title="vd.asynchronous.AsyncAbstractClient.get_collection"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_collection()</span></code></a>,
@@ -278,20 +278,20 @@ returns it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>embedder</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]]]</span>) – A <code class="docutils literal notranslate"><span class="pre">text</span> <span class="pre">-&gt;</span> <span class="pre">vector</span></code> function handed to every collection.</p></li>
+<li><p><strong>embedder</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]]]</span>) – A <code class="docutils literal notranslate"><span class="pre">text</span> <span class="pre">-&gt;</span> <span class="pre">vector</span></code> function handed to every collection.</p></li>
 <li><p><strong>**config</strong> – Backend-specific connection configuration.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="vd.asynchronous.AsyncAbstractClient.backend_name">
-<span class="sig-name descname"><span class="pre">backend_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></span><a class="headerlink" href="#vd.asynchronous.AsyncAbstractClient.backend_name" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">backend_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></span><a class="headerlink" href="#vd.asynchronous.AsyncAbstractClient.backend_name" title="Link to this definition">#</a></dt>
 <dd><p>The registry name of this backend (set by <a class="reference internal" href="#vd.asynchronous.register_async_backend" title="vd.asynchronous.register_async_backend"><code class="xref py py-func docutils literal notranslate"><span class="pre">register_async_backend()</span></code></a>).</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="vd.asynchronous.AsyncAbstractClient.client">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">client</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span><a class="headerlink" href="#vd.asynchronous.AsyncAbstractClient.client" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">client</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><a class="headerlink" href="#vd.asynchronous.AsyncAbstractClient.client" title="Link to this definition">#</a></dt>
 <dd><p>The raw async backend client — a supported, documented escape hatch.</p>
 </dd></dl>
 
@@ -301,7 +301,7 @@ returns it.</p>
 <dd><p>Release backend resources (closes the raw client if it can).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -323,7 +323,7 @@ returns it.</p>
 <dd><p>Drop a collection; raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -356,14 +356,14 @@ returns it.</p>
 <dd><p>Async-iterate collection names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="vd.asynchronous.AsyncAbstractClient.native_async">
-<span class="sig-name descname"><span class="pre">native_async</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#vd.asynchronous.AsyncAbstractClient.native_async" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">native_async</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#vd.asynchronous.AsyncAbstractClient.native_async" title="Link to this definition">#</a></dt>
 <dd><p>Real non-blocking I/O through the backend’s async SDK.</p>
 </dd></dl>
 
@@ -401,7 +401,7 @@ and <code class="docutils literal notranslate"><span class="pre">egress</span></
 <dd><p>Batch upsert — mirrors <a class="reference internal" href="vd.html#vd.AbstractCollection.add_documents" title="vd.AbstractCollection.add_documents"><code class="xref py py-meth docutils literal notranslate"><span class="pre">vd.AbstractCollection.add_documents()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -412,7 +412,7 @@ and <code class="docutils literal notranslate"><span class="pre">egress</span></
 <dd><p>Return the number of documents.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -423,7 +423,7 @@ and <code class="docutils literal notranslate"><span class="pre">egress</span></
 <dd><p>Delete a document; raises <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -445,20 +445,20 @@ and <code class="docutils literal notranslate"><span class="pre">egress</span></
 <dd><p>Yield document ids.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="vd.asynchronous.AsyncAbstractCollection.native">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">native</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span><a class="headerlink" href="#vd.asynchronous.AsyncAbstractCollection.native" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">native</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><a class="headerlink" href="#vd.asynchronous.AsyncAbstractCollection.native" title="Link to this definition">#</a></dt>
 <dd><p>The raw backend handle (escape hatch), or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="vd.asynchronous.AsyncAbstractCollection.native_async">
-<span class="sig-name descname"><span class="pre">native_async</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#vd.asynchronous.AsyncAbstractCollection.native_async" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">native_async</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#vd.asynchronous.AsyncAbstractCollection.native_async" title="Link to this definition">#</a></dt>
 <dd><p>Real non-blocking I/O through the backend’s async SDK.</p>
 </dd></dl>
 
@@ -469,7 +469,7 @@ and <code class="docutils literal notranslate"><span class="pre">egress</span></
 <p>Same contract as <a class="reference internal" href="vd.html#vd.AbstractCollection.search" title="vd.AbstractCollection.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">vd.AbstractCollection.search()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -480,14 +480,14 @@ and <code class="docutils literal notranslate"><span class="pre">egress</span></
 <dd><p>Insert or replace a document (idempotent upsert).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="vd.asynchronous.AsyncAbstractCollection.supported_filter_operators">
-<span class="sig-name descname"><span class="pre">supported_filter_operators</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or'})</span></span><a class="headerlink" href="#vd.asynchronous.AsyncAbstractCollection.supported_filter_operators" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">supported_filter_operators</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#frozenset" title="(in Python v3.15)"><span class="pre">frozenset</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or'})</span></span><a class="headerlink" href="#vd.asynchronous.AsyncAbstractCollection.supported_filter_operators" title="Link to this definition">#</a></dt>
 <dd><p>the full language.
 Adapters narrow this; <a class="reference internal" href="#vd.asynchronous.AsyncAbstractCollection.search" title="vd.asynchronous.AsyncAbstractCollection.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a> validates against it.</p>
 <dl class="field-list simple">
@@ -503,7 +503,7 @@ Adapters narrow this; <a class="reference internal" href="#vd.asynchronous.Async
 <dd><p>Insert or replace <code class="docutils literal notranslate"><span class="pre">document</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -514,13 +514,13 @@ Adapters narrow this; <a class="reference internal" href="#vd.asynchronous.Async
 <dl class="py class">
 <dt class="sig sig-object py" id="vd.asynchronous.AsyncClientWrapper">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.asynchronous.</span></span><span class="sig-name descname"><span class="pre">AsyncClientWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sync_client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/asynchronous.html#AsyncClientWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.asynchronous.AsyncClientWrapper" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Adapt a sync <a class="reference internal" href="vd.html#vd.Client" title="vd.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> to the <a class="reference internal" href="vd.html#vd.AsyncClient" title="vd.AsyncClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncClient</span></code></a>
-contract by dispatching every method to <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.to_thread()</span></code></a>.</p>
+contract by dispatching every method to <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread" title="(in Python v3.15)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.to_thread()</span></code></a>.</p>
 <p>Use <a class="reference internal" href="#vd.asynchronous.connect_async" title="vd.asynchronous.connect_async"><code class="xref py py-func docutils literal notranslate"><span class="pre">connect_async()</span></code></a> rather than instantiating this directly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>sync_client</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></span>) – A live <a class="reference internal" href="vd.html#vd.Client" title="vd.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> (typically obtained from <a class="reference internal" href="vd.html#vd.connect" title="vd.connect"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.connect()</span></code></a>).</p>
+<dd class="field-odd"><p><strong>sync_client</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></span>) – A live <a class="reference internal" href="vd.html#vd.Client" title="vd.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> (typically obtained from <a class="reference internal" href="vd.html#vd.connect" title="vd.connect"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.connect()</span></code></a>).</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -529,14 +529,14 @@ contract by dispatching every method to <a class="reference external" href="http
 <dd><p>Always <code class="docutils literal notranslate"><span class="pre">False</span></code> for this wrapper.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="vd.asynchronous.AsyncClientWrapper.client">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">client</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span><a class="headerlink" href="#vd.asynchronous.AsyncClientWrapper.client" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">client</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><a class="headerlink" href="#vd.asynchronous.AsyncClientWrapper.client" title="Link to this definition">#</a></dt>
 <dd><p>Pass through to the wrapped client’s <code class="xref py py-attr docutils literal notranslate"><span class="pre">client</span></code>.</p>
 </dd></dl>
 
@@ -546,7 +546,7 @@ contract by dispatching every method to <a class="reference external" href="http
 <dd><p>Release backend resources. Calls <code class="docutils literal notranslate"><span class="pre">close()</span></code> on the sync client if present.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -568,7 +568,7 @@ contract by dispatching every method to <a class="reference external" href="http
 <dd><p>Drop a collection; raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -601,14 +601,14 @@ contract by dispatching every method to <a class="reference external" href="http
 <dd><p>Yield collection names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="vd.asynchronous.AsyncClientWrapper.sync">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sync</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span><a class="headerlink" href="#vd.asynchronous.AsyncClientWrapper.sync" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sync</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><a class="headerlink" href="#vd.asynchronous.AsyncClientWrapper.sync" title="Link to this definition">#</a></dt>
 <dd><p>The underlying sync <a class="reference internal" href="vd.html#vd.Client" title="vd.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> — a documented escape hatch.</p>
 </dd></dl>
 
@@ -617,9 +617,9 @@ contract by dispatching every method to <a class="reference external" href="http
 <dl class="py class">
 <dt class="sig sig-object py" id="vd.asynchronous.AsyncCollectionWrapper">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.asynchronous.</span></span><span class="sig-name descname"><span class="pre">AsyncCollectionWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sync_collection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/asynchronous.html#AsyncCollectionWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.asynchronous.AsyncCollectionWrapper" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Adapt a sync <a class="reference internal" href="vd.html#vd.Collection" title="vd.Collection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code></a> to the <a class="reference internal" href="vd.html#vd.AsyncCollection" title="vd.AsyncCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncCollection</span></code></a>
-contract by dispatching every method to <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.to_thread()</span></code></a>.</p>
+contract by dispatching every method to <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread" title="(in Python v3.15)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.to_thread()</span></code></a>.</p>
 <p>Use <a class="reference internal" href="#vd.asynchronous.connect_async" title="vd.asynchronous.connect_async"><code class="xref py py-func docutils literal notranslate"><span class="pre">connect_async()</span></code></a> rather than instantiating this directly — it
 will pick this wrapper or a native async adapter as appropriate.</p>
 <dl class="field-list simple">
@@ -638,7 +638,7 @@ thread pool rather than on the event loop. Prefer a native
 implementation for high-concurrency workloads.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -649,7 +649,7 @@ implementation for high-concurrency workloads.</p>
 <dd><p>Batch upsert — mirrors <a class="reference internal" href="vd.html#vd.AbstractCollection.add_documents" title="vd.AbstractCollection.add_documents"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_documents()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -660,7 +660,7 @@ implementation for high-concurrency workloads.</p>
 <dd><p>Return the number of documents.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -671,7 +671,7 @@ implementation for high-concurrency workloads.</p>
 <dd><p>Delete a document; raises <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -693,20 +693,20 @@ implementation for high-concurrency workloads.</p>
 <dd><p>Yield document ids.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="vd.asynchronous.AsyncCollectionWrapper.native">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">native</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span><a class="headerlink" href="#vd.asynchronous.AsyncCollectionWrapper.native" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">native</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><a class="headerlink" href="#vd.asynchronous.AsyncCollectionWrapper.native" title="Link to this definition">#</a></dt>
 <dd><p>Pass through to the wrapped collection’s <code class="xref py py-attr docutils literal notranslate"><span class="pre">native</span></code>.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">native_async</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">native_async</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
 <dd><p>This wrapper offloads to a thread pool; it doesn’t do non-blocking I/O.</p>
 </dd></dl>
 
@@ -719,7 +719,7 @@ from memory. (Most backends’ sync <code class="docutils literal notranslate"><
 or a fully-realized iterator under the hood.)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -730,14 +730,14 @@ or a fully-realized iterator under the hood.)</p>
 <dd><p>Insert or replace a document (idempotent upsert).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="vd.asynchronous.AsyncCollectionWrapper.sync">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sync</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span><a class="headerlink" href="#vd.asynchronous.AsyncCollectionWrapper.sync" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sync</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><a class="headerlink" href="#vd.asynchronous.AsyncCollectionWrapper.sync" title="Link to this definition">#</a></dt>
 <dd><p>The underlying sync <a class="reference internal" href="vd.html#vd.Collection" title="vd.Collection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code></a> — a documented escape hatch.</p>
 </dd></dl>
 
@@ -747,7 +747,7 @@ or a fully-realized iterator under the hood.)</p>
 <dd><p>Insert or replace <code class="docutils literal notranslate"><span class="pre">document</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -757,7 +757,7 @@ or a fully-realized iterator under the hood.)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="vd.asynchronous.SupportsHybrid">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.asynchronous.</span></span><span class="sig-name descname"><span class="pre">SupportsHybrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/base.html#SupportsHybrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.asynchronous.SupportsHybrid" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></a></p>
 <p>A collection that supports native hybrid (dense + lexical) search.</p>
 <p>Hybrid search has no syntactic convergence across vector databases, so it
 is an opt-in capability, never baseline. Prefer the top-level
@@ -776,17 +776,17 @@ fusion variants are accepted via <code class="docutils literal notranslate"><spa
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>query</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Query text (embedded via the collection’s embedder if configured)
+<li><p><strong>query</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>]</em>) – Query text (embedded via the collection’s embedder if configured)
 or a pre-computed query vector for the dense side.</p></li>
-<li><p><strong>query_text</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Explicit text for the lexical side. Defaults to <code class="docutils literal notranslate"><span class="pre">query</span></code> when
+<li><p><strong>query_text</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Explicit text for the lexical side. Defaults to <code class="docutils literal notranslate"><span class="pre">query</span></code> when
 <code class="docutils literal notranslate"><span class="pre">query</span></code> is a string. <strong>Required</strong> when <code class="docutils literal notranslate"><span class="pre">query</span></code> is a vector.</p></li>
-<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of fused results to return.</p></li>
-<li><p><strong>filter</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, </em><em>optional</em>) – Canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> metadata filter applied to both sub-searches.</p></li>
-<li><p><strong>k_dense</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – How many results to fetch from each sub-search before fusion.
+<li><p><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Number of fused results to return.</p></li>
+<li><p><strong>filter</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>, </em><em>optional</em>) – Canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> metadata filter applied to both sub-searches.</p></li>
+<li><p><strong>k_dense</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – How many results to fetch from each sub-search before fusion.
 Both default to <code class="docutils literal notranslate"><span class="pre">max(4</span> <span class="pre">*</span> <span class="pre">limit,</span> <span class="pre">50)</span></code>. Widen for higher recall.</p></li>
-<li><p><strong>k_lexical</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – How many results to fetch from each sub-search before fusion.
+<li><p><strong>k_lexical</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – How many results to fetch from each sub-search before fusion.
 Both default to <code class="docutils literal notranslate"><span class="pre">max(4</span> <span class="pre">*</span> <span class="pre">limit,</span> <span class="pre">50)</span></code>. Widen for higher recall.</p></li>
-<li><p><strong>rrf_k</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Reciprocal Rank Fusion constant (typically 60).</p></li>
+<li><p><strong>rrf_k</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Reciprocal Rank Fusion constant (typically 60).</p></li>
 <li><p><strong>egress</strong> (<em>callable</em><em>, </em><em>optional</em>) – Transform applied to each fused result before it is yielded.</p></li>
 <li><p><strong>**kwargs</strong> – Backend-specific knobs (e.g. <code class="docutils literal notranslate"><span class="pre">alpha=0.7</span></code> on weaviate,
 <code class="docutils literal notranslate"><span class="pre">ranker=&quot;weighted&quot;</span></code> on milvus). Documented per adapter.</p></li>
@@ -805,13 +805,13 @@ factory decides: it may return a native client doing real non-blocking
 I/O (qdrant with <code class="docutils literal notranslate"><span class="pre">url=</span></code>) or the wrapper (embedded qdrant, whose async
 client would block the loop). Every other backend goes
 through the universal <a class="reference internal" href="#vd.asynchronous.AsyncClientWrapper" title="vd.asynchronous.AsyncClientWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncClientWrapper</span></code></a>, built on
-<a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.to_thread()</span></code></a>. Check <code class="docutils literal notranslate"><span class="pre">client.native_async</span></code> to tell them
+<a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread" title="(in Python v3.15)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.to_thread()</span></code></a>. Check <code class="docutils literal notranslate"><span class="pre">client.native_async</span></code> to tell them
 apart.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>backend</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Backend name — same vocabulary as <a class="reference internal" href="vd.html#vd.connect" title="vd.connect"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.connect()</span></code></a>.</p></li>
-<li><p><strong>native</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Use the backend’s native async client when one is registered
+<li><p><strong>backend</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Backend name — same vocabulary as <a class="reference internal" href="vd.html#vd.connect" title="vd.connect"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.connect()</span></code></a>.</p></li>
+<li><p><strong>native</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Use the backend’s native async client when one is registered
 (default). <code class="docutils literal notranslate"><span class="pre">False</span></code> forces the <code class="docutils literal notranslate"><span class="pre">to_thread</span></code> wrapper around the
 sync adapter.</p></li>
 <li><p><strong>**kwargs</strong> – Forwarded to the native client’s constructor, or to
@@ -864,7 +864,7 @@ the full docs.</p>
 <dd class="field-odd"><p><em>dict</em> – Fused result dicts.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.14)"><em>AsyncIterator</em></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><em>Any</em></a>]]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.15)"><em>AsyncIterator</em></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><em>Any</em></a>]]</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -895,7 +895,7 @@ the full docs.</p>
 universal <code class="docutils literal notranslate"><span class="pre">to_thread</span></code> wrapper.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -961,7 +961,7 @@ taking the <a class="reference internal" href="#vd.asynchronous.connect_async" t
     </div>
   </div>
 </footer>
-      <script src="../_static/documentation_options.js?v=1e30946d"></script>
+      <script src="../_static/documentation_options.js?v=ba481074"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

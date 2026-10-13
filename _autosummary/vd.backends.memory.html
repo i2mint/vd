@@ -195,7 +195,7 @@ tests, notebooks, and corpora small enough that an ANN index is overkill.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="vd.backends.memory.MemoryClient.backend_name">
-<span class="sig-name descname"><span class="pre">backend_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'memory'</span></span><a class="headerlink" href="#vd.backends.memory.MemoryClient.backend_name" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">backend_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'memory'</span></span><a class="headerlink" href="#vd.backends.memory.MemoryClient.backend_name" title="Link to this definition">#</a></dt>
 <dd><p>The registry name of this backend (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;chroma&quot;</span></code>). Adapters set it.</p>
 </dd></dl>
 
@@ -206,17 +206,17 @@ tests, notebooks, and corpora small enough that an ANN index is overkill.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Collection name.</p></li>
-<li><p><strong>dimension</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>) – Vector dimension. May be <code class="docutils literal notranslate"><span class="pre">None</span></code> for backends that can infer it
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Collection name.</p></li>
+<li><p><strong>dimension</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>) – Vector dimension. May be <code class="docutils literal notranslate"><span class="pre">None</span></code> for backends that can infer it
 from the first written vector; required up front by backends that
 cannot.</p></li>
-<li><p><strong>metric</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Distance metric: <code class="docutils literal notranslate"><span class="pre">&quot;cosine&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dot&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;l2&quot;</span></code>.</p></li>
+<li><p><strong>metric</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Distance metric: <code class="docutils literal notranslate"><span class="pre">&quot;cosine&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;dot&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;l2&quot;</span></code>.</p></li>
 <li><p><strong>**index_config</strong> – Backend-specific index tuning (HNSW <code class="docutils literal notranslate"><span class="pre">M</span></code>/<code class="docutils literal notranslate"><span class="pre">ef</span></code>, IVF <code class="docutils literal notranslate"><span class="pre">nlist</span></code>, …).
 Documented per adapter; never abstracted into a common enum.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If a collection of that name already exists.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If a collection of that name already exists.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#vd.backends.memory.MemoryCollection" title="vd.backends.memory.MemoryCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">MemoryCollection</span></code></a></span></p>
@@ -230,7 +230,7 @@ Documented per adapter; never abstracted into a common enum.</p></li>
 <dd><p>Drop a collection; raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if absent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -252,7 +252,7 @@ Documented per adapter; never abstracted into a common enum.</p></li>
 <dd><p>Iterate collection names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -268,13 +268,13 @@ Documented per adapter; never abstracted into a common enum.</p></li>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection.native">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">native</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="vd.base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#vd.backends.memory.MemoryCollection.native" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">native</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="vd.base.html#vd.base.Document" title="vd.base.Document"><span class="pre">Document</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#vd.backends.memory.MemoryCollection.native" title="Link to this definition">#</a></dt>
 <dd><p>The raw <code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">Document]</span></code> backing this collection (escape hatch).</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="vd.backends.memory.MemoryCollection.supported_filter_operators">
-<span class="sig-name descname"><span class="pre">supported_filter_operators</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#frozenset" title="(in Python v3.14)"><span class="pre">frozenset</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or'})</span></span><a class="headerlink" href="#vd.backends.memory.MemoryCollection.supported_filter_operators" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">supported_filter_operators</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#frozenset" title="(in Python v3.15)"><span class="pre">frozenset</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or'})</span></span><a class="headerlink" href="#vd.backends.memory.MemoryCollection.supported_filter_operators" title="Link to this definition">#</a></dt>
 <dd><p>the full language.
 Adapters narrow this; <code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code> validates against it.</p>
 <dl class="field-list simple">
@@ -328,7 +328,7 @@ Adapters narrow this; <code class="xref py py-meth docutils literal notranslate"
     </div>
   </div>
 </footer>
-      <script src="../_static/documentation_options.js?v=1e30946d"></script>
+      <script src="../_static/documentation_options.js?v=ba481074"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
