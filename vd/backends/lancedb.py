@@ -152,9 +152,7 @@ class LanceDBCollection(AbstractCollection):
         rows = [self._row(d) for d in docs]
         table = self._table
         if table is None:
-            self._db.create_table(
-                self.name, data=_rows_with_metric(rows, self.metric)
-            )
+            self._db.create_table(self.name, data=_rows_with_metric(rows, self.metric))
         else:
             (
                 table.merge_insert("id")

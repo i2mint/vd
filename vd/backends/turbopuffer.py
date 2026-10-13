@@ -599,9 +599,7 @@ class TurbopufferClient(AbstractClient):
         # This client's own record first: it knows a ``dot`` collection is
         # ``dot``, which the server stores as cosine. Otherwise the server's.
         metric = self._metrics.get(name) or _recorded_metric(ns) or "cosine"
-        return TurbopufferCollection(
-            name, ns, embedder=self._embedder, metric=metric
-        )
+        return TurbopufferCollection(name, ns, embedder=self._embedder, metric=metric)
 
     def delete_collection(self, name: str) -> None:
         """
