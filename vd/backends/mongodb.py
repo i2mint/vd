@@ -38,7 +38,8 @@ queryable. This makes the backend behave like every other ``vd`` adapter
 deployment: Atlas, or a local ``mongodb-atlas-local`` / AtlasCLI deployment —
 it is **not** available on a plain ``mongod``. The metric is also recorded when the collection is created, in a small
 ``_vd_meta`` collection that ``list_collections`` hides, so another client or
-process reads it right away, before any index exists. The index name defaults to
+process reads it right away, before any index exists. (A collection dropped
+outside vd leaves its record behind; vd's own ``delete_collection`` removes it.) The index name defaults to
 ``"vector_index"``; override it with ``vector_index="my_name"`` on
 :class:`MongoDBClient`, or pass ``index="my_name"`` to
 ``collection.search()`` to use a different, externally-managed index.
@@ -650,9 +651,10 @@ class MongoDBClient(AbstractClient):
         """
         Create a new MongoDB collection and return a ``MongoDBCollection``.
 
-        This creates the *document collection* inside the database.  The Atlas
-        vector search index on the ``"embedding"`` field must still be created
-        separately (see module docstring).
+        This creates the *document collection* inside the database and records
+        its metric. The Atlas vector search index on ``"embedding"`` is submitted
+        now when ``dimension`` is given, else built on the first search (see the
+        module docstring).
 
         Parameters
         ----------
@@ -692,9 +694,12 @@ class MongoDBClient(AbstractClient):
             vector_index=self._vector_index,
         )
         self._metrics[name] = metric
-        self._db[_META_COLLECTION].replace_one(
-            {"_id": name}, {"_id": name, "metric": metric}, upsert=True
-        )
+        try:
+            self._db[_META_COLLECTION].replace_one(
+                {"_id": name}, {"_id": name, "metric": metric}, upsert=True
+            )
+        except OperationFailure:
+            pass  # a role without access to it: the index and this client still know
         if dimension is not None:
             # Submit the index now (searching waits for it): the index is where
             # a second client or process reads the metric from (#33). Without a
@@ -707,7 +712,10 @@ class MongoDBClient(AbstractClient):
 
     def _metric_in_meta(self, name: str) -> Optional[str]:
         """The metric ``create_collection`` recorded for ``name``, if any."""
-        doc = self._db[_META_COLLECTION].find_one({"_id": name}) or {}
+        try:
+            doc = self._db[_META_COLLECTION].find_one({"_id": name}) or {}
+        except OperationFailure:
+            return None
         metric = doc.get("metric")
         return metric if metric in _METRIC_TO_ATLAS_SIMILARITY else None
 
@@ -759,8 +767,13 @@ class MongoDBClient(AbstractClient):
                 f"Collection {name!r} does not exist in database "
                 f"{self._database_name!r}."
             )
+        # Forget the record first: a same-named collection created in between
+        # keeps its own, rather than losing it to this delete.
+        try:
+            self._db[_META_COLLECTION].delete_one({"_id": name})
+        except OperationFailure:
+            pass
         self._db.drop_collection(name)
-        self._db[_META_COLLECTION].delete_one({"_id": name})
         self._metrics.pop(name, None)
 
     def list_collections(self) -> Iterator[str]:

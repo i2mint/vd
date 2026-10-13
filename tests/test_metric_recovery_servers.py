@@ -290,3 +290,14 @@ def test_mongodb_hides_and_reserves_its_bookkeeping_collection(mongo_server):
         client.get_collection("_vd_meta")
     with pytest.raises(ValueError, match="reserved"):
         client.create_collection("_vd_meta")
+
+
+def test_mongodb_a_role_that_cannot_use_the_meta_collection_still_works(mongo_server):
+    meta = mongo_server.__getitem__.return_value.__getitem__("_vd_meta")
+    meta.replace_one.side_effect = OperationFailure("not authorized")
+    meta.find_one.side_effect = OperationFailure("not authorized")
+    meta.delete_one.side_effect = OperationFailure("not authorized")
+    client = vd.connect("mongodb", uri="mongodb://fake")
+    client.create_collection("probe", metric="l2")  # does not raise
+    assert client.get_collection("probe").metric == "l2"  # this client remembers
+    client.delete_collection("probe")
