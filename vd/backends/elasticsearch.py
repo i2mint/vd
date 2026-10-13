@@ -127,7 +127,9 @@ def _recorded_metric(es: Any, name: str) -> Optional[str]:
     instead of assuming cosine (i2mint/vd#33). ``None`` when the mapping records
     none (an index made outside vd).
     """
-    mapping = es.indices.get_mapping(index=name)[name]["mappings"]
+    # keyed by the concrete index, which differs from ``name`` for an alias
+    (entry,) = es.indices.get_mapping(index=name).values()
+    mapping = entry["mappings"]
     similarity = mapping.get("properties", {}).get("embedding", {}).get("similarity")
     if similarity in _VD_METRIC:
         return _VD_METRIC[similarity]

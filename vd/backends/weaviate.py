@@ -143,12 +143,13 @@ def _recorded_metric(weaviate_client: Any, class_name: str) -> Optional[str]:
     Weaviate keeps the distance on the class's vector index, not in the client
     that created it, so this is what lets a second client or process score the
     collection the way it was built (i2mint/vd#33). ``None`` when the config
-    records no distance vd maps (e.g. ``hamming``), or cannot be read.
+    records no distance vd maps (e.g. ``hamming``), or the SDK cannot read it.
     """
     try:
-        config = weaviate_client.collections.get(class_name).config.get()
-    except Exception:
+        read_config = weaviate_client.collections.get(class_name).config.get
+    except AttributeError:  # an SDK without collection config: nothing to read
         return None
+    config = read_config()  # a connection or auth error is the caller's to see
     # SDK >= 4.16 keeps one index config per named vector; older ones keep one.
     index_configs = [
         getattr(vector, "vector_index_config", None)

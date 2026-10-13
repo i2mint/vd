@@ -208,11 +208,12 @@ def _recorded_metric(
     The similarity is fixed in the index definition, not in the client that
     created it, so a second client or process reads it here instead of assuming
     cosine (i2mint/vd#33). ``None`` when no live index records one (the index is
-    created on first write), or when the server cannot list search indexes.
+    created on first search), or when the deployment cannot list search indexes.
     """
     try:
         indexes = list(coll.list_search_indexes(vector_index))
-    except Exception:  # not Atlas-capable: nothing to read
+    except (OperationFailure, AttributeError):
+        # no search-index support (a plain mongod, or pymongo < 4.5): nothing to read
         return None
     for idx in indexes:
         if idx.get("status") in _GONE_INDEX_STATUSES:
@@ -626,6 +627,9 @@ class MongoDBClient(AbstractClient):
         self._db = self._client[database]
         self._vector_index = vector_index
         self._database_name = database
+        #: Metric of each collection created through this client, for the time
+        #: before its Atlas index exists to be read.
+        self._metrics: dict[str, str] = {}
 
     # ----- client interface ------------------------------------------------ #
 
@@ -671,7 +675,7 @@ class MongoDBClient(AbstractClient):
                 f"Collection {name!r} already exists in database "
                 f"{self._database_name!r}."
             ) from exc
-        return MongoDBCollection(
+        col = MongoDBCollection(
             name,
             self._db[name],
             embedder=self._embedder,
@@ -679,6 +683,16 @@ class MongoDBClient(AbstractClient):
             metric=metric,
             vector_index=self._vector_index,
         )
+        self._metrics[name] = metric
+        if dimension is not None:
+            # Submit the index now (searching waits for it): the index is where
+            # a second client or process reads the metric from (#33). Without a
+            # dimension it can only be built on first search.
+            try:
+                col._create_vector_index()
+            except OperationFailure:
+                pass  # no Atlas search here: the first search says so
+        return col
 
     def get_collection(self, name: str) -> MongoDBCollection:
         """
@@ -703,7 +717,8 @@ class MongoDBClient(AbstractClient):
             name,
             self._db[name],
             embedder=self._embedder,
-            metric=_recorded_metric(self._db[name], self._vector_index) or "cosine",
+            metric=_recorded_metric(self._db[name], self._vector_index)
+            or self._metrics.get(name, "cosine"),
             vector_index=self._vector_index,
         )
 
@@ -727,6 +742,7 @@ class MongoDBClient(AbstractClient):
                 f"{self._database_name!r}."
             )
         self._db.drop_collection(name)
+        self._metrics.pop(name, None)
 
     def list_collections(self) -> Iterator[str]:
         """

@@ -69,6 +69,16 @@ def test_weaviate_class_whose_distance_vd_does_not_map_reads_as_cosine(weaviate_
     assert vd.connect("weaviate").get_collection("raw").metric == "cosine"
 
 
+def test_weaviate_does_not_hide_a_connection_error_as_cosine(weaviate_server):
+    class Down(Exception):
+        pass
+
+    weaviate_server.collections.exists.side_effect = lambda name: True
+    weaviate_server.collections.get.side_effect = Down
+    with pytest.raises(Down):
+        vd.connect("weaviate").get_collection("probe")
+
+
 def test_weaviate_reads_the_single_index_config_of_older_sdks(weaviate_server):
     config = SimpleNamespace(
         vector_index_config=SimpleNamespace(distance_metric="l2-squared")
@@ -124,6 +134,15 @@ def test_elasticsearch_second_client_maps_its_first_write_with_the_metric(es_ser
     assert put["embedding"]["similarity"] == "l2_norm"
 
 
+def test_elasticsearch_alias_reads_through_to_its_index(es_server):
+    vd.connect("elasticsearch").create_collection("probe", dimension=2, metric="l2")
+    es_server.indices.exists.side_effect = lambda index: index in ("probe", "alias")
+    es_server.indices.get_mapping.side_effect = lambda index: {
+        "probe": {"mappings": es_server.mappings["probe"]}  # keyed by the real index
+    }
+    assert vd.connect("elasticsearch").get_collection("alias").metric == "l2"
+
+
 def test_elasticsearch_index_made_outside_vd_reads_as_cosine(es_server):
     es_server.mappings["raw"] = {"properties": {"text": {"type": "text"}}}
     assert vd.connect("elasticsearch").get_collection("raw").metric == "cosine"
@@ -132,6 +151,9 @@ def test_elasticsearch_index_made_outside_vd_reads_as_cosine(es_server):
 # --------------------------------------------------------------------------- #
 # MongoDB
 # --------------------------------------------------------------------------- #
+
+pymongo_errors = pytest.importorskip("pymongo.errors")
+OperationFailure = pymongo_errors.OperationFailure
 
 _ATLAS_SIMILARITY = {"cosine": "cosine", "dot": "dotProduct", "l2": "euclidean"}
 
@@ -185,5 +207,44 @@ def test_mongodb_ignores_an_index_that_is_going_away(mongo_server):
 def test_mongodb_without_an_index_yet_or_search_support_reads_as_cosine(mongo_server):
     client = vd.connect("mongodb", uri="mongodb://fake")
     assert client.get_collection("probe").metric == "cosine"  # no index yet
-    mongo_server.coll.list_search_indexes.side_effect = RuntimeError("not Atlas")
-    assert client.get_collection("probe").metric == "cosine"
+    for no_support in (OperationFailure("no such command"), AttributeError("old pymongo")):
+        mongo_server.coll.list_search_indexes.side_effect = no_support
+        assert client.get_collection("probe").metric == "cosine"
+
+
+def test_mongodb_does_not_hide_a_connection_error_as_cosine(mongo_server):
+    from pymongo.errors import ServerSelectionTimeoutError
+
+    mongo_server.coll.list_search_indexes.side_effect = ServerSelectionTimeoutError("x")
+    client = vd.connect("mongodb", uri="mongodb://fake")
+    with pytest.raises(ServerSelectionTimeoutError):
+        client.get_collection("probe")
+
+
+@pytest.mark.parametrize("metric", METRICS)
+def test_mongodb_create_submits_the_index_with_the_metric(
+    mongo_server, monkeypatch, metric
+):
+    """With a dimension the index exists from creation, so another process reads it."""
+    import pymongo.operations
+
+    class SearchIndexModel:  # absent from older pymongo; same attributes as the real
+        def __init__(self, definition, name=None, type=None):
+            self.definition = definition
+
+    monkeypatch.setattr(
+        pymongo.operations, "SearchIndexModel", SearchIndexModel, raising=False
+    )
+    client = vd.connect("mongodb", uri="mongodb://fake")
+    client.create_collection("probe", dimension=2, metric=metric)
+    (model,) = mongo_server.coll.create_search_index.call_args.args
+    assert model.definition["fields"][0]["similarity"] == (
+        _ATLAS_SIMILARITY[metric]
+    )
+
+
+def test_mongodb_same_client_remembers_the_metric_before_the_index_exists(mongo_server):
+    client = vd.connect("mongodb", uri="mongodb://fake")
+    client.create_collection("probe", metric="l2")  # no dimension: no index yet
+    mongo_server.coll.create_search_index.assert_not_called()
+    assert client.get_collection("probe").metric == "l2"
