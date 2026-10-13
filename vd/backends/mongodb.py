@@ -36,7 +36,9 @@ metric — via ``create_search_index``, then blocks until Atlas reports it
 queryable. This makes the backend behave like every other ``vd`` adapter
 (which all create their own index). Index creation requires an Atlas-capable
 deployment: Atlas, or a local ``mongodb-atlas-local`` / AtlasCLI deployment —
-it is **not** available on a plain ``mongod``. The index name defaults to
+it is **not** available on a plain ``mongod``. The metric is also recorded when the collection is created, in a small
+``_vd_meta`` collection that ``list_collections`` hides, so another client or
+process reads it right away, before any index exists. The index name defaults to
 ``"vector_index"``; override it with ``vector_index="my_name"`` on
 :class:`MongoDBClient`, or pass ``index="my_name"`` to
 ``collection.search()`` to use a different, externally-managed index.
@@ -96,6 +98,10 @@ _METRIC_TO_ATLAS_SIMILARITY = {
 
 #: Atlas similarity function name → vd metric (the inverse of the map above).
 _ATLAS_SIMILARITY_TO_METRIC = {v: k for k, v in _METRIC_TO_ATLAS_SIMILARITY.items()}
+
+#: Name of the collection where vd records each collection's metric, so another
+#: client or process can read it before the Atlas index exists (vd#35).
+_META_COLLECTION = "_vd_meta"
 
 #: Search-index statuses Atlas reports for an index that is gone or going.
 _GONE_INDEX_STATUSES = frozenset({"DOES_NOT_EXIST", "DELETING"})
@@ -668,6 +674,8 @@ class MongoDBClient(AbstractClient):
         ValueError
             If a collection named ``name`` already exists in the database.
         """
+        if name == _META_COLLECTION:
+            raise ValueError(f"{name!r} is reserved for vd's own bookkeeping.")
         try:
             self._db.create_collection(name)
         except CollectionInvalid as exc:
@@ -684,6 +692,9 @@ class MongoDBClient(AbstractClient):
             vector_index=self._vector_index,
         )
         self._metrics[name] = metric
+        self._db[_META_COLLECTION].replace_one(
+            {"_id": name}, {"_id": name, "metric": metric}, upsert=True
+        )
         if dimension is not None:
             # Submit the index now (searching waits for it): the index is where
             # a second client or process reads the metric from (#33). Without a
@@ -693,6 +704,12 @@ class MongoDBClient(AbstractClient):
             except OperationFailure:
                 pass  # no Atlas search here: the first search says so
         return col
+
+    def _metric_in_meta(self, name: str) -> Optional[str]:
+        """The metric ``create_collection`` recorded for ``name``, if any."""
+        doc = self._db[_META_COLLECTION].find_one({"_id": name}) or {}
+        metric = doc.get("metric")
+        return metric if metric in _METRIC_TO_ATLAS_SIMILARITY else None
 
     def get_collection(self, name: str) -> MongoDBCollection:
         """
@@ -708,7 +725,7 @@ class MongoDBClient(AbstractClient):
         KeyError
             If the collection does not exist in the database.
         """
-        if name not in self._db.list_collection_names():
+        if name not in self._collection_names():
             raise KeyError(
                 f"Collection {name!r} does not exist in database "
                 f"{self._database_name!r}."
@@ -718,6 +735,7 @@ class MongoDBClient(AbstractClient):
             self._db[name],
             embedder=self._embedder,
             metric=_recorded_metric(self._db[name], self._vector_index)
+            or self._metric_in_meta(name)
             or self._metrics.get(name, "cosine"),
             vector_index=self._vector_index,
         )
@@ -736,12 +754,13 @@ class MongoDBClient(AbstractClient):
         KeyError
             If the collection does not exist in the database.
         """
-        if name not in self._db.list_collection_names():
+        if name not in self._collection_names():
             raise KeyError(
                 f"Collection {name!r} does not exist in database "
                 f"{self._database_name!r}."
             )
         self._db.drop_collection(name)
+        self._db[_META_COLLECTION].delete_one({"_id": name})
         self._metrics.pop(name, None)
 
     def list_collections(self) -> Iterator[str]:
@@ -754,7 +773,11 @@ class MongoDBClient(AbstractClient):
             Names of all MongoDB collections in the database, in the order
             returned by the server.
         """
-        return iter(self._db.list_collection_names())
+        return iter(self._collection_names())
+
+    def _collection_names(self) -> list:
+        """Names of the user's collections: all but vd's own metadata one."""
+        return [n for n in self._db.list_collection_names() if n != _META_COLLECTION]
 
     def close(self) -> None:
         """Close the underlying ``MongoClient`` and release its resources."""

@@ -175,13 +175,21 @@ def mongo_server(monkeypatch):
     import vd.backends.mongodb as mod
 
     server = MagicMock()
-    server.__getitem__.return_value.__getitem__.return_value.indexes = []
-    coll = server.__getitem__.return_value.__getitem__.return_value
-    coll.list_search_indexes.side_effect = lambda *a, **kw: iter(coll.indexes)
     db = server.__getitem__.return_value
-    db.list_collection_names.return_value = ["probe"]
+    coll = MagicMock()
+    coll.indexes = []
+    coll.list_search_indexes.side_effect = lambda *a, **kw: iter(coll.indexes)
+    meta = {}  # the _vd_meta collection: _id -> document
+    meta_coll = MagicMock()
+    meta_coll.replace_one.side_effect = lambda f, doc, upsert=False: meta.update(
+        {f["_id"]: doc}
+    )
+    meta_coll.find_one.side_effect = lambda f: meta.get(f["_id"])
+    meta_coll.delete_one.side_effect = lambda f: meta.pop(f["_id"], None)
+    db.__getitem__.side_effect = lambda n: meta_coll if n == "_vd_meta" else coll
+    db.list_collection_names.return_value = ["probe", "_vd_meta"]
     monkeypatch.setattr(mod, "MongoClient", lambda *a, **kw: server)
-    server.coll = coll
+    server.coll, server.meta = coll, meta
     return server
 
 
@@ -248,3 +256,37 @@ def test_mongodb_same_client_remembers_the_metric_before_the_index_exists(mongo_
     client.create_collection("probe", metric="l2")  # no dimension: no index yet
     mongo_server.coll.create_search_index.assert_not_called()
     assert client.get_collection("probe").metric == "l2"
+
+
+@pytest.mark.parametrize("metric", METRICS)
+def test_mongodb_another_client_reads_the_metric_of_a_collection_with_no_index_yet(
+    mongo_server, metric
+):
+    """Created without a dimension: the index is built on first search, but the
+    metric was recorded at creation (#35)."""
+    vd.connect("mongodb", uri="mongodb://fake").create_collection("probe", metric=metric)
+    other = vd.connect("mongodb", uri="mongodb://fake")  # no memory of the creation
+    assert other.get_collection("probe").metric == metric
+
+
+def test_mongodb_the_index_wins_over_the_recorded_metric(mongo_server):
+    mongo_server.meta["probe"] = {"_id": "probe", "metric": "dot"}
+    mongo_server.coll.indexes = [_atlas_index("euclidean")]
+    client = vd.connect("mongodb", uri="mongodb://fake")
+    assert client.get_collection("probe").metric == "l2"
+
+
+def test_mongodb_deleting_a_collection_forgets_its_metric(mongo_server):
+    client = vd.connect("mongodb", uri="mongodb://fake")
+    client.create_collection("probe", metric="l2")
+    client.delete_collection("probe")
+    assert "probe" not in mongo_server.meta
+
+
+def test_mongodb_hides_and_reserves_its_bookkeeping_collection(mongo_server):
+    client = vd.connect("mongodb", uri="mongodb://fake")
+    assert list(client.list_collections()) == ["probe"]
+    with pytest.raises(KeyError):
+        client.get_collection("_vd_meta")
+    with pytest.raises(ValueError, match="reserved"):
+        client.create_collection("_vd_meta")
