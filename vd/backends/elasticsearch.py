@@ -575,7 +575,7 @@ class ElasticsearchClient(AbstractClient):
             "properties": {
                 "text": {"type": "text"},
                 "metadata": {"type": "object", "enabled": False},
-            }
+            },
         }
         if dimension is not None:
             mappings["properties"]["embedding"] = _build_mapping(dimension, metric)[
