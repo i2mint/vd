@@ -108,11 +108,12 @@ def _recorded_metric(client: Any, name: str) -> Optional[str]:
     """
     for index in client.list_indexes(collection_name=name) or ():
         info = client.describe_index(collection_name=name, index_name=index) or {}
+        if info.get("field_name", "vector") != "vector":
+            continue  # another field's index (a collection made outside vd)
         metric_type = str(info.get("metric_type") or "").upper()
         if metric_type in _VD_METRIC:
             return _VD_METRIC[metric_type]
     return None
-
 
 
 def _milvus_metric(metric: str) -> str:

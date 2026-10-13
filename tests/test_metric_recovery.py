@@ -105,12 +105,14 @@ class _FakeNamespace:
     "distance, metric", [("euclidean_squared", "l2"), ("cosine_distance", "cosine")]
 )
 def test_turbopuffer_reads_the_metric_from_the_namespace_schema(distance, metric):
+    pytest.importorskip("turbopuffer")
     from vd.backends.turbopuffer import _recorded_metric
 
     assert _recorded_metric(_FakeNamespace(distance)) == metric
 
 
 def test_turbopuffer_without_a_readable_schema_records_no_metric():
+    pytest.importorskip("turbopuffer")
     from vd.backends.turbopuffer import _recorded_metric
 
     class Unwritten:
@@ -118,3 +120,37 @@ def test_turbopuffer_without_a_readable_schema_records_no_metric():
             raise RuntimeError("namespace not found")
 
     assert _recorded_metric(Unwritten()) is None
+
+
+def test_a_chroma_collection_whose_embedder_cannot_be_built_still_opens():
+    """Review finding: reading ``configuration`` builds the embedding function."""
+    from vd.backends.chroma import _recorded_metric
+
+    class Collection:
+        configuration_json = {"hnsw": {"space": "ip"}}
+        metadata = None
+
+        @property
+        def configuration(self):
+            raise ValueError("Could not build embedding function openai")
+
+    assert _recorded_metric(Collection()) == "dot"
+    del Collection.configuration_json
+    assert _recorded_metric(Collection()) == "l2"  # nothing readable: the default
+
+
+def test_milvus_reads_only_the_vector_fields_index():
+    pytest.importorskip("pymilvus")
+    from vd.backends.milvus import _recorded_metric
+
+    class Client:
+        def list_indexes(self, collection_name):
+            return ["other_idx", "vector_idx"]
+
+        def describe_index(self, collection_name, index_name):
+            return {
+                "other_idx": {"field_name": "image", "metric_type": "IP"},
+                "vector_idx": {"field_name": "vector", "metric_type": "L2"},
+            }[index_name]
+
+    assert _recorded_metric(Client(), "c") == "l2"

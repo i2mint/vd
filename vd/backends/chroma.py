@@ -45,6 +45,24 @@ _METRIC_OF_SPACE = {space: metric for metric, space in _SPACE.items()}
 _CHROMA_DEFAULT_SPACE = "l2"
 
 
+def _configuration_of(chroma_collection) -> dict:
+    """The collection's configuration as a plain dict, or ``{}``.
+
+    ``configuration_json`` first: in chromadb 1.x the ``configuration``
+    property rebuilds the collection's embedding function, and raises when it
+    cannot (an OpenAI function in a process without its key) -- which would
+    make a collection another client created impossible to open.
+    """
+    raw = getattr(chroma_collection, "configuration_json", None)
+    if isinstance(raw, dict):
+        return raw
+    try:
+        configuration = getattr(chroma_collection, "configuration", None)
+    except Exception:  # noqa: BLE001 - an embedding function that cannot be built
+        return {}
+    return configuration if isinstance(configuration, dict) else {}
+
+
 def _recorded_metric(chroma_collection) -> str:
     """The ``vd`` metric of an existing Chroma collection, read from Chroma.
 
@@ -54,7 +72,7 @@ def _recorded_metric(chroma_collection) -> str:
     none uses Chroma's default, ``l2``. This is what lets a second client, or
     another process, score an ``l2`` collection as ``l2`` (i2mint/vd#31).
     """
-    configuration = getattr(chroma_collection, "configuration", None) or {}
+    configuration = _configuration_of(chroma_collection)
     spaces = [
         (configuration.get(index) or {}).get("space")
         for index in ("hnsw", "spann")

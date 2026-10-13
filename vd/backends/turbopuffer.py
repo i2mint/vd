@@ -102,7 +102,9 @@ def _recorded_metric(ns: Any) -> Optional[str]:
     turbopuffer keeps the distance metric on the ANN config of the vector
     attribute, so a client that did not create the namespace can still score
     it the way it was built (i2mint/vd#31). ``None`` when the schema cannot be
-    read or records no metric (a namespace never written to).
+    read or records no metric (a namespace never written to, or an ``ann``
+    config given as a bare ``True``, which names no metric); the caller then
+    falls back to cosine.
     """
     try:
         schema = ns.schema() or {}
@@ -122,7 +124,6 @@ def _recorded_metric(ns: Any) -> Optional[str]:
         if metric in _VD_METRIC:
             return _VD_METRIC[metric]
     return None
-
 
 
 def _map_metric(metric: str) -> str:
