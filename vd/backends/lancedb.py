@@ -56,6 +56,40 @@ _FTS_READY: set = set()
 #: vd metric -> LanceDB distance-type name.
 _METRIC = {"cosine": "cosine", "l2": "l2", "dot": "dot"}
 
+#: Schema-metadata key recording the collection's vd metric. Lance tables do
+#: not record a query metric, so vd writes its own when it creates the table,
+#: and any client opening the table later reads it back (i2mint/vd#31).
+_METRIC_KEY = b"vd:metric"
+
+#: The metric assumed for a table that records none: one written by a vd
+#: release before i2mint/vd#31 (whose default metric was cosine) or by another
+#: tool. Pass ``metric=`` to ``LanceDBCollection`` when you know better.
+_UNRECORDED_METRIC = "cosine"
+
+
+def _recorded_metric(table) -> Optional[str]:
+    """The vd metric a Lance table records in its schema metadata, if any."""
+    metadata = getattr(table.schema, "metadata", None) or {}
+    value = metadata.get(_METRIC_KEY)
+    return value.decode() if isinstance(value, bytes) else value
+
+
+def _rows_with_metric(rows: list[dict], metric: str):
+    """``rows`` as an Arrow table whose schema records ``metric``."""
+    import pyarrow as pa
+
+    dimension = len(rows[0]["vector"])
+    schema = pa.schema(
+        [
+            pa.field("id", pa.string()),
+            pa.field("text", pa.string()),
+            pa.field("vector", pa.list_(pa.float32(), dimension)),
+            pa.field("metadata", pa.string()),
+        ],
+        metadata={_METRIC_KEY: metric.encode()},
+    )
+    return pa.Table.from_pylist(rows, schema=schema)
+
 
 def _sql_str(value: str) -> str:
     """Quote a string for a LanceDB SQL ``where`` predicate."""
@@ -118,7 +152,9 @@ class LanceDBCollection(AbstractCollection):
         rows = [self._row(d) for d in docs]
         table = self._table
         if table is None:
-            self._db.create_table(self.name, data=rows)
+            self._db.create_table(
+                self.name, data=_rows_with_metric(rows, self.metric)
+            )
         else:
             (
                 table.merge_insert("id")
@@ -383,13 +419,17 @@ class LanceDBClient(AbstractClient):
     def get_collection(self, name: str) -> LanceDBCollection:
         # A collection exists either as a created Lance table or as one that
         # was create_collection'd but not yet written to.
-        if name not in set(_table_names(self._client)) and name not in self._metrics:
+        if name in set(_table_names(self._client)):
+            # The table is the truth: another client or process may have
+            # created it, and this one's memory says nothing about it.
+            table = self._client.open_table(name)
+            metric = _recorded_metric(table) or _UNRECORDED_METRIC
+        elif name in self._metrics:
+            metric = self._metrics[name]  # created here, not written yet
+        else:
             raise KeyError(f"Collection {name!r} does not exist")
         return LanceDBCollection(
-            name,
-            self._client,
-            embedder=self._embedder,
-            metric=self._metrics.get(name, "cosine"),
+            name, self._client, embedder=self._embedder, metric=metric
         )
 
     def delete_collection(self, name: str) -> None:
