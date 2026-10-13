@@ -94,6 +94,9 @@ _METRIC_TO_ATLAS_SIMILARITY = {
     "l2": "euclidean",
 }
 
+#: Atlas similarity function name → vd metric (the inverse of the map above).
+_ATLAS_SIMILARITY_TO_METRIC = {v: k for k, v in _METRIC_TO_ATLAS_SIMILARITY.items()}
+
 #: Search-index statuses Atlas reports for an index that is gone or going.
 _GONE_INDEX_STATUSES = frozenset({"DOES_NOT_EXIST", "DELETING"})
 
@@ -195,6 +198,32 @@ def _raw_to_document(raw: dict) -> Document:
         vector=raw.get("embedding"),
         metadata=raw.get("metadata") or {},
     )
+
+
+def _recorded_metric(
+    coll: Any, vector_index: str = _DEFAULT_VECTOR_INDEX
+) -> Optional[str]:
+    """The vd metric of ``coll``, read from its Atlas vector search index.
+
+    The similarity is fixed in the index definition, not in the client that
+    created it, so a second client or process reads it here instead of assuming
+    cosine (i2mint/vd#33). ``None`` when no live index records one (the index is
+    created on first write), or when the server cannot list search indexes.
+    """
+    try:
+        indexes = list(coll.list_search_indexes(vector_index))
+    except Exception:  # not Atlas-capable: nothing to read
+        return None
+    for idx in indexes:
+        if idx.get("status") in _GONE_INDEX_STATUSES:
+            continue
+        definition = idx.get("latestDefinition") or idx.get("definition") or {}
+        for field in definition.get("fields", ()):
+            if field.get("type") == "vector" and field.get("path") == "embedding":
+                metric = _ATLAS_SIMILARITY_TO_METRIC.get(field.get("similarity"))
+                if metric:
+                    return metric
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -674,6 +703,7 @@ class MongoDBClient(AbstractClient):
             name,
             self._db[name],
             embedder=self._embedder,
+            metric=_recorded_metric(self._db[name], self._vector_index) or "cosine",
             vector_index=self._vector_index,
         )
 

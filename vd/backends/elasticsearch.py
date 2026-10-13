@@ -65,6 +65,13 @@ _ES_SIMILARITY = {
     "dot": "dot_product",
 }
 
+#: ES dense_vector similarity -> vd metric (the inverse of ``_ES_SIMILARITY``).
+_VD_METRIC = {v: k for k, v in _ES_SIMILARITY.items()}
+
+#: Key under the index mapping's ``_meta`` where vd records the collection metric,
+#: for a collection whose ``dense_vector`` field is not mapped yet.
+_META_METRIC_KEY = "vd_metric"
+
 #: Minimum num_candidates for kNN search — ES requires a sensible floor.
 _MIN_NUM_CANDIDATES = 100
 
@@ -109,6 +116,23 @@ def _build_mapping(dimension: int, metric: str) -> dict:
             "metadata": {"type": "object", "enabled": False},
         }
     }
+
+
+def _recorded_metric(es: Any, name: str) -> Optional[str]:
+    """The vd metric of index ``name``, read from its mapping.
+
+    The metric lives in the ``embedding`` field's ``similarity``, or, while that
+    field is not mapped yet (a collection created without ``dimension``), in the
+    ``_meta`` vd put on the index. A second client or process reads it here
+    instead of assuming cosine (i2mint/vd#33). ``None`` when the mapping records
+    none (an index made outside vd).
+    """
+    mapping = es.indices.get_mapping(index=name)[name]["mappings"]
+    similarity = mapping.get("properties", {}).get("embedding", {}).get("similarity")
+    if similarity in _VD_METRIC:
+        return _VD_METRIC[similarity]
+    recorded = mapping.get("_meta", {}).get(_META_METRIC_KEY)
+    return recorded if recorded in _ES_SIMILARITY else None
 
 
 def _hit_to_result(hit: dict) -> SearchResult:
@@ -545,6 +569,7 @@ class ElasticsearchClient(AbstractClient):
         # listable). The dense_vector field needs the dimension, so it is only
         # mapped here when known — otherwise _ensure_index adds it on first write.
         mappings: dict[str, Any] = {
+            "_meta": {_META_METRIC_KEY: metric},
             "properties": {
                 "text": {"type": "text"},
                 "metadata": {"type": "object", "enabled": False},
@@ -575,6 +600,7 @@ class ElasticsearchClient(AbstractClient):
             name,
             self._client,
             embedder=self._embedder,
+            metric=_recorded_metric(self._client, name) or "cosine",
         )
 
     def delete_collection(self, name: str) -> None:
