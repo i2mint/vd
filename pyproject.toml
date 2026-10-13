@@ -58,7 +58,7 @@ weaviate = ["weaviate-client"]
 milvus = ["pymilvus", "milvus-lite ; platform_system != 'Windows'"]
 redis = ["redis", "numpy"]
 elasticsearch = ["elasticsearch"]
-mongodb = ["pymongo"]
+mongodb = ["pymongo>=4.7"]
 turbopuffer = ["turbopuffer"]
 # Convenience bundles.
 embedded = ["vd[chroma,qdrant,faiss,lancedb,sqlite_vec,duckdb]"]
