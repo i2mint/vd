@@ -47,7 +47,12 @@ from typing import Any, Callable, Iterable, Iterator, Optional
 
 try:
     import weaviate
-    from weaviate.classes.config import Configure, DataType, Property
+    from weaviate.classes.config import (
+        Configure,
+        DataType,
+        Property,
+        VectorDistances,
+    )
 except ImportError as e:  # pragma: no cover
     raise ImportError(
         "The weaviate backend needs the 'weaviate-client' package. "
@@ -90,6 +95,9 @@ _METRIC_TO_DISTANCE = {
     "l2": "l2-squared",
 }
 
+#: Weaviate vector distance -> vd metric (the inverse of ``_METRIC_TO_DISTANCE``).
+_DISTANCE_TO_METRIC = {v: k for k, v in _METRIC_TO_DISTANCE.items()}
+
 
 # --------------------------------------------------------------------------- #
 # Module-level helpers
@@ -129,6 +137,33 @@ def _object_uuid(doc_id: str) -> str:
     return str(uuid.uuid5(uuid.NAMESPACE_OID, doc_id))
 
 
+def _recorded_metric(weaviate_client: Any, class_name: str) -> Optional[str]:
+    """The vd metric of class ``class_name``, read from its vector index config.
+
+    Weaviate keeps the distance on the class's vector index, not in the client
+    that created it, so this is what lets a second client or process score the
+    collection the way it was built (i2mint/vd#33). ``None`` when the config
+    records no distance vd maps (e.g. ``hamming``), or the SDK cannot read it.
+    """
+    try:
+        read_config = weaviate_client.collections.get(class_name).config.get
+    except AttributeError:  # an SDK without collection config: nothing to read
+        return None
+    config = read_config()  # a connection or auth error is the caller's to see
+    # SDK >= 4.16 keeps one index config per named vector; older ones keep one.
+    index_configs = [
+        getattr(vector, "vector_index_config", None)
+        for vector in (getattr(config, "vector_config", None) or {}).values()
+    ]
+    index_configs.append(getattr(config, "vector_index_config", None))
+    for index_config in index_configs:
+        distance = getattr(index_config, "distance_metric", None)
+        distance = getattr(distance, "value", distance)
+        if distance in _DISTANCE_TO_METRIC:
+            return _DISTANCE_TO_METRIC[distance]
+    return None
+
+
 def _create_collection_schema(
     weaviate_client: Any,
     class_name: str,
@@ -153,8 +188,13 @@ def _create_collection_schema(
     -------
     The newly created Weaviate collection handle.
     """
+    index_config = Configure.VectorIndex.hnsw(
+        distance_metric=VectorDistances(_METRIC_TO_DISTANCE.get(metric, "cosine"))
+    )
     try:
-        vector_config = Configure.Vectors.self_provided()
+        vector_config = Configure.Vectors.self_provided(
+            vector_index_config=index_config
+        )
     except AttributeError:  # pragma: no cover — older SDK sub-version fallback
         vector_config = Configure.Vectors.none()
 
@@ -649,7 +689,10 @@ class WeaviateClient(AbstractClient):
         # Re-register in name_map if discovered via class existence check.
         if name not in self._name_map:
             self._name_map[name] = class_name
-        return self._collection_for(name)
+        # The server is the truth: another client or process may have created
+        # the class, and this one's memory says nothing (i2mint/vd#33).
+        metric = _recorded_metric(self._client, class_name) or "cosine"
+        return self._collection_for(name, metric=metric)
 
     def delete_collection(self, name: str) -> None:
         """
