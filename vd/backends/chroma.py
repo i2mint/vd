@@ -40,6 +40,30 @@ CHROMA_FILTER_OPERATORS = SUPPORTED_FILTER_OPERATORS - {"$not", "$exists"}
 
 #: vd metric name -> Chroma HNSW space name.
 _SPACE = {"cosine": "cosine", "dot": "ip", "l2": "l2"}
+_METRIC_OF_SPACE = {space: metric for metric, space in _SPACE.items()}
+#: Chroma's own default space: a collection created without one uses it.
+_CHROMA_DEFAULT_SPACE = "l2"
+
+
+def _recorded_metric(chroma_collection) -> str:
+    """The ``vd`` metric of an existing Chroma collection, read from Chroma.
+
+    Chroma keeps the space in the collection's configuration (``hnsw`` or
+    ``spann``) and, on older releases or collections created with
+    ``metadata={"hnsw:space": ...}``, in its metadata. A collection that names
+    none uses Chroma's default, ``l2``. This is what lets a second client, or
+    another process, score an ``l2`` collection as ``l2`` (i2mint/vd#31).
+    """
+    configuration = getattr(chroma_collection, "configuration", None) or {}
+    spaces = [
+        (configuration.get(index) or {}).get("space")
+        for index in ("hnsw", "spann")
+        if isinstance(configuration, dict)
+    ]
+    metadata = getattr(chroma_collection, "metadata", None) or {}
+    spaces.append(metadata.get("hnsw:space"))
+    space = next((s for s in spaces if s), _CHROMA_DEFAULT_SPACE)
+    return _METRIC_OF_SPACE.get(space, space)
 
 
 def _to_chroma_where(filter: Optional[Filter]) -> Optional[dict]:
@@ -208,8 +232,6 @@ class ChromaClient(AbstractClient):
             self._client = chromadb.PersistentClient(path=persist_directory)
         else:
             self._client = chromadb.EphemeralClient()
-        # Remember each collection's metric so score conversion is correct.
-        self._metrics: dict[str, str] = {}
 
     def create_collection(
         self,
@@ -233,7 +255,6 @@ class ChromaClient(AbstractClient):
             if "already exists" in str(e).lower():
                 raise ValueError(f"Collection {name!r} already exists") from e
             raise
-        self._metrics[name] = metric
         return ChromaCollection(
             chroma_collection, embedder=self._embedder, metric=metric
         )
@@ -246,7 +267,7 @@ class ChromaClient(AbstractClient):
         return ChromaCollection(
             chroma_collection,
             embedder=self._embedder,
-            metric=self._metrics.get(name, "cosine"),
+            metric=_recorded_metric(chroma_collection),
         )
 
     def delete_collection(self, name: str) -> None:
@@ -254,7 +275,6 @@ class ChromaClient(AbstractClient):
             self._client.delete_collection(name=name)
         except Exception as e:
             raise KeyError(f"Collection {name!r} does not exist") from e
-        self._metrics.pop(name, None)
 
     def list_collections(self) -> Iterator[str]:
         return (c.name for c in self._client.list_collections())

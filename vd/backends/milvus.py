@@ -83,6 +83,9 @@ _METRIC_MAP: dict[str, str] = {
     "l2": "L2",
 }
 
+#: Milvus metric_type string → vd metric name.
+_VD_METRIC: dict[str, str] = {v: k for k, v in _METRIC_MAP.items()}
+
 #: Maximum VARCHAR length for document ids.
 _ID_MAX_LENGTH: int = 512
 
@@ -93,6 +96,23 @@ _KEYS_BATCH_SIZE: int = 1000
 # --------------------------------------------------------------------------- #
 # Module-level helpers
 # --------------------------------------------------------------------------- #
+
+
+def _recorded_metric(client: Any, name: str) -> Optional[str]:
+    """The vd metric of collection ``name``, read from its vector index.
+
+    A Milvus collection keeps the metric on its index, not in the client that
+    created it, so this is what lets a second client or process score the
+    collection the way it was built (i2mint/vd#31). ``None`` when no index
+    records one (a collection created lazily and not yet written).
+    """
+    for index in client.list_indexes(collection_name=name) or ():
+        info = client.describe_index(collection_name=name, index_name=index) or {}
+        metric_type = str(info.get("metric_type") or "").upper()
+        if metric_type in _VD_METRIC:
+            return _VD_METRIC[metric_type]
+    return None
+
 
 
 def _milvus_metric(metric: str) -> str:
@@ -595,14 +615,22 @@ class MilvusBackendClient(AbstractClient):
         KeyError
             If the collection does not exist.
         """
-        if not self._client.has_collection(name) and name not in self._metrics:
+        if self._client.has_collection(name):
+            # The server is the truth: another client or process may have
+            # created the collection, and this one's memory says nothing.
+            metric = _recorded_metric(self._client, name) or self._metrics.get(
+                name, "cosine"
+            )
+        elif name in self._metrics:
+            metric = self._metrics[name]  # created here, not written yet
+        else:
             raise KeyError(f"Collection {name!r} does not exist")
         return MilvusCollection(
             name,
             self._client,
             embedder=self._embedder,
             dimension=None,  # dimension is inferred at write / query time
-            metric=self._metrics.get(name, "cosine"),
+            metric=metric,
         )
 
     def delete_collection(self, name: str) -> None:

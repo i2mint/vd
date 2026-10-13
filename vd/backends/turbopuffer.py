@@ -83,6 +83,10 @@ _METRIC_MAP: dict[str, str] = {
     "dot": "cosine_distance",  # NOTE: dot → cosine fallback; see docstring above
 }
 
+#: turbopuffer distance_metric string → vd metric. ``cosine_distance`` reads
+#: back as ``cosine``: a ``dot`` collection is stored as cosine (see above).
+_VD_METRIC: dict[str, str] = {"cosine_distance": "cosine", "euclidean_squared": "l2"}
+
 #: Default turbopuffer region.
 _DEFAULT_REGION = "gcp-us-central1"
 
@@ -90,6 +94,35 @@ _DEFAULT_REGION = "gcp-us-central1"
 # --------------------------------------------------------------------------- #
 # Module-level helpers
 # --------------------------------------------------------------------------- #
+
+
+def _recorded_metric(ns: Any) -> Optional[str]:
+    """The vd metric a namespace's vector index records, read from its schema.
+
+    turbopuffer keeps the distance metric on the ANN config of the vector
+    attribute, so a client that did not create the namespace can still score
+    it the way it was built (i2mint/vd#31). ``None`` when the schema cannot be
+    read or records no metric (a namespace never written to).
+    """
+    try:
+        schema = ns.schema() or {}
+    except Exception:  # noqa: BLE001 - no schema yet, or the call failed
+        return None
+    for config in schema.values():
+        ann = (
+            config.get("ann")
+            if isinstance(config, dict)
+            else getattr(config, "ann", None)
+        )
+        metric = (
+            ann.get("distance_metric")
+            if isinstance(ann, dict)
+            else getattr(ann, "distance_metric", None)
+        )
+        if metric in _VD_METRIC:
+            return _VD_METRIC[metric]
+    return None
+
 
 
 def _map_metric(metric: str) -> str:
@@ -561,11 +594,12 @@ class TurbopufferClient(AbstractClient):
         """
         if name not in self._all_known():
             raise KeyError(f"Collection {name!r} does not exist")
+        ns = self._get_ns(name)
+        # This client's own record first: it knows a ``dot`` collection is
+        # ``dot``, which the server stores as cosine. Otherwise the server's.
+        metric = self._metrics.get(name) or _recorded_metric(ns) or "cosine"
         return TurbopufferCollection(
-            name,
-            self._get_ns(name),
-            embedder=self._embedder,
-            metric=self._metrics.get(name, "cosine"),
+            name, ns, embedder=self._embedder, metric=metric
         )
 
     def delete_collection(self, name: str) -> None:
