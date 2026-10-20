@@ -12,6 +12,12 @@ Collections satisfy :class:`vd.SupportsHybrid`: the lexical side runs on
 LanceDB's built-in BM25 full-text index over ``text`` (no extra package),
 created on the first :meth:`~LanceDBCollection.hybrid_search` call.
 
+``await vd.connect_async("lancedb", path=...)`` returns the **native** async
+client (:class:`NativeAsyncLanceDBClient`, over ``lancedb.connect_async``):
+real non-blocking I/O, same table layout, so either client reads what the
+other wrote. Its hybrid search is :func:`vd.hybrid_search_async`'s fallback
+(async dense + client-side BM25).
+
 Requires: ``pip install lancedb``
 """
 
@@ -21,7 +27,7 @@ import inspect
 import json
 import tempfile
 import threading
-from typing import Callable, Iterable, Iterator, Optional
+from typing import AsyncIterator, Callable, Iterable, Iterator, Optional
 
 try:
     import lancedb
@@ -31,6 +37,11 @@ except ImportError as e:  # pragma: no cover
         "Install it with: pip install lancedb"
     ) from e
 
+from vd.asynchronous import (
+    AsyncAbstractClient,
+    AsyncAbstractCollection,
+    register_async_backend,
+)
 from vd.backends._helpers import (
     apply_client_filter,
     overfetch_limit,
@@ -94,6 +105,22 @@ def _rows_with_metric(rows: list[dict], metric: str):
 def _sql_str(value: str) -> str:
     """Quote a string for a LanceDB SQL ``where`` predicate."""
     return "'" + value.replace("'", "''") + "'"
+
+
+def _hits_to_results(hits: list[dict], metric: str, filter, limit: int) -> list:
+    """Dense hits (rows with ``_distance``) as filtered vd search results."""
+    results = []
+    for hit in hits:
+        doc = LanceDBCollection._to_document(hit)
+        results.append(
+            {
+                "id": doc.id,
+                "text": doc.text,
+                "score": score_from_distance(hit.get("_distance", 0.0), metric),
+                "metadata": doc.metadata,
+            }
+        )
+    return apply_client_filter(results, filter, limit=limit)
 
 
 def _table_names(db) -> list[str]:
@@ -205,20 +232,7 @@ class LanceDBCollection(AbstractCollection):
             .limit(overfetch_limit(limit, filter))
             .to_list()
         )
-        results = []
-        for hit in hits:
-            doc = self._to_document(hit)
-            results.append(
-                {
-                    "id": doc.id,
-                    "text": doc.text,
-                    "score": score_from_distance(
-                        hit.get("_distance", 0.0), self.metric
-                    ),
-                    "metadata": doc.metadata,
-                }
-            )
-        return apply_client_filter(results, filter, limit=limit)
+        return _hits_to_results(hits, self.metric, filter, limit)
 
     # ----- native hybrid: LanceDB FTS (BM25) + dense, fused with RRF ------ #
 
@@ -441,3 +455,218 @@ class LanceDBClient(AbstractClient):
     def list_collections(self) -> Iterator[str]:
         names = set(_table_names(self._client)) | set(self._metrics)
         return iter(sorted(names))
+
+
+# --------------------------------------------------------------------------- #
+# Native async (lancedb.connect_async)
+# --------------------------------------------------------------------------- #
+
+
+async def _async_table_names(db) -> list[str]:
+    """The table names of an ``AsyncConnection``."""
+    return list(getattr(await db.list_tables(), "tables", None) or [])
+
+
+async def _async_recorded_metric(table) -> Optional[str]:
+    metadata = getattr(await table.schema(), "metadata", None) or {}
+    value = metadata.get(_METRIC_KEY)
+    return value.decode() if isinstance(value, bytes) else value
+
+
+class NativeAsyncLanceDBCollection(AsyncAbstractCollection):
+    """
+    A Lance table driven by LanceDB's async API — non-blocking I/O.
+
+    Same columns, metric record, filtering and scores as
+    :class:`LanceDBCollection`, so data written by either is readable by both.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        db,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+    ):
+        self.name = name
+        self._db = db
+        self._embedder = embedder
+        self.dimension = dimension
+        self.metric = metric
+
+    @property
+    def native(self):
+        """The raw ``AsyncConnection`` (escape hatch; ``await native.open_table(name)``)."""
+        return self._db
+
+    async def _table(self):
+        """The ``AsyncTable``, or ``None`` before the first write."""
+        if self.name not in await _async_table_names(self._db):
+            return None
+        return await self._db.open_table(self.name)
+
+    async def _find(self, table, key: str) -> list[dict]:
+        return await table.query().where(f"id = {_sql_str(key)}").limit(1).to_list()
+
+    # ----- async raw primitives ------------------------------------------ #
+
+    async def _write_many(self, docs: list[Document]) -> None:
+        rows = [LanceDBCollection._row(d) for d in docs]
+        table = await self._table()
+        if table is None:
+            await self._db.create_table(
+                self.name, data=_rows_with_metric(rows, self.metric)
+            )
+        else:
+            await (
+                table.merge_insert("id")
+                .when_matched_update_all()
+                .when_not_matched_insert_all()
+                .execute(rows)
+            )
+
+    async def _read(self, key: str) -> Document:
+        table = await self._table()
+        hits = await self._find(table, key) if table is not None else []
+        if not hits:
+            raise KeyError(key)
+        return LanceDBCollection._to_document(hits[0])
+
+    async def _drop(self, key: str) -> None:
+        table = await self._table()
+        if table is None or not await self._find(table, key):
+            raise KeyError(key)
+        await table.delete(f"id = {_sql_str(key)}")
+
+    async def _keys(self) -> AsyncIterator[str]:
+        table = await self._table()
+        if table is None:
+            return
+        for key in (await table.to_arrow()).column("id").to_pylist():
+            yield key
+
+    async def _count(self) -> int:
+        table = await self._table()
+        return await table.count_rows() if table is not None else 0
+
+    async def _query(
+        self,
+        vector: Vector,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        table = await self._table()
+        if table is None:
+            return []
+        hits = await (
+            table.vector_search(list(vector))
+            .distance_type(_METRIC.get(self.metric, "cosine"))
+            .limit(overfetch_limit(limit, filter))
+            .to_list()
+        )
+        return _hits_to_results(hits, self.metric, filter, limit)
+
+
+class NativeAsyncLanceDBClient(AsyncAbstractClient):
+    """
+    Native async LanceDB client — what ``await vd.connect_async("lancedb")``
+    returns.
+
+    Takes the same arguments as :class:`LanceDBClient` (``path``, ``embedder``).
+    Construct it with :meth:`open` (``lancedb.connect_async`` is a coroutine);
+    :func:`vd.connect_async` does that for you.
+
+    Examples
+    --------
+    >>> import asyncio, vd
+    >>> async def go():
+    ...     async with await vd.connect_async("lancedb") as client:
+    ...         col = await client.create_collection("docs", dimension=2)
+    ...         await col.set("a", vd.Document(id="a", text="x", vector=[1.0, 0.0]))
+    ...         return client.native_async, await col.count()
+    >>> asyncio.run(go())
+    (True, 1)
+    """
+
+    backend_name = "lancedb"
+
+    def __init__(
+        self,
+        db,
+        *,
+        path: str,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        **config,
+    ):
+        super().__init__(embedder=embedder, **config)
+        self._path = path
+        self._client = db
+        self._metrics: dict[str, str] = {}
+
+    @classmethod
+    async def open(
+        cls,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        path: Optional[str] = None,
+        **config,
+    ) -> "NativeAsyncLanceDBClient":
+        """Connect (a temporary directory when ``path`` is omitted, as the sync client)."""
+        path = path or tempfile.mkdtemp(prefix="vd_lancedb_")
+        db = await lancedb.connect_async(path)
+        return cls(db, path=path, embedder=embedder, **config)
+
+    def _collection(
+        self, name: str, *, dimension: Optional[int], metric: str
+    ) -> NativeAsyncLanceDBCollection:
+        return NativeAsyncLanceDBCollection(
+            name,
+            self._client,
+            embedder=self._embedder,
+            dimension=dimension,
+            metric=metric,
+        )
+
+    async def create_collection(
+        self,
+        name: str,
+        *,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
+    ) -> NativeAsyncLanceDBCollection:
+        if name in await _async_table_names(self._client) or name in self._metrics:
+            raise ValueError(f"Collection {name!r} already exists")
+        self._metrics[name] = metric
+        return self._collection(name, dimension=dimension, metric=metric)
+
+    async def get_collection(self, name: str) -> NativeAsyncLanceDBCollection:
+        if name in await _async_table_names(self._client):
+            table = await self._client.open_table(name)
+            metric = await _async_recorded_metric(table) or _UNRECORDED_METRIC
+        elif name in self._metrics:
+            metric = self._metrics[name]
+        else:
+            raise KeyError(f"Collection {name!r} does not exist")
+        return self._collection(name, dimension=None, metric=metric)
+
+    async def delete_collection(self, name: str) -> None:
+        exists = name in await _async_table_names(self._client)
+        if not exists and name not in self._metrics:
+            raise KeyError(f"Collection {name!r} does not exist")
+        if exists:
+            await self._client.drop_table(name)
+        self._metrics.pop(name, None)
+        _FTS_READY.discard((getattr(self._client, "uri", self._path), name))
+
+    async def list_collections(self) -> AsyncIterator[str]:
+        names = set(await _async_table_names(self._client)) | set(self._metrics)
+        for name in sorted(names):
+            yield name
+
+
+register_async_backend("lancedb", NativeAsyncLanceDBClient.open)
