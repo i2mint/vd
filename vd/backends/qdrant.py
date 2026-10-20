@@ -181,7 +181,11 @@ def _to_point(doc: Document, *, sparse: bool = False) -> "models.PointStruct":
     With ``sparse`` the point also carries the term-count sparse vector that
     native hybrid search reads (the collection must have been created with it).
     """
-    vector = {"": doc.vector, _SPARSE_NAME: _sparse_vector(doc.text or "")} if sparse else doc.vector
+    vector = (
+        {"": doc.vector, _SPARSE_NAME: _sparse_vector(doc.text or "")}
+        if sparse
+        else doc.vector
+    )
     return models.PointStruct(
         id=_point_id(doc.id),
         vector=vector,
@@ -266,7 +270,9 @@ class QdrantCollection(AbstractCollection):
         self._embedder = embedder
         self.dimension = dimension
         self.metric = metric
-        self._sparse: Optional[bool] = None  # does the collection have the lexical vector?
+        self._sparse: Optional[bool] = (
+            None  # does the collection have the lexical vector?
+        )
 
     @property
     def native(self) -> QdrantClient:
@@ -297,7 +303,9 @@ class QdrantCollection(AbstractCollection):
     def _write_many(self, docs: list[Document]) -> None:
         self._ensure_collection()
         sparse = self._has_lexical()
-        self._client.upsert(self.name, points=[_to_point(d, sparse=sparse) for d in docs])
+        self._client.upsert(
+            self.name, points=[_to_point(d, sparse=sparse) for d in docs]
+        )
 
     def _read(self, key: str) -> Document:
         if not self._client.collection_exists(self.name):
@@ -583,7 +591,9 @@ class NativeAsyncQdrantCollection(AsyncAbstractCollection):
         self._embedder = embedder
         self.dimension = dimension
         self.metric = metric
-        self._sparse: Optional[bool] = None  # does the collection have the lexical vector?
+        self._sparse: Optional[bool] = (
+            None  # does the collection have the lexical vector?
+        )
 
     @property
     def native(self) -> AsyncQdrantClient:

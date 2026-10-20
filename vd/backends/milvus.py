@@ -386,7 +386,9 @@ class MilvusCollection(AbstractCollection):
                 f"create_collection time."
             )
         metric_type = _milvus_metric(self.metric)
-        lexical = self._lexical is not False  # new collections get BM25 unless opted out
+        lexical = (
+            self._lexical is not False
+        )  # new collections get BM25 unless opted out
         self._client.create_collection(
             collection_name=self.name,
             schema=_build_schema(self.dimension, lexical=lexical),
