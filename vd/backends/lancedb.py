@@ -617,7 +617,9 @@ class NativeAsyncLanceDBCollection(AsyncAbstractCollection):
             if table is None:
                 return []
             await self._ensure_fts_index(table)
-            table = await self._table()  # reopen: a handle from before the index misses it
+            table = (
+                await self._table()
+            )  # reopen: a handle from before the index misses it
             if table is None:
                 return []
             try:
