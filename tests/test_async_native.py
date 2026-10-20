@@ -428,3 +428,111 @@ async def test_qdrant_native_against_live_server(qdrant_available):
         if name in sync:
             sync.delete_collection(name)
         sync.close()
+
+
+# --------------------------------------------------------------------------- #
+# Native lancedb (embedded: lancedb.connect_async)
+# --------------------------------------------------------------------------- #
+
+
+@pytest.fixture
+def lancedb_available():
+    pytest.importorskip("lancedb")
+    if "lancedb" not in vd.list_backends():
+        pytest.skip("lancedb backend not installed")
+
+
+async def test_lancedb_connect_async_is_native(lancedb_available, tmp_path):
+    from vd.backends.lancedb import NativeAsyncLanceDBClient
+
+    assert "lancedb" in vd.list_async_backends()
+    async with await vd.connect_async("lancedb", path=str(tmp_path)) as client:
+        assert isinstance(client, NativeAsyncLanceDBClient)
+        assert isinstance(client, vd.AsyncClient)
+        assert isinstance(client, vd.SupportsNativeAsync)
+        col = await client.create_collection("docs", dimension=2)
+        assert isinstance(col, vd.AsyncCollection) and col.native_async is True
+        assert col.native is client.client
+    wrapped = await vd.connect_async("lancedb", path=str(tmp_path), native=False)
+    assert isinstance(wrapped, AsyncClientWrapper)
+
+
+async def test_lancedb_native_crud(lancedb_available):
+    async with await vd.connect_async("lancedb") as client:
+        col = await client.create_collection("crud", dimension=2)
+        assert await col.count() == 0
+        assert [k async for k in col.keys()] == []
+        with pytest.raises(KeyError):
+            await col.get("a")
+        with pytest.raises(KeyError):
+            await col.delete("a")
+
+        await _populate(col)
+        assert await col.count() == 3
+        assert sorted([k async for k in col.keys()]) == ["a", "b", "c"]
+        doc = await col.get("a")
+        assert (doc.id, doc.text, doc.metadata) == ("a", "cats purr",
+                                                    {"k": 1, "tag": "pet"})
+        assert doc.vector == pytest.approx([1.0, 0.0])
+
+        await col.set("a", vd.Document(id="a", text="new", vector=[1.0, 0.0]))
+        assert (await col.get("a")).text == "new"
+        assert await col.count() == 3
+
+        await col.delete("b")
+        assert await col.count() == 2
+        with pytest.raises(KeyError):
+            await col.get("b")
+
+        with pytest.raises(ValueError, match="already exists"):
+            await client.create_collection("crud")
+        assert [n async for n in client.list_collections()] == ["crud"]
+        await client.delete_collection("crud")
+        assert [n async for n in client.list_collections()] == []
+        with pytest.raises(KeyError):
+            await client.get_collection("crud")
+
+
+async def test_lancedb_native_matches_wrapped_sync(lancedb_available):
+    """Native and wrapped-sync adapters return identical results."""
+    results = []
+    for native in (True, False):
+        async with await vd.connect_async("lancedb", native=native) as client:
+            assert client.native_async is native
+            col = await client.create_collection("parity", dimension=2,
+                                                 metric="l2")
+            await _populate(col)
+            hits = [
+                (h["id"], round(h["score"], 6), h["text"], h["metadata"])
+                async for h in col.search([0.7, 0.3], limit=3,
+                                          filter={"k": {"$in": [1, 3]}})
+            ]
+            results.append(hits)
+    assert results[0] == results[1]
+    assert [r[0] for r in results[0]] == ["a", "c"]
+
+
+async def test_lancedb_native_and_sync_share_tables(lancedb_available, tmp_path):
+    """What the native client writes the sync one reads (metric included), and back."""
+    async with await vd.connect_async("lancedb", path=str(tmp_path)) as client:
+        col = await client.create_collection("shared", dimension=2, metric="dot")
+        await _populate(col)
+    sync_col = vd.connect("lancedb", path=str(tmp_path)).get_collection("shared")
+    assert sync_col.metric == "dot" and len(sync_col) == 3
+    sync_col["d"] = vd.Document(id="d", text="d", vector=[0.5, 0.5])
+    async with await vd.connect_async("lancedb", path=str(tmp_path)) as client:
+        col = await client.get_collection("shared")
+        assert col.metric == "dot" and await col.count() == 4
+        assert [h["id"] async for h in col.search([1.0, 0.0], limit=1)] == ["a"]
+
+
+async def test_lancedb_native_embedder_and_hybrid(lancedb_available):
+    embed = make_embedder()
+    async with await vd.connect_async("lancedb", embedder=embed) as client:
+        col = await client.create_collection("emb")
+        await col.set("a", "cats and kittens")
+        await col.set("b", ("dogs and puppies", {"kind": "dog"}))
+        assert (await col.get("b")).metadata == {"kind": "dog"}
+        assert [h["id"] async for h in col.search("cats and kittens", limit=1)] == ["a"]
+        hits = [h["id"] async for h in vd.hybrid_search_async(col, "dogs puppies", limit=1)]
+        assert hits == ["b"]

@@ -49,8 +49,8 @@ backends.
 - `asynchronous.py` — async surface: `connect_async`, the universal
   `asyncio.to_thread` wrappers, and **native** async bases
   (`AsyncAbstractClient` / `AsyncAbstractCollection`) plus a registry
-  (`register_async_backend`, `list_async_backends`). Native today: `qdrant`
-  with `url=` (embedded Qdrant's async client blocks the loop, so its factory
+  (`register_async_backend`, `list_async_backends`). Native today: `lancedb`
+  (embedded, `lancedb.connect_async`) and `qdrant` with `url=` (embedded Qdrant's async client blocks the loop, so its factory
   returns the wrapper there).
   The I/O-free embed / dimension / query policy is shared with the sync base
   through `base._CollectionPolicy`.
@@ -173,7 +173,7 @@ fallback engine (`reciprocal_rank_fusion` already exists in `search.py`).
 ## 4. Refactor priorities (gaps to fill)
 
 In rough order. Status as of 2026-09: done — 2, 3, 4, 7; partly done — 1
-(the `F(...)` builder is missing), 6 (native async: `qdrant` only; issue #20
+(the `F(...)` builder is missing), 6 (native async: `qdrant`, `lancedb`; issue #20
 tracks the rest), 9 (dimension checks are loud and early; `model_id` is not
 stored); open — 5, 8. Native hybrid for the remaining backends is issue #17.
 
