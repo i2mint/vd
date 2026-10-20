@@ -536,3 +536,48 @@ async def test_lancedb_native_embedder_and_hybrid(lancedb_available):
         assert [h["id"] async for h in col.search("cats and kittens", limit=1)] == ["a"]
         hits = [h["id"] async for h in vd.hybrid_search_async(col, "dogs puppies", limit=1)]
         assert hits == ["b"]
+
+
+async def test_lancedb_native_hybrid_uses_the_fts_index(lancedb_available, tmp_path):
+    """#40: the async collection's hybrid runs on LanceDB's own BM25 index, and
+    fuses to the same results as the sync collection over the same table."""
+    async with await vd.connect_async("lancedb", path=str(tmp_path)) as client:
+        col = await client.create_collection("hyb", dimension=2)
+        await _populate(col)
+        hits = [
+            h async for h in vd.hybrid_search_async(
+                col, [0.0, 1.0], query_text="cats purr", limit=3
+            )
+        ]
+        table = await client.client.open_table("hyb")
+        assert any(i.index_type == "FTS" for i in await table.list_indices())
+        filtered = [
+            h["id"] async for h in vd.hybrid_search_async(
+                col, [0.0, 1.0], query_text="cats", limit=3, filter={"tag": "pet"}
+            )
+        ]
+        with pytest.raises(ValueError, match="query_text"):
+            async for _ in vd.hybrid_search_async(col, [1.0, 0.0], limit=2):
+                pass
+    assert {h["id"] for h in hits} == {"a", "b", "c"}
+    assert "c" not in filtered
+    sync_col = vd.connect("lancedb", path=str(tmp_path))["hyb"]
+    sync_hits = list(
+        vd.hybrid_search(sync_col, [0.0, 1.0], query_text="cats purr", limit=3)
+    )
+    assert [h["id"] for h in hits] == [h["id"] for h in sync_hits]
+    assert [h["score"] for h in hits] == pytest.approx([h["score"] for h in sync_hits])
+
+
+async def test_lancedb_native_hybrid_rebuilds_after_recreate(lancedb_available, tmp_path):
+    async with await vd.connect_async("lancedb", path=str(tmp_path)) as client:
+        for _ in range(2):  # the cached "has an index" must not outlive the table
+            col = await client.create_collection("re", dimension=2)
+            await _populate(col)
+            ids = [
+                h["id"] async for h in col.hybrid_search(
+                    [0.0, 1.0], query_text="dogs", limit=1
+                )
+            ]
+            assert ids == ["b"]
+            await client.delete_collection("re")

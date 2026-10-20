@@ -15,8 +15,8 @@ created on the first :meth:`~LanceDBCollection.hybrid_search` call.
 ``await vd.connect_async("lancedb", path=...)`` returns the **native** async
 client (:class:`NativeAsyncLanceDBClient`, over ``lancedb.connect_async``):
 real non-blocking I/O, same table layout, so either client reads what the
-other wrote. Its hybrid search is :func:`vd.hybrid_search_async`'s fallback
-(async dense + client-side BM25).
+other wrote. Its hybrid search uses the same native full-text index as the sync
+collection (async dense + LanceDB BM25, fused with RRF).
 
 Requires: ``pip install lancedb``
 """
@@ -569,6 +569,115 @@ class NativeAsyncLanceDBCollection(AsyncAbstractCollection):
             .to_list()
         )
         return _hits_to_results(hits, self.metric, filter, limit)
+
+    # ----- native hybrid: LanceDB FTS (BM25) + dense, fused with RRF ------ #
+
+    def _fts_key(self) -> tuple:
+        return (getattr(self._db, "uri", id(self._db)), self.name)
+
+    @staticmethod
+    async def _has_fts_index(table) -> bool:
+        return any(
+            getattr(index, "index_type", None) == "FTS"
+            and list(getattr(index, "columns", [])) == ["text"]
+            for index in await table.list_indices()
+        )
+
+    async def _ensure_fts_index(self, table) -> None:
+        """Build the full-text index on ``text`` if missing (as the sync collection).
+
+        Known-indexed tables share the sync side's per-``(database, table)`` cache. No
+        lock is held across the ``await``: a failed create is tolerated when the
+        index turns out to exist afterwards (a concurrent creator).
+        """
+        key = self._fts_key()
+        if key in _FTS_READY:
+            return
+        if not await self._has_fts_index(table):
+            from lancedb.index import FTS
+
+            try:
+                await table.create_index("text", config=FTS(), replace=False)
+            except Exception:
+                fresh = await self._table()
+                if fresh is None or not await self._has_fts_index(fresh):
+                    raise
+        _FTS_READY.add(key)
+
+    async def _lexical_query(
+        self, text: str, *, limit: int, filter: Optional[Filter]
+    ) -> list[SearchResult]:
+        """BM25 lexical search through LanceDB's full-text index (built on first use).
+
+        The async twin of :meth:`LanceDBCollection._lexical_query`: same index, same
+        scores, metadata filtered client-side.
+        """
+        for attempt in range(2):
+            table = await self._table()
+            if table is None:
+                return []
+            await self._ensure_fts_index(table)
+            table = await self._table()  # reopen: a handle from before the index misses it
+            if table is None:
+                return []
+            try:
+                query = await table.search(text, query_type="fts")
+                hits = await query.limit(overfetch_limit(limit, filter)).to_list()
+                break
+            except (ValueError, RuntimeError) as error:
+                # dropped and recreated since the index was cached: rebuild, once
+                if attempt or "INVERTED index" not in str(error):
+                    raise
+                _FTS_READY.discard(self._fts_key())
+        results = []
+        for hit in hits:
+            doc = LanceDBCollection._to_document(hit)
+            results.append(
+                {
+                    "id": doc.id,
+                    "text": doc.text,
+                    "score": float(hit.get("_score", 0.0)),
+                    "metadata": doc.metadata,
+                }
+            )
+        return apply_client_filter(results, filter, limit=limit)
+
+    async def hybrid_search(
+        self,
+        query,
+        *,
+        query_text=None,
+        limit: int = 10,
+        filter: Optional[Filter] = None,
+        k_dense: Optional[int] = None,
+        k_lexical: Optional[int] = None,
+        rrf_k: int = 60,
+        egress=None,
+        **kwargs,
+    ) -> AsyncIterator[SearchResult]:
+        """
+        Hybrid (dense + native FTS) search, fused client-side with RRF.
+
+        The async twin of :meth:`LanceDBCollection.hybrid_search`, and what
+        :func:`vd.hybrid_search_async` awaits for this collection (instead of its
+        O(N) client-side BM25 scan). Backend fusion knobs in ``**kwargs`` are dropped,
+        as on the sync side.
+        """
+        from vd.filters import validate_filter
+        from vd.search import _HYBRID_OVERFETCH_FLOOR, _rrf_fuse
+
+        del kwargs
+        validate_filter(filter, supported=self.supported_filter_operators)
+        vec, text = self._resolve_hybrid_inputs(query, query_text)
+        floor = max(4 * limit, _HYBRID_OVERFETCH_FLOOR)
+        dense = await self._query(
+            vec, limit=k_dense if k_dense is not None else floor, filter=filter
+        )
+        lexical = await self._lexical_query(
+            text, limit=k_lexical if k_lexical is not None else floor, filter=filter
+        )
+        for hit in _rrf_fuse([dense, lexical], rrf_k=rrf_k, limit=limit):
+            yield egress(hit) if egress is not None else hit
 
 
 class NativeAsyncLanceDBClient(AsyncAbstractClient):
