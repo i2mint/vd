@@ -50,7 +50,7 @@ import tempfile
 from typing import Any, Callable, Iterable, Iterator, Optional
 
 try:
-    from pymilvus import DataType, MilvusClient
+    from pymilvus import DataType, Function, FunctionType, MilvusClient
 except ImportError as e:  # pragma: no cover
     raise ImportError(
         "The milvus backend needs the 'pymilvus' package. "
@@ -88,6 +88,12 @@ _VD_METRIC: dict[str, str] = {v: k for k, v in _METRIC_MAP.items()}
 
 #: Maximum VARCHAR length for document ids.
 _ID_MAX_LENGTH: int = 512
+
+#: Name of the BM25 output field (a sparse vector Milvus computes from ``text``).
+_SPARSE_FIELD: str = "text_sparse"
+
+#: Milvus caps a VARCHAR at 65535 characters; ``text`` is a VARCHAR when it feeds BM25.
+_TEXT_MAX_LENGTH: int = 65535
 
 #: Default batch size for Milvus Lite queries that simulate full-collection scan.
 _KEYS_BATCH_SIZE: int = 1000
@@ -142,7 +148,7 @@ def _milvus_metric(metric: str) -> str:
         raise ValueError(f"Unknown metric {metric!r}. Valid values are: {valid}.")
 
 
-def _build_schema(dimension: int) -> Any:
+def _build_schema(dimension: int, *, lexical: bool = True) -> Any:
     """
     Build a Milvus ``CollectionSchema`` for a ``vd`` collection.
 
@@ -157,6 +163,10 @@ def _build_schema(dimension: int) -> Any:
     ----------
     dimension : int
         Vector dimension; must be positive.
+    lexical : bool
+        Also declare ``text`` as an analyzed ``VARCHAR`` (at most
+        ``_TEXT_MAX_LENGTH`` characters) and a ``BM25`` function filling the
+        ``text_sparse`` field, which native hybrid search reads.
 
     Returns
     -------
@@ -166,10 +176,26 @@ def _build_schema(dimension: int) -> Any:
     schema = MilvusClient.create_schema(auto_id=False, enable_dynamic_field=True)
     schema.add_field("id", DataType.VARCHAR, is_primary=True, max_length=_ID_MAX_LENGTH)
     schema.add_field("vector", DataType.FLOAT_VECTOR, dim=dimension)
+    if lexical:
+        schema.add_field(
+            "text",
+            DataType.VARCHAR,
+            max_length=_TEXT_MAX_LENGTH,
+            enable_analyzer=True,
+        )
+        schema.add_field(_SPARSE_FIELD, DataType.SPARSE_FLOAT_VECTOR)
+        schema.add_function(
+            Function(
+                name="text_bm25",
+                input_field_names=["text"],
+                output_field_names=[_SPARSE_FIELD],
+                function_type=FunctionType.BM25,
+            )
+        )
     return schema
 
 
-def _build_index_params(metric_type: str) -> Any:
+def _build_index_params(metric_type: str, *, lexical: bool = True) -> Any:
     """
     Build Milvus ``IndexParams`` for the ``vector`` field.
 
@@ -194,6 +220,12 @@ def _build_index_params(metric_type: str) -> Any:
         index_type="AUTOINDEX",
         metric_type=metric_type,
     )
+    if lexical:
+        index_params.add_index(
+            field_name=_SPARSE_FIELD,
+            index_type="SPARSE_INVERTED_INDEX",
+            metric_type="BM25",
+        )
     return index_params
 
 
@@ -301,6 +333,9 @@ class MilvusCollection(AbstractCollection):
         created lazily on the first :meth:`_write`.
     metric : str
         ``vd`` distance metric (``"cosine"``, ``"dot"``, or ``"l2"``).
+    lexical : bool, optional
+        Whether the Milvus collection carries the BM25 field native hybrid
+        search needs. ``None`` (an existing collection) is read from Milvus.
     """
 
     def __init__(
@@ -311,12 +346,15 @@ class MilvusCollection(AbstractCollection):
         embedder: Optional[Callable[[str], Vector]] = None,
         dimension: Optional[int] = None,
         metric: str = "cosine",
+        lexical: Optional[bool] = None,
     ):
         self.name = name
         self._client = client
         self._embedder = embedder
         self.dimension = dimension
         self.metric = metric
+        # Does the collection have the BM25 field? ``None`` = ask Milvus when needed.
+        self._lexical = lexical
 
     # ----- escape hatch --------------------------------------------------- #
 
@@ -348,11 +386,20 @@ class MilvusCollection(AbstractCollection):
                 f"create_collection time."
             )
         metric_type = _milvus_metric(self.metric)
+        lexical = self._lexical is not False  # new collections get BM25 unless opted out
         self._client.create_collection(
             collection_name=self.name,
-            schema=_build_schema(self.dimension),
-            index_params=_build_index_params(metric_type),
+            schema=_build_schema(self.dimension, lexical=lexical),
+            index_params=_build_index_params(metric_type, lexical=lexical),
         )
+        self._lexical = lexical
+
+    def _has_lexical(self) -> bool:
+        """Whether the collection has the BM25 field (older ones do not); cached."""
+        if self._lexical is None:
+            fields = self._client.describe_collection(self.name).get("fields", [])
+            self._lexical = any(f.get("name") == _SPARSE_FIELD for f in fields)
+        return self._lexical
 
     # ----- raw primitives ------------------------------------------------- #
 
@@ -472,6 +519,7 @@ class MilvusCollection(AbstractCollection):
         raw = self._client.search(
             collection_name=self.name,
             data=[vector],
+            anns_field="vector",  # explicit: a lexical collection has two vector fields
             limit=fetch,
             output_fields=["text", "metadata"],
             **kwargs,
@@ -480,6 +528,91 @@ class MilvusCollection(AbstractCollection):
         hits = raw[0] if raw else []
         results: list[SearchResult] = [_hit_to_result(hit, self.metric) for hit in hits]
         return apply_client_filter(results, filter, limit=limit)
+
+    # ----- native hybrid: Milvus BM25 function + dense, fused with RRF ----- #
+
+    def _lexical_query(
+        self,
+        text: str,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        """
+        BM25 search over the ``text_sparse`` field Milvus fills from ``text``.
+
+        Milvus returns hits best-first. Its raw BM25 ``distance`` is positive on
+        a server and negated on Milvus Lite, so the score reported here is its
+        absolute value (higher is better on both). Metadata is filtered
+        client-side after over-fetching, as in :meth:`_query`.
+        """
+        del kwargs
+        if not text.strip() or not self._collection_exists():
+            return []
+        raw = self._client.search(
+            collection_name=self.name,
+            data=[text],
+            anns_field=_SPARSE_FIELD,
+            limit=overfetch_limit(limit, filter),
+            output_fields=["text", "metadata"],
+        )
+        hits = raw[0] if raw else []
+        results: list[SearchResult] = []
+        for hit in hits:
+            entity = hit.get("entity") or {}
+            results.append(
+                {
+                    "id": str(hit.get("id", "")),
+                    "text": entity.get("text") or "",
+                    "score": abs(float(hit.get("distance", 0.0))),
+                    "metadata": entity.get("metadata") or {},
+                }
+            )
+        return apply_client_filter(results, filter, limit=limit)
+
+    def hybrid_search(
+        self,
+        query,
+        *,
+        query_text=None,
+        limit: int = 10,
+        filter: Optional[Filter] = None,
+        k_dense: Optional[int] = None,
+        k_lexical: Optional[int] = None,
+        rrf_k: int = 60,
+        egress=None,
+        **kwargs,
+    ):
+        """
+        Hybrid (dense + native BM25) search, fused client-side with RRF.
+
+        See :class:`vd.SupportsHybrid`. Collections created by this adapter
+        carry a BM25 function over ``text`` and use :meth:`_lexical_query`.
+        A collection created before that change (or with ``lexical=False``) has
+        no BM25 field, so its lexical side is the client-side BM25 fallback.
+        Fusion is vd's RRF, so the fused score matches the other backends.
+        """
+        if not self._collection_exists() or self._has_lexical():
+            lexical = self._lexical_query
+        else:
+            from vd.search import bm25_lexical_search
+
+            def lexical(text, *, limit, filter, **kw):
+                return bm25_lexical_search(self, text, limit=limit, filter=filter)
+
+        return self._hybrid_via_rrf(
+            query,
+            lexical,
+            query_text=query_text,
+            limit=limit,
+            filter=filter,
+            k_dense=k_dense,
+            k_lexical=k_lexical,
+            rrf_k=rrf_k,
+            egress=egress,
+            **kwargs,
+        )
 
 
 # --------------------------------------------------------------------------- #
@@ -556,6 +689,7 @@ class MilvusBackendClient(AbstractClient):
         *,
         dimension: Optional[int] = None,
         metric: str = "cosine",
+        lexical: bool = True,
         **index_config,
     ) -> MilvusCollection:
         """
@@ -570,6 +704,11 @@ class MilvusBackendClient(AbstractClient):
             created lazily on the first write.
         metric : str
             Distance metric: ``"cosine"``, ``"dot"``, or ``"l2"``.
+        lexical : bool
+            Add a BM25 function over ``text`` so :meth:`MilvusCollection.hybrid_search`
+            is native (default). It makes ``text`` a VARCHAR of at most 65535
+            characters; pass ``lexical=False`` to keep unbounded text (hybrid
+            then uses the client-side BM25 fallback).
         **index_config
             Reserved for future backend-specific index tuning; currently
             unused.
@@ -592,6 +731,7 @@ class MilvusBackendClient(AbstractClient):
             embedder=self._embedder,
             dimension=dimension,
             metric=metric,
+            lexical=lexical,
         )
         if dimension is not None:
             # Eager creation when the dimension is already known.

@@ -23,7 +23,9 @@ Requires: ``pip install qdrant-client``
 
 from __future__ import annotations
 
+import hashlib
 import uuid
+from collections import Counter
 from typing import Any, AsyncIterator, Callable, Iterable, Iterator, Optional
 
 try:
@@ -48,6 +50,7 @@ from vd.base import (
     Vector,
 )
 from vd.filters import SUPPORTED_FILTER_OPERATORS
+from vd.search import _tokenize
 from vd.util import register_backend
 
 #: vd metric -> Qdrant distance.
@@ -60,6 +63,43 @@ _DISTANCE = {
 #: Payload keys vd reserves; user metadata lives nested under ``metadata``.
 _ID_KEY = "_vd_id"
 _TEXT_KEY = "_vd_text"
+
+
+#: Name of the sparse vector that carries the lexical (BM25-style) side of hybrid search.
+_SPARSE_NAME = "text"
+#: Qdrant sparse indices are unsigned 32-bit integers.
+_SPARSE_INDEX_SPACE = 2**32
+
+
+def _term_index(token: str) -> int:
+    """Stable (process-independent) sparse index for ``token``: a hash, no vocabulary to store."""
+    digest = hashlib.blake2b(token.encode("utf-8"), digest_size=4).digest()
+    return int.from_bytes(digest, "big") % _SPARSE_INDEX_SPACE
+
+
+def _sparse_vector(text: str, *, binary: bool = False) -> "models.SparseVector":
+    """
+    Term counts of ``text`` as a Qdrant sparse vector.
+
+    Only term frequencies are sent; the collection's ``Modifier.IDF`` makes Qdrant
+    apply the inverse document frequency on its side. Pass ``binary=True`` for a
+    query (each distinct term counts once).
+    """
+    counts = Counter(_term_index(t) for t in _tokenize(text))
+    indices = sorted(counts)
+    return models.SparseVector(
+        indices=indices, values=[1.0 if binary else float(counts[i]) for i in indices]
+    )
+
+
+def _sparse_vectors_config() -> dict:
+    """Sparse-vector config for new collections: one IDF-weighted vector over ``text``."""
+    return {_SPARSE_NAME: models.SparseVectorParams(modifier=models.Modifier.IDF)}
+
+
+def _has_sparse(info) -> bool:
+    """Whether a ``CollectionInfo`` has the lexical sparse vector (older collections do not)."""
+    return _SPARSE_NAME in (getattr(info.config.params, "sparse_vectors", None) or {})
 
 
 def _point_id(doc_id: str) -> str:
@@ -134,11 +174,17 @@ def _compile_field(qkey: str, cond: dict, must: list, must_not: list) -> None:
         must.append(models.FieldCondition(key=qkey, range=models.Range(**range_kw)))
 
 
-def _to_point(doc: Document) -> "models.PointStruct":
-    """Build the Qdrant point for ``doc`` (id mapped to a UUID, payload nested)."""
+def _to_point(doc: Document, *, sparse: bool = False) -> "models.PointStruct":
+    """
+    Build the Qdrant point for ``doc`` (id mapped to a UUID, payload nested).
+
+    With ``sparse`` the point also carries the term-count sparse vector that
+    native hybrid search reads (the collection must have been created with it).
+    """
+    vector = {"": doc.vector, _SPARSE_NAME: _sparse_vector(doc.text or "")} if sparse else doc.vector
     return models.PointStruct(
         id=_point_id(doc.id),
-        vector=doc.vector,
+        vector=vector,
         payload={_ID_KEY: doc.id, _TEXT_KEY: doc.text, "metadata": doc.metadata or {}},
     )
 
@@ -168,6 +214,8 @@ def _to_document(point) -> Document:
     """Convert a retrieved Qdrant point (with payload and vector) to a Document."""
     payload = point.payload or {}
     vector = point.vector
+    if isinstance(vector, dict):  # named vectors: the dense one is the unnamed ``""``
+        vector = vector.get("")
     return Document(
         id=payload.get(_ID_KEY, str(point.id)),
         text=payload.get(_TEXT_KEY, ""),
@@ -218,6 +266,7 @@ class QdrantCollection(AbstractCollection):
         self._embedder = embedder
         self.dimension = dimension
         self.metric = metric
+        self._sparse: Optional[bool] = None  # does the collection have the lexical vector?
 
     @property
     def native(self) -> QdrantClient:
@@ -230,17 +279,25 @@ class QdrantCollection(AbstractCollection):
             self._client.create_collection(
                 collection_name=self.name,
                 vectors_config=_vectors_config(self.dimension, self.metric),
+                sparse_vectors_config=_sparse_vectors_config(),
             )
+            self._sparse = True
+
+    def _has_lexical(self) -> bool:
+        """Whether this collection stores the lexical sparse vector (checked once, then cached)."""
+        if self._sparse is None:
+            self._sparse = _has_sparse(self._client.get_collection(self.name))
+        return self._sparse
 
     # ----- raw primitives ------------------------------------------------- #
 
     def _write(self, doc: Document) -> None:
-        self._ensure_collection()
-        self._client.upsert(self.name, points=[_to_point(doc)])
+        self._write_many([doc])
 
     def _write_many(self, docs: list[Document]) -> None:
         self._ensure_collection()
-        self._client.upsert(self.name, points=[_to_point(d) for d in docs])
+        sparse = self._has_lexical()
+        self._client.upsert(self.name, points=[_to_point(d, sparse=sparse) for d in docs])
 
     def _read(self, key: str) -> Document:
         if not self._client.collection_exists(self.name):
@@ -299,6 +356,90 @@ class QdrantCollection(AbstractCollection):
             **kwargs,
         )
         return [_point_to_result(point, self.metric) for point in response.points]
+
+    # ----- native hybrid: Qdrant sparse vector (IDF) + dense, fused with RRF ---- #
+
+    def _lexical_query(
+        self,
+        text: str,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        """
+        Lexical search over the collection's IDF-weighted sparse vector.
+
+        Terms are hashed to sparse indices (see :func:`_sparse_vector`), so no
+        vocabulary is stored; Qdrant computes the inverse document frequency.
+        The score is Qdrant's sparse dot product (higher is better); rows that
+        share no term with the query do not match. Filters are native.
+        """
+        del kwargs
+        query = _sparse_vector(text, binary=True)
+        if not query.indices or not self._client.collection_exists(self.name):
+            return []
+        response = self._client.query_points(
+            self.name,
+            query=query,
+            using=_SPARSE_NAME,
+            limit=limit,
+            query_filter=_to_qdrant_filter(filter),
+            with_payload=True,
+        )
+        return [
+            {
+                "id": (p.payload or {}).get(_ID_KEY, str(p.id)),
+                "text": (p.payload or {}).get(_TEXT_KEY, ""),
+                "score": p.score,
+                "metadata": (p.payload or {}).get("metadata", {}),
+            }
+            for p in response.points
+        ]
+
+    def hybrid_search(
+        self,
+        query,
+        *,
+        query_text=None,
+        limit: int = 10,
+        filter: Optional[Filter] = None,
+        k_dense: Optional[int] = None,
+        k_lexical: Optional[int] = None,
+        rrf_k: int = 60,
+        egress=None,
+        **kwargs,
+    ):
+        """
+        Hybrid (dense + native sparse) search, fused client-side with RRF.
+
+        See :class:`vd.SupportsHybrid` for the contract. Collections created by
+        this adapter carry a sparse ``text`` vector (``Modifier.IDF``) and use
+        :meth:`_lexical_query`. A collection created before that change has no
+        sparse vector, so its lexical side is the client-side BM25 fallback
+        (same results, no server help); recreate or re-ingest it to go native.
+        Fusion is vd's RRF, so the fused score matches the other backends.
+        """
+        if not self._client.collection_exists(self.name) or self._has_lexical():
+            lexical = self._lexical_query
+        else:
+            from vd.search import bm25_lexical_search
+
+            def lexical(text, *, limit, filter, **kw):
+                return bm25_lexical_search(self, text, limit=limit, filter=filter)
+
+        return self._hybrid_via_rrf(
+            query,
+            lexical,
+            query_text=query_text,
+            limit=limit,
+            filter=filter,
+            k_dense=k_dense,
+            k_lexical=k_lexical,
+            rrf_k=rrf_k,
+            egress=egress,
+            **kwargs,
+        )
 
 
 @register_backend("qdrant")
@@ -442,6 +583,7 @@ class NativeAsyncQdrantCollection(AsyncAbstractCollection):
         self._embedder = embedder
         self.dimension = dimension
         self.metric = metric
+        self._sparse: Optional[bool] = None  # does the collection have the lexical vector?
 
     @property
     def native(self) -> AsyncQdrantClient:
@@ -454,13 +596,19 @@ class NativeAsyncQdrantCollection(AsyncAbstractCollection):
             await self._client.create_collection(
                 collection_name=self.name,
                 vectors_config=_vectors_config(self.dimension, self.metric),
+                sparse_vectors_config=_sparse_vectors_config(),
             )
+            self._sparse = True
 
     # ----- async raw primitives ------------------------------------------ #
 
     async def _write_many(self, docs: list[Document]) -> None:
         await self._ensure_collection()
-        await self._client.upsert(self.name, points=[_to_point(d) for d in docs])
+        if self._sparse is None:  # keep points in step with the collection's config
+            self._sparse = _has_sparse(await self._client.get_collection(self.name))
+        await self._client.upsert(
+            self.name, points=[_to_point(d, sparse=self._sparse) for d in docs]
+        )
 
     async def _read(self, key: str) -> Document:
         if not await self._client.collection_exists(self.name):
