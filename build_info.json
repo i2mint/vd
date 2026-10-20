@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-20T12:27:13Z",
+  "built_at": "2026-10-20T13:54:48Z",
   "package": {
     "name": "vd",
-    "version": "0.2.18",
+    "version": "0.2.19",
     "display_name": "vd",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "2866e9a0fea71dbce7c75d85b3d7a62416a00dc6",
-    "short_commit": "2866e9a",
+    "commit": "2b89ce0eb2e7a736a1d7043850efffc49db7983f",
+    "short_commit": "2b89ce0",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/vd",
-    "commit_url": "https://github.com/i2mint/vd/commit/2866e9a0fea71dbce7c75d85b3d7a62416a00dc6",
+    "commit_url": "https://github.com/i2mint/vd/commit/2b89ce0eb2e7a736a1d7043850efffc49db7983f",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/vd",
-    "sha": "2866e9a0fea71dbce7c75d85b3d7a62416a00dc6",
+    "sha": "2b89ce0eb2e7a736a1d7043850efffc49db7983f",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "39422152941",
-    "run_url": "https://github.com/i2mint/vd/actions/runs/39422152941",
+    "run_id": "39434265145",
+    "run_url": "https://github.com/i2mint/vd/actions/runs/39434265145",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -60,14 +60,16 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.2.18",
-    "relation": "same",
+    "latest": "0.2.20",
+    "relation": "behind",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/vd && cd vd\ngit checkout 2866e9a0fea71dbce7c75d85b3d7a62416a00dc6\npip install \"epythet==0.2.20\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/vd && cd vd\ngit checkout 2b89ce0eb2e7a736a1d7043850efffc49db7983f\npip install \"epythet==0.2.20\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": true,
-    "notes": []
+    "aligned": false,
+    "notes": [
+      "The documented version (0.2.19) is behind the latest release on PyPI (0.2.20): `pip install vd` gives newer code than these docs describe."
+    ]
   }
 }

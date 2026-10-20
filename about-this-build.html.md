@@ -2,16 +2,18 @@
 
 # About this build
 
-This documentation was built on **2026-10-20 12:27 UTC** from commit <a href="https://github.com/i2mint/vd/commit/2866e9a0fea71dbce7c75d85b3d7a62416a00dc6"><code>2866e9a</code></a> on branch <code>master</code>, for **vd 0.2.18** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-20 13:54 UTC** from commit <a href="https://github.com/i2mint/vd/commit/2b89ce0eb2e7a736a1d7043850efffc49db7983f"><code>2b89ce0</code></a> on branch <code>master</code>, for **vd 0.2.19** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.2.19) is behind the latest release on PyPI (0.2.20): `pip install vd` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                  |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/vd/commit/2866e9a0fea71dbce7c75d85b3d7a62416a00dc6"><code>2866e9a0fea71dbce7c75d85b3d7a62416a00dc6</code></a> |
+| Commit              | <a href="https://github.com/i2mint/vd/commit/2b89ce0eb2e7a736a1d7043850efffc49db7983f"><code>2b89ce0eb2e7a736a1d7043850efffc49db7983f</code></a> |
 | Branch              | <code>master</code>                                                                                                                              |
 | Tags at this commit | none                                                                                                                                             |
 | Working tree        | clean                                                                                                                                            |
@@ -22,9 +24,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/vd</code>                                                                     |
-| Run          | <a href="https://github.com/i2mint/vd/actions/runs/39422152941">39422152941</a>            |
+| Run          | <a href="https://github.com/i2mint/vd/actions/runs/39434265145">39434265145</a>            |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>2866e9a0fea71dbce7c75d85b3d7a62416a00dc6</code> (in the history of the built commit) |
+| Event commit | <code>2b89ce0eb2e7a736a1d7043850efffc49db7983f</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -49,13 +51,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/vd/0.2.18/">0.2.18</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/vd/0.2.20/">0.2.20</a>, newer than the documented version (0.2.19).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/vd && cd vd
-git checkout 2866e9a0fea71dbce7c75d85b3d7a62416a00dc6
+git checkout 2b89ce0eb2e7a736a1d7043850efffc49db7983f
 pip install "epythet==0.2.20"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
