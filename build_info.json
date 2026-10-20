@@ -1,37 +1,37 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-13T11:42:26Z",
+  "built_at": "2026-10-20T10:21:41Z",
   "package": {
     "name": "vd",
-    "version": "0.2.15",
+    "version": "0.2.16",
     "display_name": "vd",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "89e47dfa354298b319ae884500cf64cfd33e3f3d",
-    "short_commit": "89e47df",
+    "commit": "2a814f4576614f33702869729a95faa0c3698378",
+    "short_commit": "2a814f4",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/vd",
-    "commit_url": "https://github.com/i2mint/vd/commit/89e47dfa354298b319ae884500cf64cfd33e3f3d",
+    "commit_url": "https://github.com/i2mint/vd/commit/2a814f4576614f33702869729a95faa0c3698378",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/vd",
-    "sha": "89e47dfa354298b319ae884500cf64cfd33e3f3d",
+    "sha": "2a814f4576614f33702869729a95faa0c3698378",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "38391877220",
-    "run_url": "https://github.com/i2mint/vd/actions/runs/38391877220",
+    "run_id": "39407159397",
+    "run_url": "https://github.com/i2mint/vd/actions/runs/39407159397",
     "server_url": "https://github.com"
   },
   "tools": {
-    "epythet": "0.2.15",
-    "sphinx": "9.1.0",
+    "epythet": "0.2.18",
+    "sphinx": "9.1.1",
     "docutils": "0.22.4",
     "python": "3.12.15"
   },
@@ -60,16 +60,16 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.2.16",
+    "latest": "0.2.17",
     "relation": "behind",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/vd && cd vd\ngit checkout 89e47dfa354298b319ae884500cf64cfd33e3f3d\npip install \"epythet==0.2.15\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/vd && cd vd\ngit checkout 2a814f4576614f33702869729a95faa0c3698378\npip install \"epythet==0.2.18\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": false,
     "notes": [
-      "The documented version (0.2.15) is behind the latest release on PyPI (0.2.16): `pip install vd` gives newer code than these docs describe."
+      "The documented version (0.2.16) is behind the latest release on PyPI (0.2.17): `pip install vd` gives newer code than these docs describe."
     ]
   }
 }

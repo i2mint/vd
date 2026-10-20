@@ -110,9 +110,6 @@ post-filter for backends that don’t honor the filter.
 
 Return `(min_ts, max_ts)` as aware datetimes, or None if empty.
 
-* **Return type:**
-  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime)]]
-
 ```pycon
 >>> from vd import connect, Document
 >>> import hashlib
@@ -125,14 +122,17 @@ Return `(min_ts, max_ts)` as aware datetimes, or None if empty.
 ['2025-01-01T00:00:00+00:00', '2025-03-01T00:00:00+00:00']
 ```
 
+* **Return type:**
+  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime)]]
+
 #### window_iter(window='1d', \*, start=None, end=None, reducer=<function count_docs>, skip_empty=False, align=True)
 
 Yield `(window_start, window_end, reducer_value)` over fixed windows.
 
 * **Parameters:**
-  * **window** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`timedelta`](https://docs.python.org/3/library/datetime.html#datetime.timedelta), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float)]) – Window size. See [`parse_window()`](#vd.time_indexed.parse_window) for accepted forms.
-  * **start** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Override the data range. Default: actual min/max ts in the index.
-  * **end** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Override the data range. Default: actual min/max ts in the index.
+  * **window** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`timedelta`](https://docs.python.org/3/library/datetime.html#datetime.timedelta), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float)]) – Window size. See [`parse_window()`](#vd.time_indexed.parse_window) for accepted forms.
+  * **start** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Override the data range. Default: actual min/max ts in the index.
+  * **end** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Override the data range. Default: actual min/max ts in the index.
   * **reducer** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`Iterable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable)[[`Document`](vd.base.html.md#vd.base.Document)]], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Callable taking the iterable of in-window 
 
     ```
@@ -158,20 +158,17 @@ A time window: `[start, end)`.
 
 `len` reducer that also handles generator inputs.
 
-* **Return type:**
-  [`int`](https://docs.python.org/3/builtins/functions.html#int)
-
 ```pycon
 >>> count_docs(iter([1, 2, 3]))
 3
 ```
 
+* **Return type:**
+  [`int`](https://docs.python.org/3/builtins/functions.html#int)
+
 ### vd.time_indexed.mean_vector(docs)
 
 Element-wise mean of document embeddings. `None` if empty / no vectors.
-
-* **Return type:**
-  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]
 
 ```pycon
 >>> from vd.base import Document
@@ -184,15 +181,15 @@ Element-wise mean of document embeddings. `None` if empty / no vectors.
 True
 ```
 
+* **Return type:**
+  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]
+
 ### vd.time_indexed.parse_window(window)
 
 Parse a window spec into a `timedelta`.
 
 Strings use a trailing unit char: `"1d"`, `"4h"`, `"30m"`, `"15s"`,
 `"1w"`. Numbers are treated as seconds. A `timedelta` is returned as-is.
-
-* **Return type:**
-  [`timedelta`](https://docs.python.org/3/library/datetime.html#datetime.timedelta)
 
 ```pycon
 >>> parse_window('1d') == timedelta(days=1)
@@ -203,6 +200,9 @@ True
 True
 ```
 
+* **Return type:**
+  [`timedelta`](https://docs.python.org/3/library/datetime.html#datetime.timedelta)
+
 ### vd.time_indexed.to_datetime(ts)
 
 Coerce a timestamp-like value into a tz-aware UTC `datetime`.
@@ -210,9 +210,6 @@ Coerce a timestamp-like value into a tz-aware UTC `datetime`.
 Accepts ISO-8601 strings (with or without timezone), date-only strings
 (`"2025-03-13"`), epoch seconds (int or float), and `datetime` objects.
 Naive datetimes / strings are assumed UTC.
-
-* **Return type:**
-  [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime)
 
 ```pycon
 >>> to_datetime('2025-03-13T09:00:00').isoformat()
@@ -223,14 +220,17 @@ Naive datetimes / strings are assumed UTC.
 '2025-03-13T09:00:00+00:00'
 ```
 
+* **Return type:**
+  [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime)
+
 ### vd.time_indexed.to_iso(ts)
 
 ISO-8601 (UTC) string suitable for cross-backend metadata storage.
-
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ```pycon
 >>> to_iso('2025-03-13T09:00:00')
 '2025-03-13T09:00:00+00:00'
 ```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)

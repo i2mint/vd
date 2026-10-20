@@ -162,7 +162,7 @@ implementation; they are ignored by the client-side fallback.
 
 * **Parameters:**
   * **collection** ([`Collection`](vd.base.html.md#vd.base.Collection)) – Any vd Collection — native-hybrid or not.
-  * **query** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]) – Query text (embedded by the collection if it has an embedder) or a
+  * **query** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]) – Query text (embedded by the collection if it has an embedder) or a
     pre-computed query vector. When `query` is a vector, `query_text`
     is **required**.
   * **query_text** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Explicit text for the lexical side. Defaults to `query` when

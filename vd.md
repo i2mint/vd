@@ -1,4 +1,4 @@
-> built 2026-10-13 11:42 UTC from 89e47df (master) · vd 0.2.15. Details: build_info.json
+> built 2026-10-20 10:21 UTC from 2a814f4 (master) · vd 0.2.16. Details: build_info.json
 
 # index.html.md
 
@@ -1325,7 +1325,7 @@ no distinct native object.
 Return the `limit` documents most similar to `query`.
 
 * **Parameters:**
-  * **query** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]) – Query text (embedded via the client’s `embedder`) or a
+  * **query** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]) – Query text (embedded via the client’s `embedder`) or a
     pre-computed query vector.
   * **limit** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Maximum number of results.
   * **filter** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]) – Metadata filter in the canonical `vd` dialect (see
@@ -1453,7 +1453,7 @@ Return the `limit` documents most similar to `query`.
 * **Return type:**
   [`Iterator`](https://docs.python.org/3/library/typing.html#typing.Iterator)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]
 
-### *class* vd.base.Document(id, text='', vector=None, metadata=<factory>)
+### *class* vd.base.Document(id, text='', vector=None, metadata=dict())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -1735,7 +1735,7 @@ VD_
 Connect to a backend using configuration from a file.
 
 * **Parameters:**
-  * **path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Path to configuration file. If not provided, searches for default
+  * **path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Path to configuration file. If not provided, searches for default
     config files.
   * **profile** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Profile name to use from configuration. Defaults to ‘default’ or
     the VD_PROFILE environment variable.
@@ -1818,7 +1818,7 @@ Load configuration from a file.
 Automatically detects format from file extension if not specified.
 
 * **Parameters:**
-  * **path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Path to configuration file. If not provided, looks for default
+  * **path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Path to configuration file. If not provided, looks for default
     config files in: ./vd.yaml, ./vd.yml, ./vd.toml, ~/.vd/config.yaml, etc.
   * **format** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Configuration format: ‘yaml’ or ‘toml’. Auto-detected from extension
     if not provided.
@@ -1840,7 +1840,7 @@ Automatically detects format from file extension if not specified.
 Load configuration from a TOML file.
 
 * **Parameters:**
-  **path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to TOML configuration file
+  **path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to TOML configuration file
 * **Returns:**
   Configuration dictionary
 * **Return type:**
@@ -1854,7 +1854,7 @@ Load configuration from a TOML file.
 Load configuration from a YAML file.
 
 * **Parameters:**
-  **path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to YAML configuration file
+  **path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to YAML configuration file
 * **Returns:**
   Configuration dictionary
 * **Return type:**
@@ -1869,7 +1869,7 @@ Save configuration to a file.
 
 * **Parameters:**
   * **config** ([`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)) – Configuration dictionary to save
-  * **path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to save configuration file
+  * **path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to save configuration file
   * **format** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Format to save: ‘yaml’ or ‘toml’. Auto-detected from extension
     if not provided.
 * **Return type:**
@@ -2449,7 +2449,7 @@ no distinct native object.
 Return the `limit` documents most similar to `query`.
 
 * **Parameters:**
-  * **query** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]) – Query text (embedded via the client’s `embedder`) or a
+  * **query** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]) – Query text (embedded via the client’s `embedder`) or a
     pre-computed query vector.
   * **limit** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Maximum number of results.
   * **filter** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]) – Metadata filter in the canonical `vd` dialect (see
@@ -2975,7 +2975,7 @@ Return the `limit` documents most similar to `query`.
 * **Return type:**
   [`Iterator`](https://docs.python.org/3/library/typing.html#typing.Iterator)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]
 
-### *class* vd.Document(id, text='', vector=None, metadata=<factory>)
+### *class* vd.Document(id, text='', vector=None, metadata=dict())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -3155,9 +3155,6 @@ post-filter for backends that don’t honor the filter.
 
 Return `(min_ts, max_ts)` as aware datetimes, or None if empty.
 
-* **Return type:**
-  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime)]]
-
 ```pycon
 >>> from vd import connect, Document
 >>> import hashlib
@@ -3170,14 +3167,17 @@ Return `(min_ts, max_ts)` as aware datetimes, or None if empty.
 ['2025-01-01T00:00:00+00:00', '2025-03-01T00:00:00+00:00']
 ```
 
+* **Return type:**
+  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime)]]
+
 #### window_iter(window='1d', \*, start=None, end=None, reducer=<function count_docs>, skip_empty=False, align=True)
 
 Yield `(window_start, window_end, reducer_value)` over fixed windows.
 
 * **Parameters:**
-  * **window** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`timedelta`](https://docs.python.org/3/library/datetime.html#datetime.timedelta), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float)]) – Window size. See [`parse_window()`](_autosummary/vd.html.md#vd.parse_window) for accepted forms.
-  * **start** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Override the data range. Default: actual min/max ts in the index.
-  * **end** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Override the data range. Default: actual min/max ts in the index.
+  * **window** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`timedelta`](https://docs.python.org/3/library/datetime.html#datetime.timedelta), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float)]) – Window size. See [`parse_window()`](_autosummary/vd.html.md#vd.parse_window) for accepted forms.
+  * **start** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Override the data range. Default: actual min/max ts in the index.
+  * **end** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Override the data range. Default: actual min/max ts in the index.
   * **reducer** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`Iterable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable)[[`Document`](_autosummary/vd.base.html.md#vd.base.Document)]], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Callable taking the iterable of in-window 
 
     ```
@@ -3553,7 +3553,7 @@ apart.
 Connect to a backend using configuration from a file.
 
 * **Parameters:**
-  * **path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Path to configuration file. If not provided, searches for default
+  * **path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Path to configuration file. If not provided, searches for default
     config files.
   * **profile** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Profile name to use from configuration. Defaults to ‘default’ or
     the VD_PROFILE environment variable.
@@ -3618,9 +3618,6 @@ Copy a collection with flexible source/target specification.
 
 Cosine similarity of two vectors (1.0 identical, 0.0 orthogonal).
 
-* **Return type:**
-  [`float`](https://docs.python.org/3/builtins/functions.html#float)
-
 ### Examples
 
 ```pycon
@@ -3630,17 +3627,20 @@ Cosine similarity of two vectors (1.0 identical, 0.0 orthogonal).
 0.0
 ```
 
+* **Return type:**
+  [`float`](https://docs.python.org/3/builtins/functions.html#float)
+
 ### vd.count_docs(docs)
 
 `len` reducer that also handles generator inputs.
-
-* **Return type:**
-  [`int`](https://docs.python.org/3/builtins/functions.html#int)
 
 ```pycon
 >>> count_docs(iter([1, 2, 3]))
 3
 ```
+
+* **Return type:**
+  [`int`](https://docs.python.org/3/builtins/functions.html#int)
 
 ### vd.create_example_config(format='yaml')
 
@@ -3691,9 +3691,6 @@ Remove duplicate results.
 
 Euclidean (L2) distance between two vectors.
 
-* **Return type:**
-  [`float`](https://docs.python.org/3/builtins/functions.html#float)
-
 ### Examples
 
 ```pycon
@@ -3701,13 +3698,16 @@ Euclidean (L2) distance between two vectors.
 0.0
 ```
 
+* **Return type:**
+  [`float`](https://docs.python.org/3/builtins/functions.html#float)
+
 ### vd.export_collection(collection, output_path, , format='jsonl', \*\*kwargs)
 
 Export a collection to a file in the specified format.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to export
-  * **output_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file/directory path
+  * **output_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file/directory path
   * **format** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Export format: ‘jsonl’, ‘json’, ‘directory’
   * **\*\*kwargs** – Additional format-specific options
 * **Returns:**
@@ -3732,7 +3732,7 @@ Useful for version control and easy browsing.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to export
-  * **output_dir** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output directory path
+  * **output_dir** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output directory path
   * **include_vectors** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to include vectors
 * **Returns:**
   Number of documents exported
@@ -3747,7 +3747,7 @@ Creates a JSON array of all documents.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to export
-  * **output_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file path
+  * **output_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file path
   * **include_vectors** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to include embedding vectors
   * **indent** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`int`](https://docs.python.org/3/builtins/functions.html#int)]) – JSON indentation (None for compact)
 * **Returns:**
@@ -3763,7 +3763,7 @@ Each line is a JSON object representing a document.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to export
-  * **output_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file path
+  * **output_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file path
   * **include_vectors** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to include embedding vectors in the export
 * **Returns:**
   Number of documents exported
@@ -3940,7 +3940,7 @@ implementation; they are ignored by the client-side fallback.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Any vd Collection — native-hybrid or not.
-  * **query** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]) – Query text (embedded by the collection if it has an embedder) or a
+  * **query** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]) – Query text (embedded by the collection if it has an embedder) or a
     pre-computed query vector. When `query` is a vector, `query_text`
     is **required**.
   * **query_text** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Explicit text for the lexical side. Defaults to `query` when
@@ -4052,7 +4052,7 @@ Import documents into a collection from a file.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to import into
-  * **input_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file/directory path
+  * **input_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file/directory path
   * **format** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Import format: ‘jsonl’, ‘json’, ‘directory’
     If None, inferred from file extension
   * **\*\*kwargs** – Additional format-specific options
@@ -4076,7 +4076,7 @@ Import documents from a directory of JSON files.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to import into
-  * **input_dir** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input directory path
+  * **input_dir** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input directory path
   * **batch_size** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Batch size for adding documents
   * **skip_existing** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – If True, skip documents with IDs that already exist
   * **pattern** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – File pattern to match
@@ -4091,7 +4091,7 @@ Import documents from JSON format into a collection.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to import into
-  * **input_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file path
+  * **input_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file path
   * **batch_size** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Batch size for adding documents
   * **skip_existing** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – If True, skip documents with IDs that already exist
 * **Returns:**
@@ -4105,7 +4105,7 @@ Import documents from JSONL format into a collection.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to import into
-  * **input_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file path
+  * **input_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file path
   * **batch_size** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Batch size for adding documents
   * **skip_existing** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – If True, skip documents with IDs that already exist
 * **Returns:**
@@ -4146,9 +4146,6 @@ imports. The extra is double-quoted so the command is safe to paste into
 zsh, bash, PowerShell and cmd. Providers without an adapter get their raw
 client package(s).
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ### Examples
 
 ```pycon
@@ -4159,6 +4156,9 @@ client package(s).
 >>> install_command('memory')
 'memory needs no installation (built into vd)'
 ```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### vd.list_all_backends()
 
@@ -4202,7 +4202,7 @@ Load configuration from a file.
 Automatically detects format from file extension if not specified.
 
 * **Parameters:**
-  * **path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Path to configuration file. If not provided, looks for default
+  * **path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Path to configuration file. If not provided, looks for default
     config files in: ./vd.yaml, ./vd.yml, ./vd.toml, ~/.vd/config.yaml, etc.
   * **format** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Configuration format: ‘yaml’ or ‘toml’. Auto-detected from extension
     if not provided.
@@ -4248,9 +4248,6 @@ True
 
 Element-wise mean of document embeddings. `None` if empty / no vectors.
 
-* **Return type:**
-  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]
-
 ```pycon
 >>> from vd.base import Document
 >>> mean_vector([
@@ -4261,6 +4258,9 @@ Element-wise mean of document embeddings. `None` if empty / no vectors.
 >>> mean_vector([]) is None
 True
 ```
+
+* **Return type:**
+  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]
 
 ### vd.metadata_distribution(collection, field, , top_n=None)
 
@@ -4393,7 +4393,7 @@ Accepted shapes: a [`Document`](_autosummary/vd.base.html.md#vd.base.Document); 
 tuple `(text, id)`, `(text, metadata)`, or `(text, id, metadata)`.
 
 * **Parameters:**
-  * **doc_input** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple), [`Document`](_autosummary/vd.base.html.md#vd.base.Document)]) – The input to normalize.
+  * **doc_input** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple), [`Document`](_autosummary/vd.base.html.md#vd.base.Document)]) – The input to normalize.
   * **auto_id** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – When the input carries no id, generate one (vs. leaving it empty).
 * **Return type:**
   [`Document`](_autosummary/vd.base.html.md#vd.base.Document)
@@ -4436,9 +4436,6 @@ Parse a window spec into a `timedelta`.
 Strings use a trailing unit char: `"1d"`, `"4h"`, `"30m"`, `"15s"`,
 `"1w"`. Numbers are treated as seconds. A `timedelta` is returned as-is.
 
-* **Return type:**
-  [`timedelta`](https://docs.python.org/3/library/datetime.html#datetime.timedelta)
-
 ```pycon
 >>> parse_window('1d') == timedelta(days=1)
 True
@@ -4447,6 +4444,9 @@ True
 >>> parse_window(3600) == timedelta(hours=1)
 True
 ```
+
+* **Return type:**
+  [`timedelta`](https://docs.python.org/3/library/datetime.html#datetime.timedelta)
 
 ### vd.print_backends_table()
 
@@ -4560,9 +4560,6 @@ taking the [`connect_async()`](_autosummary/vd.html.md#vd.connect_async) keyword
 
 Class decorator: register an adapter [`Client`](_autosummary/vd.base.html.md#vd.base.Client) under `name`.
 
-* **Return type:**
-  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`type`](https://docs.python.org/3/builtins/functions.html#type)], [`type`](https://docs.python.org/3/builtins/functions.html#type)]
-
 ### Examples
 
 ```pycon
@@ -4571,6 +4568,9 @@ Class decorator: register an adapter [`Client`](_autosummary/vd.base.html.md#vd.
 ... class ExampleClient(AbstractClient):
 ...     ...
 ```
+
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`type`](https://docs.python.org/3/builtins/functions.html#type)], [`type`](https://docs.python.org/3/builtins/functions.html#type)]
 
 ### vd.sample_collection(collection, n, , method='random', seed=None)
 
@@ -4604,7 +4604,7 @@ Save configuration to a file.
 
 * **Parameters:**
   * **config** ([`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)) – Configuration dictionary to save
-  * **path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to save configuration file
+  * **path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to save configuration file
   * **format** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Format to save: ‘yaml’ or ‘toml’. Auto-detected from extension
     if not provided.
 * **Return type:**
@@ -4680,9 +4680,6 @@ Accepts ISO-8601 strings (with or without timezone), date-only strings
 (`"2025-03-13"`), epoch seconds (int or float), and `datetime` objects.
 Naive datetimes / strings are assumed UTC.
 
-* **Return type:**
-  [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime)
-
 ```pycon
 >>> to_datetime('2025-03-13T09:00:00').isoformat()
 '2025-03-13T09:00:00+00:00'
@@ -4692,17 +4689,20 @@ Naive datetimes / strings are assumed UTC.
 '2025-03-13T09:00:00+00:00'
 ```
 
+* **Return type:**
+  [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime)
+
 ### vd.to_iso(ts)
 
 ISO-8601 (UTC) string suitable for cross-backend metadata storage.
-
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ```pycon
 >>> to_iso('2025-03-13T09:00:00')
 '2025-03-13T09:00:00+00:00'
 ```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### vd.truncate_text(text, max_length, , suffix='...')
 
@@ -4827,7 +4827,7 @@ Export a collection to a file in the specified format.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to export
-  * **output_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file/directory path
+  * **output_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file/directory path
   * **format** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Export format: ‘jsonl’, ‘json’, ‘directory’
   * **\*\*kwargs** – Additional format-specific options
 * **Returns:**
@@ -4852,7 +4852,7 @@ Useful for version control and easy browsing.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to export
-  * **output_dir** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output directory path
+  * **output_dir** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output directory path
   * **include_vectors** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to include vectors
 * **Returns:**
   Number of documents exported
@@ -4867,7 +4867,7 @@ Creates a JSON array of all documents.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to export
-  * **output_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file path
+  * **output_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file path
   * **include_vectors** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to include embedding vectors
   * **indent** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`int`](https://docs.python.org/3/builtins/functions.html#int)]) – JSON indentation (None for compact)
 * **Returns:**
@@ -4883,7 +4883,7 @@ Each line is a JSON object representing a document.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to export
-  * **output_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file path
+  * **output_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file path
   * **include_vectors** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to include embedding vectors in the export
 * **Returns:**
   Number of documents exported
@@ -4907,7 +4907,7 @@ Import documents into a collection from a file.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to import into
-  * **input_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file/directory path
+  * **input_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file/directory path
   * **format** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Import format: ‘jsonl’, ‘json’, ‘directory’
     If None, inferred from file extension
   * **\*\*kwargs** – Additional format-specific options
@@ -4931,7 +4931,7 @@ Import documents from a directory of JSON files.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to import into
-  * **input_dir** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input directory path
+  * **input_dir** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input directory path
   * **batch_size** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Batch size for adding documents
   * **skip_existing** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – If True, skip documents with IDs that already exist
   * **pattern** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – File pattern to match
@@ -4946,7 +4946,7 @@ Import documents from JSON format into a collection.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to import into
-  * **input_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file path
+  * **input_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file path
   * **batch_size** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Batch size for adding documents
   * **skip_existing** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – If True, skip documents with IDs that already exist
 * **Returns:**
@@ -4960,7 +4960,7 @@ Import documents from JSONL format into a collection.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Collection to import into
-  * **input_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file path
+  * **input_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file path
   * **batch_size** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Batch size for adding documents
   * **skip_existing** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – If True, skip documents with IDs that already exist
 * **Returns:**
@@ -5325,7 +5325,7 @@ implementation; they are ignored by the client-side fallback.
 
 * **Parameters:**
   * **collection** ([`Collection`](_autosummary/vd.base.html.md#vd.base.Collection)) – Any vd Collection — native-hybrid or not.
-  * **query** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]) – Query text (embedded by the collection if it has an embedder) or a
+  * **query** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]) – Query text (embedded by the collection if it has an embedder) or a
     pre-computed query vector. When `query` is a vector, `query_text`
     is **required**.
   * **query_text** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Explicit text for the lexical side. Defaults to `query` when
@@ -5773,9 +5773,6 @@ post-filter for backends that don’t honor the filter.
 
 Return `(min_ts, max_ts)` as aware datetimes, or None if empty.
 
-* **Return type:**
-  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime)]]
-
 ```pycon
 >>> from vd import connect, Document
 >>> import hashlib
@@ -5788,14 +5785,17 @@ Return `(min_ts, max_ts)` as aware datetimes, or None if empty.
 ['2025-01-01T00:00:00+00:00', '2025-03-01T00:00:00+00:00']
 ```
 
+* **Return type:**
+  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime)]]
+
 #### window_iter(window='1d', \*, start=None, end=None, reducer=<function count_docs>, skip_empty=False, align=True)
 
 Yield `(window_start, window_end, reducer_value)` over fixed windows.
 
 * **Parameters:**
-  * **window** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`timedelta`](https://docs.python.org/3/library/datetime.html#datetime.timedelta), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float)]) – Window size. See [`parse_window()`](_autosummary/vd.time_indexed.html.md#vd.time_indexed.parse_window) for accepted forms.
-  * **start** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Override the data range. Default: actual min/max ts in the index.
-  * **end** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Override the data range. Default: actual min/max ts in the index.
+  * **window** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`timedelta`](https://docs.python.org/3/library/datetime.html#datetime.timedelta), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float)]) – Window size. See [`parse_window()`](_autosummary/vd.time_indexed.html.md#vd.time_indexed.parse_window) for accepted forms.
+  * **start** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Override the data range. Default: actual min/max ts in the index.
+  * **end** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime), [`int`](https://docs.python.org/3/builtins/functions.html#int), [`float`](https://docs.python.org/3/builtins/functions.html#float), [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Override the data range. Default: actual min/max ts in the index.
   * **reducer** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`Iterable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable)[[`Document`](_autosummary/vd.base.html.md#vd.base.Document)]], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]) – Callable taking the iterable of in-window 
 
     ```
@@ -5821,20 +5821,17 @@ A time window: `[start, end)`.
 
 `len` reducer that also handles generator inputs.
 
-* **Return type:**
-  [`int`](https://docs.python.org/3/builtins/functions.html#int)
-
 ```pycon
 >>> count_docs(iter([1, 2, 3]))
 3
 ```
 
+* **Return type:**
+  [`int`](https://docs.python.org/3/builtins/functions.html#int)
+
 ### vd.time_indexed.mean_vector(docs)
 
 Element-wise mean of document embeddings. `None` if empty / no vectors.
-
-* **Return type:**
-  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]
 
 ```pycon
 >>> from vd.base import Document
@@ -5847,15 +5844,15 @@ Element-wise mean of document embeddings. `None` if empty / no vectors.
 True
 ```
 
+* **Return type:**
+  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]]
+
 ### vd.time_indexed.parse_window(window)
 
 Parse a window spec into a `timedelta`.
 
 Strings use a trailing unit char: `"1d"`, `"4h"`, `"30m"`, `"15s"`,
 `"1w"`. Numbers are treated as seconds. A `timedelta` is returned as-is.
-
-* **Return type:**
-  [`timedelta`](https://docs.python.org/3/library/datetime.html#datetime.timedelta)
 
 ```pycon
 >>> parse_window('1d') == timedelta(days=1)
@@ -5866,6 +5863,9 @@ True
 True
 ```
 
+* **Return type:**
+  [`timedelta`](https://docs.python.org/3/library/datetime.html#datetime.timedelta)
+
 ### vd.time_indexed.to_datetime(ts)
 
 Coerce a timestamp-like value into a tz-aware UTC `datetime`.
@@ -5873,9 +5873,6 @@ Coerce a timestamp-like value into a tz-aware UTC `datetime`.
 Accepts ISO-8601 strings (with or without timezone), date-only strings
 (`"2025-03-13"`), epoch seconds (int or float), and `datetime` objects.
 Naive datetimes / strings are assumed UTC.
-
-* **Return type:**
-  [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime)
 
 ```pycon
 >>> to_datetime('2025-03-13T09:00:00').isoformat()
@@ -5886,17 +5883,20 @@ Naive datetimes / strings are assumed UTC.
 '2025-03-13T09:00:00+00:00'
 ```
 
+* **Return type:**
+  [`datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime)
+
 ### vd.time_indexed.to_iso(ts)
 
 ISO-8601 (UTC) string suitable for cross-backend metadata storage.
-
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ```pycon
 >>> to_iso('2025-03-13T09:00:00')
 '2025-03-13T09:00:00+00:00'
 ```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 
 # _autosummary/vd.util.html.md
@@ -5969,9 +5969,6 @@ one-argument change here.
 
 Cosine similarity of two vectors (1.0 identical, 0.0 orthogonal).
 
-* **Return type:**
-  [`float`](https://docs.python.org/3/builtins/functions.html#float)
-
 ### Examples
 
 ```pycon
@@ -5981,12 +5978,12 @@ Cosine similarity of two vectors (1.0 identical, 0.0 orthogonal).
 0.0
 ```
 
+* **Return type:**
+  [`float`](https://docs.python.org/3/builtins/functions.html#float)
+
 ### vd.util.euclidean_distance(vec1, vec2)
 
 Euclidean (L2) distance between two vectors.
-
-* **Return type:**
-  [`float`](https://docs.python.org/3/builtins/functions.html#float)
 
 ### Examples
 
@@ -5994,6 +5991,9 @@ Euclidean (L2) distance between two vectors.
 >>> euclidean_distance([1.0, 0.0], [1.0, 0.0])
 0.0
 ```
+
+* **Return type:**
+  [`float`](https://docs.python.org/3/builtins/functions.html#float)
 
 ### vd.util.get_backend(name)
 
@@ -6037,15 +6037,15 @@ Return the names of all backends with a registered (importable) adapter.
 
 Component-wise mean of a non-empty iterable of equal-length vectors.
 
-* **Return type:**
-  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]
-
 ### Examples
 
 ```pycon
 >>> mean_vector([[0.0, 2.0], [2.0, 4.0]])
 [1.0, 3.0]
 ```
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]
 
 ### vd.util.normalize_document_input(doc_input, , auto_id=True)
 
@@ -6055,7 +6055,7 @@ Accepted shapes: a [`Document`](_autosummary/vd.base.html.md#vd.base.Document); 
 tuple `(text, id)`, `(text, metadata)`, or `(text, id, metadata)`.
 
 * **Parameters:**
-  * **doc_input** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple), [`Document`](_autosummary/vd.base.html.md#vd.base.Document)]) – The input to normalize.
+  * **doc_input** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple), [`Document`](_autosummary/vd.base.html.md#vd.base.Document)]) – The input to normalize.
   * **auto_id** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – When the input carries no id, generate one (vs. leaving it empty).
 * **Return type:**
   [`Document`](_autosummary/vd.base.html.md#vd.base.Document)
@@ -6075,9 +6075,6 @@ True
 
 Class decorator: register an adapter [`Client`](_autosummary/vd.base.html.md#vd.base.Client) under `name`.
 
-* **Return type:**
-  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`type`](https://docs.python.org/3/builtins/functions.html#type)], [`type`](https://docs.python.org/3/builtins/functions.html#type)]
-
 ### Examples
 
 ```pycon
@@ -6086,6 +6083,9 @@ Class decorator: register an adapter [`Client`](_autosummary/vd.base.html.md#vd.
 ... class ExampleClient(AbstractClient):
 ...     ...
 ```
+
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`type`](https://docs.python.org/3/builtins/functions.html#type)], [`type`](https://docs.python.org/3/builtins/functions.html#type)]
 
 ### vd.util.text_only(result)
 
@@ -6101,18 +6101,18 @@ Egress: keep only the text. `>>> text_only({'text': 'hi'})` -> `'hi'`.
 
 # About this build
 
-This documentation was built on **2026-10-13 11:42 UTC** from commit <a href="https://github.com/i2mint/vd/commit/89e47dfa354298b319ae884500cf64cfd33e3f3d"><code>89e47df</code></a> on branch <code>master</code>, for **vd 0.2.15** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-20 10:21 UTC** from commit <a href="https://github.com/i2mint/vd/commit/2a814f4576614f33702869729a95faa0c3698378"><code>2a814f4</code></a> on branch <code>master</code>, for **vd 0.2.16** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.2.15) is behind the latest release on PyPI (0.2.16): `pip install vd` gives newer code than these docs describe.
+- The documented version (0.2.16) is behind the latest release on PyPI (0.2.17): `pip install vd` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                  |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/vd/commit/89e47dfa354298b319ae884500cf64cfd33e3f3d"><code>89e47dfa354298b319ae884500cf64cfd33e3f3d</code></a> |
+| Commit              | <a href="https://github.com/i2mint/vd/commit/2a814f4576614f33702869729a95faa0c3698378"><code>2a814f4576614f33702869729a95faa0c3698378</code></a> |
 | Branch              | <code>master</code>                                                                                                                              |
 | Tags at this commit | none                                                                                                                                             |
 | Working tree        | clean                                                                                                                                            |
@@ -6123,16 +6123,16 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/vd</code>                                                                     |
-| Run          | <a href="https://github.com/i2mint/vd/actions/runs/38391877220">38391877220</a>            |
+| Run          | <a href="https://github.com/i2mint/vd/actions/runs/39407159397">39407159397</a>            |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>89e47dfa354298b319ae884500cf64cfd33e3f3d</code> (in the history of the built commit) |
+| Event commit | <code>2a814f4576614f33702869729a95faa0c3698378</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.15  |
-| Sphinx   | 9.1.0   |
+| epythet  | 0.2.18  |
+| Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.15 |
 
@@ -6150,14 +6150,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/vd/0.2.16/">0.2.16</a>, newer than the documented version (0.2.15).
+Latest release: <a href="https://pypi.org/project/vd/0.2.17/">0.2.17</a>, newer than the documented version (0.2.16).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/vd && cd vd
-git checkout 89e47dfa354298b319ae884500cf64cfd33e3f3d
-pip install "epythet==0.2.15"
+git checkout 2a814f4576614f33702869729a95faa0c3698378
+pip install "epythet==0.2.18"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

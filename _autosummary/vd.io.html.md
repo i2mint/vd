@@ -23,7 +23,7 @@ Export a collection to a file in the specified format.
 
 * **Parameters:**
   * **collection** ([`Collection`](vd.base.html.md#vd.base.Collection)) – Collection to export
-  * **output_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file/directory path
+  * **output_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file/directory path
   * **format** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Export format: ‘jsonl’, ‘json’, ‘directory’
   * **\*\*kwargs** – Additional format-specific options
 * **Returns:**
@@ -48,7 +48,7 @@ Useful for version control and easy browsing.
 
 * **Parameters:**
   * **collection** ([`Collection`](vd.base.html.md#vd.base.Collection)) – Collection to export
-  * **output_dir** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output directory path
+  * **output_dir** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output directory path
   * **include_vectors** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to include vectors
 * **Returns:**
   Number of documents exported
@@ -63,7 +63,7 @@ Creates a JSON array of all documents.
 
 * **Parameters:**
   * **collection** ([`Collection`](vd.base.html.md#vd.base.Collection)) – Collection to export
-  * **output_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file path
+  * **output_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file path
   * **include_vectors** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to include embedding vectors
   * **indent** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`int`](https://docs.python.org/3/builtins/functions.html#int)]) – JSON indentation (None for compact)
 * **Returns:**
@@ -79,7 +79,7 @@ Each line is a JSON object representing a document.
 
 * **Parameters:**
   * **collection** ([`Collection`](vd.base.html.md#vd.base.Collection)) – Collection to export
-  * **output_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file path
+  * **output_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Output file path
   * **include_vectors** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to include embedding vectors in the export
 * **Returns:**
   Number of documents exported
@@ -103,7 +103,7 @@ Import documents into a collection from a file.
 
 * **Parameters:**
   * **collection** ([`Collection`](vd.base.html.md#vd.base.Collection)) – Collection to import into
-  * **input_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file/directory path
+  * **input_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file/directory path
   * **format** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Import format: ‘jsonl’, ‘json’, ‘directory’
     If None, inferred from file extension
   * **\*\*kwargs** – Additional format-specific options
@@ -127,7 +127,7 @@ Import documents from a directory of JSON files.
 
 * **Parameters:**
   * **collection** ([`Collection`](vd.base.html.md#vd.base.Collection)) – Collection to import into
-  * **input_dir** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input directory path
+  * **input_dir** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input directory path
   * **batch_size** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Batch size for adding documents
   * **skip_existing** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – If True, skip documents with IDs that already exist
   * **pattern** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – File pattern to match
@@ -142,7 +142,7 @@ Import documents from JSON format into a collection.
 
 * **Parameters:**
   * **collection** ([`Collection`](vd.base.html.md#vd.base.Collection)) – Collection to import into
-  * **input_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file path
+  * **input_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file path
   * **batch_size** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Batch size for adding documents
   * **skip_existing** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – If True, skip documents with IDs that already exist
 * **Returns:**
@@ -156,7 +156,7 @@ Import documents from JSONL format into a collection.
 
 * **Parameters:**
   * **collection** ([`Collection`](vd.base.html.md#vd.base.Collection)) – Collection to import into
-  * **input_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file path
+  * **input_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Input file path
   * **batch_size** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Batch size for adding documents
   * **skip_existing** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – If True, skip documents with IDs that already exist
 * **Returns:**

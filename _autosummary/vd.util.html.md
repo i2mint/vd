@@ -66,9 +66,6 @@ one-argument change here.
 
 Cosine similarity of two vectors (1.0 identical, 0.0 orthogonal).
 
-* **Return type:**
-  [`float`](https://docs.python.org/3/builtins/functions.html#float)
-
 ### Examples
 
 ```pycon
@@ -78,12 +75,12 @@ Cosine similarity of two vectors (1.0 identical, 0.0 orthogonal).
 0.0
 ```
 
+* **Return type:**
+  [`float`](https://docs.python.org/3/builtins/functions.html#float)
+
 ### vd.util.euclidean_distance(vec1, vec2)
 
 Euclidean (L2) distance between two vectors.
-
-* **Return type:**
-  [`float`](https://docs.python.org/3/builtins/functions.html#float)
 
 ### Examples
 
@@ -91,6 +88,9 @@ Euclidean (L2) distance between two vectors.
 >>> euclidean_distance([1.0, 0.0], [1.0, 0.0])
 0.0
 ```
+
+* **Return type:**
+  [`float`](https://docs.python.org/3/builtins/functions.html#float)
 
 ### vd.util.get_backend(name)
 
@@ -134,15 +134,15 @@ Return the names of all backends with a registered (importable) adapter.
 
 Component-wise mean of a non-empty iterable of equal-length vectors.
 
-* **Return type:**
-  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]
-
 ### Examples
 
 ```pycon
 >>> mean_vector([[0.0, 2.0], [2.0, 4.0]])
 [1.0, 3.0]
 ```
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`float`](https://docs.python.org/3/builtins/functions.html#float)]
 
 ### vd.util.normalize_document_input(doc_input, , auto_id=True)
 
@@ -152,7 +152,7 @@ Accepted shapes: a [`Document`](vd.base.html.md#vd.base.Document); a `str` (just
 tuple `(text, id)`, `(text, metadata)`, or `(text, id, metadata)`.
 
 * **Parameters:**
-  * **doc_input** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple), [`Document`](vd.base.html.md#vd.base.Document)]) – The input to normalize.
+  * **doc_input** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple), [`Document`](vd.base.html.md#vd.base.Document)]) – The input to normalize.
   * **auto_id** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – When the input carries no id, generate one (vs. leaving it empty).
 * **Return type:**
   [`Document`](vd.base.html.md#vd.base.Document)
@@ -172,9 +172,6 @@ True
 
 Class decorator: register an adapter [`Client`](vd.base.html.md#vd.base.Client) under `name`.
 
-* **Return type:**
-  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`type`](https://docs.python.org/3/builtins/functions.html#type)], [`type`](https://docs.python.org/3/builtins/functions.html#type)]
-
 ### Examples
 
 ```pycon
@@ -183,6 +180,9 @@ Class decorator: register an adapter [`Client`](vd.base.html.md#vd.base.Client) 
 ... class ExampleClient(AbstractClient):
 ...     ...
 ```
+
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`type`](https://docs.python.org/3/builtins/functions.html#type)], [`type`](https://docs.python.org/3/builtins/functions.html#type)]
 
 ### vd.util.text_only(result)
 
