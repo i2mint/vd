@@ -55,7 +55,7 @@ backends.
   The I/O-free embed / dimension / query policy is shared with the sync base
   through `base._CollectionPolicy`.
 - Hybrid: `vd.hybrid_search` works everywhere (client-side BM25 + RRF
-  fallback, `search.BM25Index`); `weaviate`, `elasticsearch`, `redis` and
+  fallback, `search.BM25Index`); `weaviate`, `elasticsearch`, `redis`,
   `lancedb`, `qdrant` (sparse IDF vector) and `milvus` (BM25 function) satisfy `SupportsHybrid` with a native lexical side; older qdrant/milvus collections without it fall back to client BM25. Left: `mongodb`, `pinecone`, `turbopuffer` (issue #17).
 - Modules: `analytics`, `config`, `filters`, `health`, `io`, `migration`,
   `search`, `text`, `time_indexed`, `util`, `cli`. (`compare.py` was folded
