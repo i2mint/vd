@@ -312,6 +312,18 @@ class AsyncAbstractCollection(_CollectionPolicy, metaclass=ABCMeta):
         """The raw backend handle (escape hatch), or ``None``."""
         return getattr(self, "_native", None)
 
+    # ----- embedding off the event loop ------------------------------------ #
+
+    async def _embed_off_loop(self, text: str) -> Vector:
+        """:meth:`embed` in a worker thread: an embedder may be slow or remote."""
+        return await asyncio.to_thread(self.embed, text)
+
+    async def _ensure_vector_off_loop(self, doc: Document) -> Document:
+        """:meth:`_ensure_vector`, embedding a vector-less ``doc`` off the loop."""
+        if doc.vector is None:
+            doc.vector = await self._embed_off_loop(doc.text)
+        return self._ensure_vector(doc)
+
     # ----- AsyncCollection contract --------------------------------------- #
 
     async def get(self, key: str) -> Document:
@@ -321,7 +333,7 @@ class AsyncAbstractCollection(_CollectionPolicy, metaclass=ABCMeta):
     async def set(self, key: str, value: Union[str, tuple, Document]) -> None:
         """Insert or replace a document (idempotent upsert)."""
         self._check_writable()
-        doc = self._ensure_vector(_coerce_document(key, value))
+        doc = await self._ensure_vector_off_loop(_coerce_document(key, value))
         await self._write_many([doc])
 
     async def delete(self, key: str) -> None:
@@ -354,6 +366,8 @@ class AsyncAbstractCollection(_CollectionPolicy, metaclass=ABCMeta):
         from vd.filters import validate_filter
 
         validate_filter(filter, supported=self.supported_filter_operators)
+        if isinstance(query, str):
+            query = await self._embed_off_loop(query)
         vector = self._resolve_query(query)
         for result in await self._query(vector, limit=limit, filter=filter, **kwargs):
             yield egress(result) if egress is not None else result
@@ -373,7 +387,7 @@ class AsyncAbstractCollection(_CollectionPolicy, metaclass=ABCMeta):
         batch: list[Document] = []
         for item in documents:
             doc = normalize_document_input(item, auto_id=True)
-            self._ensure_vector(doc)
+            await self._ensure_vector_off_loop(doc)
             batch.append(doc)
             if len(batch) >= batch_size:
                 await self._write_many(batch)

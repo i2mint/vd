@@ -581,3 +581,54 @@ async def test_lancedb_native_hybrid_rebuilds_after_recreate(lancedb_available, 
             ]
             assert ids == ["b"]
             await client.delete_collection("re")
+
+
+async def test_lancedb_native_embedder_runs_off_the_loop(lancedb_available):
+    """#42: a slow or remote embedder must not block the event loop."""
+    import threading
+
+    embed, threads = make_embedder(), []
+
+    def recording(text):
+        threads.append(threading.get_ident())
+        return embed(text)
+
+    loop_thread = threading.get_ident()
+    async with await vd.connect_async("lancedb", embedder=recording) as client:
+        col = await client.create_collection("off")
+        await col.set("a", "cats and kittens")
+        await col.add_documents([("b", "dogs and puppies")])
+        assert [h["id"] async for h in col.search("cats and kittens", limit=1)] == ["a"]
+        hits = [h["id"] async for h in col.hybrid_search("dogs puppies", limit=1)]
+    assert len(hits) == 1
+    assert len(threads) == 4 and loop_thread not in threads
+
+
+async def test_lancedb_native_first_hybrid_calls_build_the_index_once(
+    lancedb_available, tmp_path, monkeypatch
+):
+    """#42: concurrent first uses serialize on a lock: one create_index, all succeed."""
+    import asyncio
+
+    from lancedb.table import AsyncTable
+
+    calls, original = [], AsyncTable.create_index
+
+    async def counting(self, *args, **kwargs):
+        calls.append(args)
+        return await original(self, *args, **kwargs)
+
+    monkeypatch.setattr(AsyncTable, "create_index", counting)
+    async with await vd.connect_async("lancedb", path=str(tmp_path)) as client:
+        col = await client.create_collection("once", dimension=2)
+        await _populate(col)
+
+        async def first_use():
+            return [
+                h["id"]
+                async for h in col.hybrid_search([0.0, 1.0], query_text="dogs", limit=1)
+            ]
+
+        results = await asyncio.gather(*(first_use() for _ in range(6)))
+    assert results == [["b"]] * 6
+    assert len(calls) == 1
