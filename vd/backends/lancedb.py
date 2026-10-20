@@ -689,7 +689,9 @@ class NativeAsyncLanceDBCollection(AsyncAbstractCollection):
 
         del kwargs
         validate_filter(filter, supported=self.supported_filter_operators)
-        if isinstance(query, str):  # embed off the loop; the text stays the lexical side
+        if isinstance(
+            query, str
+        ):  # embed off the loop; the text stays the lexical side
             query_text = query if query_text is None else query_text
             query = await self._embed_off_loop(query)
         vec, text = self._resolve_hybrid_inputs(query, query_text)
