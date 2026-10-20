@@ -272,7 +272,15 @@ def test_hybrid_search_honors_filter(populated_collection):
 def test_native_vs_fallback_path_is_observable(populated_collection, backend_name):
     """isinstance(c, SupportsHybrid) cleanly splits the two paths."""
     is_native = isinstance(populated_collection, vd.SupportsHybrid)
-    if backend_name in {"weaviate", "elasticsearch", "redis", "lancedb"}:
+    if backend_name in {
+        "weaviate",
+        "elasticsearch",
+        "redis",
+        "lancedb",
+        "qdrant",
+        "qdrant_server",
+        "milvus",
+    }:
         assert is_native, (
             f"{backend_name} should be SupportsHybrid in this PR; got {is_native}"
         )
@@ -432,3 +440,81 @@ def test_lancedb_hybrid_after_table_dropped_and_recreated(lance_col):
     col2["b"] = vd.Document(id="b", text="blue fox", vector=[1.0, 0.0])
     assert [h["id"] for h in vd.hybrid_search(
         col2, [1.0, 0.0], query_text="fox", limit=1)] == ["b"]
+
+
+# ---------- qdrant / milvus: native lexical side (embedded modes) ---------- #
+
+
+@pytest.fixture(params=["qdrant", "milvus"])
+def native_lex_col(request):
+    pytest.importorskip({"qdrant": "qdrant_client", "milvus": "pymilvus"}[request.param])
+    col = vd.connect(request.param).create_collection(f"lex_{request.param}", dimension=2)
+    col["a"] = vd.Document(
+        id="a", text="the quick brown fox", vector=[1.0, 0.0], metadata={"k": "x"}
+    )
+    col["b"] = vd.Document(id="b", text="lazy dog sleeps", vector=[0.0, 1.0], metadata={"k": "y"})
+    col["c"] = vd.Document(id="c", text="quick quick fox fox", vector=[0.7, 0.7], metadata={"k": "y"})
+    return col
+
+
+def test_native_lexical_side_matches_terms_only(native_lex_col):
+    assert native_lex_col._has_lexical()
+    hits = native_lex_col._lexical_query("quick fox", limit=5, filter=None)
+    assert {h["id"] for h in hits} == {"a", "c"}
+    assert all(h["score"] > 0 for h in hits)
+    assert native_lex_col._lexical_query("   ", limit=5, filter=None) == []
+    assert native_lex_col._lexical_query("zebra", limit=5, filter=None) == []
+
+
+def test_native_lexical_sees_later_writes_filters_and_odd_queries(native_lex_col):
+    native_lex_col["d"] = vd.Document(id="d", text="quick zebra", vector=[0.5, 0.5], metadata={"k": "y"})
+    hits = native_lex_col._lexical_query("zebra", limit=5, filter=None)
+    assert [h["id"] for h in hits] == ["d"]
+    only_y = native_lex_col._lexical_query("quick", limit=5, filter={"k": "y"})
+    assert {h["id"] for h in only_y} == {"c", "d"}
+    assert native_lex_col._lexical_query('quick ( ) "" !! AND', limit=5, filter=None)
+    del native_lex_col["d"]
+    assert native_lex_col._lexical_query("zebra", limit=5, filter=None) == []
+
+
+def test_native_hybrid_fuses_lexical_and_dense(native_lex_col):
+    hits = list(vd.hybrid_search(native_lex_col, [0.0, 1.0], query_text="brown", limit=3))
+    ids = [h["id"] for h in hits]
+    assert ids[0] in {"a", "b"} and set(ids) >= {"a", "b"}, ids  # lexical 'a' + dense 'b' both surface
+    assert all("score" in h and "metadata" in h for h in hits)
+    assert native_lex_col["a"].vector == pytest.approx([1.0, 0.0])
+
+
+def test_native_hybrid_before_first_write_is_empty():
+    pytest.importorskip("qdrant_client")
+    col = vd.connect("qdrant").create_collection("lex_empty")
+    assert list(col.hybrid_search([0.1, 0.2], query_text="x")) == []
+
+
+def test_qdrant_collection_without_sparse_vector_falls_back():
+    """A collection made before native hybrid has no sparse vector: hybrid still works (client BM25)."""
+    qdrant_client = pytest.importorskip("qdrant_client")
+    client = vd.connect("qdrant")
+    raw = client.native if hasattr(client, "native") else client._client
+    raw.create_collection(
+        "legacy",
+        vectors_config=qdrant_client.models.VectorParams(
+            size=2, distance=qdrant_client.models.Distance.COSINE
+        ),
+    )
+    col = client.get_collection("legacy")
+    col["a"] = vd.Document(id="a", text="the quick brown fox", vector=[1.0, 0.0])
+    col["b"] = vd.Document(id="b", text="lazy dog sleeps", vector=[0.0, 1.0])
+    assert not col._has_lexical()
+    hits = list(col.hybrid_search([0.0, 1.0], query_text="quick", limit=2))
+    assert {h["id"] for h in hits} == {"a", "b"}
+
+
+def test_milvus_lexical_opt_out_falls_back_and_keeps_long_text():
+    pytest.importorskip("pymilvus")
+    col = vd.connect("milvus").create_collection("no_lex", dimension=2, lexical=False)
+    col["a"] = vd.Document(id="a", text="quick " + "x" * 70000, vector=[1.0, 0.0])
+    col["b"] = vd.Document(id="b", text="lazy dog", vector=[0.0, 1.0])
+    assert not col._has_lexical()
+    hits = list(col.hybrid_search([0.0, 1.0], query_text="quick", limit=2))
+    assert {h["id"] for h in hits} == {"a", "b"}
