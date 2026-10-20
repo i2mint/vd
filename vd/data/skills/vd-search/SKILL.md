@@ -168,6 +168,8 @@ Result dicts have the usual shape; `score` is the fused RRF score.
   (`isinstance(docs, vd.SupportsHybrid)` is `True`). Every other backend uses
   a client-side BM25 scan that reads the whole collection on each call:
   fine up to ~100k documents, slow beyond.
+  `vd.hybrid_search_async` on a native async `lancedb` collection uses the
+  same LanceDB text index (no scan).
 - **Many queries, fallback backend?** Build the keyword index once:
 
   ```python
