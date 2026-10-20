@@ -1,4 +1,4 @@
-> built 2026-10-20 10:21 UTC from 2a814f4 (master) · vd 0.2.16. Details: build_info.json
+> built 2026-10-20 12:11 UTC from 4990255 (master) · vd 0.2.17. Details: build_info.json
 
 # index.html.md
 
@@ -175,7 +175,7 @@ print(asyncio.run(main()))
 # ['a']
 ```
 
-Every backend works through a thread-pool wrapper. Backends listed by `vd.list_async_backends()` can return a native async client that does real non-blocking I/O: currently `qdrant` when connected to a server with `url=`. Check `client.native_async`.
+Every backend works through a thread-pool wrapper. Backends listed by `vd.list_async_backends()` can return a native async client that does real non-blocking I/O: currently `lancedb` (embedded, over `lancedb.connect_async`) and `qdrant` when connected to a server with `url=`. Check `client.native_async`.
 
 ### Escape hatches
 
@@ -6101,18 +6101,16 @@ Egress: keep only the text. `>>> text_only({'text': 'hi'})` -> `'hi'`.
 
 # About this build
 
-This documentation was built on **2026-10-20 10:21 UTC** from commit <a href="https://github.com/i2mint/vd/commit/2a814f4576614f33702869729a95faa0c3698378"><code>2a814f4</code></a> on branch <code>master</code>, for **vd 0.2.16** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-20 12:11 UTC** from commit <a href="https://github.com/i2mint/vd/commit/4990255c6af6115937cfe8227cfddf71a127c61e"><code>4990255</code></a> on branch <code>master</code>, for **vd 0.2.17** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.2.16) is behind the latest release on PyPI (0.2.17): `pip install vd` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                  |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/vd/commit/2a814f4576614f33702869729a95faa0c3698378"><code>2a814f4576614f33702869729a95faa0c3698378</code></a> |
+| Commit              | <a href="https://github.com/i2mint/vd/commit/4990255c6af6115937cfe8227cfddf71a127c61e"><code>4990255c6af6115937cfe8227cfddf71a127c61e</code></a> |
 | Branch              | <code>master</code>                                                                                                                              |
 | Tags at this commit | none                                                                                                                                             |
 | Working tree        | clean                                                                                                                                            |
@@ -6123,15 +6121,15 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/vd</code>                                                                     |
-| Run          | <a href="https://github.com/i2mint/vd/actions/runs/39407159397">39407159397</a>            |
+| Run          | <a href="https://github.com/i2mint/vd/actions/runs/39420227440">39420227440</a>            |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>2a814f4576614f33702869729a95faa0c3698378</code> (in the history of the built commit) |
+| Event commit | <code>4990255c6af6115937cfe8227cfddf71a127c61e</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.18  |
+| epythet  | 0.2.20  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.15 |
@@ -6150,14 +6148,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/vd/0.2.17/">0.2.17</a>, newer than the documented version (0.2.16).
+Latest release: <a href="https://pypi.org/project/vd/0.2.17/">0.2.17</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/vd && cd vd
-git checkout 2a814f4576614f33702869729a95faa0c3698378
-pip install "epythet==0.2.18"
+git checkout 4990255c6af6115937cfe8227cfddf71a127c61e
+pip install "epythet==0.2.20"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

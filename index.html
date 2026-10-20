@@ -335,7 +335,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="13"><span class="c1"># ['a']</span>
 </span></pre></div>
 </div>
-<p>Every backend works through a thread-pool wrapper. Backends listed by <code class="docutils literal notranslate"><span class="pre">vd.list_async_backends()</span></code> can return a native async client that does real non-blocking I/O: currently <code class="docutils literal notranslate"><span class="pre">qdrant</span></code> when connected to a server with <code class="docutils literal notranslate"><span class="pre">url=</span></code>. Check <code class="docutils literal notranslate"><span class="pre">client.native_async</span></code>.</p>
+<p>Every backend works through a thread-pool wrapper. Backends listed by <code class="docutils literal notranslate"><span class="pre">vd.list_async_backends()</span></code> can return a native async client that does real non-blocking I/O: currently <code class="docutils literal notranslate"><span class="pre">lancedb</span></code> (embedded, over <code class="docutils literal notranslate"><span class="pre">lancedb.connect_async</span></code>) and <code class="docutils literal notranslate"><span class="pre">qdrant</span></code> when connected to a server with <code class="docutils literal notranslate"><span class="pre">url=</span></code>. Check <code class="docutils literal notranslate"><span class="pre">client.native_async</span></code>.</p>
 </section>
 <section id="escape-hatches">
 <h3>Escape hatches<a class="headerlink" href="#escape-hatches" title="Link to this heading">#</a></h3>
@@ -438,7 +438,7 @@ data-aria-dark="Switch to auto color mode">
 </section>
 </section>
 
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-20 10:21 UTC from <a href="https://github.com/i2mint/vd/commit/2a814f4576614f33702869729a95faa0c3698378">2a814f4</a> (master) · vd 0.2.16 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-20 12:11 UTC from <a href="https://github.com/i2mint/vd/commit/4990255c6af6115937cfe8227cfddf71a127c61e">4990255</a> (master) · vd 0.2.17 · <a href="about-this-build.html">about this build</a></p>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
@@ -473,7 +473,7 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="_static/documentation_options.js?v=e2418eca"></script>
+      <script src="_static/documentation_options.js?v=46390ad3"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
