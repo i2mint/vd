@@ -23,10 +23,12 @@ Requires: ``pip install lancedb``
 
 from __future__ import annotations
 
+import asyncio
 import inspect
 import json
 import tempfile
 import threading
+import weakref
 from typing import AsyncIterator, Callable, Iterable, Iterator, Optional
 
 try:
@@ -59,6 +61,12 @@ from vd.util import register_backend
 
 #: Serializes FTS-index creation within the process (see ``_ensure_fts_index``).
 _FTS_INDEX_LOCK = threading.Lock()
+
+#: The async twin of ``_FTS_INDEX_LOCK``: one :class:`asyncio.Lock` per event loop and
+#: ``(database uri, table name)``, so concurrent first uses build the index once.
+_ASYNC_FTS_LOCKS: "weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, dict]" = (
+    weakref.WeakKeyDictionary()
+)
 
 #: ``(database uri, table name)`` pairs known to have the FTS index on ``text``.
 #: Shared by every collection object; entries are dropped when the table is.
@@ -318,9 +326,10 @@ class LanceDBCollection(AbstractCollection):
                 break
             except (ValueError, RuntimeError) as error:
                 # The table was dropped and recreated since the index was
-                # cached: forget it and build the index again, once. (Newer
-                # lancedb raises ValueError here, older releases RuntimeError.)
-                if attempt or "INVERTED index" not in str(error):
+                # cached: forget it and build the index again, once. Decided by
+                # the index being gone, not by the error's text (which differs
+                # across lancedb releases, as does ValueError vs RuntimeError).
+                if attempt or self._has_fts_index(table):
                     raise
                 _FTS_READY.discard(self._fts_key())
         results = []
@@ -586,23 +595,33 @@ class NativeAsyncLanceDBCollection(AsyncAbstractCollection):
     async def _ensure_fts_index(self, table) -> None:
         """Build the full-text index on ``text`` if missing (as the sync collection).
 
-        Known-indexed tables share the sync side's per-``(database, table)`` cache. No
-        lock is held across the ``await``: a failed create is tolerated when the
-        index turns out to exist afterwards (a concurrent creator).
+        Known-indexed tables share the sync side's per-``(database, table)`` cache.
+        Creation is serialized per event loop and ``(database, table)`` by an
+        :class:`asyncio.Lock`, so concurrent first uses build it once; a failed create
+        is still tolerated when the index turns out to exist afterwards (a creator in
+        another process or loop).
         """
         key = self._fts_key()
         if key in _FTS_READY:
             return
-        if not await self._has_fts_index(table):
-            from lancedb.index import FTS
+        if await self._has_fts_index(table):
+            _FTS_READY.add(key)
+            return
+        locks = _ASYNC_FTS_LOCKS.setdefault(asyncio.get_running_loop(), {})
+        async with locks.setdefault(key, asyncio.Lock()):
+            if key in _FTS_READY:
+                return
+            table = await self._table() or table
+            if not await self._has_fts_index(table):
+                from lancedb.index import FTS
 
-            try:
-                await table.create_index("text", config=FTS(), replace=False)
-            except Exception:
-                fresh = await self._table()
-                if fresh is None or not await self._has_fts_index(fresh):
-                    raise
-        _FTS_READY.add(key)
+                try:
+                    await table.create_index("text", config=FTS(), replace=False)
+                except Exception:
+                    fresh = await self._table()
+                    if fresh is None or not await self._has_fts_index(fresh):
+                        raise
+            _FTS_READY.add(key)
 
     async def _lexical_query(
         self, text: str, *, limit: int, filter: Optional[Filter]
@@ -628,7 +647,7 @@ class NativeAsyncLanceDBCollection(AsyncAbstractCollection):
                 break
             except (ValueError, RuntimeError) as error:
                 # dropped and recreated since the index was cached: rebuild, once
-                if attempt or "INVERTED index" not in str(error):
+                if attempt or await self._has_fts_index(table):
                     raise
                 _FTS_READY.discard(self._fts_key())
         results = []
@@ -670,6 +689,9 @@ class NativeAsyncLanceDBCollection(AsyncAbstractCollection):
 
         del kwargs
         validate_filter(filter, supported=self.supported_filter_operators)
+        if isinstance(query, str):  # embed off the loop; the text stays the lexical side
+            query_text = query if query_text is None else query_text
+            query = await self._embed_off_loop(query)
         vec, text = self._resolve_hybrid_inputs(query, query_text)
         floor = max(4 * limit, _HYBRID_OVERFETCH_FLOOR)
         dense = await self._query(
