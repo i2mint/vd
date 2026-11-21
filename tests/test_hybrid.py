@@ -518,3 +518,56 @@ def test_milvus_lexical_opt_out_falls_back_and_keeps_long_text():
     assert not col._has_lexical()
     hits = list(col.hybrid_search([0.0, 1.0], query_text="quick", limit=2))
     assert {h["id"] for h in hits} == {"a", "b"}
+
+
+# ---------- BM25Index: postings scoring (vd#44) ------------------------------ #
+
+
+def _reference_bm25(texts, query, *, k1=1.5, b=0.75, limit=10):
+    """The original per-document scan, kept as an oracle for the postings index."""
+    import math
+    import re
+
+    tok = lambda s: re.findall(r"\w+", s.lower())
+    docs = [(i, tok(t)) for i, t in texts.items() if tok(t)]
+    df = {}
+    for _, toks in docs:
+        for term in set(toks):
+            df[term] = df.get(term, 0) + 1
+    n, avg = len(docs), sum(len(t) for _, t in docs) / len(docs)
+    idf = {
+        t: math.log(1 + (n - df[t] + 0.5) / (df[t] + 0.5))
+        for t in set(tok(query))
+        if t in df
+    }
+    scored = []
+    for i, toks in docs:
+        tf = {}
+        for t in toks:
+            if t in idf:
+                tf[t] = tf.get(t, 0) + 1
+        if tf:
+            s = 0.0
+            for t, f in tf.items():
+                numer = f * (k1 + 1)
+                denom = f + k1 * (1 - b + b * len(toks) / avg)
+                s += idf[t] * numer / denom
+            scored.append((i, s))
+    scored.sort(key=lambda r: r[1], reverse=True)
+    return scored[:limit]
+
+
+def test_bm25_postings_match_reference_bit_for_bit():
+    import random
+
+    rng = random.Random(0)
+    vocab = [f"w{i}" for i in range(60)]
+    texts = {str(i): " ".join(rng.choices(vocab, k=rng.randint(1, 30))) for i in range(300)}
+    col = vd.connect("memory").create_collection("bm25_ref", dimension=2)
+    for i, t in texts.items():
+        col[i] = vd.Document(id=i, text=t, vector=[1.0, 0.0])
+    index = vd.BM25Index(col)
+    for _ in range(50):
+        q = " ".join(rng.choices(vocab, k=4))
+        got = [(r["id"], r["score"]) for r in index.search(q, limit=25)]
+        assert got == _reference_bm25(texts, q, limit=25)
