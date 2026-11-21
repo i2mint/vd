@@ -371,8 +371,8 @@ def _tokenize(text: str) -> list[str]:
 class BM25Index:
     """A reusable Okapi BM25 index over a vd collection's stored ``text``.
 
-    Builds the **query-independent** term statistics — per-document token
-    lists, document frequencies, document lengths, and the mean length — once
+    Builds the **query-independent** term statistics — postings lists
+    (``term -> [(doc, tf)]``), document lengths, and the mean length — once
     in :meth:`__init__`, then answers many queries against them via
     :meth:`search`. This is the build-once / query-many companion to
     :func:`bm25_lexical_search` (which builds a throwaway index for a single
@@ -420,10 +420,14 @@ class BM25Index:
         from vd.filters import matches_filter
 
         self._tokenize = tokenize
-        # Pass 1 (query-independent): tokenize once, compute document
-        # frequencies and lengths.
-        docs: list[tuple[str, str, dict, list[str]]] = []
-        df: dict[str, int] = {}
+        # Build (query-independent): tokenize once; keep postings
+        # ``term -> [(doc_idx, tf, first_pos)]`` plus per-document lengths.
+        # ``first_pos`` is the index of the term's first occurrence in the
+        # document, so scoring can sum terms in the same order as the original
+        # per-document scan (bit-identical scores, unchanged tie order).
+        docs: list[tuple[str, str, dict]] = []
+        doc_lens: list[int] = []
+        postings: dict[str, list[tuple[int, int, int]]] = {}
         for doc_id in collection:
             doc = collection[doc_id]
             if filter is not None and not matches_filter(doc.metadata or {}, filter):
@@ -431,15 +435,23 @@ class BM25Index:
             tokens = tokenize(doc.text or "")
             if not tokens:
                 continue
-            docs.append((doc_id, doc.text, dict(doc.metadata or {}), tokens))
-            for term in set(tokens):
-                df[term] = df.get(term, 0) + 1
+            doc_idx = len(docs)
+            docs.append((doc_id, doc.text, dict(doc.metadata or {})))
+            doc_lens.append(len(tokens))
+            seen: dict[str, list[int]] = {}  # term -> [tf, first_pos]
+            for pos, tok in enumerate(tokens):
+                entry = seen.get(tok)
+                if entry is None:
+                    seen[tok] = [1, pos]
+                else:
+                    entry[0] += 1
+            for term, (freq, first_pos) in seen.items():
+                postings.setdefault(term, []).append((doc_idx, freq, first_pos))
         self._docs = docs
-        self._df = df
+        self._doc_lens = doc_lens
+        self._postings = postings
         self._n_docs = len(docs)
-        self._avg_len = (
-            sum(len(toks) for _, _, _, toks in docs) / self._n_docs if docs else 0.0
-        )
+        self._avg_len = sum(doc_lens) / self._n_docs if docs else 0.0
 
     def __len__(self) -> int:
         """Number of non-empty, filter-surviving documents in the index."""
@@ -464,28 +476,31 @@ class BM25Index:
         if not query_tokens or not self._docs:
             return []
 
-        # Pass 2 (query-dependent): idf for the query terms, then Okapi scoring.
-        n_docs, avg_len, df = self._n_docs, self._avg_len, self._df
-        idf = {
-            term: math.log(1 + (n_docs - df[term] + 0.5) / (df[term] + 0.5))
-            for term in set(query_tokens)
-            if term in df
-        }
+        # Query-dependent: idf for the query terms, then Okapi scoring of only
+        # the documents that appear in those terms' postings.
+        n_docs, avg_len, postings = self._n_docs, self._avg_len, self._postings
+        doc_lens = self._doc_lens
+        idf: dict[str, float] = {}
+        for term in set(query_tokens):
+            plist = postings.get(term)
+            if plist:
+                df = len(plist)
+                idf[term] = math.log(1 + (n_docs - df + 0.5) / (df + 0.5))
+
+        hits: dict[int, list[tuple[int, str, int]]] = {}
+        for term in idf:
+            for doc_idx, freq, first_pos in postings[term]:
+                hits.setdefault(doc_idx, []).append((first_pos, term, freq))
 
         scored: list[SearchResult] = []
-        for doc_id, text, metadata, tokens in self._docs:
-            doc_len = len(tokens)
-            tf: dict[str, int] = {}
-            for tok in tokens:
-                if tok in idf:
-                    tf[tok] = tf.get(tok, 0) + 1
-            if not tf:
-                continue
+        for doc_idx in sorted(hits):  # document order, so score ties keep it
+            doc_len = doc_lens[doc_idx]
             score = 0.0
-            for term, freq in tf.items():
+            for _, term, freq in sorted(hits[doc_idx]):  # first-appearance order
                 numer = freq * (k1 + 1)
                 denom = freq + k1 * (1 - b + b * doc_len / avg_len)
                 score += idf[term] * numer / denom
+            doc_id, text, metadata = self._docs[doc_idx]
             scored.append(
                 {"id": doc_id, "text": text, "score": score, "metadata": metadata}
             )
