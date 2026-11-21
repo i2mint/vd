@@ -2,18 +2,18 @@
 
 # About this build
 
-This documentation was built on **2026-10-20 13:54 UTC** from commit <a href="https://github.com/i2mint/vd/commit/2b89ce0eb2e7a736a1d7043850efffc49db7983f"><code>2b89ce0</code></a> on branch <code>master</code>, for **vd 0.2.19** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-21 22:32 UTC** from commit <a href="https://github.com/i2mint/vd/commit/baaaeaea9cb38d8783f0ff07022242402cb1cbdc"><code>baaaeae</code></a> on branch <code>master</code>, for **vd 0.2.20** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.2.19) is behind the latest release on PyPI (0.2.20): `pip install vd` gives newer code than these docs describe.
+- The documented version (0.2.20) is behind the latest release on PyPI (0.2.21): `pip install vd` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                  |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/vd/commit/2b89ce0eb2e7a736a1d7043850efffc49db7983f"><code>2b89ce0eb2e7a736a1d7043850efffc49db7983f</code></a> |
+| Commit              | <a href="https://github.com/i2mint/vd/commit/baaaeaea9cb38d8783f0ff07022242402cb1cbdc"><code>baaaeaea9cb38d8783f0ff07022242402cb1cbdc</code></a> |
 | Branch              | <code>master</code>                                                                                                                              |
 | Tags at this commit | none                                                                                                                                             |
 | Working tree        | clean                                                                                                                                            |
@@ -24,18 +24,18 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/vd</code>                                                                     |
-| Run          | <a href="https://github.com/i2mint/vd/actions/runs/39434265145">39434265145</a>            |
+| Run          | <a href="https://github.com/i2mint/vd/actions/runs/44957114546">44957114546</a>            |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>2b89ce0eb2e7a736a1d7043850efffc49db7983f</code> (in the history of the built commit) |
+| Event commit | <code>baaaeaea9cb38d8783f0ff07022242402cb1cbdc</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.20  |
+| epythet  | 0.2.23  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
-| Python   | 3.12.15 |
+| Python   | 3.12.16 |
 
 ## Configuration as resolved
 
@@ -51,14 +51,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/vd/0.2.20/">0.2.20</a>, newer than the documented version (0.2.19).
+Latest release: <a href="https://pypi.org/project/vd/0.2.21/">0.2.21</a>, newer than the documented version (0.2.20).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/vd && cd vd
-git checkout 2b89ce0eb2e7a736a1d7043850efffc49db7983f
-pip install "epythet==0.2.20"
+git checkout baaaeaea9cb38d8783f0ff07022242402cb1cbdc
+pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

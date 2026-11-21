@@ -713,8 +713,8 @@ Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
 A reusable Okapi BM25 index over a vd collection’s stored `text`.
 
-Builds the **query-independent** term statistics — per-document token
-lists, document frequencies, document lengths, and the mean length — once
+Builds the **query-independent** term statistics — postings lists
+(`term -> [(doc, tf)]`), document lengths, and the mean length — once
 in `__init__()`, then answers many queries against them via
 [`search()`](vd.search.html.md#module-vd.search). This is the build-once / query-many companion to
 [`bm25_lexical_search()`](#vd.bm25_lexical_search) (which builds a throwaway index for a single

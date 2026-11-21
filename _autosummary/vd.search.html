@@ -198,8 +198,8 @@ other advanced search patterns.</p>
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.search.</span></span><span class="sig-name descname"><span class="pre">BM25Index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">_tokenize&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/search.html#BM25Index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.search.BM25Index" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A reusable Okapi BM25 index over a vd collection’s stored <code class="docutils literal notranslate"><span class="pre">text</span></code>.</p>
-<p>Builds the <strong>query-independent</strong> term statistics — per-document token
-lists, document frequencies, document lengths, and the mean length — once
+<p>Builds the <strong>query-independent</strong> term statistics — postings lists
+(<code class="docutils literal notranslate"><span class="pre">term</span> <span class="pre">-&gt;</span> <span class="pre">[(doc,</span> <span class="pre">tf)]</span></code>), document lengths, and the mean length — once
 in <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code>, then answers many queries against them via
 <a class="reference internal" href="#vd.search.BM25Index.search" title="vd.search.BM25Index.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a>. This is the build-once / query-many companion to
 <a class="reference internal" href="#vd.search.bm25_lexical_search" title="vd.search.bm25_lexical_search"><code class="xref py py-func docutils literal notranslate"><span class="pre">bm25_lexical_search()</span></code></a> (which builds a throwaway index for a single
@@ -576,7 +576,7 @@ or the adapter’s fused score on the native path.</p>
     </div>
   </div>
 </footer>
-      <script src="../_static/documentation_options.js?v=0a5b2d08"></script>
+      <script src="../_static/documentation_options.js?v=20e0ead2"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

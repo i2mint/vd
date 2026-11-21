@@ -1,39 +1,39 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-20T13:54:48Z",
+  "built_at": "2026-11-21T22:32:08Z",
   "package": {
     "name": "vd",
-    "version": "0.2.19",
+    "version": "0.2.20",
     "display_name": "vd",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "2b89ce0eb2e7a736a1d7043850efffc49db7983f",
-    "short_commit": "2b89ce0",
+    "commit": "baaaeaea9cb38d8783f0ff07022242402cb1cbdc",
+    "short_commit": "baaaeae",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/vd",
-    "commit_url": "https://github.com/i2mint/vd/commit/2b89ce0eb2e7a736a1d7043850efffc49db7983f",
+    "commit_url": "https://github.com/i2mint/vd/commit/baaaeaea9cb38d8783f0ff07022242402cb1cbdc",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/vd",
-    "sha": "2b89ce0eb2e7a736a1d7043850efffc49db7983f",
+    "sha": "baaaeaea9cb38d8783f0ff07022242402cb1cbdc",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "39434265145",
-    "run_url": "https://github.com/i2mint/vd/actions/runs/39434265145",
+    "run_id": "44957114546",
+    "run_url": "https://github.com/i2mint/vd/actions/runs/44957114546",
     "server_url": "https://github.com"
   },
   "tools": {
-    "epythet": "0.2.20",
+    "epythet": "0.2.23",
     "sphinx": "9.1.1",
     "docutils": "0.22.4",
-    "python": "3.12.15"
+    "python": "3.12.16"
   },
   "config": {
     "theme": "auto",
@@ -60,16 +60,16 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.2.20",
+    "latest": "0.2.21",
     "relation": "behind",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/vd && cd vd\ngit checkout 2b89ce0eb2e7a736a1d7043850efffc49db7983f\npip install \"epythet==0.2.20\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/vd && cd vd\ngit checkout baaaeaea9cb38d8783f0ff07022242402cb1cbdc\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": false,
     "notes": [
-      "The documented version (0.2.19) is behind the latest release on PyPI (0.2.20): `pip install vd` gives newer code than these docs describe."
+      "The documented version (0.2.20) is behind the latest release on PyPI (0.2.21): `pip install vd` gives newer code than these docs describe."
     ]
   }
 }
