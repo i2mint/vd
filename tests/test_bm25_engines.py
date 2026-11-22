@@ -70,11 +70,37 @@ def test_bm25s_keeps_ties_in_document_order():
 
 
 @needs_bm25s
-def test_bm25s_fixes_k1_and_b_at_build_time():
-    index = BM25Index({"a": _Doc("x y"), "b": _Doc("y z")}, engine="bm25s", k1=1.2)
-    assert index.search("y")  # the build values
-    with pytest.raises(ValueError, match="build another BM25Index"):
-        index.search("y", k1=2.0)
+def test_bm25s_takes_k1_and_b_per_query_like_the_python_engine():
+    docs = _corpus(n=120)
+    py, fast = BM25Index(docs), BM25Index(docs, engine="bm25s")
+    a = py.search("w0 w9", limit=20, k1=1.2, b=0.5)
+    c = fast.search("w0 w9", limit=20, k1=1.2, b=0.5)
+    assert [r["id"] for r in a] == [r["id"] for r in c]
+    assert [r["score"] for r in c] == pytest.approx([r["score"] for r in a], rel=1e-5)
+
+
+@needs_bm25s
+@pytest.mark.parametrize("query", ["fox  dog", " "])
+def test_bm25s_survives_a_tokenizer_that_emits_empty_tokens(query):
+    docs = {"a": _Doc("fox dog"), "b": _Doc("cat")}
+    split = lambda s: s.split(" ")  # noqa: E731
+    py = BM25Index(docs, tokenize=split)
+    fast = BM25Index(docs, tokenize=split, engine="bm25s")
+    assert [r["id"] for r in fast.search(query)] == [r["id"] for r in py.search(query)]
+
+
+@needs_bm25s
+def test_a_bm25s_index_pickles():
+    import pickle
+
+    index = BM25Index(_corpus(n=50), engine="bm25s")
+    again = pickle.loads(pickle.dumps(index))
+    assert again.search("w0 w1") == index.search("w0 w1")
+
+
+def test_a_negative_limit_is_refused():
+    with pytest.raises(ValueError, match="limit"):
+        BM25Index({"a": _Doc("x")}).search("x", limit=-1)
 
 
 @needs_bm25s
