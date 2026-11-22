@@ -197,10 +197,6 @@ def test_benchmark_with_an_embedding_client(monkeypatch, capsys, embedder):
     assert "Throughput:" in out
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="cmd_benchmark searches with a text query but connects without an embedder, so it always fails",
-)
 def test_benchmark_against_a_vector_collection(shared, monkeypatch, capsys):
     assert run(monkeypatch, "benchmark", "memory", "docs", "--queries", "2") == 0
 

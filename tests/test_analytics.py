@@ -157,10 +157,6 @@ def test_sample_collection_random_is_reproducible_with_seed(col):
     assert len(set(s1)) == 2 and set(s1) <= {"a", "b", "c"}
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="'diverse' keeps the candidate with the HIGHEST min-similarity, i.e. the most similar one",
-)
 def test_sample_collection_diverse_picks_the_least_similar_next(col):
     picked = sample_collection(col, 2, method="diverse", seed=3)
     first, second = picked
