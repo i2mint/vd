@@ -101,8 +101,8 @@ data-aria-dark="Switch to auto color mode">
       <i class="i-lucide close"></i>
     </button>
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
-<li><a class="reference internal" href="#for-ai-agents">For AI agents</a></li>
 <li><a class="reference internal" href="#install">Install</a></li>
+<li><a class="reference internal" href="#quick-start">Quick start</a></li>
 <li><a class="reference internal" href="#the-mental-model">The mental model</a></li>
 <li><a class="reference internal" href="#the-api">The API</a><ul>
 <li><a class="reference internal" href="#metadata-filtering">Metadata filtering</a></li>
@@ -113,6 +113,8 @@ data-aria-dark="Switch to auto color mode">
 </li>
 <li><a class="reference internal" href="#choosing-and-setting-up-a-backend">Choosing and setting up a backend</a></li>
 <li><a class="reference internal" href="#the-toolkit">The toolkit</a></li>
+<li><a class="reference internal" href="#vd-versus-framework-stores">vd versus framework stores</a></li>
+<li><a class="reference internal" href="#for-ai-agents">For AI agents</a></li>
 <li><a class="reference internal" href="#for-artisanal-hand-typed-contributions">For artisanal, hand-typed contributions</a></li>
 <li><a class="reference internal" href="#license">License</a></li>
 </ul>
@@ -145,58 +147,20 @@ data-aria-dark="Switch to auto color mode">
 <section id="vd">
 <h1>vd<a class="headerlink" href="#vd" title="Link to this heading">#</a></h1>
 <p><strong>One Pythonic interface to ~15 vector databases.</strong> Store vectors, search them, filter by metadata, and switch between databases (memory, Chroma, Qdrant, pgvector, LanceDB, Pinecone, …) by changing one word.</p>
-<p><em>Still typing code with your own ten fingers? <a class="reference internal" href="#for-artisanal-hand-typed-contributions">Your artisanal corner is at the bottom</a>.</em></p>
-<section id="for-ai-agents">
-<h2>For AI agents<a class="headerlink" href="#for-ai-agents" title="Link to this heading">#</a></h2>
-<p><strong>Skills.</strong> <code class="docutils literal notranslate"><span class="pre">vd</span></code> ships agent skills in <a class="reference internal" href="#vd/data/skills/"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">vd/data/skills/</span></code></span></a>. They install into any agent host with <a class="reference external" href="https://cli.github.com/manual/gh_skill"><code class="docutils literal notranslate"><span class="pre">gh</span> <span class="pre">skill</span></code></a>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-quickstart<span class="w"> </span>--agent<span class="w"> </span>claude-code
-</span><span data-line="2">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-backend-choose
-</span><span data-line="3">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-setup-backend
-</span><span data-line="4">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-ingest
-</span><span data-line="5">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-search
-</span><span data-line="6">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-ops
-</span><span data-line="7">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-add-backend
+<p>For code that should not be tied to one framework’s store. If you already live inside LangChain or LlamaIndex, see <a class="reference external" href="https://github.com/i2mint/vd#vd-versus-framework-stores">vd versus framework stores</a>.</p>
+<section id="install">
+<h2>Install<a class="headerlink" href="#install" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">pip<span class="w"> </span>install<span class="w"> </span>vd<span class="w">                    </span><span class="c1"># core (stdlib + pyyaml) and the memory backend</span>
+</span><span data-line="2">pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"vd[chroma]"</span><span class="w">          </span><span class="c1"># plus one backend's client</span>
+</span><span data-line="3">pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"vd[embedded]"</span><span class="w">        </span><span class="c1"># plus chroma, qdrant, faiss, lancedb, sqlite_vec, duckdb</span>
+</span><span data-line="4">pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"vd[all-backends]"</span><span class="w">    </span><span class="c1"># plus every backend client</span>
 </span></pre></div>
 </div>
-<p>They also ship inside the wheel, so after <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">vd</span></code> you can link them without GitHub:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">mkdir<span class="w"> </span>-p<span class="w"> </span>~/.claude/skills
-</span><span data-line="2">ln<span class="w"> </span>-s<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">'import vd; print(vd.skills_dir())'</span><span class="k">)</span><span class="s2">"</span>/vd-*<span class="w"> </span>~/.claude/skills/
-</span></pre></div>
-</div>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Skill</p></th>
-<th class="head"><p>Use it when…</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vd-quickstart</span></code></p></td>
-<td><p>doing basic vector search: connect, create a collection, add docs, query</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vd-backend-choose</span></code></p></td>
-<td><p>picking a vector DB and weighing trade-offs</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vd-setup-backend</span></code></p></td>
-<td><p>installing, starting and verifying a backend (pip, Docker, API keys)</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vd-ingest</span></code></p></td>
-<td><p>loading documents: cleaning, chunking, metadata, bulk insert</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vd-search</span></code></p></td>
-<td><p>filters, hybrid (keyword + vector) search, multi-query, RRF, similar-to, dedup</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vd-ops</span></code></p></td>
-<td><p>export/import, migration, stats, integrity, health checks, benchmarks</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vd-add-backend</span></code></p></td>
-<td><p>(developer) implementing or reviewing a backend adapter</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>Project instructions</strong> for coding agents working <em>on</em> <code class="docutils literal notranslate"><span class="pre">vd</span></code> live in <a class="reference internal" href="#.claude/CLAUDE.md"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">.claude/CLAUDE.md</span></code></span></a>: architecture, test commands, conventions and the refactor roadmap.</p>
-<p><strong>What an agent can do with <code class="docutils literal notranslate"><span class="pre">vd</span></code>:</strong> recommend and set up a vector database for a user, index their documents, run filtered or hybrid searches, and move a collection between databases. The whole surface is two <code class="docutils literal notranslate"><span class="pre">Mapping</span></code>s plus <code class="docutils literal notranslate"><span class="pre">search</span></code>:</p>
+<p>Each backend’s client is an optional extra named after the backend. Keep the quotes: zsh treats <code class="docutils literal notranslate"><span class="pre">[...]</span></code> as a glob.</p>
+</section>
+<section id="quick-start">
+<h2>Quick start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
+<p>The whole surface is two <code class="docutils literal notranslate"><span class="pre">Mapping</span></code>s plus <code class="docutils literal notranslate"><span class="pre">search</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
 </span><span data-line="2">
 </span><span data-line="3"><span class="n">client</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">)</span>  <span class="c1"># switch DB = change this one word</span>
@@ -214,16 +178,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="15"><span class="c1"># b 0.123</span>
 </span></pre></div>
 </div>
-</section>
-<section id="install">
-<h2>Install<a class="headerlink" href="#install" title="Link to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">pip<span class="w"> </span>install<span class="w"> </span>vd<span class="w">                    </span><span class="c1"># core (stdlib + pyyaml) and the memory backend</span>
-</span><span data-line="2">pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"vd[chroma]"</span><span class="w">          </span><span class="c1"># plus one backend's client</span>
-</span><span data-line="3">pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"vd[embedded]"</span><span class="w">        </span><span class="c1"># plus chroma, qdrant, faiss, lancedb, sqlite_vec, duckdb</span>
-</span><span data-line="4">pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"vd[all-backends]"</span><span class="w">    </span><span class="c1"># plus every backend client</span>
-</span></pre></div>
-</div>
-<p>Each backend’s client is an optional extra named after the backend. Keep the quotes: zsh treats <code class="docutils literal notranslate"><span class="pre">[...]</span></code> as a glob.</p>
+<p><em>Still typing code with your own ten fingers? <a class="reference external" href="https://github.com/i2mint/vd#for-artisanal-hand-typed-contributions">Your artisanal corner is at the bottom</a>.</em></p>
 </section>
 <section id="the-mental-model">
 <h2>The mental model<a class="headerlink" href="#the-mental-model" title="Link to this heading">#</a></h2>
@@ -402,6 +357,69 @@ data-aria-dark="Switch to auto color mode">
 <li><p><strong>CLI</strong>: <code class="docutils literal notranslate"><span class="pre">vd</span> <span class="pre">backends</span></code>, <code class="docutils literal notranslate"><span class="pre">vd</span> <span class="pre">install</span></code>, <code class="docutils literal notranslate"><span class="pre">vd</span> <span class="pre">export</span></code>, <code class="docutils literal notranslate"><span class="pre">vd</span> <span class="pre">import</span></code>, <code class="docutils literal notranslate"><span class="pre">vd</span> <span class="pre">migrate</span></code>, …</p></li>
 </ul>
 </section>
+<section id="vd-versus-framework-stores">
+<h2>vd versus framework stores<a class="headerlink" href="#vd-versus-framework-stores" title="Link to this heading">#</a></h2>
+<p>LlamaIndex, LangChain and Haystack wrap many more vector stores than vd’s 15, and if your application lives inside one of those frameworks, its stores are the natural choice. They are built as plug-in points for the framework’s retrieval pipeline rather than as a portable storage interface, and it shows in what their base classes guarantee (as of 2026-11-22):</p>
+<ul class="simple">
+<li><p>LangChain’s <code class="docutils literal notranslate"><span class="pre">VectorStore</span></code> (langchain-core 1.8.4) requires only <code class="docutils literal notranslate"><span class="pre">similarity_search</span></code> and <code class="docutils literal notranslate"><span class="pre">from_texts</span></code>; <code class="docutils literal notranslate"><span class="pre">get_by_ids</span></code> is optional, there is no listing or length, and <code class="docutils literal notranslate"><span class="pre">filter</span></code> is passed through in each store’s own syntax.</p></li>
+<li><p>LlamaIndex’s <code class="docutils literal notranslate"><span class="pre">BasePydanticVectorStore</span></code> (llama-index-core 0.14.26) requires <code class="docutils literal notranslate"><span class="pre">add</span></code>, <code class="docutils literal notranslate"><span class="pre">delete</span></code> and <code class="docutils literal notranslate"><span class="pre">query</span></code>; <code class="docutils literal notranslate"><span class="pre">get_nodes</span></code>, which you need to read back or export a store, is optional. Its typed <code class="docutils literal notranslate"><span class="pre">MetadataFilters</span></code> is the most portable filter model of the three.</p></li>
+<li><p>Haystack’s <a class="reference external" href="https://docs.haystack.deepset.ai/docs/metadata-filtering">metadata filtering docs</a> define one filter syntax but note that the available operators “may vary depending on the specific Document Store integration”.</p></li>
+</ul>
+<p>We ran the same ten filters through LlamaIndex on three stores. Its in-memory store got all ten right; its Chroma adapter raised on four it does not support, which is the right behaviour; on Qdrant local mode one filter (<code class="docutils literal notranslate"><span class="pre">TEXT_MATCH</span></code>) returned no rows instead of two, with only a warning. The same documents also could not be added unchanged to all three (Chroma rejects list-valued metadata, Qdrant non-UUID ids).</p>
+<p>vd’s design answers those points: every backend is the same <code class="docutils literal notranslate"><span class="pre">Mapping</span></code>, so listing, export and <code class="docutils literal notranslate"><span class="pre">migrate_collection</span></code> work on all of them; each backend declares its filter operators and an unsupported one raises <code class="docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code>; string ids work everywhere. The test script and the full comparison are in <a class="reference external" href="https://github.com/i2mint/vd/issues/48">i2mint/vd#48</a>.</p>
+</section>
+<section id="for-ai-agents">
+<h2>For AI agents<a class="headerlink" href="#for-ai-agents" title="Link to this heading">#</a></h2>
+<p><strong>Skills.</strong> <code class="docutils literal notranslate"><span class="pre">vd</span></code> ships agent skills in <a class="reference external" href="https://github.com/i2mint/vd/tree/master/vd/data/skills/"><code class="docutils literal notranslate"><span class="pre">vd/data/skills/</span></code></a>. They install into any agent host with <a class="reference external" href="https://cli.github.com/manual/gh_skill"><code class="docutils literal notranslate"><span class="pre">gh</span> <span class="pre">skill</span></code></a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-quickstart<span class="w"> </span>--agent<span class="w"> </span>claude-code
+</span><span data-line="2">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-backend-choose
+</span><span data-line="3">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-setup-backend
+</span><span data-line="4">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-ingest
+</span><span data-line="5">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-search
+</span><span data-line="6">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-ops
+</span><span data-line="7">gh<span class="w"> </span>skill<span class="w"> </span>install<span class="w"> </span>i2mint/vd<span class="w"> </span>vd-add-backend
+</span></pre></div>
+</div>
+<p>They also ship inside the wheel, so after <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">vd</span></code> you can link them without GitHub:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">mkdir<span class="w"> </span>-p<span class="w"> </span>~/.claude/skills
+</span><span data-line="2">ln<span class="w"> </span>-s<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">'import vd; print(vd.skills_dir())'</span><span class="k">)</span><span class="s2">"</span>/vd-*<span class="w"> </span>~/.claude/skills/
+</span></pre></div>
+</div>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Skill</p></th>
+<th class="head"><p>Use it when…</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vd-quickstart</span></code></p></td>
+<td><p>doing basic vector search: connect, create a collection, add docs, query</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vd-backend-choose</span></code></p></td>
+<td><p>picking a vector DB and weighing trade-offs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vd-setup-backend</span></code></p></td>
+<td><p>installing, starting and verifying a backend (pip, Docker, API keys)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vd-ingest</span></code></p></td>
+<td><p>loading documents: cleaning, chunking, metadata, bulk insert</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vd-search</span></code></p></td>
+<td><p>filters, hybrid (keyword + vector) search, multi-query, RRF, similar-to, dedup</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vd-ops</span></code></p></td>
+<td><p>export/import, migration, stats, integrity, health checks, benchmarks</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vd-add-backend</span></code></p></td>
+<td><p>(developer) implementing or reviewing a backend adapter</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Project instructions</strong> for coding agents working <em>on</em> <code class="docutils literal notranslate"><span class="pre">vd</span></code> live in <a class="reference external" href="https://github.com/i2mint/vd/blob/master/.claude/CLAUDE.md"><code class="docutils literal notranslate"><span class="pre">.claude/CLAUDE.md</span></code></a>: architecture, test commands, conventions and the refactor roadmap.</p>
+<p><strong>What an agent can do with <code class="docutils literal notranslate"><span class="pre">vd</span></code>:</strong> recommend and set up a vector database for a user, index their documents, run filtered or hybrid searches, and move a collection between databases. The quick start above is the whole surface.</p>
+</section>
 <section id="for-artisanal-hand-typed-contributions">
 <h2>For artisanal, hand-typed contributions<a class="headerlink" href="#for-artisanal-hand-typed-contributions" title="Link to this heading">#</a></h2>
 <p>Welcome, fellow keyboard enthusiast. Here is what the sections above don’t already cover.</p>
@@ -418,7 +436,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="3">python<span class="w"> </span>-m<span class="w"> </span>pytest
 </span></pre></div>
 </div>
-<p>See <a class="reference internal" href="#tests/README.md"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">tests/README.md</span></code></span></a> for connection settings and caveats.</p>
+<p>See <a class="reference external" href="https://github.com/i2mint/vd/blob/master/tests/README.md"><code class="docutils literal notranslate"><span class="pre">tests/README.md</span></code></a> for connection settings and caveats.</p>
 <p><strong>Design rationale.</strong></p>
 <ul class="simple">
 <li><p><strong>Embedding is external.</strong> The core operates on vectors; an <code class="docutils literal notranslate"><span class="pre">embedder</span></code> is an injected, optional convenience, never a hard dependency.</p></li>
@@ -426,7 +444,7 @@ data-aria-dark="Switch to auto color mode">
 <li><p><strong>Thin adapters.</strong> <code class="docutils literal notranslate"><span class="pre">AbstractClient</span></code> / <code class="docutils literal notranslate"><span class="pre">AbstractCollection</span></code> implement everything users see; a backend supplies a handful of raw primitives. Adding a backend is about 150 lines, and the <code class="docutils literal notranslate"><span class="pre">vd-add-backend</span></code> skill walks through it.</p></li>
 <li><p><strong>Capabilities, not a fat base.</strong> Optional features (<code class="docutils literal notranslate"><span class="pre">SupportsBatch</span></code>, <code class="docutils literal notranslate"><span class="pre">SupportsHybrid</span></code>, <code class="docutils literal notranslate"><span class="pre">SupportsNativeAsync</span></code>) are <code class="docutils literal notranslate"><span class="pre">&#64;runtime_checkable</span></code> protocols you feature-discover.</p></li>
 </ul>
-<p>The longer design notes are in <a class="reference internal" href="#misc/docs/vd_design_notes.md"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">misc/docs/vd_design_notes.md</span></code></span></a>, and the backend-selection research report is in <a class="reference internal" href="#misc/docs/"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">misc/docs/</span></code></span></a>.</p>
+<p>The longer design notes are in <a class="reference external" href="https://github.com/i2mint/vd/blob/master/misc/docs/vd_design_notes.md"><code class="docutils literal notranslate"><span class="pre">misc/docs/vd_design_notes.md</span></code></a>, and the backend-selection research report is in <a class="reference external" href="https://github.com/i2mint/vd/tree/master/misc/docs/"><code class="docutils literal notranslate"><span class="pre">misc/docs/</span></code></a>.</p>
 <p><strong>Contributing.</strong> Open an issue or a pull request at <a class="reference external" href="https://github.com/i2mint/vd/issues">github.com/i2mint/vd</a>. Releases are automated: merging to <code class="docutils literal notranslate"><span class="pre">master</span></code> bumps the version and publishes to PyPI.</p>
 </section>
 <section id="license">
@@ -438,7 +456,7 @@ data-aria-dark="Switch to auto color mode">
 </section>
 </section>
 
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-22 22:28 UTC from <a href="https://github.com/i2mint/vd/commit/8f8dfcc90647100ba93a7c083e3ebe5319fc0e33">8f8dfcc</a> (master) · vd 0.2.24 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-22 23:45 UTC from <a href="https://github.com/i2mint/vd/commit/1c91a7a3321ac8c383ebbadb786c2697c7f51b17">1c91a7a</a> (master) · vd 0.2.25 · <a href="about-this-build.html">about this build</a></p>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
@@ -473,7 +491,7 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="_static/documentation_options.js?v=dc91f075"></script>
+      <script src="_static/documentation_options.js?v=78e9746c"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>

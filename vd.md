@@ -1,4 +1,4 @@
-> built 2026-11-22 22:28 UTC from 8f8dfcc (master) · vd 0.2.24. Details: build_info.json
+> built 2026-11-22 23:45 UTC from 1c91a7a (master) · vd 0.2.25. Details: build_info.json
 
 # index.html.md
 
@@ -8,42 +8,22 @@
 
 **One Pythonic interface to ~15 vector databases.** Store vectors, search them, filter by metadata, and switch between databases (memory, Chroma, Qdrant, pgvector, LanceDB, Pinecone, …) by changing one word.
 
-*Still typing code with your own ten fingers? [Your artisanal corner is at the bottom]().*
+For code that should not be tied to one framework’s store. If you already live inside LangChain or LlamaIndex, see [vd versus framework stores](https://github.com/i2mint/vd#vd-versus-framework-stores).
 
-## For AI agents
-
-**Skills.** `vd` ships agent skills in [`vd/data/skills/`](). They install into any agent host with [`gh skill`](https://cli.github.com/manual/gh_skill):
+## Install
 
 ```bash
-gh skill install i2mint/vd vd-quickstart --agent claude-code
-gh skill install i2mint/vd vd-backend-choose
-gh skill install i2mint/vd vd-setup-backend
-gh skill install i2mint/vd vd-ingest
-gh skill install i2mint/vd vd-search
-gh skill install i2mint/vd vd-ops
-gh skill install i2mint/vd vd-add-backend
+pip install vd                    # core (stdlib + pyyaml) and the memory backend
+pip install "vd[chroma]"          # plus one backend's client
+pip install "vd[embedded]"        # plus chroma, qdrant, faiss, lancedb, sqlite_vec, duckdb
+pip install "vd[all-backends]"    # plus every backend client
 ```
 
-They also ship inside the wheel, so after `pip install vd` you can link them without GitHub:
+Each backend’s client is an optional extra named after the backend. Keep the quotes: zsh treats `[...]` as a glob.
 
-```bash
-mkdir -p ~/.claude/skills
-ln -s "$(python -c 'import vd; print(vd.skills_dir())')"/vd-* ~/.claude/skills/
-```
+## Quick start
 
-| Skill               | Use it when…                                                                   |
-|---------------------|--------------------------------------------------------------------------------|
-| `vd-quickstart`     | doing basic vector search: connect, create a collection, add docs, query       |
-| `vd-backend-choose` | picking a vector DB and weighing trade-offs                                    |
-| `vd-setup-backend`  | installing, starting and verifying a backend (pip, Docker, API keys)           |
-| `vd-ingest`         | loading documents: cleaning, chunking, metadata, bulk insert                   |
-| `vd-search`         | filters, hybrid (keyword + vector) search, multi-query, RRF, similar-to, dedup |
-| `vd-ops`            | export/import, migration, stats, integrity, health checks, benchmarks          |
-| `vd-add-backend`    | (developer) implementing or reviewing a backend adapter                        |
-
-**Project instructions** for coding agents working *on* `vd` live in [`.claude/CLAUDE.md`](): architecture, test commands, conventions and the refactor roadmap.
-
-**What an agent can do with `vd`:** recommend and set up a vector database for a user, index their documents, run filtered or hybrid searches, and move a collection between databases. The whole surface is two `Mapping`s plus `search`:
+The whole surface is two `Mapping`s plus `search`:
 
 ```python
 import vd
@@ -63,16 +43,7 @@ for hit in col.search([0.1, 0.8, 0.0], limit=2):
 # b 0.123
 ```
 
-## Install
-
-```bash
-pip install vd                    # core (stdlib + pyyaml) and the memory backend
-pip install "vd[chroma]"          # plus one backend's client
-pip install "vd[embedded]"        # plus chroma, qdrant, faiss, lancedb, sqlite_vec, duckdb
-pip install "vd[all-backends]"    # plus every backend client
-```
-
-Each backend’s client is an optional extra named after the backend. Keep the quotes: zsh treats `[...]` as a glob.
+*Still typing code with your own ten fingers? [Your artisanal corner is at the bottom](https://github.com/i2mint/vd#for-artisanal-hand-typed-contributions).*
 
 ## The mental model
 
@@ -226,6 +197,53 @@ Beyond the facade, `vd` bundles the composite operations people actually do:
 - **`vd.TimeIndexedCollection`**: a time-windowed wrapper over any collection.
 - **CLI**: `vd backends`, `vd install`, `vd export`, `vd import`, `vd migrate`, …
 
+## vd versus framework stores
+
+LlamaIndex, LangChain and Haystack wrap many more vector stores than vd’s 15, and if your application lives inside one of those frameworks, its stores are the natural choice. They are built as plug-in points for the framework’s retrieval pipeline rather than as a portable storage interface, and it shows in what their base classes guarantee (as of 2026-11-22):
+
+- LangChain’s `VectorStore` (langchain-core 1.8.4) requires only `similarity_search` and `from_texts`; `get_by_ids` is optional, there is no listing or length, and `filter` is passed through in each store’s own syntax.
+- LlamaIndex’s `BasePydanticVectorStore` (llama-index-core 0.14.26) requires `add`, `delete` and `query`; `get_nodes`, which you need to read back or export a store, is optional. Its typed `MetadataFilters` is the most portable filter model of the three.
+- Haystack’s [metadata filtering docs](https://docs.haystack.deepset.ai/docs/metadata-filtering) define one filter syntax but note that the available operators “may vary depending on the specific Document Store integration”.
+
+We ran the same ten filters through LlamaIndex on three stores. Its in-memory store got all ten right; its Chroma adapter raised on four it does not support, which is the right behaviour; on Qdrant local mode one filter (`TEXT_MATCH`) returned no rows instead of two, with only a warning. The same documents also could not be added unchanged to all three (Chroma rejects list-valued metadata, Qdrant non-UUID ids).
+
+vd’s design answers those points: every backend is the same `Mapping`, so listing, export and `migrate_collection` work on all of them; each backend declares its filter operators and an unsupported one raises `UnsupportedFilterError`; string ids work everywhere. The test script and the full comparison are in [i2mint/vd#48](https://github.com/i2mint/vd/issues/48).
+
+## For AI agents
+
+**Skills.** `vd` ships agent skills in [`vd/data/skills/`](https://github.com/i2mint/vd/tree/master/vd/data/skills/). They install into any agent host with [`gh skill`](https://cli.github.com/manual/gh_skill):
+
+```bash
+gh skill install i2mint/vd vd-quickstart --agent claude-code
+gh skill install i2mint/vd vd-backend-choose
+gh skill install i2mint/vd vd-setup-backend
+gh skill install i2mint/vd vd-ingest
+gh skill install i2mint/vd vd-search
+gh skill install i2mint/vd vd-ops
+gh skill install i2mint/vd vd-add-backend
+```
+
+They also ship inside the wheel, so after `pip install vd` you can link them without GitHub:
+
+```bash
+mkdir -p ~/.claude/skills
+ln -s "$(python -c 'import vd; print(vd.skills_dir())')"/vd-* ~/.claude/skills/
+```
+
+| Skill               | Use it when…                                                                   |
+|---------------------|--------------------------------------------------------------------------------|
+| `vd-quickstart`     | doing basic vector search: connect, create a collection, add docs, query       |
+| `vd-backend-choose` | picking a vector DB and weighing trade-offs                                    |
+| `vd-setup-backend`  | installing, starting and verifying a backend (pip, Docker, API keys)           |
+| `vd-ingest`         | loading documents: cleaning, chunking, metadata, bulk insert                   |
+| `vd-search`         | filters, hybrid (keyword + vector) search, multi-query, RRF, similar-to, dedup |
+| `vd-ops`            | export/import, migration, stats, integrity, health checks, benchmarks          |
+| `vd-add-backend`    | (developer) implementing or reviewing a backend adapter                        |
+
+**Project instructions** for coding agents working *on* `vd` live in [`.claude/CLAUDE.md`](https://github.com/i2mint/vd/blob/master/.claude/CLAUDE.md): architecture, test commands, conventions and the refactor roadmap.
+
+**What an agent can do with `vd`:** recommend and set up a vector database for a user, index their documents, run filtered or hybrid searches, and move a collection between databases. The quick start above is the whole surface.
+
 ## For artisanal, hand-typed contributions
 
 Welcome, fellow keyboard enthusiast. Here is what the sections above don’t already cover.
@@ -247,7 +265,7 @@ uv pip install -e ".[test,dev,pgvector,redis,elasticsearch,weaviate,mongodb,milv
 python -m pytest
 ```
 
-See [`tests/README.md`]() for connection settings and caveats.
+See [`tests/README.md`](https://github.com/i2mint/vd/blob/master/tests/README.md) for connection settings and caveats.
 
 **Design rationale.**
 
@@ -256,7 +274,7 @@ See [`tests/README.md`]() for connection settings and caveats.
 - **Thin adapters.** `AbstractClient` / `AbstractCollection` implement everything users see; a backend supplies a handful of raw primitives. Adding a backend is about 150 lines, and the `vd-add-backend` skill walks through it.
 - **Capabilities, not a fat base.** Optional features (`SupportsBatch`, `SupportsHybrid`, `SupportsNativeAsync`) are `@runtime_checkable` protocols you feature-discover.
 
-The longer design notes are in [`misc/docs/vd_design_notes.md`](), and the backend-selection research report is in [`misc/docs/`]().
+The longer design notes are in [`misc/docs/vd_design_notes.md`](https://github.com/i2mint/vd/blob/master/misc/docs/vd_design_notes.md), and the backend-selection research report is in [`misc/docs/`](https://github.com/i2mint/vd/tree/master/misc/docs/).
 
 **Contributing.** Open an issue or a pull request at [github.com/i2mint/vd](https://github.com/i2mint/vd/issues). Releases are automated: merging to `master` bumps the version and publishes to PyPI.
 
@@ -6174,7 +6192,7 @@ Egress: keep only the text. `>>> text_only({'text': 'hi'})` -> `'hi'`.
 
 # About this build
 
-This documentation was built on **2026-11-22 22:28 UTC** from commit <a href="https://github.com/i2mint/vd/commit/8f8dfcc90647100ba93a7c083e3ebe5319fc0e33"><code>8f8dfcc</code></a> on branch <code>master</code>, for **vd 0.2.24** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 23:45 UTC** from commit <a href="https://github.com/i2mint/vd/commit/1c91a7a3321ac8c383ebbadb786c2697c7f51b17"><code>1c91a7a</code></a> on branch <code>master</code>, for **vd 0.2.25** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -6183,7 +6201,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                  |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/vd/commit/8f8dfcc90647100ba93a7c083e3ebe5319fc0e33"><code>8f8dfcc90647100ba93a7c083e3ebe5319fc0e33</code></a> |
+| Commit              | <a href="https://github.com/i2mint/vd/commit/1c91a7a3321ac8c383ebbadb786c2697c7f51b17"><code>1c91a7a3321ac8c383ebbadb786c2697c7f51b17</code></a> |
 | Branch              | <code>master</code>                                                                                                                              |
 | Tags at this commit | none                                                                                                                                             |
 | Working tree        | clean                                                                                                                                            |
@@ -6194,9 +6212,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/vd</code>                                                                     |
-| Run          | <a href="https://github.com/i2mint/vd/actions/runs/45077724559">45077724559</a>            |
+| Run          | <a href="https://github.com/i2mint/vd/actions/runs/45084765573">45084765573</a>            |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>8f8dfcc90647100ba93a7c083e3ebe5319fc0e33</code> (in the history of the built commit) |
+| Event commit | <code>1c91a7a3321ac8c383ebbadb786c2697c7f51b17</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -6221,13 +6239,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/vd/0.2.24/">0.2.24</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/vd/0.2.25/">0.2.25</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/vd && cd vd
-git checkout 8f8dfcc90647100ba93a7c083e3ebe5319fc0e33
+git checkout 1c91a7a3321ac8c383ebbadb786c2697c7f51b17
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

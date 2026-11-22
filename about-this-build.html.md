@@ -2,7 +2,7 @@
 
 # About this build
 
-This documentation was built on **2026-11-22 22:28 UTC** from commit <a href="https://github.com/i2mint/vd/commit/8f8dfcc90647100ba93a7c083e3ebe5319fc0e33"><code>8f8dfcc</code></a> on branch <code>master</code>, for **vd 0.2.24** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 23:45 UTC** from commit <a href="https://github.com/i2mint/vd/commit/1c91a7a3321ac8c383ebbadb786c2697c7f51b17"><code>1c91a7a</code></a> on branch <code>master</code>, for **vd 0.2.25** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -11,7 +11,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                  |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/vd/commit/8f8dfcc90647100ba93a7c083e3ebe5319fc0e33"><code>8f8dfcc90647100ba93a7c083e3ebe5319fc0e33</code></a> |
+| Commit              | <a href="https://github.com/i2mint/vd/commit/1c91a7a3321ac8c383ebbadb786c2697c7f51b17"><code>1c91a7a3321ac8c383ebbadb786c2697c7f51b17</code></a> |
 | Branch              | <code>master</code>                                                                                                                              |
 | Tags at this commit | none                                                                                                                                             |
 | Working tree        | clean                                                                                                                                            |
@@ -22,9 +22,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/vd</code>                                                                     |
-| Run          | <a href="https://github.com/i2mint/vd/actions/runs/45077724559">45077724559</a>            |
+| Run          | <a href="https://github.com/i2mint/vd/actions/runs/45084765573">45084765573</a>            |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>8f8dfcc90647100ba93a7c083e3ebe5319fc0e33</code> (in the history of the built commit) |
+| Event commit | <code>1c91a7a3321ac8c383ebbadb786c2697c7f51b17</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -49,13 +49,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/vd/0.2.24/">0.2.24</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/vd/0.2.25/">0.2.25</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/vd && cd vd
-git checkout 8f8dfcc90647100ba93a7c083e3ebe5319fc0e33
+git checkout 1c91a7a3321ac8c383ebbadb786c2697c7f51b17
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
