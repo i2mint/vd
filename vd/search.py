@@ -610,7 +610,9 @@ class Bm25sEngine:
         if len(hit) > limit:  # keep the top `limit` (ties at the cut kept whole)
             cut = np.partition(scores[hit], len(hit) - limit)[len(hit) - limit]
             hit = hit[scores[hit] >= cut]
-        order = hit[np.lexsort((hit, -scores[hit]))][:limit]  # score desc, then doc order
+        order = hit[np.lexsort((hit, -scores[hit]))][
+            :limit
+        ]  # score desc, then doc order
         scale = k1 + 1
         return [(int(i), float(scores[i]) * scale) for i in order]
 
