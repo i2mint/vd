@@ -1,4 +1,4 @@
-> built 2026-11-22 14:39 UTC from 646d20a (master) · vd 0.2.22. Details: build_info.json
+> built 2026-11-22 19:07 UTC from 66f51c6 (master) · vd 0.2.22. Details: build_info.json
 
 # index.html.md
 
@@ -217,7 +217,7 @@ vd.install_command("qdrant")  # 'pip install "vd[qdrant]"'
 
 Beyond the facade, `vd` bundles the composite operations people actually do:
 
-- **`vd.search`**: `multi_query_search`, `reciprocal_rank_fusion`, `hybrid_search`, `BM25Index`, `search_similar_to_document`, `deduplicate_results`.
+- **`vd.search`**: `multi_query_search`, `reciprocal_rank_fusion`, `hybrid_search`, `BM25Index`, `search_similar_to_document`, `deduplicate_results`. `BM25Index` is pure Python by default; `BM25Index(collection, engine="bm25s")` (the `vd[bm25s]` extra) precomputes the scores with [bm25s](https://github.com/xhluca/bm25s) and answers queries with common words hundreds of times faster past ~10k documents, with the same scores and ranking (`k1`/`b` then fixed at build time).
 - **`vd.io`**: `export_collection` / `import_collection` (JSONL, JSON, directory).
 - **`vd.migration`**: `migrate_collection`, `migrate_client`, `copy_collection` to move data between any two backends.
 - **`vd.analytics`**: `collection_stats`, `find_duplicates`, `find_outliers`, `validate_collection`.
@@ -2275,24 +2275,24 @@ the *convenience* of writing/searching raw text; otherwise pass
 
 ### Classes
 
-| [`Document`](_autosummary/vd.html.md#vd.Document)(id[, text, vector, metadata])        | The unit stored in a [`Collection`](_autosummary/vd.html.md#vd.Collection).                                                                                                                                                                                                        |
-|------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [`Client`](_autosummary/vd.html.md#vd.Client)(\*args, \*\*kwargs)                    | A live connection to one backend: `Mapping[str, Collection]`.                                                                                                                                                                                                                            |
-| [`Collection`](_autosummary/vd.html.md#vd.Collection)(\*args, \*\*kwargs)                | A collection of documents: `MutableMapping[str, Document]` + `search`.                                                                                                                                                                                                                   |
-| [`AbstractClient`](_autosummary/vd.html.md#vd.AbstractClient)(\*[, embedder])                | Base class implementing the [`Client`](_autosummary/vd.html.md#vd.Client) contract for adapters.                                                                                                                                                                               |
-| [`AbstractCollection`](_autosummary/vd.html.md#vd.AbstractCollection)()                          | Base class implementing the [`Collection`](_autosummary/vd.html.md#vd.Collection) contract for adapters.                                                                                                                                                                           |
-| [`SupportsBatch`](_autosummary/vd.html.md#vd.SupportsBatch)(\*args, \*\*kwargs)             | A collection that supports efficient batch insertion.                                                                                                                                                                                                                                    |
-| [`SupportsHybrid`](_autosummary/vd.html.md#vd.SupportsHybrid)(\*args, \*\*kwargs)            | A collection that supports native hybrid (dense + lexical) search.                                                                                                                                                                                                                       |
-| [`SupportsNativeAsync`](_autosummary/vd.html.md#vd.SupportsNativeAsync)(\*args, \*\*kwargs)       | Marker protocol set on async clients/collections that use a backend's native async SDK rather than the universal [`asyncio.to_thread()`](https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread) wrapper.                                                                 |
-| [`AsyncClient`](_autosummary/vd.html.md#vd.AsyncClient)(\*args, \*\*kwargs)               | The async sibling of [`Client`](_autosummary/vd.html.md#vd.Client).                                                                                                                                                                                                            |
-| [`AsyncCollection`](_autosummary/vd.html.md#vd.AsyncCollection)(\*args, \*\*kwargs)           | The async sibling of [`Collection`](_autosummary/vd.html.md#vd.Collection).                                                                                                                                                                                                        |
-| [`AsyncClientWrapper`](_autosummary/vd.html.md#vd.AsyncClientWrapper)(sync_client)               | Adapt a sync [`Client`](_autosummary/vd.html.md#vd.Client) to the [`AsyncClient`](_autosummary/vd.html.md#vd.AsyncClient) contract by dispatching every method to [`asyncio.to_thread()`](https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread).         |
-| [`AsyncCollectionWrapper`](_autosummary/vd.html.md#vd.AsyncCollectionWrapper)(sync_collection)       | Adapt a sync [`Collection`](_autosummary/vd.html.md#vd.Collection) to the [`AsyncCollection`](_autosummary/vd.html.md#vd.AsyncCollection) contract by dispatching every method to [`asyncio.to_thread()`](https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread). |
-| [`AsyncAbstractClient`](_autosummary/vd.html.md#vd.AsyncAbstractClient)(\*[, embedder])           | Base class for **native** async clients (the async sibling of [`vd.AbstractClient`](_autosummary/vd.html.md#vd.AbstractClient)).                                                                                                                                                       |
-| [`AsyncAbstractCollection`](_autosummary/vd.html.md#vd.AsyncAbstractCollection)()                     | Base class for **native** async collections (the async sibling of [`vd.AbstractCollection`](_autosummary/vd.html.md#vd.AbstractCollection)).                                                                                                                                               |
-| [`BM25Index`](_autosummary/vd.html.md#vd.BM25Index)(collection, \*[, filter, tokenize]) | A reusable Okapi BM25 index over a vd collection's stored `text`.                                                                                                                                                                                                                        |
-| [`TimeIndexedCollection`](_autosummary/vd.html.md#vd.TimeIndexedCollection)(collection, \*[, ...])  | Time-indexed wrapper over any vd `Collection`.                                                                                                                                                                                                                                           |
-| [`WindowSlice`](_autosummary/vd.html.md#vd.WindowSlice)(start, end)                       | A time window: `[start, end)`.                                                                                                                                                                                                                                                           |
+| [`Document`](_autosummary/vd.html.md#vd.Document)(id[, text, vector, metadata])             | The unit stored in a [`Collection`](_autosummary/vd.html.md#vd.Collection).                                                                                                                                                                                                        |
+|-----------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`Client`](_autosummary/vd.html.md#vd.Client)(\*args, \*\*kwargs)                         | A live connection to one backend: `Mapping[str, Collection]`.                                                                                                                                                                                                                            |
+| [`Collection`](_autosummary/vd.html.md#vd.Collection)(\*args, \*\*kwargs)                     | A collection of documents: `MutableMapping[str, Document]` + `search`.                                                                                                                                                                                                                   |
+| [`AbstractClient`](_autosummary/vd.html.md#vd.AbstractClient)(\*[, embedder])                     | Base class implementing the [`Client`](_autosummary/vd.html.md#vd.Client) contract for adapters.                                                                                                                                                                               |
+| [`AbstractCollection`](_autosummary/vd.html.md#vd.AbstractCollection)()                               | Base class implementing the [`Collection`](_autosummary/vd.html.md#vd.Collection) contract for adapters.                                                                                                                                                                           |
+| [`SupportsBatch`](_autosummary/vd.html.md#vd.SupportsBatch)(\*args, \*\*kwargs)                  | A collection that supports efficient batch insertion.                                                                                                                                                                                                                                    |
+| [`SupportsHybrid`](_autosummary/vd.html.md#vd.SupportsHybrid)(\*args, \*\*kwargs)                 | A collection that supports native hybrid (dense + lexical) search.                                                                                                                                                                                                                       |
+| [`SupportsNativeAsync`](_autosummary/vd.html.md#vd.SupportsNativeAsync)(\*args, \*\*kwargs)            | Marker protocol set on async clients/collections that use a backend's native async SDK rather than the universal [`asyncio.to_thread()`](https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread) wrapper.                                                                 |
+| [`AsyncClient`](_autosummary/vd.html.md#vd.AsyncClient)(\*args, \*\*kwargs)                    | The async sibling of [`Client`](_autosummary/vd.html.md#vd.Client).                                                                                                                                                                                                            |
+| [`AsyncCollection`](_autosummary/vd.html.md#vd.AsyncCollection)(\*args, \*\*kwargs)                | The async sibling of [`Collection`](_autosummary/vd.html.md#vd.Collection).                                                                                                                                                                                                        |
+| [`AsyncClientWrapper`](_autosummary/vd.html.md#vd.AsyncClientWrapper)(sync_client)                    | Adapt a sync [`Client`](_autosummary/vd.html.md#vd.Client) to the [`AsyncClient`](_autosummary/vd.html.md#vd.AsyncClient) contract by dispatching every method to [`asyncio.to_thread()`](https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread).         |
+| [`AsyncCollectionWrapper`](_autosummary/vd.html.md#vd.AsyncCollectionWrapper)(sync_collection)            | Adapt a sync [`Collection`](_autosummary/vd.html.md#vd.Collection) to the [`AsyncCollection`](_autosummary/vd.html.md#vd.AsyncCollection) contract by dispatching every method to [`asyncio.to_thread()`](https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread). |
+| [`AsyncAbstractClient`](_autosummary/vd.html.md#vd.AsyncAbstractClient)(\*[, embedder])                | Base class for **native** async clients (the async sibling of [`vd.AbstractClient`](_autosummary/vd.html.md#vd.AbstractClient)).                                                                                                                                                       |
+| [`AsyncAbstractCollection`](_autosummary/vd.html.md#vd.AsyncAbstractCollection)()                          | Base class for **native** async collections (the async sibling of [`vd.AbstractCollection`](_autosummary/vd.html.md#vd.AbstractCollection)).                                                                                                                                               |
+| [`BM25Index`](_autosummary/vd.html.md#vd.BM25Index)(collection, \*[, filter, tokenize, ...]) | A reusable Okapi BM25 index over a vd collection's stored `text`.                                                                                                                                                                                                                        |
+| [`TimeIndexedCollection`](_autosummary/vd.html.md#vd.TimeIndexedCollection)(collection, \*[, ...])       | Time-indexed wrapper over any vd `Collection`.                                                                                                                                                                                                                                           |
+| [`WindowSlice`](_autosummary/vd.html.md#vd.WindowSlice)(start, end)                            | A time window: `[start, end)`.                                                                                                                                                                                                                                                           |
 
 ### Exceptions
 
@@ -2868,7 +2868,7 @@ Insert or replace `document`.
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
-### *class* vd.BM25Index(collection, \*, filter=None, tokenize=<function \_tokenize>)
+### *class* vd.BM25Index(collection, \*, filter=None, tokenize=<function \_tokenize>, k1=1.5, b=0.75, engine='python')
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -2897,6 +2897,16 @@ index (weaviate, elasticsearch, redis, lancedb, …).
     matching documents and its statistics reflect that subset.
   * **tokenize** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]) – Tokenizer (default: lowercased `\w+` tokens). Pass a custom one for
     stemming, CJK, etc.
+  * **k1** ([`float`](https://docs.python.org/3/builtins/functions.html#float)) – The Okapi hyperparameters [`search()`](_autosummary/vd.search.html.md#module-vd.search) uses when it is given none.
+  * **b** ([`float`](https://docs.python.org/3/builtins/functions.html#float)) – The Okapi hyperparameters [`search()`](_autosummary/vd.search.html.md#module-vd.search) uses when it is given none.
+  * **engine** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – `"python"` (default): the pure-Python postings index, no dependency,
+    `k1`/`b` free at query time. `"bm25s"`: the scores are computed
+    once at build time by [bm25s](https://github.com/xhluca/bm25s) (MIT;
+    `pip install vd[bm25s]`), which answers a query with common words
+    tens to hundreds of times faster past ~10k documents. Same scores (to
+    float32 rounding) and the same ranking, up to the order of scores that
+    are equal to that rounding. Other `k1`/`b` at query time cost one
+    more build each. See `BM25_ENGINES`.
 
 ### Examples
 
@@ -2910,14 +2920,16 @@ index (weaviate, elasticsearch, redis, lancedb, …).
 'a'
 ```
 
-#### search(query_text, , limit=10, k1=1.5, b=0.75)
+#### search(query_text, , limit=10, k1=None, b=None)
 
 Okapi BM25 scores for `query_text` over the indexed documents.
 
 Returns result dicts in the same shape as [`Collection.search()`](_autosummary/vd.html.md#vd.Collection.search) —
-`{"id", "text", "score", "metadata"}` — sorted by descending score.
-`k1` / `b` are the standard Okapi hyperparameters (scoring-time, so
-one index can be queried with different settings).
+`{"id", "text", "score", "metadata"}` — sorted by descending score,
+ties in document order. `k1` / `b` are the standard Okapi
+hyperparameters, defaulting to the index’s; every engine accepts other
+values per query (the `"bm25s"` engine builds one more index for each
+new pair, so its fast path is the build-time pair).
 
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]
@@ -5180,6 +5192,11 @@ Advanced search utilities for vd.
 Provides functions for multi-query search, search result merging, and
 other advanced search patterns.
 
+### Module Attributes
+
+| [`BM25_ENGINES`](_autosummary/vd.search.html.md#vd.search.BM25_ENGINES)   | name -> `(corpus_tokens, *, k1, b) -> scorer`.   |
+|-----------------------------------------------------------------|--------------------------------------------------|
+
 ### Functions
 
 | [`bm25_lexical_search`](_autosummary/vd.search.html.md#vd.search.bm25_lexical_search)(collection, query_text, \*)    | Brute-force BM25 lexical search over a vd collection's stored `text`.   |
@@ -5193,10 +5210,11 @@ other advanced search patterns.
 
 ### Classes
 
-| [`BM25Index`](_autosummary/vd.search.html.md#vd.search.BM25Index)(collection, \*[, filter, tokenize])   | A reusable Okapi BM25 index over a vd collection's stored `text`.   |
-|--------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+| [`BM25Index`](_autosummary/vd.search.html.md#vd.search.BM25Index)(collection, \*[, filter, tokenize, ...])   | A reusable Okapi BM25 index over a vd collection's stored `text`.       |
+|-------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| [`Bm25sEngine`](_autosummary/vd.search.html.md#vd.search.Bm25sEngine)(corpus_tokens, \*, k1, b)                | A BM25 scorer backed by [bm25s](https://github.com/xhluca/bm25s) (MIT). |
 
-### *class* vd.search.BM25Index(collection, \*, filter=None, tokenize=<function \_tokenize>)
+### *class* vd.search.BM25Index(collection, \*, filter=None, tokenize=<function \_tokenize>, k1=1.5, b=0.75, engine='python')
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -5225,6 +5243,18 @@ index (weaviate, elasticsearch, redis, lancedb, …).
     matching documents and its statistics reflect that subset.
   * **tokenize** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]) – Tokenizer (default: lowercased `\w+` tokens). Pass a custom one for
     stemming, CJK, etc.
+  * **k1** ([`float`](https://docs.python.org/3/builtins/functions.html#float)) – The Okapi hyperparameters [`search()`](_autosummary/vd.search.html.md#vd.search.BM25Index.search) uses when it is given none.
+  * **b** ([`float`](https://docs.python.org/3/builtins/functions.html#float)) – The Okapi hyperparameters [`search()`](_autosummary/vd.search.html.md#vd.search.BM25Index.search) uses when it is given none.
+  * **engine** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – 
+
+    `"python"` (default): the pure-Python postings index, no dependency,
+    `k1`/`b` free at query time. `"bm25s"`: the scores are computed
+    once at build time by [bm25s](https://github.com/xhluca/bm25s) (MIT;
+    `pip install vd[bm25s]`), which answers a query with common words
+    tens to hundreds of times faster past ~10k documents. Same scores (to
+    float32 rounding) and the same ranking, up to the order of scores that
+    are equal to that rounding. Other `k1`/`b` at query time cost one
+    more build each. See [`BM25_ENGINES`](_autosummary/vd.search.html.md#vd.search.BM25_ENGINES).
 
 ### Examples
 
@@ -5238,17 +5268,49 @@ index (weaviate, elasticsearch, redis, lancedb, …).
 'a'
 ```
 
-#### search(query_text, , limit=10, k1=1.5, b=0.75)
+#### search(query_text, , limit=10, k1=None, b=None)
 
 Okapi BM25 scores for `query_text` over the indexed documents.
 
 Returns result dicts in the same shape as `Collection.search()` —
-`{"id", "text", "score", "metadata"}` — sorted by descending score.
-`k1` / `b` are the standard Okapi hyperparameters (scoring-time, so
-one index can be queried with different settings).
+`{"id", "text", "score", "metadata"}` — sorted by descending score,
+ties in document order. `k1` / `b` are the standard Okapi
+hyperparameters, defaulting to the index’s; every engine accepts other
+values per query (the `"bm25s"` engine builds one more index for each
+new pair, so its fast path is the build-time pair).
 
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]
+
+### vd.search.BM25_ENGINES *: [dict](https://docs.python.org/3/builtins/stdtypes.html#dict)* *= {'bm25s': <class 'vd.search.Bm25sEngine'>, 'python': None}*
+
+name -> `(corpus_tokens, *,
+k1, b) -> scorer`. `"python"` is the built-in postings index itself.
+
+* **Type:**
+  The scoring engines [`BM25Index`](_autosummary/vd.search.html.md#vd.search.BM25Index) can build
+
+### *class* vd.search.Bm25sEngine(corpus_tokens, , k1, b)
+
+Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
+
+A BM25 scorer backed by [bm25s](https://github.com/xhluca/bm25s) (MIT).
+
+Called as `engine(query_tokens, limit=..., k1=..., b=...) -> [(doc_idx, score)]`.
+bm25s computes every score at index time for one `(k1, b)`; this engine keeps the
+corpus tokens and builds an index per `(k1, b)` on first use (the last
+[`max_indexes`](_autosummary/vd.search.html.md#vd.search.Bm25sEngine.max_indexes) are kept), so callers can still vary them per query, as with
+the pure-Python engine, at the cost of one build per new pair.
+
+bm25s’s Lucene variant drops the constant `(k1 + 1)` from the numerator, so its
+scores are multiplied back by it: the result is vd’s own Okapi score (to float32
+rounding), which matters to callers that calibrate on score values. Ties are put
+back in document order, and a repeated query term counts once, as in the
+pure-Python engine. Picklable.
+
+#### max_indexes *= 4*
+
+How many `(k1, b)` indexes to keep built.
 
 ### vd.search.bm25_lexical_search(collection, query_text, , limit=10, filter=None, k1=1.5, b=0.75)
 
@@ -6113,16 +6175,18 @@ Egress: keep only the text. `>>> text_only({'text': 'hi'})` -> `'hi'`.
 
 # About this build
 
-This documentation was built on **2026-11-22 14:39 UTC** from commit <a href="https://github.com/i2mint/vd/commit/646d20a65a5dfbe207085ab2104b102e28ab7679"><code>646d20a</code></a> on branch <code>master</code>, for **vd 0.2.22** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 19:07 UTC** from commit <a href="https://github.com/i2mint/vd/commit/66f51c63b00b4dcdab8517702f2488460f457b6b"><code>66f51c6</code></a> on branch <code>master</code>, for **vd 0.2.22** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.2.22) is behind the latest release on PyPI (0.2.23): `pip install vd` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                  |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/vd/commit/646d20a65a5dfbe207085ab2104b102e28ab7679"><code>646d20a65a5dfbe207085ab2104b102e28ab7679</code></a> |
+| Commit              | <a href="https://github.com/i2mint/vd/commit/66f51c63b00b4dcdab8517702f2488460f457b6b"><code>66f51c63b00b4dcdab8517702f2488460f457b6b</code></a> |
 | Branch              | <code>master</code>                                                                                                                              |
 | Tags at this commit | none                                                                                                                                             |
 | Working tree        | clean                                                                                                                                            |
@@ -6133,9 +6197,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/vd</code>                                                                     |
-| Run          | <a href="https://github.com/i2mint/vd/actions/runs/45033844220">45033844220</a>            |
+| Run          | <a href="https://github.com/i2mint/vd/actions/runs/45058776727">45058776727</a>            |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>646d20a65a5dfbe207085ab2104b102e28ab7679</code> (in the history of the built commit) |
+| Event commit | <code>66f51c63b00b4dcdab8517702f2488460f457b6b</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -6160,13 +6224,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/vd/0.2.22/">0.2.22</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/vd/0.2.23/">0.2.23</a>, newer than the documented version (0.2.22).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/vd && cd vd
-git checkout 646d20a65a5dfbe207085ab2104b102e28ab7679
+git checkout 66f51c63b00b4dcdab8517702f2488460f457b6b
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

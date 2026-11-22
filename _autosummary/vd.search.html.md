@@ -5,6 +5,11 @@ Advanced search utilities for vd.
 Provides functions for multi-query search, search result merging, and
 other advanced search patterns.
 
+### Module Attributes
+
+| [`BM25_ENGINES`](#vd.search.BM25_ENGINES)   | name -> `(corpus_tokens, *, k1, b) -> scorer`.   |
+|-----------------------------------------------------------------|--------------------------------------------------|
+
 ### Functions
 
 | [`bm25_lexical_search`](#vd.search.bm25_lexical_search)(collection, query_text, \*)    | Brute-force BM25 lexical search over a vd collection's stored `text`.   |
@@ -18,10 +23,11 @@ other advanced search patterns.
 
 ### Classes
 
-| [`BM25Index`](#vd.search.BM25Index)(collection, \*[, filter, tokenize])   | A reusable Okapi BM25 index over a vd collection's stored `text`.   |
-|--------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+| [`BM25Index`](#vd.search.BM25Index)(collection, \*[, filter, tokenize, ...])   | A reusable Okapi BM25 index over a vd collection's stored `text`.       |
+|-------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
+| [`Bm25sEngine`](#vd.search.Bm25sEngine)(corpus_tokens, \*, k1, b)                | A BM25 scorer backed by [bm25s](https://github.com/xhluca/bm25s) (MIT). |
 
-### *class* vd.search.BM25Index(collection, \*, filter=None, tokenize=<function \_tokenize>)
+### *class* vd.search.BM25Index(collection, \*, filter=None, tokenize=<function \_tokenize>, k1=1.5, b=0.75, engine='python')
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -50,6 +56,18 @@ index (weaviate, elasticsearch, redis, lancedb, …).
     matching documents and its statistics reflect that subset.
   * **tokenize** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]) – Tokenizer (default: lowercased `\w+` tokens). Pass a custom one for
     stemming, CJK, etc.
+  * **k1** ([`float`](https://docs.python.org/3/builtins/functions.html#float)) – The Okapi hyperparameters [`search()`](#vd.search.BM25Index.search) uses when it is given none.
+  * **b** ([`float`](https://docs.python.org/3/builtins/functions.html#float)) – The Okapi hyperparameters [`search()`](#vd.search.BM25Index.search) uses when it is given none.
+  * **engine** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – 
+
+    `"python"` (default): the pure-Python postings index, no dependency,
+    `k1`/`b` free at query time. `"bm25s"`: the scores are computed
+    once at build time by [bm25s](https://github.com/xhluca/bm25s) (MIT;
+    `pip install vd[bm25s]`), which answers a query with common words
+    tens to hundreds of times faster past ~10k documents. Same scores (to
+    float32 rounding) and the same ranking, up to the order of scores that
+    are equal to that rounding. Other `k1`/`b` at query time cost one
+    more build each. See [`BM25_ENGINES`](#vd.search.BM25_ENGINES).
 
 ### Examples
 
@@ -63,17 +81,49 @@ index (weaviate, elasticsearch, redis, lancedb, …).
 'a'
 ```
 
-#### search(query_text, , limit=10, k1=1.5, b=0.75)
+#### search(query_text, , limit=10, k1=None, b=None)
 
 Okapi BM25 scores for `query_text` over the indexed documents.
 
 Returns result dicts in the same shape as `Collection.search()` —
-`{"id", "text", "score", "metadata"}` — sorted by descending score.
-`k1` / `b` are the standard Okapi hyperparameters (scoring-time, so
-one index can be queried with different settings).
+`{"id", "text", "score", "metadata"}` — sorted by descending score,
+ties in document order. `k1` / `b` are the standard Okapi
+hyperparameters, defaulting to the index’s; every engine accepts other
+values per query (the `"bm25s"` engine builds one more index for each
+new pair, so its fast path is the build-time pair).
 
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]
+
+### vd.search.BM25_ENGINES *: [dict](https://docs.python.org/3/builtins/stdtypes.html#dict)* *= {'bm25s': <class 'vd.search.Bm25sEngine'>, 'python': None}*
+
+name -> `(corpus_tokens, *,
+k1, b) -> scorer`. `"python"` is the built-in postings index itself.
+
+* **Type:**
+  The scoring engines [`BM25Index`](#vd.search.BM25Index) can build
+
+### *class* vd.search.Bm25sEngine(corpus_tokens, , k1, b)
+
+Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
+
+A BM25 scorer backed by [bm25s](https://github.com/xhluca/bm25s) (MIT).
+
+Called as `engine(query_tokens, limit=..., k1=..., b=...) -> [(doc_idx, score)]`.
+bm25s computes every score at index time for one `(k1, b)`; this engine keeps the
+corpus tokens and builds an index per `(k1, b)` on first use (the last
+[`max_indexes`](#vd.search.Bm25sEngine.max_indexes) are kept), so callers can still vary them per query, as with
+the pure-Python engine, at the cost of one build per new pair.
+
+bm25s’s Lucene variant drops the constant `(k1 + 1)` from the numerator, so its
+scores are multiplied back by it: the result is vd’s own Okapi score (to float32
+rounding), which matters to callers that calibrate on score values. Ties are put
+back in document order, and a repeated query term counts once, as in the
+pure-Python engine. Picklable.
+
+#### max_indexes *= 4*
+
+How many `(k1, b)` indexes to keep built.
 
 ### vd.search.bm25_lexical_search(collection, query_text, , limit=10, filter=None, k1=1.5, b=0.75)
 

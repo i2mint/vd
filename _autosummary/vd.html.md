@@ -114,24 +114,24 @@ the *convenience* of writing/searching raw text; otherwise pass
 
 ### Classes
 
-| [`Document`](#vd.Document)(id[, text, vector, metadata])        | The unit stored in a [`Collection`](#vd.Collection).                                                                                                                                                                                                        |
-|------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [`Client`](#vd.Client)(\*args, \*\*kwargs)                    | A live connection to one backend: `Mapping[str, Collection]`.                                                                                                                                                                                                                            |
-| [`Collection`](#vd.Collection)(\*args, \*\*kwargs)                | A collection of documents: `MutableMapping[str, Document]` + `search`.                                                                                                                                                                                                                   |
-| [`AbstractClient`](#vd.AbstractClient)(\*[, embedder])                | Base class implementing the [`Client`](#vd.Client) contract for adapters.                                                                                                                                                                               |
-| [`AbstractCollection`](#vd.AbstractCollection)()                          | Base class implementing the [`Collection`](#vd.Collection) contract for adapters.                                                                                                                                                                           |
-| [`SupportsBatch`](#vd.SupportsBatch)(\*args, \*\*kwargs)             | A collection that supports efficient batch insertion.                                                                                                                                                                                                                                    |
-| [`SupportsHybrid`](#vd.SupportsHybrid)(\*args, \*\*kwargs)            | A collection that supports native hybrid (dense + lexical) search.                                                                                                                                                                                                                       |
-| [`SupportsNativeAsync`](#vd.SupportsNativeAsync)(\*args, \*\*kwargs)       | Marker protocol set on async clients/collections that use a backend's native async SDK rather than the universal [`asyncio.to_thread()`](https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread) wrapper.                                                                 |
-| [`AsyncClient`](#vd.AsyncClient)(\*args, \*\*kwargs)               | The async sibling of [`Client`](#vd.Client).                                                                                                                                                                                                            |
-| [`AsyncCollection`](#vd.AsyncCollection)(\*args, \*\*kwargs)           | The async sibling of [`Collection`](#vd.Collection).                                                                                                                                                                                                        |
-| [`AsyncClientWrapper`](#vd.AsyncClientWrapper)(sync_client)               | Adapt a sync [`Client`](#vd.Client) to the [`AsyncClient`](#vd.AsyncClient) contract by dispatching every method to [`asyncio.to_thread()`](https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread).         |
-| [`AsyncCollectionWrapper`](#vd.AsyncCollectionWrapper)(sync_collection)       | Adapt a sync [`Collection`](#vd.Collection) to the [`AsyncCollection`](#vd.AsyncCollection) contract by dispatching every method to [`asyncio.to_thread()`](https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread). |
-| [`AsyncAbstractClient`](#vd.AsyncAbstractClient)(\*[, embedder])           | Base class for **native** async clients (the async sibling of [`vd.AbstractClient`](#vd.AbstractClient)).                                                                                                                                                       |
-| [`AsyncAbstractCollection`](#vd.AsyncAbstractCollection)()                     | Base class for **native** async collections (the async sibling of [`vd.AbstractCollection`](#vd.AbstractCollection)).                                                                                                                                               |
-| [`BM25Index`](#vd.BM25Index)(collection, \*[, filter, tokenize]) | A reusable Okapi BM25 index over a vd collection's stored `text`.                                                                                                                                                                                                                        |
-| [`TimeIndexedCollection`](#vd.TimeIndexedCollection)(collection, \*[, ...])  | Time-indexed wrapper over any vd `Collection`.                                                                                                                                                                                                                                           |
-| [`WindowSlice`](#vd.WindowSlice)(start, end)                       | A time window: `[start, end)`.                                                                                                                                                                                                                                                           |
+| [`Document`](#vd.Document)(id[, text, vector, metadata])             | The unit stored in a [`Collection`](#vd.Collection).                                                                                                                                                                                                        |
+|-----------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`Client`](#vd.Client)(\*args, \*\*kwargs)                         | A live connection to one backend: `Mapping[str, Collection]`.                                                                                                                                                                                                                            |
+| [`Collection`](#vd.Collection)(\*args, \*\*kwargs)                     | A collection of documents: `MutableMapping[str, Document]` + `search`.                                                                                                                                                                                                                   |
+| [`AbstractClient`](#vd.AbstractClient)(\*[, embedder])                     | Base class implementing the [`Client`](#vd.Client) contract for adapters.                                                                                                                                                                               |
+| [`AbstractCollection`](#vd.AbstractCollection)()                               | Base class implementing the [`Collection`](#vd.Collection) contract for adapters.                                                                                                                                                                           |
+| [`SupportsBatch`](#vd.SupportsBatch)(\*args, \*\*kwargs)                  | A collection that supports efficient batch insertion.                                                                                                                                                                                                                                    |
+| [`SupportsHybrid`](#vd.SupportsHybrid)(\*args, \*\*kwargs)                 | A collection that supports native hybrid (dense + lexical) search.                                                                                                                                                                                                                       |
+| [`SupportsNativeAsync`](#vd.SupportsNativeAsync)(\*args, \*\*kwargs)            | Marker protocol set on async clients/collections that use a backend's native async SDK rather than the universal [`asyncio.to_thread()`](https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread) wrapper.                                                                 |
+| [`AsyncClient`](#vd.AsyncClient)(\*args, \*\*kwargs)                    | The async sibling of [`Client`](#vd.Client).                                                                                                                                                                                                            |
+| [`AsyncCollection`](#vd.AsyncCollection)(\*args, \*\*kwargs)                | The async sibling of [`Collection`](#vd.Collection).                                                                                                                                                                                                        |
+| [`AsyncClientWrapper`](#vd.AsyncClientWrapper)(sync_client)                    | Adapt a sync [`Client`](#vd.Client) to the [`AsyncClient`](#vd.AsyncClient) contract by dispatching every method to [`asyncio.to_thread()`](https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread).         |
+| [`AsyncCollectionWrapper`](#vd.AsyncCollectionWrapper)(sync_collection)            | Adapt a sync [`Collection`](#vd.Collection) to the [`AsyncCollection`](#vd.AsyncCollection) contract by dispatching every method to [`asyncio.to_thread()`](https://docs.python.org/3/library/asyncio-task.html#asyncio.to_thread). |
+| [`AsyncAbstractClient`](#vd.AsyncAbstractClient)(\*[, embedder])                | Base class for **native** async clients (the async sibling of [`vd.AbstractClient`](#vd.AbstractClient)).                                                                                                                                                       |
+| [`AsyncAbstractCollection`](#vd.AsyncAbstractCollection)()                          | Base class for **native** async collections (the async sibling of [`vd.AbstractCollection`](#vd.AbstractCollection)).                                                                                                                                               |
+| [`BM25Index`](#vd.BM25Index)(collection, \*[, filter, tokenize, ...]) | A reusable Okapi BM25 index over a vd collection's stored `text`.                                                                                                                                                                                                                        |
+| [`TimeIndexedCollection`](#vd.TimeIndexedCollection)(collection, \*[, ...])       | Time-indexed wrapper over any vd `Collection`.                                                                                                                                                                                                                                           |
+| [`WindowSlice`](#vd.WindowSlice)(start, end)                            | A time window: `[start, end)`.                                                                                                                                                                                                                                                           |
 
 ### Exceptions
 
@@ -707,7 +707,7 @@ Insert or replace `document`.
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
-### *class* vd.BM25Index(collection, \*, filter=None, tokenize=<function \_tokenize>)
+### *class* vd.BM25Index(collection, \*, filter=None, tokenize=<function \_tokenize>, k1=1.5, b=0.75, engine='python')
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -736,6 +736,16 @@ index (weaviate, elasticsearch, redis, lancedb, …).
     matching documents and its statistics reflect that subset.
   * **tokenize** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]) – Tokenizer (default: lowercased `\w+` tokens). Pass a custom one for
     stemming, CJK, etc.
+  * **k1** ([`float`](https://docs.python.org/3/builtins/functions.html#float)) – The Okapi hyperparameters [`search()`](vd.search.html.md#module-vd.search) uses when it is given none.
+  * **b** ([`float`](https://docs.python.org/3/builtins/functions.html#float)) – The Okapi hyperparameters [`search()`](vd.search.html.md#module-vd.search) uses when it is given none.
+  * **engine** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – `"python"` (default): the pure-Python postings index, no dependency,
+    `k1`/`b` free at query time. `"bm25s"`: the scores are computed
+    once at build time by [bm25s](https://github.com/xhluca/bm25s) (MIT;
+    `pip install vd[bm25s]`), which answers a query with common words
+    tens to hundreds of times faster past ~10k documents. Same scores (to
+    float32 rounding) and the same ranking, up to the order of scores that
+    are equal to that rounding. Other `k1`/`b` at query time cost one
+    more build each. See `BM25_ENGINES`.
 
 ### Examples
 
@@ -749,14 +759,16 @@ index (weaviate, elasticsearch, redis, lancedb, …).
 'a'
 ```
 
-#### search(query_text, , limit=10, k1=1.5, b=0.75)
+#### search(query_text, , limit=10, k1=None, b=None)
 
 Okapi BM25 scores for `query_text` over the indexed documents.
 
 Returns result dicts in the same shape as [`Collection.search()`](#vd.Collection.search) —
-`{"id", "text", "score", "metadata"}` — sorted by descending score.
-`k1` / `b` are the standard Okapi hyperparameters (scoring-time, so
-one index can be queried with different settings).
+`{"id", "text", "score", "metadata"}` — sorted by descending score,
+ties in document order. `k1` / `b` are the standard Okapi
+hyperparameters, defaulting to the index’s; every engine accepts other
+values per query (the `"bm25s"` engine builds one more index for each
+new pair, so its fast path is the build-time pair).
 
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]

@@ -4,6 +4,12 @@ vd.search
 .. automodule:: vd.search
 
    
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      BM25_ENGINES
+   
    .. rubric:: Functions
 
    .. autosummary::
@@ -21,4 +27,5 @@ vd.search
    .. autosummary::
    
       BM25Index
+      Bm25sEngine
    

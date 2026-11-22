@@ -105,6 +105,11 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#vd.search.BM25Index.search"><code class="docutils literal notranslate"><span class="pre">BM25Index.search()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#vd.search.BM25_ENGINES"><code class="docutils literal notranslate"><span class="pre">BM25_ENGINES</span></code></a></li>
+<li><a class="reference internal" href="#vd.search.Bm25sEngine"><code class="docutils literal notranslate"><span class="pre">Bm25sEngine</span></code></a><ul>
+<li><a class="reference internal" href="#vd.search.Bm25sEngine.max_indexes"><code class="docutils literal notranslate"><span class="pre">Bm25sEngine.max_indexes</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#vd.search.bm25_lexical_search"><code class="docutils literal notranslate"><span class="pre">bm25_lexical_search()</span></code></a></li>
 <li><a class="reference internal" href="#vd.search.deduplicate_results"><code class="docutils literal notranslate"><span class="pre">deduplicate_results()</span></code></a></li>
 <li><a class="reference internal" href="#vd.search.hybrid_search"><code class="docutils literal notranslate"><span class="pre">hybrid_search()</span></code></a></li>
@@ -155,6 +160,16 @@ data-aria-dark="Switch to auto color mode">
 <p>Advanced search utilities for vd.</p>
 <p>Provides functions for multi-query search, search result merging, and
 other advanced search patterns.</p>
+<p class="rubric">Module Attributes</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.search.BM25_ENGINES" title="vd.search.BM25_ENGINES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BM25_ENGINES</span></code></a></p></td>
+<td><p>name -&gt; <code class="docutils literal notranslate"><span class="pre">(corpus_tokens,</span> <span class="pre">*,</span> <span class="pre">k1,</span> <span class="pre">b)</span> <span class="pre">-&gt;</span> <span class="pre">scorer</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p class="rubric">Functions</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
@@ -187,15 +202,18 @@ other advanced search patterns.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#vd.search.BM25Index" title="vd.search.BM25Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BM25Index</span></code></a>(collection, *[, filter, tokenize])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.search.BM25Index" title="vd.search.BM25Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BM25Index</span></code></a>(collection, *[, filter, tokenize, ...])</p></td>
 <td><p>A reusable Okapi BM25 index over a vd collection's stored <code class="docutils literal notranslate"><span class="pre">text</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vd.search.Bm25sEngine" title="vd.search.Bm25sEngine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bm25sEngine</span></code></a>(corpus_tokens, *, k1, b)</p></td>
+<td><p>A BM25 scorer backed by <a class="reference external" href="https://github.com/xhluca/bm25s">bm25s</a> (MIT).</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="vd.search.BM25Index">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.search.</span></span><span class="sig-name descname"><span class="pre">BM25Index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">_tokenize&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/search.html#BM25Index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.search.BM25Index" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.search.</span></span><span class="sig-name descname"><span class="pre">BM25Index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">_tokenize&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'python'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/search.html#BM25Index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.search.BM25Index" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A reusable Okapi BM25 index over a vd collection’s stored <code class="docutils literal notranslate"><span class="pre">text</span></code>.</p>
 <p>Builds the <strong>query-independent</strong> term statistics — postings lists
@@ -221,6 +239,17 @@ and are dropped at build time.</p></li>
 matching documents and its statistics reflect that subset.</p></li>
 <li><p><strong>tokenize</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>) – Tokenizer (default: lowercased <code class="docutils literal notranslate"><span class="pre">\w+</span></code> tokens). Pass a custom one for
 stemming, CJK, etc.</p></li>
+<li><p><strong>k1</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – The Okapi hyperparameters <a class="reference internal" href="#vd.search.BM25Index.search" title="vd.search.BM25Index.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a> uses when it is given none.</p></li>
+<li><p><strong>b</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – The Okapi hyperparameters <a class="reference internal" href="#vd.search.BM25Index.search" title="vd.search.BM25Index.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a> uses when it is given none.</p></li>
+<li><p><strong>engine</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – <p><code class="docutils literal notranslate"><span class="pre">&quot;python&quot;</span></code> (default): the pure-Python postings index, no dependency,
+<code class="docutils literal notranslate"><span class="pre">k1</span></code>/<code class="docutils literal notranslate"><span class="pre">b</span></code> free at query time. <code class="docutils literal notranslate"><span class="pre">&quot;bm25s&quot;</span></code>: the scores are computed
+once at build time by <a class="reference external" href="https://github.com/xhluca/bm25s">bm25s</a> (MIT;
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">vd[bm25s]</span></code>), which answers a query with common words
+tens to hundreds of times faster past ~10k documents. Same scores (to
+float32 rounding) and the same ranking, up to the order of scores that
+are equal to that rounding. Other <code class="docutils literal notranslate"><span class="pre">k1</span></code>/<code class="docutils literal notranslate"><span class="pre">b</span></code> at query time cost one
+more build each. See <a class="reference internal" href="#vd.search.BM25_ENGINES" title="vd.search.BM25_ENGINES"><code class="xref py py-data docutils literal notranslate"><span class="pre">BM25_ENGINES</span></code></a>.</p>
+</p></li>
 </ul>
 </dd>
 </dl>
@@ -236,17 +265,56 @@ stemming, CJK, etc.</p></li>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="vd.search.BM25Index.search">
-<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_text</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.75</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/search.html#BM25Index.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.search.BM25Index.search" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_text</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/search.html#BM25Index.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.search.BM25Index.search" title="Link to this definition">#</a></dt>
 <dd><p>Okapi BM25 scores for <code class="docutils literal notranslate"><span class="pre">query_text</span></code> over the indexed documents.</p>
 <p>Returns result dicts in the same shape as <code class="xref py py-meth docutils literal notranslate"><span class="pre">Collection.search()</span></code> —
-<code class="docutils literal notranslate"><span class="pre">{&quot;id&quot;,</span> <span class="pre">&quot;text&quot;,</span> <span class="pre">&quot;score&quot;,</span> <span class="pre">&quot;metadata&quot;}</span></code> — sorted by descending score.
-<code class="docutils literal notranslate"><span class="pre">k1</span></code> / <code class="docutils literal notranslate"><span class="pre">b</span></code> are the standard Okapi hyperparameters (scoring-time, so
-one index can be queried with different settings).</p>
+<code class="docutils literal notranslate"><span class="pre">{&quot;id&quot;,</span> <span class="pre">&quot;text&quot;,</span> <span class="pre">&quot;score&quot;,</span> <span class="pre">&quot;metadata&quot;}</span></code> — sorted by descending score,
+ties in document order. <code class="docutils literal notranslate"><span class="pre">k1</span></code> / <code class="docutils literal notranslate"><span class="pre">b</span></code> are the standard Okapi
+hyperparameters, defaulting to the index’s; every engine accepts other
+values per query (the <code class="docutils literal notranslate"><span class="pre">&quot;bm25s&quot;</span></code> engine builds one more index for each
+new pair, so its fast path is the build-time pair).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]</span></p>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="vd.search.BM25_ENGINES">
+<span class="sig-prename descclassname"><span class="pre">vd.search.</span></span><span class="sig-name descname"><span class="pre">BM25_ENGINES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'bm25s':</span> <span class="pre">&lt;class</span> <span class="pre">'vd.search.Bm25sEngine'&gt;,</span> <span class="pre">'python':</span> <span class="pre">None}</span></span><a class="headerlink" href="#vd.search.BM25_ENGINES" title="Link to this definition">#</a></dt>
+<dd><p>name -&gt; <code class="docutils literal notranslate"><span class="pre">(corpus_tokens,</span> <span class="pre">*,</span>
+<span class="pre">k1,</span> <span class="pre">b)</span> <span class="pre">-&gt;</span> <span class="pre">scorer</span></code>. <code class="docutils literal notranslate"><span class="pre">&quot;python&quot;</span></code> is the built-in postings index itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The scoring engines <a class="reference internal" href="#vd.search.BM25Index" title="vd.search.BM25Index"><code class="xref py py-class docutils literal notranslate"><span class="pre">BM25Index</span></code></a> can build</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="vd.search.Bm25sEngine">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">vd.search.</span></span><span class="sig-name descname"><span class="pre">Bm25sEngine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corpus_tokens</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">k1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/search.html#Bm25sEngine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.search.Bm25sEngine" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A BM25 scorer backed by <a class="reference external" href="https://github.com/xhluca/bm25s">bm25s</a> (MIT).</p>
+<p>Called as <code class="docutils literal notranslate"><span class="pre">engine(query_tokens,</span> <span class="pre">limit=...,</span> <span class="pre">k1=...,</span> <span class="pre">b=...)</span> <span class="pre">-&gt;</span> <span class="pre">[(doc_idx,</span> <span class="pre">score)]</span></code>.
+bm25s computes every score at index time for one <code class="docutils literal notranslate"><span class="pre">(k1,</span> <span class="pre">b)</span></code>; this engine keeps the
+corpus tokens and builds an index per <code class="docutils literal notranslate"><span class="pre">(k1,</span> <span class="pre">b)</span></code> on first use (the last
+<a class="reference internal" href="#vd.search.Bm25sEngine.max_indexes" title="vd.search.Bm25sEngine.max_indexes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">max_indexes</span></code></a> are kept), so callers can still vary them per query, as with
+the pure-Python engine, at the cost of one build per new pair.</p>
+<p>bm25s’s Lucene variant drops the constant <code class="docutils literal notranslate"><span class="pre">(k1</span> <span class="pre">+</span> <span class="pre">1)</span></code> from the numerator, so its
+scores are multiplied back by it: the result is vd’s own Okapi score (to float32
+rounding), which matters to callers that calibrate on score values. Ties are put
+back in document order, and a repeated query term counts once, as in the
+pure-Python engine. Picklable.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vd.search.Bm25sEngine.max_indexes">
+<span class="sig-name descname"><span class="pre">max_indexes</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#vd.search.Bm25sEngine.max_indexes" title="Link to this definition">#</a></dt>
+<dd><p>How many <code class="docutils literal notranslate"><span class="pre">(k1,</span> <span class="pre">b)</span></code> indexes to keep built.</p>
 </dd></dl>
 
 </dd></dl>
