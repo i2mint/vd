@@ -72,8 +72,17 @@ LOGICAL_OPERATORS = frozenset({"$and", "$or", "$not"})
 #: Operators used inside a ``{'field': {...}}`` condition.
 FIELD_OPERATORS = frozenset(
     {
-        "$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$in", "$nin", "$exists",
-        "$startswith", "$regex",
+        "$eq",
+        "$ne",
+        "$gt",
+        "$gte",
+        "$lt",
+        "$lte",
+        "$in",
+        "$nin",
+        "$exists",
+        "$startswith",
+        "$regex",
     }
 )
 

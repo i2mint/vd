@@ -36,7 +36,9 @@ from vd.util import register_backend
 #: Operators Chroma's ``where`` clause supports natively. Chroma has no
 #: ``$not`` and no ``$exists`` — those raise UnsupportedFilterError so the
 #: caller can simplify the filter or drop to ``collection.native``.
-CHROMA_FILTER_OPERATORS = SUPPORTED_FILTER_OPERATORS - {"$not", "$exists"} - STRING_OPERATORS
+CHROMA_FILTER_OPERATORS = (
+    SUPPORTED_FILTER_OPERATORS - {"$not", "$exists"} - STRING_OPERATORS
+)
 
 #: vd metric name -> Chroma HNSW space name.
 _SPACE = {"cosine": "cosine", "dot": "ip", "l2": "l2"}
