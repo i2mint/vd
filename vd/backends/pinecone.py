@@ -65,7 +65,7 @@ from vd.base import (
     SearchResult,
     Vector,
 )
-from vd.filters import SUPPORTED_FILTER_OPERATORS
+from vd.filters import SUPPORTED_FILTER_OPERATORS, STRING_OPERATORS
 from vd.util import register_backend
 
 # ---------------------------------------------------------------------------
@@ -80,7 +80,7 @@ _VD_TEXT_KEY = "_vd_text"
 _UNSUPPORTED = frozenset({"$not", "$exists"})
 
 #: Filter operators this adapter can honor.
-PINECONE_FILTER_OPERATORS = SUPPORTED_FILTER_OPERATORS - _UNSUPPORTED
+PINECONE_FILTER_OPERATORS = SUPPORTED_FILTER_OPERATORS - _UNSUPPORTED - STRING_OPERATORS
 
 #: vd metric name → Pinecone metric string.
 _METRIC_MAP: dict[str, str] = {

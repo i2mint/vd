@@ -73,7 +73,7 @@ from vd.base import (
     SearchResult,
     Vector,
 )
-from vd.filters import SUPPORTED_FILTER_OPERATORS
+from vd.filters import SUPPORTED_FILTER_OPERATORS, STRING_OPERATORS
 from vd.util import register_backend
 
 # ---------------------------------------------------------------------------
@@ -276,7 +276,7 @@ class MongoDBCollection(AbstractCollection):
         Name of the Atlas vector search index to use in ``$vectorSearch``.
     """
 
-    supported_filter_operators = SUPPORTED_FILTER_OPERATORS
+    supported_filter_operators = SUPPORTED_FILTER_OPERATORS - STRING_OPERATORS
 
     def __init__(
         self,

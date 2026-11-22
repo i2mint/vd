@@ -238,7 +238,7 @@ async def test_qdrant_native_embedder_and_dimension_checks(qdrant_available):
         with pytest.raises(vd.EmbeddingRequiredError):
             await col.set("a", "raw text needs an embedder")
         with pytest.raises(vd.UnsupportedFilterError):
-            async for _ in col.search([1.0, 0.0], filter={"x": {"$regex": "a"}}):
+            async for _ in col.search([1.0, 0.0], filter={"x": {"$like": "a"}}):
                 pass
 
 
