@@ -149,13 +149,10 @@ def test_benchmark_insert_writes_the_documents(embedder):
     assert results["avg_time_per_doc"] == pytest.approx(results["total_time"] / 5)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="benchmarks divide by wall-clock elapsed time; a run inside the clock's resolution raises ZeroDivisionError",
-)
 @pytest.mark.parametrize("which", ["search", "insert"])
 def test_benchmarks_survive_a_zero_elapsed_time(col, monkeypatch, which):
-    monkeypatch.setattr(vd.health, "time", SimpleNamespace(time=lambda: 0.0))
+    """A run inside the clock's resolution (common on Windows) used to divide by zero."""
+    monkeypatch.setattr(vd.health, "time", SimpleNamespace(perf_counter=lambda: 0.0))
     if which == "search":
         results = benchmark_search(col, "alpha", n_queries=1)
     else:

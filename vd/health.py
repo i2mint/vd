@@ -128,6 +128,15 @@ def health_check_collection(collection: Collection) -> dict[str, Any]:
     }
 
 
+def _rate(count: int, seconds: float) -> float:
+    """``count / seconds``, or ``inf`` for a run shorter than the clock's resolution.
+
+    >>> _rate(10, 2.0), _rate(3, 0.0)
+    (5.0, inf)
+    """
+    return count / seconds if seconds > 0 else float("inf")
+
+
 def benchmark_search(
     collection: Collection,
     query: str,
@@ -170,15 +179,15 @@ def benchmark_search(
     """
     latencies = []
 
-    start_time = time.time()
+    start_time = time.perf_counter()
 
     for _ in range(n_queries):
-        query_start = time.time()
+        query_start = time.perf_counter()
         list(collection.search(query, limit=limit))
-        query_end = time.time()
+        query_end = time.perf_counter()
         latencies.append(query_end - query_start)
 
-    end_time = time.time()
+    end_time = time.perf_counter()
     total_time = end_time - start_time
 
     # Sort for percentiles
@@ -197,7 +206,7 @@ def benchmark_search(
         "p50": percentile(latencies_sorted, 50),
         "p95": percentile(latencies_sorted, 95),
         "p99": percentile(latencies_sorted, 99),
-        "queries_per_second": n_queries / total_time,
+        "queries_per_second": _rate(n_queries, total_time),
     }
 
 
@@ -248,7 +257,7 @@ def benchmark_insert(
         test_docs.append(doc)
 
     # Benchmark
-    start_time = time.time()
+    start_time = time.perf_counter()
 
     batch = []
     for doc in test_docs:
@@ -260,13 +269,13 @@ def benchmark_insert(
     if batch:
         collection.add_documents(batch)
 
-    end_time = time.time()
+    end_time = time.perf_counter()
     total_time = end_time - start_time
 
     return {
         "n_documents": n_documents,
         "total_time": total_time,
         "avg_time_per_doc": total_time / n_documents,
-        "documents_per_second": n_documents / total_time,
+        "documents_per_second": _rate(n_documents, total_time),
         "batch_size": batch_size,
     }
