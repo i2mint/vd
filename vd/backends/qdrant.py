@@ -49,7 +49,7 @@ from vd.base import (
     SearchResult,
     Vector,
 )
-from vd.filters import SUPPORTED_FILTER_OPERATORS
+from vd.filters import SUPPORTED_FILTER_OPERATORS, STRING_OPERATORS
 from vd.search import _tokenize
 from vd.util import register_backend
 
@@ -254,7 +254,7 @@ class QdrantCollection(AbstractCollection):
     """A collection backed by one Qdrant collection. Native payload filtering."""
 
     # Qdrant covers the entire canonical filter language natively.
-    supported_filter_operators = SUPPORTED_FILTER_OPERATORS
+    supported_filter_operators = SUPPORTED_FILTER_OPERATORS - STRING_OPERATORS
 
     def __init__(
         self,
@@ -575,7 +575,7 @@ class NativeAsyncQdrantCollection(AsyncAbstractCollection):
     :class:`QdrantCollection`, so data written by either is readable by both.
     """
 
-    supported_filter_operators = SUPPORTED_FILTER_OPERATORS
+    supported_filter_operators = SUPPORTED_FILTER_OPERATORS - STRING_OPERATORS
 
     def __init__(
         self,

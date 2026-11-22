@@ -23,7 +23,13 @@ is sugar for ``{'field': {'$eq': value}}``. Multiple top-level fields combine
 with an implicit ``$and``.
 
 Field operators (inside ``{'field': {...}}``): ``$eq``, ``$ne``, ``$gt``,
-``$gte``, ``$lt``, ``$lte``, ``$in``, ``$nin``, ``$exists``.
+``$gte``, ``$lt``, ``$lte``, ``$in``, ``$nin``, ``$exists``, plus the string
+operators ``$startswith`` (a prefix) and ``$regex`` (``re.search`` on a string
+value; a non-string value never matches). Backends that push filters down to a
+native query declare which operators they translate: the string operators are not
+among them unless stated, so those backends raise ``UnsupportedFilterError``
+rather than mistranslate (the in-memory matcher and client-side-filtering
+backends support them).
 
 Logical operators (top-level): ``$and`` / ``$or`` take a list of subfilters;
 ``$not`` takes a single subfilter.
@@ -51,6 +57,7 @@ Traceback (most recent call last):
 vd.base.UnsupportedFilterError: Unknown filter operator '$bogus'. ...
 """
 
+import re
 from typing import Any, Iterable, Mapping, Optional
 
 from vd.base import Filter, UnsupportedFilterError
@@ -64,8 +71,15 @@ LOGICAL_OPERATORS = frozenset({"$and", "$or", "$not"})
 
 #: Operators used inside a ``{'field': {...}}`` condition.
 FIELD_OPERATORS = frozenset(
-    {"$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$in", "$nin", "$exists"}
+    {
+        "$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$in", "$nin", "$exists",
+        "$startswith", "$regex",
+    }
 )
+
+#: The string operators of the language. A backend that translates filters to a
+#: native query and has not implemented these subtracts them from its supported set.
+STRING_OPERATORS = frozenset({"$startswith", "$regex"})
 
 #: Every operator the canonical ``vd`` filter language defines.
 SUPPORTED_FILTER_OPERATORS = LOGICAL_OPERATORS | FIELD_OPERATORS
@@ -102,6 +116,16 @@ def _apply_field_operator(op: str, actual: Any, operand: Any) -> bool:
         return _in(actual, operand)
     if op == "$nin":
         return not _in(actual, operand)
+
+    if op == "$startswith":
+        return isinstance(actual, str) and actual.startswith(str(operand))
+    if op == "$regex":
+        if not isinstance(actual, str):
+            return False
+        try:
+            return re.search(operand, actual) is not None
+        except (re.error, TypeError) as e:
+            raise UnsupportedFilterError(f"Invalid $regex pattern {operand!r}: {e}")
 
     # Ordered comparisons — incomparable types never match (rather than erroring).
     try:
@@ -207,10 +231,10 @@ def validate_filter(
     Examples
     --------
     >>> validate_filter({'year': {'$gte': 2020}})            # ok, returns None
-    >>> validate_filter({'a': {'$regex': '.*'}})             # not in the language
+    >>> validate_filter({'a': {'$like': 'x%'}})                # not in the language
     Traceback (most recent call last):
         ...
-    vd.base.UnsupportedFilterError: Unknown filter operator '$regex'. ...
+    vd.base.UnsupportedFilterError: Unknown filter operator '$like'. ...
     >>> validate_filter({'a': {'$exists': True}}, supported={'$eq'})
     Traceback (most recent call last):
         ...

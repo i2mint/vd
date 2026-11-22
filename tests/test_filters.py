@@ -144,6 +144,8 @@ def test_supported_operators_constant_is_complete():
         "$in",
         "$nin",
         "$exists",
+        "$startswith",
+        "$regex",
         "$and",
         "$or",
         "$not",
@@ -163,8 +165,8 @@ def test_validate_filter_accepts_valid():
 
 
 def test_validate_filter_rejects_unknown_operator():
-    with pytest.raises(UnsupportedFilterError, match=r"\$regex"):
-        validate_filter({"a": {"$regex": ".*"}})
+    with pytest.raises(UnsupportedFilterError, match=r"\$like"):
+        validate_filter({"a": {"$like": ".*"}})
 
 
 def test_validate_filter_rejects_operator_outside_supported_subset():
@@ -174,8 +176,8 @@ def test_validate_filter_rejects_operator_outside_supported_subset():
 
 
 def test_validate_filter_recurses_into_logical():
-    with pytest.raises(UnsupportedFilterError, match=r"\$regex"):
-        validate_filter({"$and": [{"year": 2022}, {"a": {"$regex": "x"}}]})
+    with pytest.raises(UnsupportedFilterError, match=r"\$like"):
+        validate_filter({"$and": [{"year": 2022}, {"a": {"$like": "x"}}]})
 
 
 # --------------------------------------------------------------------------
@@ -213,3 +215,35 @@ def test_search_with_exists(collection):
 def test_search_unknown_operator_raises(collection):
     with pytest.raises(UnsupportedFilterError):
         list(collection.search("article", filter={"year": {"$typo": 2020}}))
+
+
+# --- string operators ($startswith, $regex) ---------------------------------
+
+
+def test_startswith_matches_a_string_prefix():
+    f = {"path": {"$startswith": "docs/"}}
+    assert matches_filter({"path": "docs/a.md"}, f)
+    assert not matches_filter({"path": "src/docs/a.md"}, f)
+    assert not matches_filter({"path": 3}, f)
+    assert not matches_filter({}, f)
+
+
+def test_regex_searches_a_string_value():
+    f = {"filename": {"$regex": r"\.md$"}}
+    assert matches_filter({"filename": "a.md"}, f)
+    assert not matches_filter({"filename": "a.txt"}, f)
+    assert not matches_filter({"filename": None}, f)
+
+
+def test_bad_regex_raises_unsupported():
+    with pytest.raises(UnsupportedFilterError, match="regex"):
+        matches_filter({"a": "x"}, {"a": {"$regex": "("}})
+
+
+def test_native_translating_backends_do_not_claim_string_operators():
+    from vd.filters import STRING_OPERATORS, validate_filter
+    from vd.backends.chroma import CHROMA_FILTER_OPERATORS
+
+    assert not (STRING_OPERATORS & CHROMA_FILTER_OPERATORS)
+    with pytest.raises(UnsupportedFilterError):
+        validate_filter({"a": {"$startswith": "x"}}, supported=CHROMA_FILTER_OPERATORS)
