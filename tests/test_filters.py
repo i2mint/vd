@@ -242,6 +242,7 @@ def test_bad_regex_raises_unsupported():
 
 def test_native_translating_backends_do_not_claim_string_operators():
     from vd.filters import STRING_OPERATORS, validate_filter
+    pytest.importorskip('chromadb')
     from vd.backends.chroma import CHROMA_FILTER_OPERATORS
 
     assert not (STRING_OPERATORS & CHROMA_FILTER_OPERATORS)
