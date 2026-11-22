@@ -212,7 +212,7 @@ vd.install_command("qdrant")  # 'pip install "vd[qdrant]"'
 
 Beyond the facade, `vd` bundles the composite operations people actually do:
 
-- **`vd.search`**: `multi_query_search`, `reciprocal_rank_fusion`, `hybrid_search`, `BM25Index`, `search_similar_to_document`, `deduplicate_results`.
+- **`vd.search`**: `multi_query_search`, `reciprocal_rank_fusion`, `hybrid_search`, `BM25Index`, `search_similar_to_document`, `deduplicate_results`. `BM25Index` is pure Python by default; `BM25Index(collection, engine="bm25s")` (the `vd[bm25s]` extra) precomputes the scores with [bm25s](https://github.com/xhluca/bm25s) and answers queries with common words hundreds of times faster past ~10k documents, with the same scores and ranking (`k1`/`b` then fixed at build time).
 - **`vd.io`**: `export_collection` / `import_collection` (JSONL, JSON, directory).
 - **`vd.migration`**: `migrate_collection`, `migrate_client`, `copy_collection` to move data between any two backends.
 - **`vd.analytics`**: `collection_stats`, `find_duplicates`, `find_outliers`, `validate_collection`.

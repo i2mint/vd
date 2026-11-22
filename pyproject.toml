@@ -60,6 +60,8 @@ redis = ["redis", "numpy"]
 elasticsearch = ["elasticsearch"]
 mongodb = ["pymongo>=4.7"]
 turbopuffer = ["turbopuffer"]
+# Optional BM25 engine (MIT): BM25Index(engine="bm25s").
+bm25s = ["bm25s", "numpy"]
 # Convenience bundles.
 embedded = ["vd[chroma,qdrant,faiss,lancedb,sqlite_vec,duckdb]"]
 all-backends = [

@@ -398,6 +398,16 @@ class BM25Index:
     tokenize : Callable[[str], list[str]], optional
         Tokenizer (default: lowercased ``\\w+`` tokens). Pass a custom one for
         stemming, CJK, etc.
+    k1, b : float
+        The Okapi hyperparameters :meth:`search` uses when it is given none.
+    engine : str
+        ``"python"`` (default): the pure-Python postings index, no dependency,
+        ``k1``/``b`` free at query time. ``"bm25s"``: the scores are computed
+        once at build time by `bm25s <https://github.com/xhluca/bm25s>`_ (MIT;
+        ``pip install vd[bm25s]``), which answers a query with common words
+        tens to hundreds of times faster past ~10k documents. Same scores (to
+        float32 rounding) and the same ranking; ``k1``/``b`` are then fixed at
+        build time. See :data:`BM25_ENGINES`.
 
     Examples
     --------
@@ -416,16 +426,25 @@ class BM25Index:
         *,
         filter: Optional[dict] = None,
         tokenize: Callable[[str], list[str]] = _tokenize,
+        k1: float = 1.5,
+        b: float = 0.75,
+        engine: str = "python",
     ):
         from vd.filters import matches_filter
 
+        if engine not in BM25_ENGINES:
+            raise ValueError(
+                f"unknown BM25 engine {engine!r} (known: {', '.join(BM25_ENGINES)})"
+            )
         self._tokenize = tokenize
+        self.k1, self.b, self.engine = k1, b, engine
         # Build (query-independent): tokenize once; keep postings
         # ``term -> [(doc_idx, tf, first_pos)]`` plus per-document lengths.
         # ``first_pos`` is the index of the term's first occurrence in the
         # document, so scoring can sum terms in the same order as the original
         # per-document scan (bit-identical scores, unchanged tie order).
         docs: list[tuple[str, str, dict]] = []
+        collection_tokens: list[list[str]] = []
         doc_lens: list[int] = []
         postings: dict[str, list[tuple[int, int, int]]] = {}
         for doc_id in collection:
@@ -438,6 +457,9 @@ class BM25Index:
             doc_idx = len(docs)
             docs.append((doc_id, doc.text, dict(doc.metadata or {})))
             doc_lens.append(len(tokens))
+            if engine != "python":  # the engine builds its own statistics
+                collection_tokens.append(tokens)
+                continue
             seen: dict[str, list[int]] = {}  # term -> [tf, first_pos]
             for pos, tok in enumerate(tokens):
                 entry = seen.get(tok)
@@ -452,6 +474,11 @@ class BM25Index:
         self._postings = postings
         self._n_docs = len(docs)
         self._avg_len = sum(doc_lens) / self._n_docs if docs else 0.0
+        self._engine = (
+            BM25_ENGINES[engine](collection_tokens, k1=k1, b=b)
+            if engine != "python" and docs
+            else None
+        )
 
     def __len__(self) -> int:
         """Number of non-empty, filter-surviving documents in the index."""
@@ -462,19 +489,35 @@ class BM25Index:
         query_text: str,
         *,
         limit: int = 10,
-        k1: float = 1.5,
-        b: float = 0.75,
+        k1: Optional[float] = None,
+        b: Optional[float] = None,
     ) -> list[SearchResult]:
         """Okapi BM25 scores for ``query_text`` over the indexed documents.
 
         Returns result dicts in the same shape as :meth:`Collection.search` —
-        ``{"id", "text", "score", "metadata"}`` — sorted by descending score.
-        ``k1`` / ``b`` are the standard Okapi hyperparameters (scoring-time, so
-        one index can be queried with different settings).
+        ``{"id", "text", "score", "metadata"}`` — sorted by descending score,
+        ties in document order. ``k1`` / ``b`` are the standard Okapi
+        hyperparameters, defaulting to the index's. The ``"python"`` engine
+        scores at query time, so one index can be queried with different
+        settings; the ``"bm25s"`` engine scored at build time and raises
+        ``ValueError`` for others.
         """
+        k1 = self.k1 if k1 is None else k1
+        b = self.b if b is None else b
         query_tokens = self._tokenize(query_text)
         if not query_tokens or not self._docs:
             return []
+        if self._engine is not None:
+            if (k1, b) != (self.k1, self.b):
+                raise ValueError(
+                    f"the {self.engine!r} engine scored with k1={self.k1}, b={self.b} "
+                    f"at build time; build another BM25Index for k1={k1}, b={b}"
+                )
+            return [
+                {"id": d[0], "text": d[1], "score": score, "metadata": d[2]}
+                for idx, score in self._engine(query_tokens, limit=limit)
+                for d in (self._docs[idx],)
+            ]
 
         # Query-dependent: idf for the query terms, then Okapi scoring of only
         # the documents that appear in those terms' postings.
@@ -507,6 +550,44 @@ class BM25Index:
 
         scored.sort(key=lambda r: r["score"], reverse=True)
         return scored[:limit]
+
+
+def _bm25s_engine(corpus_tokens: list[list[str]], *, k1: float, b: float):
+    """A ``query_tokens, limit -> [(doc_idx, score)]`` scorer built by bm25s.
+
+    bm25s's Lucene variant drops the constant ``(k1 + 1)`` from the numerator, so
+    its scores are multiplied back by it: the result is vd's own Okapi score (to
+    float32 rounding), which matters to callers that calibrate on score values.
+    Ties are put back in document order, as the pure-Python engine returns them.
+    """
+    try:
+        import bm25s
+        import numpy as np
+    except ImportError as error:
+        raise ImportError(
+            "BM25Index(engine='bm25s') needs bm25s: pip install 'vd[bm25s]'"
+        ) from error
+
+    retriever = bm25s.BM25(k1=k1, b=b, method="lucene")
+    retriever.index(corpus_tokens, show_progress=False)
+    n_docs, scale = len(corpus_tokens), k1 + 1
+
+    def score(query_tokens: list[str], *, limit: int) -> list[tuple[int, float]]:
+        # each distinct term once, as the pure-Python engine counts it
+        known = [t for t in dict.fromkeys(query_tokens) if t in retriever.vocab_dict]
+        if not known or limit <= 0:
+            return []
+        scores = retriever.get_scores(known)
+        hit = np.flatnonzero(scores > 0)
+        order = hit[np.lexsort((hit, -scores[hit]))][:limit]  # score desc, then doc order
+        return [(int(i), float(scores[i]) * scale) for i in order]
+
+    return score
+
+
+#: The scoring engines :class:`BM25Index` can build: name -> ``(corpus_tokens, *,
+#: k1, b) -> scorer``. ``"python"`` is the built-in postings index itself.
+BM25_ENGINES: dict = {"python": None, "bm25s": _bm25s_engine}
 
 
 def bm25_lexical_search(
