@@ -2,7 +2,7 @@
 
 **One Pythonic interface to ~15 vector databases.** Store vectors, search them, filter by metadata, and switch between databases (memory, Chroma, Qdrant, pgvector, LanceDB, Pinecone, …) by changing one word.
 
-*Still typing code with your own ten fingers? [Your artisanal corner is at the bottom](https://github.com/i2mint/vd#for-artisanal-hand-typed-contributions).*
+For code that should not be tied to one framework's store. If you already live inside LangChain or LlamaIndex, see [vd versus framework stores](https://github.com/i2mint/vd#vd-versus-framework-stores).
 
 ## Install
 
@@ -36,6 +36,8 @@ for hit in col.search([0.1, 0.8, 0.0], limit=2):
 # a 1.0
 # b 0.123
 ```
+
+*Still typing code with your own ten fingers? [Your artisanal corner is at the bottom](https://github.com/i2mint/vd#for-artisanal-hand-typed-contributions).*
 
 ## The mental model
 
@@ -192,9 +194,15 @@ Beyond the facade, `vd` bundles the composite operations people actually do:
 
 ## vd versus framework stores
 
-LlamaIndex, LangChain and Haystack each wrap many more vector stores (LlamaIndex alone has about 78), and if your application lives inside one of those frameworks, its stores are the natural choice. They are plug-in points for the framework's own retrieval pipeline, though, not a portable storage interface. None of them gives a `Mapping` of collections, a guaranteed way to list or export what is stored, or a filter language that behaves the same on every store: LangChain passes `filter` through in each store's own syntax, LlamaIndex's `get_nodes` is optional, and Haystack's docs say operators "may vary" by store.
+LlamaIndex, LangChain and Haystack wrap many more vector stores than vd's 15, and if your application lives inside one of those frameworks, its stores are the natural choice. They are built as plug-in points for the framework's retrieval pipeline rather than as a portable storage interface, and it shows in what their base classes guarantee (as of 2026-11-22):
 
-In a small test of LlamaIndex (llama-index-core 0.14.26, 2026-11-22), the same ten filters gave 10 correct results on its in-memory store, 6 correct and 4 errors on Chroma, and on Qdrant local mode one filter (`TEXT_MATCH`) returned no rows instead of two with only a warning. The same nodes could not even be added unchanged to all three (Chroma rejects list-valued metadata, Qdrant non-UUID ids). In vd, every backend is the same `Mapping`, an unsupported operator raises `UnsupportedFilterError`, string ids work everywhere, and `migrate_collection` moves a collection between any two backends. Details: [i2mint/vd#48](https://github.com/i2mint/vd/issues/48).
+- LangChain's `VectorStore` (langchain-core 1.8.4) requires only `similarity_search` and `from_texts`; `get_by_ids` is optional, there is no listing or length, and `filter` is passed through in each store's own syntax.
+- LlamaIndex's `BasePydanticVectorStore` (llama-index-core 0.14.26) requires `add`, `delete` and `query`; `get_nodes`, which you need to read back or export a store, is optional. Its typed `MetadataFilters` is the most portable filter model of the three.
+- Haystack's [metadata filtering docs](https://docs.haystack.deepset.ai/docs/metadata-filtering) define one filter syntax but note that the available operators "may vary depending on the specific Document Store integration".
+
+We ran the same ten filters through LlamaIndex on three stores. Its in-memory store got all ten right; its Chroma adapter raised on four it does not support, which is the right behaviour; on Qdrant local mode one filter (`TEXT_MATCH`) returned no rows instead of two, with only a warning. The same documents also could not be added unchanged to all three (Chroma rejects list-valued metadata, Qdrant non-UUID ids).
+
+vd's design answers those points: every backend is the same `Mapping`, so listing, export and `migrate_collection` work on all of them; each backend declares its filter operators and an unsupported one raises `UnsupportedFilterError`; string ids work everywhere. The test script and the full comparison are in [i2mint/vd#48](https://github.com/i2mint/vd/issues/48).
 
 ## For AI agents
 
