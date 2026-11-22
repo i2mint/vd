@@ -84,7 +84,7 @@ A collection backed by an in-process `dict[str, Document]`.
 
 The raw `dict[str, Document]` backing this collection (escape hatch).
 
-#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'})*
+#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'})*
 
 the full language.
 Adapters narrow this; `search()` validates against it.

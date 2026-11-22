@@ -24,7 +24,13 @@ is sugar for `{'field': {'$eq': value}}`. Multiple top-level fields combine
 with an implicit `$and`.
 
 Field operators (inside `{'field': {...}}`): `$eq`, `$ne`, `$gt`,
-`$gte`, `$lt`, `$lte`, `$in`, `$nin`, `$exists`.
+`$gte`, `$lt`, `$lte`, `$in`, `$nin`, `$exists`, plus the string
+operators `$startswith` (a prefix) and `$regex` (`re.search` on a string
+value; a non-string value never matches). Backends that push filters down to a
+native query declare which operators they translate: the string operators are not
+among them unless stated, so those backends raise `UnsupportedFilterError`
+rather than mistranslate (the in-memory matcher and client-side-filtering
+backends support them).
 
 Logical operators (top-level): `$and` / `$or` take a list of subfilters;
 `$not` takes a single subfilter.
@@ -60,6 +66,7 @@ vd.base.UnsupportedFilterError: Unknown filter operator '$bogus'. ...
 | [`LOGICAL_OPERATORS`](#vd.filters.LOGICAL_OPERATORS)          | Operators used at the top level of a filter to combine subfilters.   |
 |-----------------------------------------------------------------------------|----------------------------------------------------------------------|
 | [`FIELD_OPERATORS`](#vd.filters.FIELD_OPERATORS)            | Operators used inside a `{'field': {...}}` condition.                |
+| [`STRING_OPERATORS`](#vd.filters.STRING_OPERATORS)           | The string operators of the language.                                |
 | [`SUPPORTED_FILTER_OPERATORS`](#vd.filters.SUPPORTED_FILTER_OPERATORS) | Every operator the canonical `vd` filter language defines.           |
 
 ### Functions
@@ -68,7 +75,7 @@ vd.base.UnsupportedFilterError: Unknown filter operator '$bogus'. ...
 |-------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [`validate_filter`](#vd.filters.validate_filter)(filter, \*[, supported]) | Walk `filter` and raise [`UnsupportedFilterError`](vd.base.html.md#vd.base.UnsupportedFilterError) on any operator that is unknown or not in `supported`. |
 
-### vd.filters.FIELD_OPERATORS *= frozenset({'$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin'})*
+### vd.filters.FIELD_OPERATORS *= frozenset({'$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$regex', '$startswith'})*
 
 Operators used inside a `{'field': {...}}` condition.
 
@@ -76,7 +83,12 @@ Operators used inside a `{'field': {...}}` condition.
 
 Operators used at the top level of a filter to combine subfilters.
 
-### vd.filters.SUPPORTED_FILTER_OPERATORS *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'})*
+### vd.filters.STRING_OPERATORS *= frozenset({'$regex', '$startswith'})*
+
+The string operators of the language. A backend that translates filters to a
+native query and has not implemented these subtracts them from its supported set.
+
+### vd.filters.SUPPORTED_FILTER_OPERATORS *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'})*
 
 Every operator the canonical `vd` filter language defines.
 
@@ -105,7 +117,7 @@ True
 True
 ```
 
-### vd.filters.validate_filter(filter, , supported=frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'}))
+### vd.filters.validate_filter(filter, , supported=frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'}))
 
 Walk `filter` and raise [`UnsupportedFilterError`](vd.base.html.md#vd.base.UnsupportedFilterError) on any
 operator that is unknown or not in `supported`.
@@ -125,10 +137,10 @@ clear `vd` error up front instead of an opaque backend error later.
 
 ```pycon
 >>> validate_filter({'year': {'$gte': 2020}})            # ok, returns None
->>> validate_filter({'a': {'$regex': '.*'}})             # not in the language
+>>> validate_filter({'a': {'$like': 'x%'}})                # not in the language
 Traceback (most recent call last):
     ...
-vd.base.UnsupportedFilterError: Unknown filter operator '$regex'. ...
+vd.base.UnsupportedFilterError: Unknown filter operator '$like'. ...
 >>> validate_filter({'a': {'$exists': True}}, supported={'$eq'})
 Traceback (most recent call last):
     ...

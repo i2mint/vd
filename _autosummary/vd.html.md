@@ -321,7 +321,7 @@ Return the `limit` documents most similar to `query`.
 * **Return type:**
   [*Iterator*](https://docs.python.org/3/library/typing.html#typing.Iterator)[[*dict*](https://docs.python.org/3/builtins/stdtypes.html#dict)[[*str*](https://docs.python.org/3/builtins/stdtypes.html#str), [*Any*](https://docs.python.org/3/library/typing.html#typing.Any)]]
 
-#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'})*
+#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'})*
 
 the full language.
 Adapters narrow this; [`search()`](vd.search.html.md#module-vd.search) validates against it.
@@ -499,7 +499,7 @@ Insert or replace a document (idempotent upsert).
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
-#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'})*
+#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'})*
 
 the full language.
 Adapters narrow this; [`search()`](vd.search.html.md#module-vd.search) validates against it.
@@ -2601,7 +2601,7 @@ Validate collection integrity and identify issues.
 True
 ```
 
-### vd.validate_filter(filter, , supported=frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'}))
+### vd.validate_filter(filter, , supported=frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'}))
 
 Walk `filter` and raise [`UnsupportedFilterError`](vd.base.html.md#vd.base.UnsupportedFilterError) on any
 operator that is unknown or not in `supported`.
@@ -2621,10 +2621,10 @@ clear `vd` error up front instead of an opaque backend error later.
 
 ```pycon
 >>> validate_filter({'year': {'$gte': 2020}})            # ok, returns None
->>> validate_filter({'a': {'$regex': '.*'}})             # not in the language
+>>> validate_filter({'a': {'$like': 'x%'}})                # not in the language
 Traceback (most recent call last):
     ...
-vd.base.UnsupportedFilterError: Unknown filter operator '$regex'. ...
+vd.base.UnsupportedFilterError: Unknown filter operator '$like'. ...
 >>> validate_filter({'a': {'$exists': True}}, supported={'$eq'})
 Traceback (most recent call last):
     ...

@@ -207,7 +207,7 @@ Insert or replace a document (idempotent upsert).
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
-#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'})*
+#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'})*
 
 the full language.
 Adapters narrow this; [`search()`](#vd.asynchronous.AsyncAbstractCollection.search) validates against it.

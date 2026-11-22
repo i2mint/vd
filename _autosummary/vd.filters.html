@@ -104,6 +104,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#filter-syntax">Filter syntax</a></li>
 <li><a class="reference internal" href="#vd.filters.FIELD_OPERATORS"><code class="docutils literal notranslate"><span class="pre">FIELD_OPERATORS</span></code></a></li>
 <li><a class="reference internal" href="#vd.filters.LOGICAL_OPERATORS"><code class="docutils literal notranslate"><span class="pre">LOGICAL_OPERATORS</span></code></a></li>
+<li><a class="reference internal" href="#vd.filters.STRING_OPERATORS"><code class="docutils literal notranslate"><span class="pre">STRING_OPERATORS</span></code></a></li>
 <li><a class="reference internal" href="#vd.filters.SUPPORTED_FILTER_OPERATORS"><code class="docutils literal notranslate"><span class="pre">SUPPORTED_FILTER_OPERATORS</span></code></a></li>
 <li><a class="reference internal" href="#vd.filters.matches_filter"><code class="docutils literal notranslate"><span class="pre">matches_filter()</span></code></a></li>
 <li><a class="reference internal" href="#vd.filters.validate_filter"><code class="docutils literal notranslate"><span class="pre">validate_filter()</span></code></a></li>
@@ -169,7 +170,13 @@ the caller gets a clear <code class="docutils literal notranslate"><span class="
 is sugar for <code class="docutils literal notranslate"><span class="pre">{'field':</span> <span class="pre">{'$eq':</span> <span class="pre">value}}</span></code>. Multiple top-level fields combine
 with an implicit <code class="docutils literal notranslate"><span class="pre">$and</span></code>.</p>
 <p>Field operators (inside <code class="docutils literal notranslate"><span class="pre">{'field':</span> <span class="pre">{...}}</span></code>): <code class="docutils literal notranslate"><span class="pre">$eq</span></code>, <code class="docutils literal notranslate"><span class="pre">$ne</span></code>, <code class="docutils literal notranslate"><span class="pre">$gt</span></code>,
-<code class="docutils literal notranslate"><span class="pre">$gte</span></code>, <code class="docutils literal notranslate"><span class="pre">$lt</span></code>, <code class="docutils literal notranslate"><span class="pre">$lte</span></code>, <code class="docutils literal notranslate"><span class="pre">$in</span></code>, <code class="docutils literal notranslate"><span class="pre">$nin</span></code>, <code class="docutils literal notranslate"><span class="pre">$exists</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">$gte</span></code>, <code class="docutils literal notranslate"><span class="pre">$lt</span></code>, <code class="docutils literal notranslate"><span class="pre">$lte</span></code>, <code class="docutils literal notranslate"><span class="pre">$in</span></code>, <code class="docutils literal notranslate"><span class="pre">$nin</span></code>, <code class="docutils literal notranslate"><span class="pre">$exists</span></code>, plus the string
+operators <code class="docutils literal notranslate"><span class="pre">$startswith</span></code> (a prefix) and <code class="docutils literal notranslate"><span class="pre">$regex</span></code> (<code class="docutils literal notranslate"><span class="pre">re.search</span></code> on a string
+value; a non-string value never matches). Backends that push filters down to a
+native query declare which operators they translate: the string operators are not
+among them unless stated, so those backends raise <code class="docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code>
+rather than mistranslate (the in-memory matcher and client-side-filtering
+backends support them).</p>
 <p>Logical operators (top-level): <code class="docutils literal notranslate"><span class="pre">$and</span></code> / <code class="docutils literal notranslate"><span class="pre">$or</span></code> take a list of subfilters;
 <code class="docutils literal notranslate"><span class="pre">$not</span></code> takes a single subfilter.</p>
 <p class="rubric">Examples</p>
@@ -204,7 +211,10 @@ with an implicit <code class="docutils literal notranslate"><span class="pre">$a
 <tr class="row-even"><td><p><a class="reference internal" href="#vd.filters.FIELD_OPERATORS" title="vd.filters.FIELD_OPERATORS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FIELD_OPERATORS</span></code></a></p></td>
 <td><p>Operators used inside a <code class="docutils literal notranslate"><span class="pre">{'field':</span> <span class="pre">{...}}</span></code> condition.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#vd.filters.SUPPORTED_FILTER_OPERATORS" title="vd.filters.SUPPORTED_FILTER_OPERATORS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SUPPORTED_FILTER_OPERATORS</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.filters.STRING_OPERATORS" title="vd.filters.STRING_OPERATORS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">STRING_OPERATORS</span></code></a></p></td>
+<td><p>The string operators of the language.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vd.filters.SUPPORTED_FILTER_OPERATORS" title="vd.filters.SUPPORTED_FILTER_OPERATORS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SUPPORTED_FILTER_OPERATORS</span></code></a></p></td>
 <td><p>Every operator the canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> filter language defines.</p></td>
 </tr>
 </tbody>
@@ -226,7 +236,7 @@ with an implicit <code class="docutils literal notranslate"><span class="pre">$a
 </section>
 <dl class="py data">
 <dt class="sig sig-object py" id="vd.filters.FIELD_OPERATORS">
-<span class="sig-prename descclassname"><span class="pre">vd.filters.</span></span><span class="sig-name descname"><span class="pre">FIELD_OPERATORS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin'})</span></span><a class="headerlink" href="#vd.filters.FIELD_OPERATORS" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">vd.filters.</span></span><span class="sig-name descname"><span class="pre">FIELD_OPERATORS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$regex',</span> <span class="pre">'$startswith'})</span></span><a class="headerlink" href="#vd.filters.FIELD_OPERATORS" title="Link to this definition">#</a></dt>
 <dd><p>Operators used inside a <code class="docutils literal notranslate"><span class="pre">{'field':</span> <span class="pre">{...}}</span></code> condition.</p>
 </dd></dl>
 
@@ -237,8 +247,15 @@ with an implicit <code class="docutils literal notranslate"><span class="pre">$a
 </dd></dl>
 
 <dl class="py data">
+<dt class="sig sig-object py" id="vd.filters.STRING_OPERATORS">
+<span class="sig-prename descclassname"><span class="pre">vd.filters.</span></span><span class="sig-name descname"><span class="pre">STRING_OPERATORS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$regex',</span> <span class="pre">'$startswith'})</span></span><a class="headerlink" href="#vd.filters.STRING_OPERATORS" title="Link to this definition">#</a></dt>
+<dd><p>The string operators of the language. A backend that translates filters to a
+native query and has not implemented these subtracts them from its supported set.</p>
+</dd></dl>
+
+<dl class="py data">
 <dt class="sig sig-object py" id="vd.filters.SUPPORTED_FILTER_OPERATORS">
-<span class="sig-prename descclassname"><span class="pre">vd.filters.</span></span><span class="sig-name descname"><span class="pre">SUPPORTED_FILTER_OPERATORS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or'})</span></span><a class="headerlink" href="#vd.filters.SUPPORTED_FILTER_OPERATORS" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">vd.filters.</span></span><span class="sig-name descname"><span class="pre">SUPPORTED_FILTER_OPERATORS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or',</span> <span class="pre">'$regex',</span> <span class="pre">'$startswith'})</span></span><a class="headerlink" href="#vd.filters.SUPPORTED_FILTER_OPERATORS" title="Link to this definition">#</a></dt>
 <dd><p>Every operator the canonical <code class="docutils literal notranslate"><span class="pre">vd</span></code> filter language defines.</p>
 </dd></dl>
 
@@ -273,7 +290,7 @@ with an implicit <code class="docutils literal notranslate"><span class="pre">$a
 
 <dl class="py function">
 <dt class="sig sig-object py" id="vd.filters.validate_filter">
-<span class="sig-prename descclassname"><span class="pre">vd.filters.</span></span><span class="sig-name descname"><span class="pre">validate_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">supported</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or'})</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/filters.html#validate_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.filters.validate_filter" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">vd.filters.</span></span><span class="sig-name descname"><span class="pre">validate_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">supported</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">frozenset({'$and',</span> <span class="pre">'$eq',</span> <span class="pre">'$exists',</span> <span class="pre">'$gt',</span> <span class="pre">'$gte',</span> <span class="pre">'$in',</span> <span class="pre">'$lt',</span> <span class="pre">'$lte',</span> <span class="pre">'$ne',</span> <span class="pre">'$nin',</span> <span class="pre">'$not',</span> <span class="pre">'$or',</span> <span class="pre">'$regex',</span> <span class="pre">'$startswith'})</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/filters.html#validate_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.filters.validate_filter" title="Link to this definition">#</a></dt>
 <dd><p>Walk <code class="docutils literal notranslate"><span class="pre">filter</span></code> and raise <a class="reference internal" href="vd.base.html#vd.base.UnsupportedFilterError" title="vd.base.UnsupportedFilterError"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnsupportedFilterError</span></code></a> on any
 operator that is unknown or not in <code class="docutils literal notranslate"><span class="pre">supported</span></code>.</p>
 <p>Backends that translate the canonical filter to a native query call this
@@ -293,10 +310,10 @@ defines.</p></li>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">validate_filter</span><span class="p">({</span><span class="s1">'year'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'$gte'</span><span class="p">:</span> <span class="mi">2020</span><span class="p">}})</span>            <span class="c1"># ok, returns None</span>
-</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="n">validate_filter</span><span class="p">({</span><span class="s1">'a'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'$regex'</span><span class="p">:</span> <span class="s1">'.*'</span><span class="p">}})</span>             <span class="c1"># not in the language</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="n">validate_filter</span><span class="p">({</span><span class="s1">'a'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'$like'</span><span class="p">:</span> <span class="s1">'x%'</span><span class="p">}})</span>                <span class="c1"># not in the language</span>
 </span><span data-line="3"><span class="gt">Traceback (most recent call last):</span>
 </span><span data-line="4"><span class="w">    </span><span class="o">...</span>
-</span><span data-line="5"><span class="gr">vd.base.UnsupportedFilterError</span>: <span class="n">Unknown filter operator '$regex'. ...</span>
+</span><span data-line="5"><span class="gr">vd.base.UnsupportedFilterError</span>: <span class="n">Unknown filter operator '$like'. ...</span>
 </span><span data-line="6"><span class="gp">&gt;&gt;&gt; </span><span class="n">validate_filter</span><span class="p">({</span><span class="s1">'a'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'$exists'</span><span class="p">:</span> <span class="kc">True</span><span class="p">}},</span> <span class="n">supported</span><span class="o">=</span><span class="p">{</span><span class="s1">'$eq'</span><span class="p">})</span>
 </span><span data-line="7"><span class="gt">Traceback (most recent call last):</span>
 </span><span data-line="8"><span class="w">    </span><span class="o">...</span>
@@ -347,7 +364,7 @@ defines.</p></li>
     </div>
   </div>
 </footer>
-      <script src="../_static/documentation_options.js?v=20e0ead2"></script>
+      <script src="../_static/documentation_options.js?v=84986ecb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

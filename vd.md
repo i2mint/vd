@@ -1,4 +1,4 @@
-> built 2026-11-21 22:32 UTC from baaaeae (master) · vd 0.2.20. Details: build_info.json
+> built 2026-11-22 11:53 UTC from 26e9e20 (master) · vd 0.2.21. Details: build_info.json
 
 # index.html.md
 
@@ -658,7 +658,7 @@ Insert or replace a document (idempotent upsert).
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
-#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'})*
+#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'})*
 
 the full language.
 Adapters narrow this; [`search()`](_autosummary/vd.asynchronous.html.md#vd.asynchronous.AsyncAbstractCollection.search) validates against it.
@@ -1098,7 +1098,7 @@ A collection backed by an in-process `dict[str, Document]`.
 
 The raw `dict[str, Document]` backing this collection (escape hatch).
 
-#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'})*
+#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'})*
 
 the full language.
 Adapters narrow this; `search()` validates against it.
@@ -1346,7 +1346,7 @@ Return the `limit` documents most similar to `query`.
 * **Return type:**
   [*Iterator*](https://docs.python.org/3/library/typing.html#typing.Iterator)[[*dict*](https://docs.python.org/3/builtins/stdtypes.html#dict)[[*str*](https://docs.python.org/3/builtins/stdtypes.html#str), [*Any*](https://docs.python.org/3/library/typing.html#typing.Any)]]
 
-#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'})*
+#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'})*
 
 the full language.
 Adapters narrow this; [`search()`](_autosummary/vd.base.html.md#vd.base.AbstractCollection.search) validates against it.
@@ -1916,7 +1916,13 @@ is sugar for `{'field': {'$eq': value}}`. Multiple top-level fields combine
 with an implicit `$and`.
 
 Field operators (inside `{'field': {...}}`): `$eq`, `$ne`, `$gt`,
-`$gte`, `$lt`, `$lte`, `$in`, `$nin`, `$exists`.
+`$gte`, `$lt`, `$lte`, `$in`, `$nin`, `$exists`, plus the string
+operators `$startswith` (a prefix) and `$regex` (`re.search` on a string
+value; a non-string value never matches). Backends that push filters down to a
+native query declare which operators they translate: the string operators are not
+among them unless stated, so those backends raise `UnsupportedFilterError`
+rather than mistranslate (the in-memory matcher and client-side-filtering
+backends support them).
 
 Logical operators (top-level): `$and` / `$or` take a list of subfilters;
 `$not` takes a single subfilter.
@@ -1952,6 +1958,7 @@ vd.base.UnsupportedFilterError: Unknown filter operator '$bogus'. ...
 | [`LOGICAL_OPERATORS`](_autosummary/vd.filters.html.md#vd.filters.LOGICAL_OPERATORS)          | Operators used at the top level of a filter to combine subfilters.   |
 |-----------------------------------------------------------------------------|----------------------------------------------------------------------|
 | [`FIELD_OPERATORS`](_autosummary/vd.filters.html.md#vd.filters.FIELD_OPERATORS)            | Operators used inside a `{'field': {...}}` condition.                |
+| [`STRING_OPERATORS`](_autosummary/vd.filters.html.md#vd.filters.STRING_OPERATORS)           | The string operators of the language.                                |
 | [`SUPPORTED_FILTER_OPERATORS`](_autosummary/vd.filters.html.md#vd.filters.SUPPORTED_FILTER_OPERATORS) | Every operator the canonical `vd` filter language defines.           |
 
 ### Functions
@@ -1960,7 +1967,7 @@ vd.base.UnsupportedFilterError: Unknown filter operator '$bogus'. ...
 |-------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [`validate_filter`](_autosummary/vd.filters.html.md#vd.filters.validate_filter)(filter, \*[, supported]) | Walk `filter` and raise [`UnsupportedFilterError`](_autosummary/vd.base.html.md#vd.base.UnsupportedFilterError) on any operator that is unknown or not in `supported`. |
 
-### vd.filters.FIELD_OPERATORS *= frozenset({'$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin'})*
+### vd.filters.FIELD_OPERATORS *= frozenset({'$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$regex', '$startswith'})*
 
 Operators used inside a `{'field': {...}}` condition.
 
@@ -1968,7 +1975,12 @@ Operators used inside a `{'field': {...}}` condition.
 
 Operators used at the top level of a filter to combine subfilters.
 
-### vd.filters.SUPPORTED_FILTER_OPERATORS *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'})*
+### vd.filters.STRING_OPERATORS *= frozenset({'$regex', '$startswith'})*
+
+The string operators of the language. A backend that translates filters to a
+native query and has not implemented these subtracts them from its supported set.
+
+### vd.filters.SUPPORTED_FILTER_OPERATORS *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'})*
 
 Every operator the canonical `vd` filter language defines.
 
@@ -1997,7 +2009,7 @@ True
 True
 ```
 
-### vd.filters.validate_filter(filter, , supported=frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'}))
+### vd.filters.validate_filter(filter, , supported=frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'}))
 
 Walk `filter` and raise [`UnsupportedFilterError`](_autosummary/vd.base.html.md#vd.base.UnsupportedFilterError) on any
 operator that is unknown or not in `supported`.
@@ -2017,10 +2029,10 @@ clear `vd` error up front instead of an opaque backend error later.
 
 ```pycon
 >>> validate_filter({'year': {'$gte': 2020}})            # ok, returns None
->>> validate_filter({'a': {'$regex': '.*'}})             # not in the language
+>>> validate_filter({'a': {'$like': 'x%'}})                # not in the language
 Traceback (most recent call last):
     ...
-vd.base.UnsupportedFilterError: Unknown filter operator '$regex'. ...
+vd.base.UnsupportedFilterError: Unknown filter operator '$like'. ...
 >>> validate_filter({'a': {'$exists': True}}, supported={'$eq'})
 Traceback (most recent call last):
     ...
@@ -2470,7 +2482,7 @@ Return the `limit` documents most similar to `query`.
 * **Return type:**
   [*Iterator*](https://docs.python.org/3/library/typing.html#typing.Iterator)[[*dict*](https://docs.python.org/3/builtins/stdtypes.html#dict)[[*str*](https://docs.python.org/3/builtins/stdtypes.html#str), [*Any*](https://docs.python.org/3/library/typing.html#typing.Any)]]
 
-#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'})*
+#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'})*
 
 the full language.
 Adapters narrow this; [`search()`](_autosummary/vd.search.html.md#module-vd.search) validates against it.
@@ -2648,7 +2660,7 @@ Insert or replace a document (idempotent upsert).
 * **Return type:**
   [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
-#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'})*
+#### supported_filter_operators *: [frozenset](https://docs.python.org/3/builtins/stdtypes.html#frozenset)* *= frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'})*
 
 the full language.
 Adapters narrow this; [`search()`](_autosummary/vd.search.html.md#module-vd.search) validates against it.
@@ -4750,7 +4762,7 @@ Validate collection integrity and identify issues.
 True
 ```
 
-### vd.validate_filter(filter, , supported=frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or'}))
+### vd.validate_filter(filter, , supported=frozenset({'$and', '$eq', '$exists', '$gt', '$gte', '$in', '$lt', '$lte', '$ne', '$nin', '$not', '$or', '$regex', '$startswith'}))
 
 Walk `filter` and raise [`UnsupportedFilterError`](_autosummary/vd.base.html.md#vd.base.UnsupportedFilterError) on any
 operator that is unknown or not in `supported`.
@@ -4770,10 +4782,10 @@ clear `vd` error up front instead of an opaque backend error later.
 
 ```pycon
 >>> validate_filter({'year': {'$gte': 2020}})            # ok, returns None
->>> validate_filter({'a': {'$regex': '.*'}})             # not in the language
+>>> validate_filter({'a': {'$like': 'x%'}})                # not in the language
 Traceback (most recent call last):
     ...
-vd.base.UnsupportedFilterError: Unknown filter operator '$regex'. ...
+vd.base.UnsupportedFilterError: Unknown filter operator '$like'. ...
 >>> validate_filter({'a': {'$exists': True}}, supported={'$eq'})
 Traceback (most recent call last):
     ...
@@ -6101,18 +6113,16 @@ Egress: keep only the text. `>>> text_only({'text': 'hi'})` -> `'hi'`.
 
 # About this build
 
-This documentation was built on **2026-11-21 22:32 UTC** from commit <a href="https://github.com/i2mint/vd/commit/baaaeaea9cb38d8783f0ff07022242402cb1cbdc"><code>baaaeae</code></a> on branch <code>master</code>, for **vd 0.2.20** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 11:53 UTC** from commit <a href="https://github.com/i2mint/vd/commit/26e9e20f4cb3a98df5efd443c9ed555707bcc23f"><code>26e9e20</code></a> on branch <code>master</code>, for **vd 0.2.21** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.2.20) is behind the latest release on PyPI (0.2.21): `pip install vd` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                  |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/vd/commit/baaaeaea9cb38d8783f0ff07022242402cb1cbdc"><code>baaaeaea9cb38d8783f0ff07022242402cb1cbdc</code></a> |
+| Commit              | <a href="https://github.com/i2mint/vd/commit/26e9e20f4cb3a98df5efd443c9ed555707bcc23f"><code>26e9e20f4cb3a98df5efd443c9ed555707bcc23f</code></a> |
 | Branch              | <code>master</code>                                                                                                                              |
 | Tags at this commit | none                                                                                                                                             |
 | Working tree        | clean                                                                                                                                            |
@@ -6123,9 +6133,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/vd</code>                                                                     |
-| Run          | <a href="https://github.com/i2mint/vd/actions/runs/44957114546">44957114546</a>            |
+| Run          | <a href="https://github.com/i2mint/vd/actions/runs/45019370379">45019370379</a>            |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>baaaeaea9cb38d8783f0ff07022242402cb1cbdc</code> (in the history of the built commit) |
+| Event commit | <code>26e9e20f4cb3a98df5efd443c9ed555707bcc23f</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -6150,13 +6160,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/vd/0.2.21/">0.2.21</a>, newer than the documented version (0.2.20).
+Latest release: <a href="https://pypi.org/project/vd/0.2.21/">0.2.21</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/vd && cd vd
-git checkout baaaeaea9cb38d8783f0ff07022242402cb1cbdc
+git checkout 26e9e20f4cb3a98df5efd443c9ed555707bcc23f
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

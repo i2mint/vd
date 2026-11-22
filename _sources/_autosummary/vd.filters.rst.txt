@@ -10,6 +10,7 @@ vd.filters
    
       LOGICAL_OPERATORS
       FIELD_OPERATORS
+      STRING_OPERATORS
       SUPPORTED_FILTER_OPERATORS
    
    .. rubric:: Functions
