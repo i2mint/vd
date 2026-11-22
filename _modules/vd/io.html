@@ -435,205 +435,213 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="284">    <span class="p">)</span>
 </span><span data-line="285">
 </span><span data-line="286">    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span data-line="287">    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
-</span><span data-line="288">        <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
-</span><span data-line="289">        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="290">            <span class="s2">"id"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-</span><span data-line="291">            <span class="s2">"text"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
-</span><span data-line="292">            <span class="s2">"metadata"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
-</span><span data-line="293">        <span class="p">}</span>
-</span><span data-line="294">        <span class="k">if</span> <span class="n">include_vectors</span> <span class="ow">and</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
-</span><span data-line="295">            <span class="n">data</span><span class="p">[</span><span class="s2">"vector"</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span>
-</span><span data-line="296">
-</span><span data-line="297">        <span class="c1"># Sanitize filename</span>
-</span><span data-line="298">        <span class="n">safe_id</span> <span class="o">=</span> <span class="n">doc_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span>
-</span><span data-line="299">        <span class="n">file_path</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">safe_id</span><span class="si">}</span><span class="s2">.json"</span>
-</span><span data-line="300">
-</span><span data-line="301">        <span class="n">file_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
-</span><span data-line="302">            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span>
-</span><span data-line="303">        <span class="p">)</span>
-</span><span data-line="304">        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span data-line="305">
-</span><span data-line="306">    <span class="k">return</span> <span class="n">count</span></div>
-
-</span><span data-line="307">
+</span><span data-line="287">    <span class="n">used_names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"_metadata"</span><span class="p">}</span>  <span class="c1"># the metadata file's stem is reserved</span>
+</span><span data-line="288">    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+</span><span data-line="289">        <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+</span><span data-line="290">        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="291">            <span class="s2">"id"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+</span><span data-line="292">            <span class="s2">"text"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+</span><span data-line="293">            <span class="s2">"metadata"</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+</span><span data-line="294">        <span class="p">}</span>
+</span><span data-line="295">        <span class="k">if</span> <span class="n">include_vectors</span> <span class="ow">and</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
+</span><span data-line="296">            <span class="n">data</span><span class="p">[</span><span class="s2">"vector"</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span>
+</span><span data-line="297">
+</span><span data-line="298">        <span class="c1"># Sanitize filename</span>
+</span><span data-line="299">        <span class="n">safe_id</span> <span class="o">=</span> <span class="n">doc_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span>
+</span><span data-line="300">        <span class="c1"># Ids that sanitize alike (e.g. 'a/b' and 'a_b') must not share a file</span>
+</span><span data-line="301">        <span class="c1"># (the real id is stored inside the file, so a suffix is harmless)</span>
+</span><span data-line="302">        <span class="n">file_stem</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">safe_id</span><span class="p">,</span> <span class="mi">1</span>
+</span><span data-line="303">        <span class="k">while</span> <span class="n">file_stem</span> <span class="ow">in</span> <span class="n">used_names</span><span class="p">:</span>
+</span><span data-line="304">            <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span data-line="305">            <span class="n">file_stem</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">safe_id</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">"</span>
+</span><span data-line="306">        <span class="n">used_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">file_stem</span><span class="p">)</span>
+</span><span data-line="307">        <span class="n">file_path</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">file_stem</span><span class="si">}</span><span class="s2">.json"</span>
 </span><span data-line="308">
+</span><span data-line="309">        <span class="n">file_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+</span><span data-line="310">            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span>
+</span><span data-line="311">        <span class="p">)</span>
+</span><span data-line="312">        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span data-line="313">
+</span><span data-line="314">    <span class="k">return</span> <span class="n">count</span></div>
+
+</span><span data-line="315">
+</span><span data-line="316">
 <div class="viewcode-block" id="import_from_directory">
 <a class="viewcode-back" href="../../_autosummary/vd.io.html#vd.import_from_directory">[docs]</a>
-</span><span data-line="309"><span class="k">def</span><span class="w"> </span><span class="nf">import_from_directory</span><span class="p">(</span>
-</span><span data-line="310">    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
-</span><span data-line="311">    <span class="n">input_dir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-</span><span data-line="312">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="313">    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-</span><span data-line="314">    <span class="n">skip_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span data-line="315">    <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"*.json"</span><span class="p">,</span>
-</span><span data-line="316"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span data-line="317"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="318"><span class="sd">    Import documents from a directory of JSON files.</span>
-</span><span data-line="319">
-</span><span data-line="320"><span class="sd">    Parameters</span>
-</span><span data-line="321"><span class="sd">    ----------</span>
-</span><span data-line="322"><span class="sd">    collection : Collection</span>
-</span><span data-line="323"><span class="sd">        Collection to import into</span>
-</span><span data-line="324"><span class="sd">    input_dir : str or Path</span>
-</span><span data-line="325"><span class="sd">        Input directory path</span>
-</span><span data-line="326"><span class="sd">    batch_size : int, default 100</span>
-</span><span data-line="327"><span class="sd">        Batch size for adding documents</span>
-</span><span data-line="328"><span class="sd">    skip_existing : bool, default False</span>
-</span><span data-line="329"><span class="sd">        If True, skip documents with IDs that already exist</span>
-</span><span data-line="330"><span class="sd">    pattern : str, default '*.json'</span>
-</span><span data-line="331"><span class="sd">        File pattern to match</span>
-</span><span data-line="332">
-</span><span data-line="333"><span class="sd">    Returns</span>
-</span><span data-line="334"><span class="sd">    -------</span>
-</span><span data-line="335"><span class="sd">    int</span>
-</span><span data-line="336"><span class="sd">        Number of documents imported</span>
-</span><span data-line="337"><span class="sd">    """</span>
-</span><span data-line="338">    <span class="n">input_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_dir</span><span class="p">)</span>
-</span><span data-line="339">    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span data-line="340">    <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="341">
-</span><span data-line="342">    <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">input_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
-</span><span data-line="343">        <span class="c1"># Skip metadata file</span>
-</span><span data-line="344">        <span class="k">if</span> <span class="n">file_path</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">"_metadata.json"</span><span class="p">:</span>
-</span><span data-line="345">            <span class="k">continue</span>
-</span><span data-line="346">
-</span><span data-line="347">        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">file_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">))</span>
-</span><span data-line="348">
-</span><span data-line="349">        <span class="c1"># Check if we should skip</span>
-</span><span data-line="350">        <span class="k">if</span> <span class="n">skip_existing</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
-</span><span data-line="351">            <span class="k">continue</span>
-</span><span data-line="352">
-</span><span data-line="353">        <span class="c1"># Create document</span>
-</span><span data-line="354">        <span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
-</span><span data-line="355">            <span class="nb">id</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
-</span><span data-line="356">            <span class="n">text</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"text"</span><span class="p">],</span>
-</span><span data-line="357">            <span class="n">vector</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"vector"</span><span class="p">),</span>
-</span><span data-line="358">            <span class="n">metadata</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"metadata"</span><span class="p">,</span> <span class="p">{}),</span>
-</span><span data-line="359">        <span class="p">)</span>
+</span><span data-line="317"><span class="k">def</span><span class="w"> </span><span class="nf">import_from_directory</span><span class="p">(</span>
+</span><span data-line="318">    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+</span><span data-line="319">    <span class="n">input_dir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+</span><span data-line="320">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="321">    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+</span><span data-line="322">    <span class="n">skip_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="323">    <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"*.json"</span><span class="p">,</span>
+</span><span data-line="324"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span data-line="325"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="326"><span class="sd">    Import documents from a directory of JSON files.</span>
+</span><span data-line="327">
+</span><span data-line="328"><span class="sd">    Parameters</span>
+</span><span data-line="329"><span class="sd">    ----------</span>
+</span><span data-line="330"><span class="sd">    collection : Collection</span>
+</span><span data-line="331"><span class="sd">        Collection to import into</span>
+</span><span data-line="332"><span class="sd">    input_dir : str or Path</span>
+</span><span data-line="333"><span class="sd">        Input directory path</span>
+</span><span data-line="334"><span class="sd">    batch_size : int, default 100</span>
+</span><span data-line="335"><span class="sd">        Batch size for adding documents</span>
+</span><span data-line="336"><span class="sd">    skip_existing : bool, default False</span>
+</span><span data-line="337"><span class="sd">        If True, skip documents with IDs that already exist</span>
+</span><span data-line="338"><span class="sd">    pattern : str, default '*.json'</span>
+</span><span data-line="339"><span class="sd">        File pattern to match</span>
+</span><span data-line="340">
+</span><span data-line="341"><span class="sd">    Returns</span>
+</span><span data-line="342"><span class="sd">    -------</span>
+</span><span data-line="343"><span class="sd">    int</span>
+</span><span data-line="344"><span class="sd">        Number of documents imported</span>
+</span><span data-line="345"><span class="sd">    """</span>
+</span><span data-line="346">    <span class="n">input_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_dir</span><span class="p">)</span>
+</span><span data-line="347">    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="348">    <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="349">
+</span><span data-line="350">    <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">input_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+</span><span data-line="351">        <span class="c1"># Skip metadata file</span>
+</span><span data-line="352">        <span class="k">if</span> <span class="n">file_path</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">"_metadata.json"</span><span class="p">:</span>
+</span><span data-line="353">            <span class="k">continue</span>
+</span><span data-line="354">
+</span><span data-line="355">        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">file_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">))</span>
+</span><span data-line="356">
+</span><span data-line="357">        <span class="c1"># Check if we should skip</span>
+</span><span data-line="358">        <span class="k">if</span> <span class="n">skip_existing</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+</span><span data-line="359">            <span class="k">continue</span>
 </span><span data-line="360">
-</span><span data-line="361">        <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
-</span><span data-line="362">        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span data-line="363">
-</span><span data-line="364">        <span class="c1"># Flush batch</span>
-</span><span data-line="365">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">batch_size</span><span class="p">:</span>
-</span><span data-line="366">            <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-</span><span data-line="367">            <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="361">        <span class="c1"># Create document</span>
+</span><span data-line="362">        <span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
+</span><span data-line="363">            <span class="nb">id</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
+</span><span data-line="364">            <span class="n">text</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"text"</span><span class="p">],</span>
+</span><span data-line="365">            <span class="n">vector</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"vector"</span><span class="p">),</span>
+</span><span data-line="366">            <span class="n">metadata</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"metadata"</span><span class="p">,</span> <span class="p">{}),</span>
+</span><span data-line="367">        <span class="p">)</span>
 </span><span data-line="368">
-</span><span data-line="369">    <span class="c1"># Flush remaining</span>
-</span><span data-line="370">    <span class="k">if</span> <span class="n">batch</span><span class="p">:</span>
-</span><span data-line="371">        <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-</span><span data-line="372">
-</span><span data-line="373">    <span class="k">return</span> <span class="n">count</span></div>
+</span><span data-line="369">        <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</span><span data-line="370">        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span data-line="371">
+</span><span data-line="372">        <span class="c1"># Flush batch</span>
+</span><span data-line="373">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">batch_size</span><span class="p">:</span>
+</span><span data-line="374">            <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+</span><span data-line="375">            <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="376">
+</span><span data-line="377">    <span class="c1"># Flush remaining</span>
+</span><span data-line="378">    <span class="k">if</span> <span class="n">batch</span><span class="p">:</span>
+</span><span data-line="379">        <span class="n">collection</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+</span><span data-line="380">
+</span><span data-line="381">    <span class="k">return</span> <span class="n">count</span></div>
 
-</span><span data-line="374">
-</span><span data-line="375">
-</span><span data-line="376"><span class="c1"># Convenience functions to add to Collection (can be monkey-patched or used via helper)</span>
-</span><span data-line="377">
-</span><span data-line="378">
+</span><span data-line="382">
+</span><span data-line="383">
+</span><span data-line="384"><span class="c1"># Convenience functions to add to Collection (can be monkey-patched or used via helper)</span>
+</span><span data-line="385">
+</span><span data-line="386">
 <div class="viewcode-block" id="export_collection">
 <a class="viewcode-back" href="../../_autosummary/vd.io.html#vd.export_collection">[docs]</a>
-</span><span data-line="379"><span class="k">def</span><span class="w"> </span><span class="nf">export_collection</span><span class="p">(</span>
-</span><span data-line="380">    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
-</span><span data-line="381">    <span class="n">output_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-</span><span data-line="382">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="383">    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"jsonl"</span><span class="p">,</span>
-</span><span data-line="384">    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span data-line="385"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span data-line="386"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="387"><span class="sd">    Export a collection to a file in the specified format.</span>
-</span><span data-line="388">
-</span><span data-line="389"><span class="sd">    Parameters</span>
-</span><span data-line="390"><span class="sd">    ----------</span>
-</span><span data-line="391"><span class="sd">    collection : Collection</span>
-</span><span data-line="392"><span class="sd">        Collection to export</span>
-</span><span data-line="393"><span class="sd">    output_path : str or Path</span>
-</span><span data-line="394"><span class="sd">        Output file/directory path</span>
-</span><span data-line="395"><span class="sd">    format : str</span>
-</span><span data-line="396"><span class="sd">        Export format: 'jsonl', 'json', 'directory'</span>
-</span><span data-line="397"><span class="sd">    **kwargs</span>
-</span><span data-line="398"><span class="sd">        Additional format-specific options</span>
-</span><span data-line="399">
-</span><span data-line="400"><span class="sd">    Returns</span>
-</span><span data-line="401"><span class="sd">    -------</span>
-</span><span data-line="402"><span class="sd">    int</span>
-</span><span data-line="403"><span class="sd">        Number of documents exported</span>
-</span><span data-line="404">
-</span><span data-line="405"><span class="sd">    Examples</span>
-</span><span data-line="406"><span class="sd">    --------</span>
-</span><span data-line="407"><span class="sd">    &gt;&gt;&gt; import vd</span>
-</span><span data-line="408"><span class="sd">    &gt;&gt;&gt; client = vd.connect('memory')  # doctest: +SKIP</span>
-</span><span data-line="409"><span class="sd">    &gt;&gt;&gt; docs = client.create_collection('test')  # doctest: +SKIP</span>
-</span><span data-line="410"><span class="sd">    &gt;&gt;&gt; vd.export_collection(docs, 'backup.jsonl')  # doctest: +SKIP</span>
-</span><span data-line="411"><span class="sd">    """</span>
-</span><span data-line="412">    <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"jsonl"</span><span class="p">:</span>
-</span><span data-line="413">        <span class="k">return</span> <span class="n">export_to_jsonl</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="414">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"json"</span><span class="p">:</span>
-</span><span data-line="415">        <span class="k">return</span> <span class="n">export_to_json</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="416">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"directory"</span><span class="p">:</span>
-</span><span data-line="417">        <span class="k">return</span> <span class="n">export_to_directory</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="418">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="419">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown format: </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+</span><span data-line="387"><span class="k">def</span><span class="w"> </span><span class="nf">export_collection</span><span class="p">(</span>
+</span><span data-line="388">    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+</span><span data-line="389">    <span class="n">output_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+</span><span data-line="390">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="391">    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"jsonl"</span><span class="p">,</span>
+</span><span data-line="392">    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span data-line="393"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span data-line="394"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="395"><span class="sd">    Export a collection to a file in the specified format.</span>
+</span><span data-line="396">
+</span><span data-line="397"><span class="sd">    Parameters</span>
+</span><span data-line="398"><span class="sd">    ----------</span>
+</span><span data-line="399"><span class="sd">    collection : Collection</span>
+</span><span data-line="400"><span class="sd">        Collection to export</span>
+</span><span data-line="401"><span class="sd">    output_path : str or Path</span>
+</span><span data-line="402"><span class="sd">        Output file/directory path</span>
+</span><span data-line="403"><span class="sd">    format : str</span>
+</span><span data-line="404"><span class="sd">        Export format: 'jsonl', 'json', 'directory'</span>
+</span><span data-line="405"><span class="sd">    **kwargs</span>
+</span><span data-line="406"><span class="sd">        Additional format-specific options</span>
+</span><span data-line="407">
+</span><span data-line="408"><span class="sd">    Returns</span>
+</span><span data-line="409"><span class="sd">    -------</span>
+</span><span data-line="410"><span class="sd">    int</span>
+</span><span data-line="411"><span class="sd">        Number of documents exported</span>
+</span><span data-line="412">
+</span><span data-line="413"><span class="sd">    Examples</span>
+</span><span data-line="414"><span class="sd">    --------</span>
+</span><span data-line="415"><span class="sd">    &gt;&gt;&gt; import vd</span>
+</span><span data-line="416"><span class="sd">    &gt;&gt;&gt; client = vd.connect('memory')  # doctest: +SKIP</span>
+</span><span data-line="417"><span class="sd">    &gt;&gt;&gt; docs = client.create_collection('test')  # doctest: +SKIP</span>
+</span><span data-line="418"><span class="sd">    &gt;&gt;&gt; vd.export_collection(docs, 'backup.jsonl')  # doctest: +SKIP</span>
+</span><span data-line="419"><span class="sd">    """</span>
+</span><span data-line="420">    <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"jsonl"</span><span class="p">:</span>
+</span><span data-line="421">        <span class="k">return</span> <span class="n">export_to_jsonl</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="422">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"json"</span><span class="p">:</span>
+</span><span data-line="423">        <span class="k">return</span> <span class="n">export_to_json</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="424">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"directory"</span><span class="p">:</span>
+</span><span data-line="425">        <span class="k">return</span> <span class="n">export_to_directory</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="426">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="427">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown format: </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
-</span><span data-line="420">
-</span><span data-line="421">
+</span><span data-line="428">
+</span><span data-line="429">
 <div class="viewcode-block" id="import_collection">
 <a class="viewcode-back" href="../../_autosummary/vd.io.html#vd.import_collection">[docs]</a>
-</span><span data-line="422"><span class="k">def</span><span class="w"> </span><span class="nf">import_collection</span><span class="p">(</span>
-</span><span data-line="423">    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
-</span><span data-line="424">    <span class="n">input_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-</span><span data-line="425">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="426">    <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="427">    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span data-line="428"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span data-line="429"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="430"><span class="sd">    Import documents into a collection from a file.</span>
-</span><span data-line="431">
-</span><span data-line="432"><span class="sd">    Parameters</span>
-</span><span data-line="433"><span class="sd">    ----------</span>
-</span><span data-line="434"><span class="sd">    collection : Collection</span>
-</span><span data-line="435"><span class="sd">        Collection to import into</span>
-</span><span data-line="436"><span class="sd">    input_path : str or Path</span>
-</span><span data-line="437"><span class="sd">        Input file/directory path</span>
-</span><span data-line="438"><span class="sd">    format : str, optional</span>
-</span><span data-line="439"><span class="sd">        Import format: 'jsonl', 'json', 'directory'</span>
-</span><span data-line="440"><span class="sd">        If None, inferred from file extension</span>
-</span><span data-line="441"><span class="sd">    **kwargs</span>
-</span><span data-line="442"><span class="sd">        Additional format-specific options</span>
-</span><span data-line="443">
-</span><span data-line="444"><span class="sd">    Returns</span>
-</span><span data-line="445"><span class="sd">    -------</span>
-</span><span data-line="446"><span class="sd">    int</span>
-</span><span data-line="447"><span class="sd">        Number of documents imported</span>
-</span><span data-line="448">
-</span><span data-line="449"><span class="sd">    Examples</span>
-</span><span data-line="450"><span class="sd">    --------</span>
-</span><span data-line="451"><span class="sd">    &gt;&gt;&gt; import vd</span>
-</span><span data-line="452"><span class="sd">    &gt;&gt;&gt; client = vd.connect('memory')  # doctest: +SKIP</span>
-</span><span data-line="453"><span class="sd">    &gt;&gt;&gt; docs = client.create_collection('test')  # doctest: +SKIP</span>
-</span><span data-line="454"><span class="sd">    &gt;&gt;&gt; vd.import_collection(docs, 'backup.jsonl')  # doctest: +SKIP</span>
-</span><span data-line="455"><span class="sd">    """</span>
-</span><span data-line="456">    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
-</span><span data-line="457">
-</span><span data-line="458">    <span class="c1"># Infer format if not specified</span>
-</span><span data-line="459">    <span class="k">if</span> <span class="nb">format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="460">        <span class="k">if</span> <span class="n">input_path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-</span><span data-line="461">            <span class="nb">format</span> <span class="o">=</span> <span class="s2">"directory"</span>
-</span><span data-line="462">        <span class="k">elif</span> <span class="n">input_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".jsonl"</span><span class="p">:</span>
-</span><span data-line="463">            <span class="nb">format</span> <span class="o">=</span> <span class="s2">"jsonl"</span>
-</span><span data-line="464">        <span class="k">elif</span> <span class="n">input_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".json"</span><span class="p">:</span>
-</span><span data-line="465">            <span class="nb">format</span> <span class="o">=</span> <span class="s2">"json"</span>
-</span><span data-line="466">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="467">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot infer format from path: </span><span class="si">{</span><span class="n">input_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span data-line="468">
-</span><span data-line="469">    <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"jsonl"</span><span class="p">:</span>
-</span><span data-line="470">        <span class="k">return</span> <span class="n">import_from_jsonl</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="471">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"json"</span><span class="p">:</span>
-</span><span data-line="472">        <span class="k">return</span> <span class="n">import_from_json</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="473">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"directory"</span><span class="p">:</span>
-</span><span data-line="474">        <span class="k">return</span> <span class="n">import_from_directory</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="475">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="476">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown format: </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+</span><span data-line="430"><span class="k">def</span><span class="w"> </span><span class="nf">import_collection</span><span class="p">(</span>
+</span><span data-line="431">    <span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">,</span>
+</span><span data-line="432">    <span class="n">input_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+</span><span data-line="433">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="434">    <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="435">    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span data-line="436"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span data-line="437"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="438"><span class="sd">    Import documents into a collection from a file.</span>
+</span><span data-line="439">
+</span><span data-line="440"><span class="sd">    Parameters</span>
+</span><span data-line="441"><span class="sd">    ----------</span>
+</span><span data-line="442"><span class="sd">    collection : Collection</span>
+</span><span data-line="443"><span class="sd">        Collection to import into</span>
+</span><span data-line="444"><span class="sd">    input_path : str or Path</span>
+</span><span data-line="445"><span class="sd">        Input file/directory path</span>
+</span><span data-line="446"><span class="sd">    format : str, optional</span>
+</span><span data-line="447"><span class="sd">        Import format: 'jsonl', 'json', 'directory'</span>
+</span><span data-line="448"><span class="sd">        If None, inferred from file extension</span>
+</span><span data-line="449"><span class="sd">    **kwargs</span>
+</span><span data-line="450"><span class="sd">        Additional format-specific options</span>
+</span><span data-line="451">
+</span><span data-line="452"><span class="sd">    Returns</span>
+</span><span data-line="453"><span class="sd">    -------</span>
+</span><span data-line="454"><span class="sd">    int</span>
+</span><span data-line="455"><span class="sd">        Number of documents imported</span>
+</span><span data-line="456">
+</span><span data-line="457"><span class="sd">    Examples</span>
+</span><span data-line="458"><span class="sd">    --------</span>
+</span><span data-line="459"><span class="sd">    &gt;&gt;&gt; import vd</span>
+</span><span data-line="460"><span class="sd">    &gt;&gt;&gt; client = vd.connect('memory')  # doctest: +SKIP</span>
+</span><span data-line="461"><span class="sd">    &gt;&gt;&gt; docs = client.create_collection('test')  # doctest: +SKIP</span>
+</span><span data-line="462"><span class="sd">    &gt;&gt;&gt; vd.import_collection(docs, 'backup.jsonl')  # doctest: +SKIP</span>
+</span><span data-line="463"><span class="sd">    """</span>
+</span><span data-line="464">    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+</span><span data-line="465">
+</span><span data-line="466">    <span class="c1"># Infer format if not specified</span>
+</span><span data-line="467">    <span class="k">if</span> <span class="nb">format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="468">        <span class="k">if</span> <span class="n">input_path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+</span><span data-line="469">            <span class="nb">format</span> <span class="o">=</span> <span class="s2">"directory"</span>
+</span><span data-line="470">        <span class="k">elif</span> <span class="n">input_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".jsonl"</span><span class="p">:</span>
+</span><span data-line="471">            <span class="nb">format</span> <span class="o">=</span> <span class="s2">"jsonl"</span>
+</span><span data-line="472">        <span class="k">elif</span> <span class="n">input_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".json"</span><span class="p">:</span>
+</span><span data-line="473">            <span class="nb">format</span> <span class="o">=</span> <span class="s2">"json"</span>
+</span><span data-line="474">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="475">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot infer format from path: </span><span class="si">{</span><span class="n">input_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="476">
+</span><span data-line="477">    <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"jsonl"</span><span class="p">:</span>
+</span><span data-line="478">        <span class="k">return</span> <span class="n">import_from_jsonl</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="479">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"json"</span><span class="p">:</span>
+</span><span data-line="480">        <span class="k">return</span> <span class="n">import_from_json</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="481">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"directory"</span><span class="p">:</span>
+</span><span data-line="482">        <span class="k">return</span> <span class="n">import_from_directory</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="483">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="484">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown format: </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">
@@ -662,7 +670,7 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="../../_static/documentation_options.js?v=171860b8"></script>
+      <script src="../../_static/documentation_options.js?v=dc91f075"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

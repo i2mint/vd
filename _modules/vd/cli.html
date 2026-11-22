@@ -377,164 +377,187 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="214">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Benchmarking search on </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">collection</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>
 </span><span data-line="215">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Running </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">queries</span><span class="si">}</span><span class="s2"> queries..."</span><span class="p">)</span>
 </span><span data-line="216">
-</span><span data-line="217">    <span class="c1"># Benchmark</span>
-</span><span data-line="218">    <span class="n">results</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">benchmark_search</span><span class="p">(</span>
-</span><span data-line="219">        <span class="n">collection</span><span class="p">,</span>
-</span><span data-line="220">        <span class="n">args</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
-</span><span data-line="221">        <span class="n">n_queries</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">queries</span><span class="p">,</span>
-</span><span data-line="222">        <span class="n">limit</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">limit</span><span class="p">,</span>
-</span><span data-line="223">    <span class="p">)</span>
-</span><span data-line="224">
-</span><span data-line="225">    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Results:"</span><span class="p">)</span>
-</span><span data-line="226">    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-</span><span data-line="227">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total time: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'total_time'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>
-</span><span data-line="228">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Average latency: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'avg_latency'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms"</span><span class="p">)</span>
-</span><span data-line="229">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Min latency: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'min_latency'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms"</span><span class="p">)</span>
-</span><span data-line="230">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Max latency: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'max_latency'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms"</span><span class="p">)</span>
-</span><span data-line="231">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"P50: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'p50'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms"</span><span class="p">)</span>
-</span><span data-line="232">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"P95: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'p95'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms"</span><span class="p">)</span>
-</span><span data-line="233">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"P99: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'p99'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms"</span><span class="p">)</span>
-</span><span data-line="234">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Throughput: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'queries_per_second'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> queries/sec"</span><span class="p">)</span></div>
+</span><span data-line="217">    <span class="c1"># The CLI connects without an embedder, so a text query only works on</span>
+</span><span data-line="218">    <span class="c1"># embedding clients; on a vector-only collection use a stored vector instead.</span>
+</span><span data-line="219">    <span class="n">query</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">query</span>
+</span><span data-line="220">    <span class="k">try</span><span class="p">:</span>
+</span><span data-line="221">        <span class="nb">list</span><span class="p">(</span><span class="n">collection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+</span><span data-line="222">    <span class="k">except</span> <span class="n">vd</span><span class="o">.</span><span class="n">EmbeddingRequiredError</span><span class="p">:</span>
+</span><span data-line="223">        <span class="n">query</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+</span><span data-line="224">            <span class="p">(</span>
+</span><span data-line="225">                <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span><span class="o">.</span><span class="n">vector</span>
+</span><span data-line="226">                <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span>
+</span><span data-line="227">                <span class="k">if</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span><span class="o">.</span><span class="n">vector</span>
+</span><span data-line="228">            <span class="p">),</span>
+</span><span data-line="229">            <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="230">        <span class="p">)</span>
+</span><span data-line="231">        <span class="k">if</span> <span class="n">query</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="232">            <span class="nb">print</span><span class="p">(</span>
+</span><span data-line="233">                <span class="s2">"Error: collection has no vectors and no embedder is configured; "</span>
+</span><span data-line="234">                <span class="s2">"cannot benchmark search."</span><span class="p">,</span>
+</span><span data-line="235">                <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+</span><span data-line="236">            <span class="p">)</span>
+</span><span data-line="237">            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span data-line="238">        <span class="nb">print</span><span class="p">(</span><span class="s2">"No embedder configured: benchmarking with a stored vector as query."</span><span class="p">)</span>
+</span><span data-line="239">
+</span><span data-line="240">    <span class="c1"># Benchmark</span>
+</span><span data-line="241">    <span class="n">results</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">benchmark_search</span><span class="p">(</span>
+</span><span data-line="242">        <span class="n">collection</span><span class="p">,</span>
+</span><span data-line="243">        <span class="n">query</span><span class="p">,</span>
+</span><span data-line="244">        <span class="n">n_queries</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">queries</span><span class="p">,</span>
+</span><span data-line="245">        <span class="n">limit</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">limit</span><span class="p">,</span>
+</span><span data-line="246">    <span class="p">)</span>
+</span><span data-line="247">
+</span><span data-line="248">    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Results:"</span><span class="p">)</span>
+</span><span data-line="249">    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+</span><span data-line="250">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total time: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'total_time'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>
+</span><span data-line="251">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Average latency: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'avg_latency'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms"</span><span class="p">)</span>
+</span><span data-line="252">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Min latency: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'min_latency'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms"</span><span class="p">)</span>
+</span><span data-line="253">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Max latency: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'max_latency'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms"</span><span class="p">)</span>
+</span><span data-line="254">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"P50: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'p50'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms"</span><span class="p">)</span>
+</span><span data-line="255">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"P95: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'p95'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms"</span><span class="p">)</span>
+</span><span data-line="256">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"P99: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'p99'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">ms"</span><span class="p">)</span>
+</span><span data-line="257">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Throughput: </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">'queries_per_second'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> queries/sec"</span><span class="p">)</span></div>
 
-</span><span data-line="235">
-</span><span data-line="236">
+</span><span data-line="258">
+</span><span data-line="259">
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../_autosummary/vd.cli.html#vd.cli.main">[docs]</a>
-</span><span data-line="237"><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-</span><span data-line="238"><span class="w">    </span><span class="sd">"""Main CLI entry point."""</span>
-</span><span data-line="239">    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
-</span><span data-line="240">        <span class="n">description</span><span class="o">=</span><span class="s2">"vd - Vector Database Facades CLI"</span><span class="p">,</span>
-</span><span data-line="241">        <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
-</span><span data-line="242">        <span class="n">epilog</span><span class="o">=</span><span class="s2">"""</span>
-</span><span data-line="243"><span class="s2">Examples:</span>
-</span><span data-line="244"><span class="s2">  # List available backends</span>
-</span><span data-line="245"><span class="s2">  vd backends</span>
-</span><span data-line="246">
-</span><span data-line="247"><span class="s2">  # Get installation instructions</span>
-</span><span data-line="248"><span class="s2">  vd install chroma</span>
-</span><span data-line="249">
-</span><span data-line="250"><span class="s2">  # Export a collection</span>
-</span><span data-line="251"><span class="s2">  vd export memory my_docs -o backup.jsonl</span>
-</span><span data-line="252">
-</span><span data-line="253"><span class="s2">  # Import a collection</span>
-</span><span data-line="254"><span class="s2">  vd import chroma my_docs -i backup.jsonl</span>
-</span><span data-line="255">
-</span><span data-line="256"><span class="s2">  # Get collection statistics</span>
-</span><span data-line="257"><span class="s2">  vd stats memory my_docs</span>
-</span><span data-line="258">
-</span><span data-line="259"><span class="s2">  # Migrate between backends</span>
-</span><span data-line="260"><span class="s2">  vd migrate memory my_docs chroma my_docs</span>
-</span><span data-line="261">
-</span><span data-line="262"><span class="s2">  # Benchmark search</span>
-</span><span data-line="263"><span class="s2">  vd benchmark memory my_docs -q "test query"</span>
-</span><span data-line="264"><span class="s2">        """</span><span class="p">,</span>
-</span><span data-line="265">    <span class="p">)</span>
-</span><span data-line="266">
-</span><span data-line="267">    <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s2">"command"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Command to run"</span><span class="p">)</span>
-</span><span data-line="268">
-</span><span data-line="269">    <span class="c1"># Backends command</span>
-</span><span data-line="270">    <span class="n">backends_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-</span><span data-line="271">        <span class="s2">"backends"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"List every vector database vd knows about"</span>
-</span><span data-line="272">    <span class="p">)</span>
-</span><span data-line="273">    <span class="n">backends_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_backends</span><span class="p">)</span>
-</span><span data-line="274">
-</span><span data-line="275">    <span class="c1"># Install info command</span>
-</span><span data-line="276">    <span class="n">install_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-</span><span data-line="277">        <span class="s2">"install"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Get installation instructions"</span>
-</span><span data-line="278">    <span class="p">)</span>
-</span><span data-line="279">    <span class="n">install_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Backend name"</span><span class="p">)</span>
-</span><span data-line="280">    <span class="n">install_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_install_info</span><span class="p">)</span>
+</span><span data-line="260"><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+</span><span data-line="261"><span class="w">    </span><span class="sd">"""Main CLI entry point."""</span>
+</span><span data-line="262">    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+</span><span data-line="263">        <span class="n">description</span><span class="o">=</span><span class="s2">"vd - Vector Database Facades CLI"</span><span class="p">,</span>
+</span><span data-line="264">        <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
+</span><span data-line="265">        <span class="n">epilog</span><span class="o">=</span><span class="s2">"""</span>
+</span><span data-line="266"><span class="s2">Examples:</span>
+</span><span data-line="267"><span class="s2">  # List available backends</span>
+</span><span data-line="268"><span class="s2">  vd backends</span>
+</span><span data-line="269">
+</span><span data-line="270"><span class="s2">  # Get installation instructions</span>
+</span><span data-line="271"><span class="s2">  vd install chroma</span>
+</span><span data-line="272">
+</span><span data-line="273"><span class="s2">  # Export a collection</span>
+</span><span data-line="274"><span class="s2">  vd export memory my_docs -o backup.jsonl</span>
+</span><span data-line="275">
+</span><span data-line="276"><span class="s2">  # Import a collection</span>
+</span><span data-line="277"><span class="s2">  vd import chroma my_docs -i backup.jsonl</span>
+</span><span data-line="278">
+</span><span data-line="279"><span class="s2">  # Get collection statistics</span>
+</span><span data-line="280"><span class="s2">  vd stats memory my_docs</span>
 </span><span data-line="281">
-</span><span data-line="282">    <span class="c1"># Health check command</span>
-</span><span data-line="283">    <span class="n">health_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"health"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Check backend health"</span><span class="p">)</span>
-</span><span data-line="284">    <span class="n">health_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Backend name"</span><span class="p">)</span>
-</span><span data-line="285">    <span class="n">health_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_health_check</span><span class="p">)</span>
-</span><span data-line="286">
-</span><span data-line="287">    <span class="c1"># Export command</span>
-</span><span data-line="288">    <span class="n">export_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"export"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Export a collection"</span><span class="p">)</span>
-</span><span data-line="289">    <span class="n">export_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Backend name"</span><span class="p">)</span>
-</span><span data-line="290">    <span class="n">export_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"collection"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Collection name"</span><span class="p">)</span>
-</span><span data-line="291">    <span class="n">export_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-o"</span><span class="p">,</span> <span class="s2">"--output"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Output file"</span><span class="p">)</span>
-</span><span data-line="292">    <span class="n">export_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-</span><span data-line="293">        <span class="s2">"-f"</span><span class="p">,</span> <span class="s2">"--format"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">"jsonl"</span><span class="p">,</span> <span class="s2">"json"</span><span class="p">,</span> <span class="s2">"directory"</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="s2">"jsonl"</span>
-</span><span data-line="294">    <span class="p">)</span>
-</span><span data-line="295">    <span class="n">export_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-</span><span data-line="296">        <span class="s2">"--no-vectors"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Exclude vectors"</span>
-</span><span data-line="297">    <span class="p">)</span>
-</span><span data-line="298">    <span class="n">export_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_export</span><span class="p">)</span>
-</span><span data-line="299">
-</span><span data-line="300">    <span class="c1"># Import command</span>
-</span><span data-line="301">    <span class="n">import_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"import"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Import into a collection"</span><span class="p">)</span>
-</span><span data-line="302">    <span class="n">import_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Backend name"</span><span class="p">)</span>
-</span><span data-line="303">    <span class="n">import_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"collection"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Collection name"</span><span class="p">)</span>
-</span><span data-line="304">    <span class="n">import_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-i"</span><span class="p">,</span> <span class="s2">"--input"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Input file"</span><span class="p">)</span>
-</span><span data-line="305">    <span class="n">import_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-f"</span><span class="p">,</span> <span class="s2">"--format"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">"jsonl"</span><span class="p">,</span> <span class="s2">"json"</span><span class="p">,</span> <span class="s2">"directory"</span><span class="p">])</span>
-</span><span data-line="306">    <span class="n">import_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-</span><span data-line="307">        <span class="s2">"--skip-existing"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Skip existing documents"</span>
-</span><span data-line="308">    <span class="p">)</span>
-</span><span data-line="309">    <span class="n">import_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_import</span><span class="p">)</span>
-</span><span data-line="310">
-</span><span data-line="311">    <span class="c1"># Stats command</span>
-</span><span data-line="312">    <span class="n">stats_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"stats"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Show collection statistics"</span><span class="p">)</span>
-</span><span data-line="313">    <span class="n">stats_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Backend name"</span><span class="p">)</span>
-</span><span data-line="314">    <span class="n">stats_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"collection"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Collection name"</span><span class="p">)</span>
-</span><span data-line="315">    <span class="n">stats_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-v"</span><span class="p">,</span> <span class="s2">"--verbose"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">)</span>
-</span><span data-line="316">    <span class="n">stats_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_stats</span><span class="p">)</span>
-</span><span data-line="317">
-</span><span data-line="318">    <span class="c1"># Validate command</span>
-</span><span data-line="319">    <span class="n">validate_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"validate"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Validate a collection"</span><span class="p">)</span>
-</span><span data-line="320">    <span class="n">validate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Backend name"</span><span class="p">)</span>
-</span><span data-line="321">    <span class="n">validate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"collection"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Collection name"</span><span class="p">)</span>
-</span><span data-line="322">    <span class="n">validate_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_validate</span><span class="p">)</span>
-</span><span data-line="323">
-</span><span data-line="324">    <span class="c1"># Migrate command</span>
-</span><span data-line="325">    <span class="n">migrate_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-</span><span data-line="326">        <span class="s2">"migrate"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Migrate collection between backends"</span>
-</span><span data-line="327">    <span class="p">)</span>
-</span><span data-line="328">    <span class="n">migrate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"source_backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Source backend"</span><span class="p">)</span>
-</span><span data-line="329">    <span class="n">migrate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"source_collection"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Source collection"</span><span class="p">)</span>
-</span><span data-line="330">    <span class="n">migrate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"target_backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Target backend"</span><span class="p">)</span>
-</span><span data-line="331">    <span class="n">migrate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"target_collection"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Target collection"</span><span class="p">)</span>
-</span><span data-line="332">    <span class="n">migrate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--batch-size"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-</span><span data-line="333">    <span class="n">migrate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-</span><span data-line="334">        <span class="s2">"--recompute-vectors"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Recompute embeddings"</span>
-</span><span data-line="335">    <span class="p">)</span>
-</span><span data-line="336">    <span class="n">migrate_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_migrate</span><span class="p">)</span>
-</span><span data-line="337">
-</span><span data-line="338">    <span class="c1"># Benchmark command</span>
-</span><span data-line="339">    <span class="n">benchmark_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"benchmark"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Benchmark search"</span><span class="p">)</span>
-</span><span data-line="340">    <span class="n">benchmark_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Backend name"</span><span class="p">)</span>
-</span><span data-line="341">    <span class="n">benchmark_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"collection"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Collection name"</span><span class="p">)</span>
-</span><span data-line="342">    <span class="n">benchmark_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-q"</span><span class="p">,</span> <span class="s2">"--query"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"test query"</span><span class="p">)</span>
-</span><span data-line="343">    <span class="n">benchmark_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--queries"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-</span><span data-line="344">    <span class="n">benchmark_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--limit"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-</span><span data-line="345">    <span class="n">benchmark_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_benchmark</span><span class="p">)</span>
+</span><span data-line="282"><span class="s2">  # Migrate between backends</span>
+</span><span data-line="283"><span class="s2">  vd migrate memory my_docs chroma my_docs</span>
+</span><span data-line="284">
+</span><span data-line="285"><span class="s2">  # Benchmark search</span>
+</span><span data-line="286"><span class="s2">  vd benchmark memory my_docs -q "test query"</span>
+</span><span data-line="287"><span class="s2">        """</span><span class="p">,</span>
+</span><span data-line="288">    <span class="p">)</span>
+</span><span data-line="289">
+</span><span data-line="290">    <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s2">"command"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Command to run"</span><span class="p">)</span>
+</span><span data-line="291">
+</span><span data-line="292">    <span class="c1"># Backends command</span>
+</span><span data-line="293">    <span class="n">backends_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+</span><span data-line="294">        <span class="s2">"backends"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"List every vector database vd knows about"</span>
+</span><span data-line="295">    <span class="p">)</span>
+</span><span data-line="296">    <span class="n">backends_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_backends</span><span class="p">)</span>
+</span><span data-line="297">
+</span><span data-line="298">    <span class="c1"># Install info command</span>
+</span><span data-line="299">    <span class="n">install_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+</span><span data-line="300">        <span class="s2">"install"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Get installation instructions"</span>
+</span><span data-line="301">    <span class="p">)</span>
+</span><span data-line="302">    <span class="n">install_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Backend name"</span><span class="p">)</span>
+</span><span data-line="303">    <span class="n">install_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_install_info</span><span class="p">)</span>
+</span><span data-line="304">
+</span><span data-line="305">    <span class="c1"># Health check command</span>
+</span><span data-line="306">    <span class="n">health_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"health"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Check backend health"</span><span class="p">)</span>
+</span><span data-line="307">    <span class="n">health_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Backend name"</span><span class="p">)</span>
+</span><span data-line="308">    <span class="n">health_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_health_check</span><span class="p">)</span>
+</span><span data-line="309">
+</span><span data-line="310">    <span class="c1"># Export command</span>
+</span><span data-line="311">    <span class="n">export_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"export"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Export a collection"</span><span class="p">)</span>
+</span><span data-line="312">    <span class="n">export_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Backend name"</span><span class="p">)</span>
+</span><span data-line="313">    <span class="n">export_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"collection"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Collection name"</span><span class="p">)</span>
+</span><span data-line="314">    <span class="n">export_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-o"</span><span class="p">,</span> <span class="s2">"--output"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Output file"</span><span class="p">)</span>
+</span><span data-line="315">    <span class="n">export_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+</span><span data-line="316">        <span class="s2">"-f"</span><span class="p">,</span> <span class="s2">"--format"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">"jsonl"</span><span class="p">,</span> <span class="s2">"json"</span><span class="p">,</span> <span class="s2">"directory"</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="s2">"jsonl"</span>
+</span><span data-line="317">    <span class="p">)</span>
+</span><span data-line="318">    <span class="n">export_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+</span><span data-line="319">        <span class="s2">"--no-vectors"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Exclude vectors"</span>
+</span><span data-line="320">    <span class="p">)</span>
+</span><span data-line="321">    <span class="n">export_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_export</span><span class="p">)</span>
+</span><span data-line="322">
+</span><span data-line="323">    <span class="c1"># Import command</span>
+</span><span data-line="324">    <span class="n">import_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"import"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Import into a collection"</span><span class="p">)</span>
+</span><span data-line="325">    <span class="n">import_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Backend name"</span><span class="p">)</span>
+</span><span data-line="326">    <span class="n">import_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"collection"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Collection name"</span><span class="p">)</span>
+</span><span data-line="327">    <span class="n">import_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-i"</span><span class="p">,</span> <span class="s2">"--input"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Input file"</span><span class="p">)</span>
+</span><span data-line="328">    <span class="n">import_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-f"</span><span class="p">,</span> <span class="s2">"--format"</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">"jsonl"</span><span class="p">,</span> <span class="s2">"json"</span><span class="p">,</span> <span class="s2">"directory"</span><span class="p">])</span>
+</span><span data-line="329">    <span class="n">import_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+</span><span data-line="330">        <span class="s2">"--skip-existing"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Skip existing documents"</span>
+</span><span data-line="331">    <span class="p">)</span>
+</span><span data-line="332">    <span class="n">import_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_import</span><span class="p">)</span>
+</span><span data-line="333">
+</span><span data-line="334">    <span class="c1"># Stats command</span>
+</span><span data-line="335">    <span class="n">stats_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"stats"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Show collection statistics"</span><span class="p">)</span>
+</span><span data-line="336">    <span class="n">stats_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Backend name"</span><span class="p">)</span>
+</span><span data-line="337">    <span class="n">stats_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"collection"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Collection name"</span><span class="p">)</span>
+</span><span data-line="338">    <span class="n">stats_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-v"</span><span class="p">,</span> <span class="s2">"--verbose"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">)</span>
+</span><span data-line="339">    <span class="n">stats_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_stats</span><span class="p">)</span>
+</span><span data-line="340">
+</span><span data-line="341">    <span class="c1"># Validate command</span>
+</span><span data-line="342">    <span class="n">validate_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"validate"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Validate a collection"</span><span class="p">)</span>
+</span><span data-line="343">    <span class="n">validate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Backend name"</span><span class="p">)</span>
+</span><span data-line="344">    <span class="n">validate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"collection"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Collection name"</span><span class="p">)</span>
+</span><span data-line="345">    <span class="n">validate_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_validate</span><span class="p">)</span>
 </span><span data-line="346">
-</span><span data-line="347">    <span class="c1"># Parse args</span>
-</span><span data-line="348">    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
-</span><span data-line="349">
-</span><span data-line="350">    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span><span class="p">:</span>
-</span><span data-line="351">        <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
-</span><span data-line="352">        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span data-line="353">
-</span><span data-line="354">    <span class="c1"># Run command</span>
-</span><span data-line="355">    <span class="k">try</span><span class="p">:</span>
-</span><span data-line="356">        <span class="n">args</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-</span><span data-line="357">    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-</span><span data-line="358">        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Interrupted"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
-</span><span data-line="359">        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">130</span><span class="p">)</span>
-</span><span data-line="360">    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span data-line="361">        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
-</span><span data-line="362">        <span class="k">if</span> <span class="s2">"--verbose"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="ow">or</span> <span class="s2">"-v"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span>
-</span><span data-line="363">            <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
-</span><span data-line="364">
-</span><span data-line="365">            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
-</span><span data-line="366">        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+</span><span data-line="347">    <span class="c1"># Migrate command</span>
+</span><span data-line="348">    <span class="n">migrate_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+</span><span data-line="349">        <span class="s2">"migrate"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Migrate collection between backends"</span>
+</span><span data-line="350">    <span class="p">)</span>
+</span><span data-line="351">    <span class="n">migrate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"source_backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Source backend"</span><span class="p">)</span>
+</span><span data-line="352">    <span class="n">migrate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"source_collection"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Source collection"</span><span class="p">)</span>
+</span><span data-line="353">    <span class="n">migrate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"target_backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Target backend"</span><span class="p">)</span>
+</span><span data-line="354">    <span class="n">migrate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"target_collection"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Target collection"</span><span class="p">)</span>
+</span><span data-line="355">    <span class="n">migrate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--batch-size"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</span><span data-line="356">    <span class="n">migrate_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+</span><span data-line="357">        <span class="s2">"--recompute-vectors"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Recompute embeddings"</span>
+</span><span data-line="358">    <span class="p">)</span>
+</span><span data-line="359">    <span class="n">migrate_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_migrate</span><span class="p">)</span>
+</span><span data-line="360">
+</span><span data-line="361">    <span class="c1"># Benchmark command</span>
+</span><span data-line="362">    <span class="n">benchmark_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"benchmark"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Benchmark search"</span><span class="p">)</span>
+</span><span data-line="363">    <span class="n">benchmark_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Backend name"</span><span class="p">)</span>
+</span><span data-line="364">    <span class="n">benchmark_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"collection"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Collection name"</span><span class="p">)</span>
+</span><span data-line="365">    <span class="n">benchmark_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-q"</span><span class="p">,</span> <span class="s2">"--query"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"test query"</span><span class="p">)</span>
+</span><span data-line="366">    <span class="n">benchmark_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--queries"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</span><span data-line="367">    <span class="n">benchmark_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--limit"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</span><span data-line="368">    <span class="n">benchmark_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_benchmark</span><span class="p">)</span>
+</span><span data-line="369">
+</span><span data-line="370">    <span class="c1"># Parse args</span>
+</span><span data-line="371">    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+</span><span data-line="372">
+</span><span data-line="373">    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span><span class="p">:</span>
+</span><span data-line="374">        <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
+</span><span data-line="375">        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span data-line="376">
+</span><span data-line="377">    <span class="c1"># Run command</span>
+</span><span data-line="378">    <span class="k">try</span><span class="p">:</span>
+</span><span data-line="379">        <span class="n">args</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</span><span data-line="380">    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+</span><span data-line="381">        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Interrupted"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+</span><span data-line="382">        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">130</span><span class="p">)</span>
+</span><span data-line="383">    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span data-line="384">        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+</span><span data-line="385">        <span class="k">if</span> <span class="s2">"--verbose"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="ow">or</span> <span class="s2">"-v"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span>
+</span><span data-line="386">            <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+</span><span data-line="387">
+</span><span data-line="388">            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+</span><span data-line="389">        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 
-</span><span data-line="367">
-</span><span data-line="368">
-</span><span data-line="369"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-</span><span data-line="370">    <span class="n">main</span><span class="p">()</span>
+</span><span data-line="390">
+</span><span data-line="391">
+</span><span data-line="392"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+</span><span data-line="393">    <span class="n">main</span><span class="p">()</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -562,7 +585,7 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="../../_static/documentation_options.js?v=171860b8"></script>
+      <script src="../../_static/documentation_options.js?v=dc91f075"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

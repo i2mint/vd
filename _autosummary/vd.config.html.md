@@ -30,7 +30,6 @@ VD_
  prefix:
 
 - VD_BACKEND: Override backend name
-- VD_EMBEDDING_MODEL: Override embedding model
 
 * **Parameters:**
   **config** ([`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)) – Configuration dictionary

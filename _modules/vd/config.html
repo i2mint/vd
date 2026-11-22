@@ -376,253 +376,252 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="225">
 </span><span data-line="226"><span class="sd">    Looks for environment variables with the VD_ prefix:</span>
 </span><span data-line="227"><span class="sd">    - VD_BACKEND: Override backend name</span>
-</span><span data-line="228"><span class="sd">    - VD_EMBEDDING_MODEL: Override embedding model</span>
-</span><span data-line="229">
-</span><span data-line="230"><span class="sd">    Parameters</span>
-</span><span data-line="231"><span class="sd">    ----------</span>
-</span><span data-line="232"><span class="sd">    config : dict</span>
-</span><span data-line="233"><span class="sd">        Configuration dictionary</span>
-</span><span data-line="234">
-</span><span data-line="235"><span class="sd">    Returns</span>
-</span><span data-line="236"><span class="sd">    -------</span>
-</span><span data-line="237"><span class="sd">    dict</span>
-</span><span data-line="238"><span class="sd">        Configuration with environment overrides applied</span>
-</span><span data-line="239">
-</span><span data-line="240"><span class="sd">    Examples</span>
-</span><span data-line="241"><span class="sd">    --------</span>
-</span><span data-line="242"><span class="sd">    &gt;&gt;&gt; import os  # doctest: +SKIP</span>
-</span><span data-line="243"><span class="sd">    &gt;&gt;&gt; os.environ['VD_BACKEND'] = 'chroma'  # doctest: +SKIP</span>
-</span><span data-line="244"><span class="sd">    &gt;&gt;&gt; config = apply_env_overrides({'backend': 'memory'})  # doctest: +SKIP</span>
-</span><span data-line="245"><span class="sd">    &gt;&gt;&gt; config['backend']  # doctest: +SKIP</span>
-</span><span data-line="246"><span class="sd">    'chroma'</span>
-</span><span data-line="247"><span class="sd">    """</span>
-</span><span data-line="248">    <span class="n">config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</span><span data-line="249">
-</span><span data-line="250">    <span class="c1"># Override backend</span>
-</span><span data-line="251">    <span class="k">if</span> <span class="s2">"VD_BACKEND"</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
-</span><span data-line="252">        <span class="n">config</span><span class="p">[</span><span class="s2">"backend"</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"VD_BACKEND"</span><span class="p">]</span>
-</span><span data-line="253">
-</span><span data-line="254">    <span class="k">return</span> <span class="n">config</span></div>
+</span><span data-line="228">
+</span><span data-line="229"><span class="sd">    Parameters</span>
+</span><span data-line="230"><span class="sd">    ----------</span>
+</span><span data-line="231"><span class="sd">    config : dict</span>
+</span><span data-line="232"><span class="sd">        Configuration dictionary</span>
+</span><span data-line="233">
+</span><span data-line="234"><span class="sd">    Returns</span>
+</span><span data-line="235"><span class="sd">    -------</span>
+</span><span data-line="236"><span class="sd">    dict</span>
+</span><span data-line="237"><span class="sd">        Configuration with environment overrides applied</span>
+</span><span data-line="238">
+</span><span data-line="239"><span class="sd">    Examples</span>
+</span><span data-line="240"><span class="sd">    --------</span>
+</span><span data-line="241"><span class="sd">    &gt;&gt;&gt; import os  # doctest: +SKIP</span>
+</span><span data-line="242"><span class="sd">    &gt;&gt;&gt; os.environ['VD_BACKEND'] = 'chroma'  # doctest: +SKIP</span>
+</span><span data-line="243"><span class="sd">    &gt;&gt;&gt; config = apply_env_overrides({'backend': 'memory'})  # doctest: +SKIP</span>
+</span><span data-line="244"><span class="sd">    &gt;&gt;&gt; config['backend']  # doctest: +SKIP</span>
+</span><span data-line="245"><span class="sd">    'chroma'</span>
+</span><span data-line="246"><span class="sd">    """</span>
+</span><span data-line="247">    <span class="n">config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span data-line="248">
+</span><span data-line="249">    <span class="c1"># Override backend</span>
+</span><span data-line="250">    <span class="k">if</span> <span class="s2">"VD_BACKEND"</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+</span><span data-line="251">        <span class="n">config</span><span class="p">[</span><span class="s2">"backend"</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"VD_BACKEND"</span><span class="p">]</span>
+</span><span data-line="252">
+</span><span data-line="253">    <span class="k">return</span> <span class="n">config</span></div>
 
+</span><span data-line="254">
 </span><span data-line="255">
-</span><span data-line="256">
 <div class="viewcode-block" id="connect_from_config">
 <a class="viewcode-back" href="../../_autosummary/vd.config.html#vd.connect_from_config">[docs]</a>
-</span><span data-line="257"><span class="k">def</span><span class="w"> </span><span class="nf">connect_from_config</span><span class="p">(</span>
-</span><span data-line="258">    <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="259">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="260">    <span class="n">profile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="261">    <span class="n">apply_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="262">    <span class="n">embedder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="263">    <span class="o">**</span><span class="n">overrides</span><span class="p">,</span>
-</span><span data-line="264"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Client</span><span class="p">:</span>
-</span><span data-line="265"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="266"><span class="sd">    Connect to a backend using configuration from a file.</span>
-</span><span data-line="267">
-</span><span data-line="268"><span class="sd">    Parameters</span>
-</span><span data-line="269"><span class="sd">    ----------</span>
-</span><span data-line="270"><span class="sd">    path : str or Path, optional</span>
-</span><span data-line="271"><span class="sd">        Path to configuration file. If not provided, searches for default</span>
-</span><span data-line="272"><span class="sd">        config files.</span>
-</span><span data-line="273"><span class="sd">    profile : str, optional</span>
-</span><span data-line="274"><span class="sd">        Profile name to use from configuration. Defaults to 'default' or</span>
-</span><span data-line="275"><span class="sd">        the VD_PROFILE environment variable.</span>
-</span><span data-line="276"><span class="sd">    apply_env : bool, default True</span>
-</span><span data-line="277"><span class="sd">        Whether to apply environment variable overrides</span>
-</span><span data-line="278"><span class="sd">    embedder : callable, optional</span>
-</span><span data-line="279"><span class="sd">        Optional ``text -&gt; vector`` convenience embedder, passed to</span>
-</span><span data-line="280"><span class="sd">        :func:`vd.connect`. A vd config file describes the *backend</span>
-</span><span data-line="281"><span class="sd">        connection*, not embedding — embedding stays the caller's concern.</span>
-</span><span data-line="282"><span class="sd">    **overrides</span>
-</span><span data-line="283"><span class="sd">        Additional keyword arguments to override configuration values</span>
-</span><span data-line="284">
-</span><span data-line="285"><span class="sd">    Returns</span>
-</span><span data-line="286"><span class="sd">    -------</span>
-</span><span data-line="287"><span class="sd">    Client</span>
-</span><span data-line="288"><span class="sd">        Connected client instance</span>
-</span><span data-line="289">
-</span><span data-line="290"><span class="sd">    Examples</span>
-</span><span data-line="291"><span class="sd">    --------</span>
-</span><span data-line="292"><span class="sd">    &gt;&gt;&gt; # With a config file</span>
-</span><span data-line="293"><span class="sd">    &gt;&gt;&gt; client = connect_from_config('vd.yaml')  # doctest: +SKIP</span>
-</span><span data-line="294">
-</span><span data-line="295"><span class="sd">    &gt;&gt;&gt; # With a specific profile</span>
-</span><span data-line="296"><span class="sd">    &gt;&gt;&gt; client = connect_from_config('vd.yaml', profile='production')  # doctest: +SKIP</span>
-</span><span data-line="297">
-</span><span data-line="298"><span class="sd">    &gt;&gt;&gt; # With environment variable VD_PROFILE=dev</span>
-</span><span data-line="299"><span class="sd">    &gt;&gt;&gt; client = connect_from_config()  # doctest: +SKIP</span>
-</span><span data-line="300">
-</span><span data-line="301"><span class="sd">    &gt;&gt;&gt; # With overrides</span>
-</span><span data-line="302"><span class="sd">    &gt;&gt;&gt; client = connect_from_config('vd.yaml', persist_directory='./data')  # doctest: +SKIP</span>
-</span><span data-line="303"><span class="sd">    """</span>
-</span><span data-line="304">    <span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
-</span><span data-line="305">
-</span><span data-line="306">    <span class="c1"># Load config</span>
-</span><span data-line="307">    <span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-</span><span data-line="308">
-</span><span data-line="309">    <span class="c1"># Get profile</span>
-</span><span data-line="310">    <span class="n">config</span> <span class="o">=</span> <span class="n">get_profile</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">profile</span><span class="p">)</span>
-</span><span data-line="311">
-</span><span data-line="312">    <span class="c1"># Apply environment variable overrides</span>
-</span><span data-line="313">    <span class="k">if</span> <span class="n">apply_env</span><span class="p">:</span>
-</span><span data-line="314">        <span class="n">config</span> <span class="o">=</span> <span class="n">apply_env_overrides</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-</span><span data-line="315">
-</span><span data-line="316">    <span class="c1"># Apply explicit overrides</span>
-</span><span data-line="317">    <span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">overrides</span><span class="p">)</span>
-</span><span data-line="318">
-</span><span data-line="319">    <span class="c1"># Extract backend name; embedding (if any) stays out of the config file.</span>
-</span><span data-line="320">    <span class="n">backend_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="s2">"memory"</span><span class="p">)</span>
-</span><span data-line="321">    <span class="n">config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"embedding_model"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># tolerate (ignore) legacy config keys</span>
-</span><span data-line="322">    <span class="n">config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"embedder"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span data-line="323">
-</span><span data-line="324">    <span class="c1"># Connect</span>
-</span><span data-line="325">    <span class="k">return</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">backend_name</span><span class="p">,</span> <span class="n">embedder</span><span class="o">=</span><span class="n">embedder</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></div>
+</span><span data-line="256"><span class="k">def</span><span class="w"> </span><span class="nf">connect_from_config</span><span class="p">(</span>
+</span><span data-line="257">    <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="258">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="259">    <span class="n">profile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="260">    <span class="n">apply_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="261">    <span class="n">embedder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="262">    <span class="o">**</span><span class="n">overrides</span><span class="p">,</span>
+</span><span data-line="263"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Client</span><span class="p">:</span>
+</span><span data-line="264"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="265"><span class="sd">    Connect to a backend using configuration from a file.</span>
+</span><span data-line="266">
+</span><span data-line="267"><span class="sd">    Parameters</span>
+</span><span data-line="268"><span class="sd">    ----------</span>
+</span><span data-line="269"><span class="sd">    path : str or Path, optional</span>
+</span><span data-line="270"><span class="sd">        Path to configuration file. If not provided, searches for default</span>
+</span><span data-line="271"><span class="sd">        config files.</span>
+</span><span data-line="272"><span class="sd">    profile : str, optional</span>
+</span><span data-line="273"><span class="sd">        Profile name to use from configuration. Defaults to 'default' or</span>
+</span><span data-line="274"><span class="sd">        the VD_PROFILE environment variable.</span>
+</span><span data-line="275"><span class="sd">    apply_env : bool, default True</span>
+</span><span data-line="276"><span class="sd">        Whether to apply environment variable overrides</span>
+</span><span data-line="277"><span class="sd">    embedder : callable, optional</span>
+</span><span data-line="278"><span class="sd">        Optional ``text -&gt; vector`` convenience embedder, passed to</span>
+</span><span data-line="279"><span class="sd">        :func:`vd.connect`. A vd config file describes the *backend</span>
+</span><span data-line="280"><span class="sd">        connection*, not embedding — embedding stays the caller's concern.</span>
+</span><span data-line="281"><span class="sd">    **overrides</span>
+</span><span data-line="282"><span class="sd">        Additional keyword arguments to override configuration values</span>
+</span><span data-line="283">
+</span><span data-line="284"><span class="sd">    Returns</span>
+</span><span data-line="285"><span class="sd">    -------</span>
+</span><span data-line="286"><span class="sd">    Client</span>
+</span><span data-line="287"><span class="sd">        Connected client instance</span>
+</span><span data-line="288">
+</span><span data-line="289"><span class="sd">    Examples</span>
+</span><span data-line="290"><span class="sd">    --------</span>
+</span><span data-line="291"><span class="sd">    &gt;&gt;&gt; # With a config file</span>
+</span><span data-line="292"><span class="sd">    &gt;&gt;&gt; client = connect_from_config('vd.yaml')  # doctest: +SKIP</span>
+</span><span data-line="293">
+</span><span data-line="294"><span class="sd">    &gt;&gt;&gt; # With a specific profile</span>
+</span><span data-line="295"><span class="sd">    &gt;&gt;&gt; client = connect_from_config('vd.yaml', profile='production')  # doctest: +SKIP</span>
+</span><span data-line="296">
+</span><span data-line="297"><span class="sd">    &gt;&gt;&gt; # With environment variable VD_PROFILE=dev</span>
+</span><span data-line="298"><span class="sd">    &gt;&gt;&gt; client = connect_from_config()  # doctest: +SKIP</span>
+</span><span data-line="299">
+</span><span data-line="300"><span class="sd">    &gt;&gt;&gt; # With overrides</span>
+</span><span data-line="301"><span class="sd">    &gt;&gt;&gt; client = connect_from_config('vd.yaml', persist_directory='./data')  # doctest: +SKIP</span>
+</span><span data-line="302"><span class="sd">    """</span>
+</span><span data-line="303">    <span class="kn">import</span><span class="w"> </span><span class="nn">vd</span>
+</span><span data-line="304">
+</span><span data-line="305">    <span class="c1"># Load config</span>
+</span><span data-line="306">    <span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span><span data-line="307">
+</span><span data-line="308">    <span class="c1"># Get profile</span>
+</span><span data-line="309">    <span class="n">config</span> <span class="o">=</span> <span class="n">get_profile</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">profile</span><span class="p">)</span>
+</span><span data-line="310">
+</span><span data-line="311">    <span class="c1"># Apply environment variable overrides</span>
+</span><span data-line="312">    <span class="k">if</span> <span class="n">apply_env</span><span class="p">:</span>
+</span><span data-line="313">        <span class="n">config</span> <span class="o">=</span> <span class="n">apply_env_overrides</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</span><span data-line="314">
+</span><span data-line="315">    <span class="c1"># Apply explicit overrides</span>
+</span><span data-line="316">    <span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">overrides</span><span class="p">)</span>
+</span><span data-line="317">
+</span><span data-line="318">    <span class="c1"># Extract backend name; embedding (if any) stays out of the config file.</span>
+</span><span data-line="319">    <span class="n">backend_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"backend"</span><span class="p">,</span> <span class="s2">"memory"</span><span class="p">)</span>
+</span><span data-line="320">    <span class="n">config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"embedding_model"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># tolerate (ignore) legacy config keys</span>
+</span><span data-line="321">    <span class="n">config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"embedder"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span data-line="322">
+</span><span data-line="323">    <span class="c1"># Connect</span>
+</span><span data-line="324">    <span class="k">return</span> <span class="n">vd</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">backend_name</span><span class="p">,</span> <span class="n">embedder</span><span class="o">=</span><span class="n">embedder</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></div>
 
+</span><span data-line="325">
 </span><span data-line="326">
-</span><span data-line="327">
 <div class="viewcode-block" id="save_config">
 <a class="viewcode-back" href="../../_autosummary/vd.config.html#vd.save_config">[docs]</a>
-</span><span data-line="328"><span class="k">def</span><span class="w"> </span><span class="nf">save_config</span><span class="p">(</span>
-</span><span data-line="329">    <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-</span><span data-line="330">    <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-</span><span data-line="331">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="332">    <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="333"><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="334"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="335"><span class="sd">    Save configuration to a file.</span>
-</span><span data-line="336">
-</span><span data-line="337"><span class="sd">    Parameters</span>
-</span><span data-line="338"><span class="sd">    ----------</span>
-</span><span data-line="339"><span class="sd">    config : dict</span>
-</span><span data-line="340"><span class="sd">        Configuration dictionary to save</span>
-</span><span data-line="341"><span class="sd">    path : str or Path</span>
-</span><span data-line="342"><span class="sd">        Path to save configuration file</span>
-</span><span data-line="343"><span class="sd">    format : str, optional</span>
-</span><span data-line="344"><span class="sd">        Format to save: 'yaml' or 'toml'. Auto-detected from extension</span>
-</span><span data-line="345"><span class="sd">        if not provided.</span>
-</span><span data-line="346">
-</span><span data-line="347"><span class="sd">    Examples</span>
-</span><span data-line="348"><span class="sd">    --------</span>
-</span><span data-line="349"><span class="sd">    &gt;&gt;&gt; config = {</span>
-</span><span data-line="350"><span class="sd">    ...     'profiles': {</span>
-</span><span data-line="351"><span class="sd">    ...         'dev': {'backend': 'memory'},</span>
-</span><span data-line="352"><span class="sd">    ...         'prod': {'backend': 'chroma', 'persist_directory': './data'}</span>
-</span><span data-line="353"><span class="sd">    ...     }</span>
-</span><span data-line="354"><span class="sd">    ... }</span>
-</span><span data-line="355"><span class="sd">    &gt;&gt;&gt; save_config(config, 'vd.yaml')  # doctest: +SKIP</span>
-</span><span data-line="356"><span class="sd">    """</span>
-</span><span data-line="357">    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-</span><span data-line="358">
-</span><span data-line="359">    <span class="c1"># Auto-detect format</span>
-</span><span data-line="360">    <span class="k">if</span> <span class="nb">format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="361">        <span class="n">suffix</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-</span><span data-line="362">        <span class="k">if</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">".yaml"</span><span class="p">,</span> <span class="s2">".yml"</span><span class="p">]:</span>
-</span><span data-line="363">            <span class="nb">format</span> <span class="o">=</span> <span class="s2">"yaml"</span>
-</span><span data-line="364">        <span class="k">elif</span> <span class="n">suffix</span> <span class="o">==</span> <span class="s2">".toml"</span><span class="p">:</span>
-</span><span data-line="365">            <span class="nb">format</span> <span class="o">=</span> <span class="s2">"toml"</span>
-</span><span data-line="366">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="367">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span data-line="368">                <span class="sa">f</span><span class="s2">"Cannot detect format from extension '</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">'. "</span>
-</span><span data-line="369">                <span class="s2">"Specify format explicitly with format='yaml' or format='toml'"</span>
-</span><span data-line="370">            <span class="p">)</span>
-</span><span data-line="371">
-</span><span data-line="372">    <span class="c1"># Save config</span>
-</span><span data-line="373">    <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"yaml"</span><span class="p">:</span>
-</span><span data-line="374">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="375">            <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
-</span><span data-line="376">        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-</span><span data-line="377">            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-</span><span data-line="378">                <span class="s2">"PyYAML is required for YAML config support. "</span>
-</span><span data-line="379">                <span class="s2">"Install it with: pip install pyyaml"</span>
-</span><span data-line="380">            <span class="p">)</span>
-</span><span data-line="381">
-</span><span data-line="382">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span data-line="383">            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span data-line="384">
-</span><span data-line="385">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"toml"</span><span class="p">:</span>
-</span><span data-line="386">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="387">            <span class="kn">import</span><span class="w"> </span><span class="nn">tomli_w</span>
-</span><span data-line="388">        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-</span><span data-line="389">            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-</span><span data-line="390">                <span class="s2">"tomli-w is required for writing TOML config files. "</span>
-</span><span data-line="391">                <span class="s2">"Install it with: pip install tomli-w"</span>
-</span><span data-line="392">            <span class="p">)</span>
-</span><span data-line="393">
-</span><span data-line="394">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span data-line="395">            <span class="n">tomli_w</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
-</span><span data-line="396">
-</span><span data-line="397">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="398">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported format: </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+</span><span data-line="327"><span class="k">def</span><span class="w"> </span><span class="nf">save_config</span><span class="p">(</span>
+</span><span data-line="328">    <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+</span><span data-line="329">    <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+</span><span data-line="330">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="331">    <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="332"><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="333"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="334"><span class="sd">    Save configuration to a file.</span>
+</span><span data-line="335">
+</span><span data-line="336"><span class="sd">    Parameters</span>
+</span><span data-line="337"><span class="sd">    ----------</span>
+</span><span data-line="338"><span class="sd">    config : dict</span>
+</span><span data-line="339"><span class="sd">        Configuration dictionary to save</span>
+</span><span data-line="340"><span class="sd">    path : str or Path</span>
+</span><span data-line="341"><span class="sd">        Path to save configuration file</span>
+</span><span data-line="342"><span class="sd">    format : str, optional</span>
+</span><span data-line="343"><span class="sd">        Format to save: 'yaml' or 'toml'. Auto-detected from extension</span>
+</span><span data-line="344"><span class="sd">        if not provided.</span>
+</span><span data-line="345">
+</span><span data-line="346"><span class="sd">    Examples</span>
+</span><span data-line="347"><span class="sd">    --------</span>
+</span><span data-line="348"><span class="sd">    &gt;&gt;&gt; config = {</span>
+</span><span data-line="349"><span class="sd">    ...     'profiles': {</span>
+</span><span data-line="350"><span class="sd">    ...         'dev': {'backend': 'memory'},</span>
+</span><span data-line="351"><span class="sd">    ...         'prod': {'backend': 'chroma', 'persist_directory': './data'}</span>
+</span><span data-line="352"><span class="sd">    ...     }</span>
+</span><span data-line="353"><span class="sd">    ... }</span>
+</span><span data-line="354"><span class="sd">    &gt;&gt;&gt; save_config(config, 'vd.yaml')  # doctest: +SKIP</span>
+</span><span data-line="355"><span class="sd">    """</span>
+</span><span data-line="356">    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span><span data-line="357">
+</span><span data-line="358">    <span class="c1"># Auto-detect format</span>
+</span><span data-line="359">    <span class="k">if</span> <span class="nb">format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="360">        <span class="n">suffix</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span data-line="361">        <span class="k">if</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">".yaml"</span><span class="p">,</span> <span class="s2">".yml"</span><span class="p">]:</span>
+</span><span data-line="362">            <span class="nb">format</span> <span class="o">=</span> <span class="s2">"yaml"</span>
+</span><span data-line="363">        <span class="k">elif</span> <span class="n">suffix</span> <span class="o">==</span> <span class="s2">".toml"</span><span class="p">:</span>
+</span><span data-line="364">            <span class="nb">format</span> <span class="o">=</span> <span class="s2">"toml"</span>
+</span><span data-line="365">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="366">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span data-line="367">                <span class="sa">f</span><span class="s2">"Cannot detect format from extension '</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">'. "</span>
+</span><span data-line="368">                <span class="s2">"Specify format explicitly with format='yaml' or format='toml'"</span>
+</span><span data-line="369">            <span class="p">)</span>
+</span><span data-line="370">
+</span><span data-line="371">    <span class="c1"># Save config</span>
+</span><span data-line="372">    <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"yaml"</span><span class="p">:</span>
+</span><span data-line="373">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="374">            <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+</span><span data-line="375">        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+</span><span data-line="376">            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+</span><span data-line="377">                <span class="s2">"PyYAML is required for YAML config support. "</span>
+</span><span data-line="378">                <span class="s2">"Install it with: pip install pyyaml"</span>
+</span><span data-line="379">            <span class="p">)</span>
+</span><span data-line="380">
+</span><span data-line="381">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span data-line="382">            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span data-line="383">
+</span><span data-line="384">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"toml"</span><span class="p">:</span>
+</span><span data-line="385">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="386">            <span class="kn">import</span><span class="w"> </span><span class="nn">tomli_w</span>
+</span><span data-line="387">        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+</span><span data-line="388">            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+</span><span data-line="389">                <span class="s2">"tomli-w is required for writing TOML config files. "</span>
+</span><span data-line="390">                <span class="s2">"Install it with: pip install tomli-w"</span>
+</span><span data-line="391">            <span class="p">)</span>
+</span><span data-line="392">
+</span><span data-line="393">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span data-line="394">            <span class="n">tomli_w</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+</span><span data-line="395">
+</span><span data-line="396">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="397">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported format: </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
+</span><span data-line="398">
 </span><span data-line="399">
-</span><span data-line="400">
 <div class="viewcode-block" id="create_example_config">
 <a class="viewcode-back" href="../../_autosummary/vd.config.html#vd.create_example_config">[docs]</a>
-</span><span data-line="401"><span class="k">def</span><span class="w"> </span><span class="nf">create_example_config</span><span class="p">(</span><span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"yaml"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="402"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="403"><span class="sd">    Generate an example configuration file content.</span>
-</span><span data-line="404">
-</span><span data-line="405"><span class="sd">    Parameters</span>
-</span><span data-line="406"><span class="sd">    ----------</span>
-</span><span data-line="407"><span class="sd">    format : str, default 'yaml'</span>
-</span><span data-line="408"><span class="sd">        Format of configuration: 'yaml' or 'toml'</span>
-</span><span data-line="409">
-</span><span data-line="410"><span class="sd">    Returns</span>
-</span><span data-line="411"><span class="sd">    -------</span>
-</span><span data-line="412"><span class="sd">    str</span>
-</span><span data-line="413"><span class="sd">        Example configuration as a string</span>
-</span><span data-line="414">
-</span><span data-line="415"><span class="sd">    Examples</span>
-</span><span data-line="416"><span class="sd">    --------</span>
-</span><span data-line="417"><span class="sd">    &gt;&gt;&gt; yaml_config = create_example_config('yaml')  # doctest: +SKIP</span>
-</span><span data-line="418"><span class="sd">    &gt;&gt;&gt; print(yaml_config)  # doctest: +SKIP</span>
-</span><span data-line="419"><span class="sd">    &gt;&gt;&gt; toml_config = create_example_config('toml')  # doctest: +SKIP</span>
-</span><span data-line="420"><span class="sd">    """</span>
-</span><span data-line="421">    <span class="c1"># A vd config file describes the *backend connection* only. Embedding is</span>
-</span><span data-line="422">    <span class="c1"># the caller's concern — it is never configured here.</span>
-</span><span data-line="423">    <span class="n">example_config</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="424">        <span class="s2">"profiles"</span><span class="p">:</span> <span class="p">{</span>
-</span><span data-line="425">            <span class="s2">"default"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"backend"</span><span class="p">:</span> <span class="s2">"memory"</span><span class="p">},</span>
-</span><span data-line="426">            <span class="s2">"dev"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"backend"</span><span class="p">:</span> <span class="s2">"memory"</span><span class="p">},</span>
-</span><span data-line="427">            <span class="s2">"prod"</span><span class="p">:</span> <span class="p">{</span>
-</span><span data-line="428">                <span class="s2">"backend"</span><span class="p">:</span> <span class="s2">"chroma"</span><span class="p">,</span>
-</span><span data-line="429">                <span class="s2">"persist_directory"</span><span class="p">:</span> <span class="s2">"./vector_db"</span><span class="p">,</span>
-</span><span data-line="430">            <span class="p">},</span>
-</span><span data-line="431">            <span class="s2">"qdrant_cloud"</span><span class="p">:</span> <span class="p">{</span>
-</span><span data-line="432">                <span class="s2">"backend"</span><span class="p">:</span> <span class="s2">"qdrant"</span><span class="p">,</span>
-</span><span data-line="433">                <span class="s2">"url"</span><span class="p">:</span> <span class="s2">"https://YOUR-CLUSTER.qdrant.io"</span><span class="p">,</span>
-</span><span data-line="434">            <span class="p">},</span>
-</span><span data-line="435">        <span class="p">}</span>
-</span><span data-line="436">    <span class="p">}</span>
-</span><span data-line="437">
-</span><span data-line="438">    <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"yaml"</span><span class="p">:</span>
-</span><span data-line="439">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="440">            <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
-</span><span data-line="441">
-</span><span data-line="442">            <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">example_config</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span data-line="443">        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-</span><span data-line="444">            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-</span><span data-line="445">                <span class="s2">"PyYAML is required for YAML config support. "</span>
-</span><span data-line="446">                <span class="s2">"Install it with: pip install pyyaml"</span>
-</span><span data-line="447">            <span class="p">)</span>
-</span><span data-line="448">
-</span><span data-line="449">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"toml"</span><span class="p">:</span>
-</span><span data-line="450">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="451">            <span class="kn">import</span><span class="w"> </span><span class="nn">tomli_w</span>
-</span><span data-line="452">
-</span><span data-line="453">            <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
-</span><span data-line="454">
-</span><span data-line="455">            <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
-</span><span data-line="456">            <span class="n">tomli_w</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">example_config</span><span class="p">,</span> <span class="n">buf</span><span class="p">)</span>
-</span><span data-line="457">            <span class="k">return</span> <span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">)</span>
-</span><span data-line="458">        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-</span><span data-line="459">            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-</span><span data-line="460">                <span class="s2">"tomli-w is required for writing TOML config files. "</span>
-</span><span data-line="461">                <span class="s2">"Install it with: pip install tomli-w"</span>
-</span><span data-line="462">            <span class="p">)</span>
-</span><span data-line="463">
-</span><span data-line="464">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="465">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported format: </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+</span><span data-line="400"><span class="k">def</span><span class="w"> </span><span class="nf">create_example_config</span><span class="p">(</span><span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"yaml"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="401"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="402"><span class="sd">    Generate an example configuration file content.</span>
+</span><span data-line="403">
+</span><span data-line="404"><span class="sd">    Parameters</span>
+</span><span data-line="405"><span class="sd">    ----------</span>
+</span><span data-line="406"><span class="sd">    format : str, default 'yaml'</span>
+</span><span data-line="407"><span class="sd">        Format of configuration: 'yaml' or 'toml'</span>
+</span><span data-line="408">
+</span><span data-line="409"><span class="sd">    Returns</span>
+</span><span data-line="410"><span class="sd">    -------</span>
+</span><span data-line="411"><span class="sd">    str</span>
+</span><span data-line="412"><span class="sd">        Example configuration as a string</span>
+</span><span data-line="413">
+</span><span data-line="414"><span class="sd">    Examples</span>
+</span><span data-line="415"><span class="sd">    --------</span>
+</span><span data-line="416"><span class="sd">    &gt;&gt;&gt; yaml_config = create_example_config('yaml')  # doctest: +SKIP</span>
+</span><span data-line="417"><span class="sd">    &gt;&gt;&gt; print(yaml_config)  # doctest: +SKIP</span>
+</span><span data-line="418"><span class="sd">    &gt;&gt;&gt; toml_config = create_example_config('toml')  # doctest: +SKIP</span>
+</span><span data-line="419"><span class="sd">    """</span>
+</span><span data-line="420">    <span class="c1"># A vd config file describes the *backend connection* only. Embedding is</span>
+</span><span data-line="421">    <span class="c1"># the caller's concern — it is never configured here.</span>
+</span><span data-line="422">    <span class="n">example_config</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="423">        <span class="s2">"profiles"</span><span class="p">:</span> <span class="p">{</span>
+</span><span data-line="424">            <span class="s2">"default"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"backend"</span><span class="p">:</span> <span class="s2">"memory"</span><span class="p">},</span>
+</span><span data-line="425">            <span class="s2">"dev"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"backend"</span><span class="p">:</span> <span class="s2">"memory"</span><span class="p">},</span>
+</span><span data-line="426">            <span class="s2">"prod"</span><span class="p">:</span> <span class="p">{</span>
+</span><span data-line="427">                <span class="s2">"backend"</span><span class="p">:</span> <span class="s2">"chroma"</span><span class="p">,</span>
+</span><span data-line="428">                <span class="s2">"persist_directory"</span><span class="p">:</span> <span class="s2">"./vector_db"</span><span class="p">,</span>
+</span><span data-line="429">            <span class="p">},</span>
+</span><span data-line="430">            <span class="s2">"qdrant_cloud"</span><span class="p">:</span> <span class="p">{</span>
+</span><span data-line="431">                <span class="s2">"backend"</span><span class="p">:</span> <span class="s2">"qdrant"</span><span class="p">,</span>
+</span><span data-line="432">                <span class="s2">"url"</span><span class="p">:</span> <span class="s2">"https://YOUR-CLUSTER.qdrant.io"</span><span class="p">,</span>
+</span><span data-line="433">            <span class="p">},</span>
+</span><span data-line="434">        <span class="p">}</span>
+</span><span data-line="435">    <span class="p">}</span>
+</span><span data-line="436">
+</span><span data-line="437">    <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"yaml"</span><span class="p">:</span>
+</span><span data-line="438">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="439">            <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+</span><span data-line="440">
+</span><span data-line="441">            <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">example_config</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span data-line="442">        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+</span><span data-line="443">            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+</span><span data-line="444">                <span class="s2">"PyYAML is required for YAML config support. "</span>
+</span><span data-line="445">                <span class="s2">"Install it with: pip install pyyaml"</span>
+</span><span data-line="446">            <span class="p">)</span>
+</span><span data-line="447">
+</span><span data-line="448">    <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"toml"</span><span class="p">:</span>
+</span><span data-line="449">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="450">            <span class="kn">import</span><span class="w"> </span><span class="nn">tomli_w</span>
+</span><span data-line="451">
+</span><span data-line="452">            <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+</span><span data-line="453">
+</span><span data-line="454">            <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
+</span><span data-line="455">            <span class="n">tomli_w</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">example_config</span><span class="p">,</span> <span class="n">buf</span><span class="p">)</span>
+</span><span data-line="456">            <span class="k">return</span> <span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">)</span>
+</span><span data-line="457">        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+</span><span data-line="458">            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+</span><span data-line="459">                <span class="s2">"tomli-w is required for writing TOML config files. "</span>
+</span><span data-line="460">                <span class="s2">"Install it with: pip install tomli-w"</span>
+</span><span data-line="461">            <span class="p">)</span>
+</span><span data-line="462">
+</span><span data-line="463">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="464">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported format: </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">
@@ -651,7 +650,7 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="../../_static/documentation_options.js?v=171860b8"></script>
+      <script src="../../_static/documentation_options.js?v=dc91f075"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

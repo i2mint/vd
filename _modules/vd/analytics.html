@@ -498,128 +498,132 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="347">        <span class="c1"># Greedily select most diverse documents</span>
 </span><span data-line="348">        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="ow">and</span> <span class="n">remaining</span><span class="p">:</span>
 </span><span data-line="349">            <span class="n">best_id</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="350">            <span class="n">best_min_sim</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+</span><span data-line="350">            <span class="n">best_max_sim</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"inf"</span><span class="p">)</span>
 </span><span data-line="351">
 </span><span data-line="352">            <span class="k">for</span> <span class="n">candidate_id</span> <span class="ow">in</span> <span class="n">remaining</span><span class="p">:</span>
 </span><span data-line="353">                <span class="n">candidate_doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">candidate_id</span><span class="p">]</span>
 </span><span data-line="354">                <span class="k">if</span> <span class="ow">not</span> <span class="n">candidate_doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
 </span><span data-line="355">                    <span class="k">continue</span>
 </span><span data-line="356">
-</span><span data-line="357">                <span class="c1"># Find minimum similarity to selected documents</span>
-</span><span data-line="358">                <span class="n">min_sim</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"inf"</span><span class="p">)</span>
-</span><span data-line="359">                <span class="k">for</span> <span class="n">selected_id</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">:</span>
-</span><span data-line="360">                    <span class="n">selected_doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">selected_id</span><span class="p">]</span>
-</span><span data-line="361">                    <span class="k">if</span> <span class="ow">not</span> <span class="n">selected_doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
-</span><span data-line="362">                        <span class="k">continue</span>
-</span><span data-line="363">
-</span><span data-line="364">                    <span class="n">sim</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">candidate_doc</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="n">selected_doc</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
-</span><span data-line="365">                    <span class="n">min_sim</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">min_sim</span><span class="p">,</span> <span class="n">sim</span><span class="p">)</span>
-</span><span data-line="366">
-</span><span data-line="367">                <span class="k">if</span> <span class="n">min_sim</span> <span class="o">&gt;</span> <span class="n">best_min_sim</span><span class="p">:</span>
-</span><span data-line="368">                    <span class="n">best_min_sim</span> <span class="o">=</span> <span class="n">min_sim</span>
-</span><span data-line="369">                    <span class="n">best_id</span> <span class="o">=</span> <span class="n">candidate_id</span>
+</span><span data-line="357">                <span class="c1"># Farthest-point: how close is the candidate to its NEAREST selected</span>
+</span><span data-line="358">                <span class="c1"># document? Keep the candidate whose nearest neighbour is farthest.</span>
+</span><span data-line="359">                <span class="n">max_sim</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"-inf"</span><span class="p">)</span>
+</span><span data-line="360">                <span class="k">for</span> <span class="n">selected_id</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">:</span>
+</span><span data-line="361">                    <span class="n">selected_doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">selected_id</span><span class="p">]</span>
+</span><span data-line="362">                    <span class="k">if</span> <span class="ow">not</span> <span class="n">selected_doc</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
+</span><span data-line="363">                        <span class="k">continue</span>
+</span><span data-line="364">
+</span><span data-line="365">                    <span class="n">sim</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">candidate_doc</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="n">selected_doc</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+</span><span data-line="366">                    <span class="n">max_sim</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_sim</span><span class="p">,</span> <span class="n">sim</span><span class="p">)</span>
+</span><span data-line="367">
+</span><span data-line="368">                <span class="k">if</span> <span class="n">max_sim</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"-inf"</span><span class="p">):</span>
+</span><span data-line="369">                    <span class="k">continue</span>  <span class="c1"># nothing to compare against: not a diverse pick</span>
 </span><span data-line="370">
-</span><span data-line="371">            <span class="k">if</span> <span class="n">best_id</span><span class="p">:</span>
-</span><span data-line="372">                <span class="n">selected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_id</span><span class="p">)</span>
-</span><span data-line="373">                <span class="n">remaining</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">best_id</span><span class="p">)</span>
-</span><span data-line="374">            <span class="k">else</span><span class="p">:</span>
-</span><span data-line="375">                <span class="c1"># Fallback to random if no vectors</span>
-</span><span data-line="376">                <span class="n">best_id</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">remaining</span><span class="p">))</span>
-</span><span data-line="377">                <span class="n">selected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_id</span><span class="p">)</span>
-</span><span data-line="378">                <span class="n">remaining</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">best_id</span><span class="p">)</span>
-</span><span data-line="379">
-</span><span data-line="380">        <span class="k">return</span> <span class="n">selected</span>
-</span><span data-line="381">
-</span><span data-line="382">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="383">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown sampling method: </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
-
-</span><span data-line="384">
+</span><span data-line="371">                <span class="k">if</span> <span class="n">max_sim</span> <span class="o">&lt;</span> <span class="n">best_max_sim</span><span class="p">:</span>
+</span><span data-line="372">                    <span class="n">best_max_sim</span> <span class="o">=</span> <span class="n">max_sim</span>
+</span><span data-line="373">                    <span class="n">best_id</span> <span class="o">=</span> <span class="n">candidate_id</span>
+</span><span data-line="374">
+</span><span data-line="375">            <span class="k">if</span> <span class="n">best_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="376">                <span class="n">selected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_id</span><span class="p">)</span>
+</span><span data-line="377">                <span class="n">remaining</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">best_id</span><span class="p">)</span>
+</span><span data-line="378">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="379">                <span class="c1"># Fallback to random if no vectors</span>
+</span><span data-line="380">                <span class="n">best_id</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">remaining</span><span class="p">))</span>
+</span><span data-line="381">                <span class="n">selected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_id</span><span class="p">)</span>
+</span><span data-line="382">                <span class="n">remaining</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">best_id</span><span class="p">)</span>
+</span><span data-line="383">
+</span><span data-line="384">        <span class="k">return</span> <span class="n">selected</span>
 </span><span data-line="385">
+</span><span data-line="386">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="387">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown sampling method: </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+
+</span><span data-line="388">
+</span><span data-line="389">
 <div class="viewcode-block" id="validate_collection">
 <a class="viewcode-back" href="../../_autosummary/vd.analytics.html#vd.validate_collection">[docs]</a>
-</span><span data-line="386"><span class="k">def</span><span class="w"> </span><span class="nf">validate_collection</span><span class="p">(</span><span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span data-line="387"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="388"><span class="sd">    Validate collection integrity and identify issues.</span>
-</span><span data-line="389">
-</span><span data-line="390"><span class="sd">    Parameters</span>
-</span><span data-line="391"><span class="sd">    ----------</span>
-</span><span data-line="392"><span class="sd">    collection : Collection</span>
-</span><span data-line="393"><span class="sd">        Collection to validate</span>
-</span><span data-line="394">
-</span><span data-line="395"><span class="sd">    Returns</span>
-</span><span data-line="396"><span class="sd">    -------</span>
-</span><span data-line="397"><span class="sd">    dict</span>
-</span><span data-line="398"><span class="sd">        Validation report with:</span>
-</span><span data-line="399"><span class="sd">        - valid: Whether collection is valid</span>
-</span><span data-line="400"><span class="sd">        - issues: List of issue descriptions</span>
-</span><span data-line="401"><span class="sd">        - warnings: List of warning messages</span>
-</span><span data-line="402"><span class="sd">        - stats: Basic stats</span>
-</span><span data-line="403">
-</span><span data-line="404"><span class="sd">    Examples</span>
-</span><span data-line="405"><span class="sd">    --------</span>
-</span><span data-line="406"><span class="sd">    &gt;&gt;&gt; import vd</span>
-</span><span data-line="407"><span class="sd">    &gt;&gt;&gt; client = vd.connect('memory')  # doctest: +SKIP</span>
-</span><span data-line="408"><span class="sd">    &gt;&gt;&gt; docs = client.create_collection('test')  # doctest: +SKIP</span>
-</span><span data-line="409"><span class="sd">    &gt;&gt;&gt; report = vd.validate_collection(docs)  # doctest: +SKIP</span>
-</span><span data-line="410"><span class="sd">    &gt;&gt;&gt; print(report['valid'])  # doctest: +SKIP</span>
-</span><span data-line="411"><span class="sd">    True</span>
-</span><span data-line="412"><span class="sd">    """</span>
-</span><span data-line="413">    <span class="n">issues</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="414">    <span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="415">
-</span><span data-line="416">    <span class="c1"># Check for empty collection</span>
-</span><span data-line="417">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="418">        <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Collection is empty"</span><span class="p">)</span>
+</span><span data-line="390"><span class="k">def</span><span class="w"> </span><span class="nf">validate_collection</span><span class="p">(</span><span class="n">collection</span><span class="p">:</span> <span class="n">Collection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span data-line="391"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="392"><span class="sd">    Validate collection integrity and identify issues.</span>
+</span><span data-line="393">
+</span><span data-line="394"><span class="sd">    Parameters</span>
+</span><span data-line="395"><span class="sd">    ----------</span>
+</span><span data-line="396"><span class="sd">    collection : Collection</span>
+</span><span data-line="397"><span class="sd">        Collection to validate</span>
+</span><span data-line="398">
+</span><span data-line="399"><span class="sd">    Returns</span>
+</span><span data-line="400"><span class="sd">    -------</span>
+</span><span data-line="401"><span class="sd">    dict</span>
+</span><span data-line="402"><span class="sd">        Validation report with:</span>
+</span><span data-line="403"><span class="sd">        - valid: Whether collection is valid</span>
+</span><span data-line="404"><span class="sd">        - issues: List of issue descriptions</span>
+</span><span data-line="405"><span class="sd">        - warnings: List of warning messages</span>
+</span><span data-line="406"><span class="sd">        - stats: Basic stats</span>
+</span><span data-line="407">
+</span><span data-line="408"><span class="sd">    Examples</span>
+</span><span data-line="409"><span class="sd">    --------</span>
+</span><span data-line="410"><span class="sd">    &gt;&gt;&gt; import vd</span>
+</span><span data-line="411"><span class="sd">    &gt;&gt;&gt; client = vd.connect('memory')  # doctest: +SKIP</span>
+</span><span data-line="412"><span class="sd">    &gt;&gt;&gt; docs = client.create_collection('test')  # doctest: +SKIP</span>
+</span><span data-line="413"><span class="sd">    &gt;&gt;&gt; report = vd.validate_collection(docs)  # doctest: +SKIP</span>
+</span><span data-line="414"><span class="sd">    &gt;&gt;&gt; print(report['valid'])  # doctest: +SKIP</span>
+</span><span data-line="415"><span class="sd">    True</span>
+</span><span data-line="416"><span class="sd">    """</span>
+</span><span data-line="417">    <span class="n">issues</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="418">    <span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span data-line="419">
-</span><span data-line="420">    <span class="c1"># Check each document</span>
-</span><span data-line="421">    <span class="n">missing_vectors</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span data-line="422">    <span class="n">empty_text</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span data-line="423">    <span class="n">inconsistent_dimensions</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="424">
-</span><span data-line="425">    <span class="n">expected_dim</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="426">
-</span><span data-line="427">    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
-</span><span data-line="428">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="429">            <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+</span><span data-line="420">    <span class="c1"># Check for empty collection</span>
+</span><span data-line="421">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="422">        <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Collection is empty"</span><span class="p">)</span>
+</span><span data-line="423">
+</span><span data-line="424">    <span class="c1"># Check each document</span>
+</span><span data-line="425">    <span class="n">missing_vectors</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="426">    <span class="n">empty_text</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="427">    <span class="n">inconsistent_dimensions</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="428">
+</span><span data-line="429">    <span class="n">expected_dim</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span data-line="430">
-</span><span data-line="431">            <span class="c1"># Check for empty text</span>
-</span><span data-line="432">            <span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
-</span><span data-line="433">                <span class="n">empty_text</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span data-line="434">                <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Document </span><span class="si">{</span><span class="n">doc_id</span><span class="si">}</span><span class="s2"> has empty text"</span><span class="p">)</span>
-</span><span data-line="435">
-</span><span data-line="436">            <span class="c1"># Check vectors</span>
-</span><span data-line="437">            <span class="k">if</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="438">                <span class="n">missing_vectors</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span data-line="439">            <span class="k">else</span><span class="p">:</span>
-</span><span data-line="440">                <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
-</span><span data-line="441">                <span class="k">if</span> <span class="n">expected_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="442">                    <span class="n">expected_dim</span> <span class="o">=</span> <span class="n">dim</span>
-</span><span data-line="443">                <span class="k">elif</span> <span class="n">dim</span> <span class="o">!=</span> <span class="n">expected_dim</span><span class="p">:</span>
-</span><span data-line="444">                    <span class="n">inconsistent_dimensions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
-</span><span data-line="445">
-</span><span data-line="446">        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span data-line="447">            <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error reading document </span><span class="si">{</span><span class="n">doc_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span data-line="448">
-</span><span data-line="449">    <span class="c1"># Summary warnings</span>
-</span><span data-line="450">    <span class="k">if</span> <span class="n">missing_vectors</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="451">        <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">missing_vectors</span><span class="si">}</span><span class="s2"> documents missing vectors"</span><span class="p">)</span>
+</span><span data-line="431">    <span class="k">for</span> <span class="n">doc_id</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+</span><span data-line="432">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="433">            <span class="n">doc</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">doc_id</span><span class="p">]</span>
+</span><span data-line="434">
+</span><span data-line="435">            <span class="c1"># Check for empty text</span>
+</span><span data-line="436">            <span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">doc</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+</span><span data-line="437">                <span class="n">empty_text</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span data-line="438">                <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Document </span><span class="si">{</span><span class="n">doc_id</span><span class="si">}</span><span class="s2"> has empty text"</span><span class="p">)</span>
+</span><span data-line="439">
+</span><span data-line="440">            <span class="c1"># Check vectors</span>
+</span><span data-line="441">            <span class="k">if</span> <span class="n">doc</span><span class="o">.</span><span class="n">vector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="442">                <span class="n">missing_vectors</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span data-line="443">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="444">                <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span>
+</span><span data-line="445">                <span class="k">if</span> <span class="n">expected_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="446">                    <span class="n">expected_dim</span> <span class="o">=</span> <span class="n">dim</span>
+</span><span data-line="447">                <span class="k">elif</span> <span class="n">dim</span> <span class="o">!=</span> <span class="n">expected_dim</span><span class="p">:</span>
+</span><span data-line="448">                    <span class="n">inconsistent_dimensions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
+</span><span data-line="449">
+</span><span data-line="450">        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span data-line="451">            <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error reading document </span><span class="si">{</span><span class="n">doc_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span><span data-line="452">
-</span><span data-line="453">    <span class="k">if</span> <span class="n">inconsistent_dimensions</span><span class="p">:</span>
-</span><span data-line="454">        <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span data-line="455">            <span class="sa">f</span><span class="s2">"Inconsistent vector dimensions found: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">inconsistent_dimensions</span><span class="p">)</span><span class="si">}</span><span class="s2"> documents"</span>
-</span><span data-line="456">        <span class="p">)</span>
-</span><span data-line="457">
-</span><span data-line="458">    <span class="k">return</span> <span class="p">{</span>
-</span><span data-line="459">        <span class="s2">"valid"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
-</span><span data-line="460">        <span class="s2">"issues"</span><span class="p">:</span> <span class="n">issues</span><span class="p">,</span>
-</span><span data-line="461">        <span class="s2">"warnings"</span><span class="p">:</span> <span class="n">warnings</span><span class="p">,</span>
-</span><span data-line="462">        <span class="s2">"stats"</span><span class="p">:</span> <span class="p">{</span>
-</span><span data-line="463">            <span class="s2">"total_documents"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">),</span>
-</span><span data-line="464">            <span class="s2">"missing_vectors"</span><span class="p">:</span> <span class="n">missing_vectors</span><span class="p">,</span>
-</span><span data-line="465">            <span class="s2">"empty_text"</span><span class="p">:</span> <span class="n">empty_text</span><span class="p">,</span>
-</span><span data-line="466">            <span class="s2">"inconsistent_dimensions"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">inconsistent_dimensions</span><span class="p">),</span>
-</span><span data-line="467">        <span class="p">},</span>
-</span><span data-line="468">    <span class="p">}</span></div>
+</span><span data-line="453">    <span class="c1"># Summary warnings</span>
+</span><span data-line="454">    <span class="k">if</span> <span class="n">missing_vectors</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="455">        <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">missing_vectors</span><span class="si">}</span><span class="s2"> documents missing vectors"</span><span class="p">)</span>
+</span><span data-line="456">
+</span><span data-line="457">    <span class="k">if</span> <span class="n">inconsistent_dimensions</span><span class="p">:</span>
+</span><span data-line="458">        <span class="n">issues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span data-line="459">            <span class="sa">f</span><span class="s2">"Inconsistent vector dimensions found: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">inconsistent_dimensions</span><span class="p">)</span><span class="si">}</span><span class="s2"> documents"</span>
+</span><span data-line="460">        <span class="p">)</span>
+</span><span data-line="461">
+</span><span data-line="462">    <span class="k">return</span> <span class="p">{</span>
+</span><span data-line="463">        <span class="s2">"valid"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+</span><span data-line="464">        <span class="s2">"issues"</span><span class="p">:</span> <span class="n">issues</span><span class="p">,</span>
+</span><span data-line="465">        <span class="s2">"warnings"</span><span class="p">:</span> <span class="n">warnings</span><span class="p">,</span>
+</span><span data-line="466">        <span class="s2">"stats"</span><span class="p">:</span> <span class="p">{</span>
+</span><span data-line="467">            <span class="s2">"total_documents"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">),</span>
+</span><span data-line="468">            <span class="s2">"missing_vectors"</span><span class="p">:</span> <span class="n">missing_vectors</span><span class="p">,</span>
+</span><span data-line="469">            <span class="s2">"empty_text"</span><span class="p">:</span> <span class="n">empty_text</span><span class="p">,</span>
+</span><span data-line="470">            <span class="s2">"inconsistent_dimensions"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">inconsistent_dimensions</span><span class="p">),</span>
+</span><span data-line="471">        <span class="p">},</span>
+</span><span data-line="472">    <span class="p">}</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">
@@ -648,7 +652,7 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="../../_static/documentation_options.js?v=171860b8"></script>
+      <script src="../../_static/documentation_options.js?v=dc91f075"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
