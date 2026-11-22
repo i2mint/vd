@@ -1,4 +1,4 @@
-> built 2026-11-22 11:53 UTC from 26e9e20 (master) · vd 0.2.21. Details: build_info.json
+> built 2026-11-22 14:39 UTC from 646d20a (master) · vd 0.2.22. Details: build_info.json
 
 # index.html.md
 
@@ -6113,7 +6113,7 @@ Egress: keep only the text. `>>> text_only({'text': 'hi'})` -> `'hi'`.
 
 # About this build
 
-This documentation was built on **2026-11-22 11:53 UTC** from commit <a href="https://github.com/i2mint/vd/commit/26e9e20f4cb3a98df5efd443c9ed555707bcc23f"><code>26e9e20</code></a> on branch <code>master</code>, for **vd 0.2.21** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 14:39 UTC** from commit <a href="https://github.com/i2mint/vd/commit/646d20a65a5dfbe207085ab2104b102e28ab7679"><code>646d20a</code></a> on branch <code>master</code>, for **vd 0.2.22** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -6122,7 +6122,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                  |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/vd/commit/26e9e20f4cb3a98df5efd443c9ed555707bcc23f"><code>26e9e20f4cb3a98df5efd443c9ed555707bcc23f</code></a> |
+| Commit              | <a href="https://github.com/i2mint/vd/commit/646d20a65a5dfbe207085ab2104b102e28ab7679"><code>646d20a65a5dfbe207085ab2104b102e28ab7679</code></a> |
 | Branch              | <code>master</code>                                                                                                                              |
 | Tags at this commit | none                                                                                                                                             |
 | Working tree        | clean                                                                                                                                            |
@@ -6133,9 +6133,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/vd</code>                                                                     |
-| Run          | <a href="https://github.com/i2mint/vd/actions/runs/45019370379">45019370379</a>            |
+| Run          | <a href="https://github.com/i2mint/vd/actions/runs/45033844220">45033844220</a>            |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>26e9e20f4cb3a98df5efd443c9ed555707bcc23f</code> (in the history of the built commit) |
+| Event commit | <code>646d20a65a5dfbe207085ab2104b102e28ab7679</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -6160,13 +6160,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/vd/0.2.21/">0.2.21</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/vd/0.2.22/">0.2.22</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/vd && cd vd
-git checkout 26e9e20f4cb3a98df5efd443c9ed555707bcc23f
+git checkout 646d20a65a5dfbe207085ab2104b102e28ab7679
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
