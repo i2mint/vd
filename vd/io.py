@@ -284,6 +284,7 @@ def export_to_directory(
     )
 
     count = 0
+    used_names = {"_metadata"}  # the metadata file's stem is reserved
     for doc_id in collection:
         doc = collection[doc_id]
         data = {
@@ -296,7 +297,14 @@ def export_to_directory(
 
         # Sanitize filename
         safe_id = doc_id.replace("/", "_").replace("\\", "_")
-        file_path = output_dir / f"{safe_id}.json"
+        # Ids that sanitize alike (e.g. 'a/b' and 'a_b') must not share a file
+        # (the real id is stored inside the file, so a suffix is harmless)
+        file_stem, n = safe_id, 1
+        while file_stem in used_names:
+            n += 1
+            file_stem = f"{safe_id}__{n}"
+        used_names.add(file_stem)
+        file_path = output_dir / f"{file_stem}.json"
 
         file_path.write_text(
             json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"

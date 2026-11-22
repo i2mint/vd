@@ -347,28 +347,32 @@ def sample_collection(
         # Greedily select most diverse documents
         while len(selected) < n and remaining:
             best_id = None
-            best_min_sim = -1
+            best_max_sim = float("inf")
 
             for candidate_id in remaining:
                 candidate_doc = collection[candidate_id]
                 if not candidate_doc.vector:
                     continue
 
-                # Find minimum similarity to selected documents
-                min_sim = float("inf")
+                # Farthest-point: how close is the candidate to its NEAREST selected
+                # document? Keep the candidate whose nearest neighbour is farthest.
+                max_sim = float("-inf")
                 for selected_id in selected:
                     selected_doc = collection[selected_id]
                     if not selected_doc.vector:
                         continue
 
                     sim = cosine_similarity(candidate_doc.vector, selected_doc.vector)
-                    min_sim = min(min_sim, sim)
+                    max_sim = max(max_sim, sim)
 
-                if min_sim > best_min_sim:
-                    best_min_sim = min_sim
+                if max_sim == float("-inf"):
+                    continue  # nothing to compare against: not a diverse pick
+
+                if max_sim < best_max_sim:
+                    best_max_sim = max_sim
                     best_id = candidate_id
 
-            if best_id:
+            if best_id is not None:
                 selected.append(best_id)
                 remaining.remove(best_id)
             else:

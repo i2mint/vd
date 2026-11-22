@@ -214,10 +214,33 @@ def cmd_benchmark(args):
     print(f"Benchmarking search on {args.collection}...")
     print(f"Running {args.queries} queries...")
 
+    # The CLI connects without an embedder, so a text query only works on
+    # embedding clients; on a vector-only collection use a stored vector instead.
+    query = args.query
+    try:
+        list(collection.search(query, limit=1))
+    except vd.EmbeddingRequiredError:
+        query = next(
+            (
+                collection[doc_id].vector
+                for doc_id in collection
+                if collection[doc_id].vector
+            ),
+            None,
+        )
+        if query is None:
+            print(
+                "Error: collection has no vectors and no embedder is configured; "
+                "cannot benchmark search.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        print("No embedder configured: benchmarking with a stored vector as query.")
+
     # Benchmark
     results = vd.benchmark_search(
         collection,
-        args.query,
+        query,
         n_queries=args.queries,
         limit=args.limit,
     )

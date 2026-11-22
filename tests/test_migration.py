@@ -59,10 +59,6 @@ def test_migrate_collection_batches_and_reports_progress(source, target):
     assert calls[:2] == [(2, 5), (4, 5)]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="progress_callback is not called after the final partial batch, so it never reaches total",
-)
 def test_migrate_collection_progress_reaches_total(source, target):
     calls = []
     migrate_collection(source, target, batch_size=2, progress_callback=lambda c, t: calls.append((c, t)))
@@ -94,10 +90,6 @@ def test_migrate_collection_recomputes_vectors_with_target_embedder(source, embe
     assert target["d1"].vector == embedder("text 1")
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="preserve_vectors=False sets doc.vector=None on the object read from the source, mutating the source",
-)
 def test_migrate_collection_recompute_leaves_source_untouched(source, embedder):
     target = vd.connect("memory", embedder=embedder).create_collection("tgt")
     migrate_collection(source, target, preserve_vectors=False)

@@ -225,7 +225,6 @@ def apply_env_overrides(config: dict) -> dict:
 
     Looks for environment variables with the VD_ prefix:
     - VD_BACKEND: Override backend name
-    - VD_EMBEDDING_MODEL: Override embedding model
 
     Parameters
     ----------

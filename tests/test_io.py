@@ -114,10 +114,6 @@ def test_directory_export_sanitizes_slashes_but_keeps_the_id(tmp_path):
     assert list(target) == ["x/y"]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="export_to_directory maps 'a/b' and 'a_b' to one file: a document is silently lost",
-)
 def test_directory_round_trip_keeps_ids_that_sanitize_alike(tmp_path):
     c = _new_collection()
     c["a/b"] = Document(id="a/b", text="slash", vector=[1.0, 0.0])

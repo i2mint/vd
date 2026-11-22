@@ -5,6 +5,7 @@ Provides functions to migrate collections between different vector database
 backends while preserving all data, metadata, and embeddings.
 """
 
+import copy
 from typing import Any, Callable, Optional, Union
 
 from vd.base import Client, Collection, Document
@@ -85,6 +86,9 @@ def migrate_collection(
             doc = source_collection[doc_id]
 
             # Optionally clear vectors to force re-embedding
+            # (work on a copy: the source document must not be mutated)
+            doc = copy.copy(doc)
+            doc.metadata = dict(doc.metadata or {})
             if not preserve_vectors:
                 doc.vector = None
 
@@ -115,6 +119,9 @@ def migrate_collection(
         except Exception as e:
             stats["failed"] += len(batch)
             stats["errors"].append(f"Error in final batch: {str(e)}")
+        processed += len(batch)
+        if progress_callback:
+            progress_callback(processed, stats["total"])
 
     return stats
 
