@@ -70,6 +70,10 @@ def get_backend(name: str) -> type:
     ValueError
         If ``name`` is not a known backend at all.
     """
+    if name not in _backends:
+        from vd.backends import load  # adapters register lazily, on first use
+
+        load(name)
     if name in _backends:
         return _backends[name]
 
@@ -103,7 +107,14 @@ def get_backend(name: str) -> type:
 
 
 def list_backends() -> list[str]:
-    """Return the names of all backends with a registered (importable) adapter."""
+    """Return the names of all backends with a registered (importable) adapter.
+
+    Imports every installed adapter first (seconds, with several SDKs installed):
+    adapters are otherwise loaded only when a backend is resolved by name.
+    """
+    from vd.backends import load_all
+
+    load_all()
     return sorted(_backends)
 
 

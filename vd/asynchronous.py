@@ -573,8 +573,12 @@ def list_async_backends() -> list[str]:
     Return the names of backends with a registered native async client.
 
     Every other backend still works with :func:`connect_async`, through the
-    universal ``to_thread`` wrapper.
+    universal ``to_thread`` wrapper. Imports every installed adapter first (adapters
+    register lazily, and a native async client registers with its adapter).
     """
+    from vd.backends import load_all
+
+    load_all()
     return sorted(_async_backends)
 
 
@@ -631,6 +635,10 @@ async def connect_async(backend: str, *, native: bool = True, **kwargs) -> Async
     # but keep it lazy so this module is safe to import standalone).
     from vd.util import connect
 
+    if native and backend not in _async_backends:
+        from vd.backends import load
+
+        load(backend)  # a native async client registers with its adapter module
     factory = _async_backends.get(backend) if native else None
     if factory is not None:
         client = factory(**kwargs)
