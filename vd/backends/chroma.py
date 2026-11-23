@@ -298,3 +298,201 @@ class ChromaClient(AbstractClient):
 
     def list_collections(self) -> Iterator[str]:
         return (c.name for c in self._client.list_collections())
+
+
+# --------------------------------------------------------------------------- #
+# Native async — chromadb.AsyncHttpClient (a Chroma server)
+# --------------------------------------------------------------------------- #
+
+from vd.asynchronous import (  # noqa: E402
+    AsyncAbstractClient,
+    AsyncAbstractCollection,
+    register_async_backend,
+)
+
+
+class NativeAsyncChromaCollection(AsyncAbstractCollection):
+    """
+    A Chroma collection driven by ``chromadb.AsyncHttpClient`` — non-blocking I/O.
+
+    Same storage layout, filter translation and scores as :class:`ChromaCollection`,
+    so data written by either is readable by both.
+    """
+
+    supported_filter_operators = CHROMA_FILTER_OPERATORS
+
+    def __init__(
+        self,
+        chroma_collection,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        metric: str = "cosine",
+    ):
+        self.name = chroma_collection.name
+        self._collection = chroma_collection
+        self._embedder = embedder
+        self.dimension = None  # Chroma infers it from the first vector
+        self.metric = metric
+
+    @property
+    def native(self):
+        """The raw async ``chromadb`` collection (escape hatch)."""
+        return self._collection
+
+    async def _write_many(self, docs: list[Document]) -> None:
+        await self._collection.upsert(
+            ids=[d.id for d in docs],
+            documents=[d.text for d in docs],
+            embeddings=[d.vector for d in docs],
+            metadatas=[d.metadata or None for d in docs],
+        )
+
+    async def _read(self, key: str) -> Document:
+        got = await self._collection.get(
+            ids=[key], include=["documents", "embeddings", "metadatas"]
+        )
+        if not got["ids"]:
+            raise KeyError(key)
+        embeddings = got.get("embeddings")
+        return Document(
+            id=got["ids"][0],
+            text=(got["documents"] or [""])[0] or "",
+            vector=list(embeddings[0])
+            if embeddings is not None and len(embeddings)
+            else None,
+            metadata=(got["metadatas"] or [{}])[0] or {},
+        )
+
+    async def _drop(self, key: str) -> None:
+        if not (await self._collection.get(ids=[key]))["ids"]:
+            raise KeyError(key)
+        await self._collection.delete(ids=[key])
+
+    async def _keys(self):
+        for key in (await self._collection.get(include=[]))["ids"]:
+            yield key
+
+    async def _count(self) -> int:
+        return await self._collection.count()
+
+    async def _query(
+        self,
+        vector: Vector,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        result = await self._collection.query(
+            query_embeddings=[vector],
+            n_results=limit,
+            where=_to_chroma_where(filter),
+            include=["documents", "metadatas", "distances"],
+            **kwargs,
+        )
+        if not result["ids"] or not result["ids"][0]:
+            return []
+        ids, docs = result["ids"][0], result["documents"][0]
+        metas, dists = result["metadatas"][0], result["distances"][0]
+        return [
+            {
+                "id": ids[i],
+                "text": docs[i] if docs else "",
+                "score": score_from_distance(dists[i], self.metric),
+                "metadata": metas[i] or {} if metas else {},
+            }
+            for i in range(len(ids))
+        ]
+
+
+class NativeAsyncChromaClient(AsyncAbstractClient):
+    """
+    Native async Chroma client — what ``await vd.connect_async("chroma", host=...)``
+    returns for a Chroma server.
+
+    It wraps an already-connected ``chromadb`` async client (``AsyncHttpClient`` is a
+    coroutine, so :func:`_connect_async_chroma` awaits it and hands it in). Ephemeral
+    and on-disk Chroma run in-process, where there is no I/O to overlap, so
+    :func:`vd.connect_async` gives those the thread-pool wrapper instead.
+    """
+
+    backend_name = "chroma"
+
+    def __init__(
+        self,
+        client,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        **config,
+    ):
+        super().__init__(embedder=embedder, **config)
+        self._client = client
+
+    def _wrap(self, chroma_collection, metric: str) -> NativeAsyncChromaCollection:
+        return NativeAsyncChromaCollection(
+            chroma_collection, embedder=self._embedder, metric=metric
+        )
+
+    async def create_collection(
+        self,
+        name: str,
+        *,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
+    ) -> NativeAsyncChromaCollection:
+        space = _SPACE.get(metric, "cosine")
+        try:
+            chroma_collection = await self._client.create_collection(
+                name=name, configuration={"hnsw": {"space": space}}, **index_config
+            )
+        except Exception as e:
+            if "already exists" in str(e).lower():
+                raise ValueError(f"Collection {name!r} already exists") from e
+            raise
+        return self._wrap(chroma_collection, metric)
+
+    async def get_collection(self, name: str) -> NativeAsyncChromaCollection:
+        try:
+            chroma_collection = await self._client.get_collection(name=name)
+        except Exception as e:
+            raise KeyError(f"Collection {name!r} does not exist") from e
+        return self._wrap(chroma_collection, _recorded_metric(chroma_collection))
+
+    async def delete_collection(self, name: str) -> None:
+        try:
+            await self._client.delete_collection(name=name)
+        except Exception as e:
+            raise KeyError(f"Collection {name!r} does not exist") from e
+
+    async def list_collections(self):
+        for c in await self._client.list_collections():
+            yield getattr(c, "name", c)
+
+    async def close(self) -> None:
+        """Nothing to release: the async HTTP client holds no open connection pool."""
+
+
+async def _connect_async_chroma(**kwargs) -> Any:
+    """
+    The :func:`vd.connect_async` factory for ``chroma``.
+
+    With ``host=`` (a Chroma server) it returns :class:`NativeAsyncChromaClient`
+    over ``chromadb.AsyncHttpClient``. Ephemeral and ``persist_directory=`` modes run
+    in-process, so they get the ``asyncio.to_thread`` wrapper around the sync
+    adapter.
+    """
+    import asyncio
+
+    if kwargs.get("host") is not None:
+        host, port = kwargs.pop("host"), kwargs.pop("port", 8000)
+        embedder = kwargs.pop("embedder", None)
+        client = await chromadb.AsyncHttpClient(host=host, port=port)
+        return NativeAsyncChromaClient(client, embedder=embedder, **kwargs)
+    from vd.asynchronous import AsyncClientWrapper
+    from vd.util import connect
+
+    return AsyncClientWrapper(await asyncio.to_thread(connect, "chroma", **kwargs))
+
+
+register_async_backend("chroma", _connect_async_chroma)
