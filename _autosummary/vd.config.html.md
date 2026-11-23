@@ -21,13 +21,7 @@ and configuration profiles for managing backend connections.
 
 Apply environment variable overrides to configuration.
 
-Looks for environment variables with the 
-
-```
-VD_
-```
-
- prefix:
+Looks for environment variables with the `VD_` prefix:
 
 - VD_BACKEND: Override backend name
 
