@@ -1,4 +1,4 @@
-> built 2026-11-23 07:28 UTC from f2722dd (master) · vd 0.2.27. Details: build_info.json
+> built 2026-11-23 09:40 UTC from 9939e94 (master) · vd 0.2.28. Details: build_info.json
 
 # index.html.md
 
@@ -986,7 +986,8 @@ the full docs.
 Return the names of backends with a registered native async client.
 
 Every other backend still works with [`connect_async()`](_autosummary/vd.asynchronous.html.md#vd.asynchronous.connect_async), through the
-universal `to_thread` wrapper.
+universal `to_thread` wrapper. Imports every installed adapter first (adapters
+register lazily, and a native async client registers with its adapter).
 
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
@@ -1016,11 +1017,47 @@ taking the [`connect_async()`](_autosummary/vd.asynchronous.html.md#vd.asynchron
 
 Backend adapters for the vector databases `vd` supports.
 
-Importing this package registers every adapter whose client library is
-installed. Each adapter lives in its own module and registers itself with the
-[`register_backend()`](_autosummary/vd.util.html.md#vd.util.register_backend) decorator; modules whose third-party client
-is not installed fail to import and are skipped silently — that backend simply
-will not appear in [`vd.list_backends()`](_autosummary/vd.html.md#vd.list_backends).
+Adapters are registered **lazily**: `import vd` imports only the always-available
+`memory` adapter, because importing every installed client SDK (chromadb, lancedb,
+…) costs seconds. An adapter module is imported the first time its backend is
+resolved by name ([`vd.connect()`](_autosummary/vd.html.md#vd.connect), [`vd.util.get_backend()`](_autosummary/vd.util.html.md#vd.util.get_backend),
+[`vd.connect_async()`](_autosummary/vd.html.md#vd.connect_async)), or all at once by [`load_all()`](_autosummary/vd.backends.html.md#vd.backends.load_all), which
+[`vd.list_backends()`](_autosummary/vd.html.md#vd.list_backends) and [`vd.list_async_backends()`](_autosummary/vd.html.md#vd.list_async_backends) call. Each adapter lives
+in its own module and registers itself with the [`register_backend()`](_autosummary/vd.util.html.md#vd.util.register_backend)
+decorator; a module whose third-party client is not installed fails to import and
+is skipped silently, so that backend does not appear in [`vd.list_backends()`](_autosummary/vd.html.md#vd.list_backends).
+
+### Module Attributes
+
+| [`BACKEND_MODULES`](_autosummary/vd.backends.html.md#vd.backends.BACKEND_MODULES)   | Every backend module vd ships; the module's name is the backend's name.   |
+|--------------------------------------------------------------------|---------------------------------------------------------------------------|
+
+### Functions
+
+| [`load`](_autosummary/vd.backends.html.md#vd.backends.load)(name)   | Import the adapter module for backend `name`; whether it is now available.                     |
+|---------------------------------------------------------------|------------------------------------------------------------------------------------------------|
+| [`load_all`](_autosummary/vd.backends.html.md#vd.backends.load_all)()   | Import every adapter module whose client library is installed (the old import-time behaviour). |
+
+### vd.backends.BACKEND_MODULES *= ('memory', 'chroma', 'faiss', 'sqlite_vec', 'duckdb', 'lancedb', 'qdrant', 'pgvector', 'pinecone', 'weaviate', 'milvus', 'redis', 'elasticsearch', 'mongodb', 'turbopuffer')*
+
+Every backend module vd ships; the module’s name is the backend’s name.
+
+### vd.backends.load(name)
+
+Import the adapter module for backend `name`; whether it is now available.
+
+`False` for a name that is not a shipped adapter and for one whose third-party
+client is not installed (the module then fails to import and is skipped).
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
+### vd.backends.load_all()
+
+Import every adapter module whose client library is installed (the old import-time behaviour).
+
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### Modules
 
@@ -4201,7 +4238,8 @@ Return every provider with live `installed` / `has_adapter` flags added.
 Return the names of backends with a registered native async client.
 
 Every other backend still works with [`connect_async()`](_autosummary/vd.html.md#vd.connect_async), through the
-universal `to_thread` wrapper.
+universal `to_thread` wrapper. Imports every installed adapter first (adapters
+register lazily, and a native async client registers with its adapter).
 
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
@@ -4220,6 +4258,9 @@ of registered backends.
 ### vd.list_backends()
 
 Return the names of all backends with a registered (importable) adapter.
+
+Imports every installed adapter first (seconds, with several SDKs installed):
+adapters are otherwise loaded only when a backend is resolved by name.
 
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
@@ -6103,6 +6144,9 @@ Egress: keep `(id, text, score)`.
 
 Return the names of all backends with a registered (importable) adapter.
 
+Imports every installed adapter first (seconds, with several SDKs installed):
+adapters are otherwise loaded only when a backend is resolved by name.
+
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
@@ -6174,18 +6218,16 @@ Egress: keep only the text. `>>> text_only({'text': 'hi'})` -> `'hi'`.
 
 # About this build
 
-This documentation was built on **2026-11-23 07:28 UTC** from commit <a href="https://github.com/i2mint/vd/commit/f2722ddb1c3861c2d83da57fd714f0829c278fea"><code>f2722dd</code></a> on branch <code>master</code>, for **vd 0.2.27** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 09:40 UTC** from commit <a href="https://github.com/i2mint/vd/commit/9939e9411898f9108623949e134dd753c86894b2"><code>9939e94</code></a> on branch <code>master</code>, for **vd 0.2.28** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.2.27) is behind the latest release on PyPI (0.2.28): `pip install vd` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                  |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/vd/commit/f2722ddb1c3861c2d83da57fd714f0829c278fea"><code>f2722ddb1c3861c2d83da57fd714f0829c278fea</code></a> |
+| Commit              | <a href="https://github.com/i2mint/vd/commit/9939e9411898f9108623949e134dd753c86894b2"><code>9939e9411898f9108623949e134dd753c86894b2</code></a> |
 | Branch              | <code>master</code>                                                                                                                              |
 | Tags at this commit | none                                                                                                                                             |
 | Working tree        | clean                                                                                                                                            |
@@ -6196,15 +6238,15 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/vd</code>                                                                     |
-| Run          | <a href="https://github.com/i2mint/vd/actions/runs/45131173778">45131173778</a>            |
+| Run          | <a href="https://github.com/i2mint/vd/actions/runs/45148834127">45148834127</a>            |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>f2722ddb1c3861c2d83da57fd714f0829c278fea</code> (in the history of the built commit) |
+| Event commit | <code>9939e9411898f9108623949e134dd753c86894b2</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.24  |
+| epythet  | 0.2.25  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.16 |
@@ -6223,14 +6265,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/vd/0.2.28/">0.2.28</a>, newer than the documented version (0.2.27).
+Latest release: <a href="https://pypi.org/project/vd/0.2.28/">0.2.28</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/vd && cd vd
-git checkout f2722ddb1c3861c2d83da57fd714f0829c278fea
-pip install "epythet==0.2.24"
+git checkout 9939e9411898f9108623949e134dd753c86894b2
+pip install "epythet==0.2.25"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

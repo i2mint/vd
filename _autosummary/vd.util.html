@@ -333,6 +333,8 @@ and pre-computed query vectors.</p></li>
 <dt class="sig sig-object py" id="vd.util.list_backends">
 <span class="sig-prename descclassname"><span class="pre">vd.util.</span></span><span class="sig-name descname"><span class="pre">list_backends</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/util.html#list_backends"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.util.list_backends" title="Link to this definition">#</a></dt>
 <dd><p>Return the names of all backends with a registered (importable) adapter.</p>
+<p>Imports every installed adapter first (seconds, with several SDKs installed):
+adapters are otherwise loaded only when a backend is resolved by name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
@@ -455,7 +457,7 @@ tuple <code class="docutils literal notranslate"><span class="pre">(text,</span>
     </div>
   </div>
 </footer>
-      <script src="../_static/documentation_options.js?v=eb697a1f"></script>
+      <script src="../_static/documentation_options.js?v=0373d9dd"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

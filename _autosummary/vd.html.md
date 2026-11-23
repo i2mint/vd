@@ -2029,7 +2029,8 @@ Return every provider with live `installed` / `has_adapter` flags added.
 Return the names of backends with a registered native async client.
 
 Every other backend still works with [`connect_async()`](#vd.connect_async), through the
-universal `to_thread` wrapper.
+universal `to_thread` wrapper. Imports every installed adapter first (adapters
+register lazily, and a native async client registers with its adapter).
 
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
@@ -2048,6 +2049,9 @@ of registered backends.
 ### vd.list_backends()
 
 Return the names of all backends with a registered (importable) adapter.
+
+Imports every installed adapter first (seconds, with several SDKs installed):
+adapters are otherwise loaded only when a backend is resolved by name.
 
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]

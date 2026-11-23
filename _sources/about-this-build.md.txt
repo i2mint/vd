@@ -5,19 +5,17 @@ orphan: true
 
 # About this build
 
-This documentation was built on **2026-11-23 07:28 UTC** from commit <a href="https://github.com/i2mint/vd/commit/f2722ddb1c3861c2d83da57fd714f0829c278fea"><code>f2722dd</code></a> on branch <code>master</code>, for **vd 0.2.27** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 09:40 UTC** from commit <a href="https://github.com/i2mint/vd/commit/9939e9411898f9108623949e134dd753c86894b2"><code>9939e94</code></a> on branch <code>master</code>, for **vd 0.2.28** (from <code>pyproject.toml</code>).
 
-:::{warning}
-The documentation and the package may be misaligned:
-
-- The documented version (0.2.27) is behind the latest release on PyPI (0.2.28): `pip install vd` gives newer code than these docs describe.
+:::{note}
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 :::
 
 ## Source
 
 | | |
 |---|---|
-| Commit | <a href="https://github.com/i2mint/vd/commit/f2722ddb1c3861c2d83da57fd714f0829c278fea"><code>f2722ddb1c3861c2d83da57fd714f0829c278fea</code></a> |
+| Commit | <a href="https://github.com/i2mint/vd/commit/9939e9411898f9108623949e134dd753c86894b2"><code>9939e9411898f9108623949e134dd753c86894b2</code></a> |
 | Branch | <code>master</code> |
 | Tags at this commit | none |
 | Working tree | clean |
@@ -28,15 +26,15 @@ The documentation and the package may be misaligned:
 | | |
 |---|---|
 | Repository | <code>i2mint/vd</code> |
-| Run | <a href="https://github.com/i2mint/vd/actions/runs/45131173778">45131173778</a> |
+| Run | <a href="https://github.com/i2mint/vd/actions/runs/45148834127">45148834127</a> |
 | Ref | <code>refs/heads/master</code> |
-| Event commit | <code>f2722ddb1c3861c2d83da57fd714f0829c278fea</code> (in the history of the built commit) |
+| Event commit | <code>9939e9411898f9108623949e134dd753c86894b2</code> (in the history of the built commit) |
 
 ## Tools
 
 | | |
 |---|---|
-| epythet | 0.2.24 |
+| epythet | 0.2.25 |
 | Sphinx | 9.1.1 |
 | docutils | 0.22.4 |
 | Python | 3.12.16 |
@@ -55,14 +53,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/vd/0.2.28/">0.2.28</a>, newer than the documented version (0.2.27).
+Latest release: <a href="https://pypi.org/project/vd/0.2.28/">0.2.28</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/vd && cd vd
-git checkout f2722ddb1c3861c2d83da57fd714f0829c278fea
-pip install "epythet==0.2.24"
+git checkout 9939e9411898f9108623949e134dd753c86894b2
+pip install "epythet==0.2.25"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

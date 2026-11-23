@@ -4,6 +4,19 @@ vd.backends
 .. automodule:: vd.backends
 
    
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      BACKEND_MODULES
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      load
+      load_all
+   
 .. rubric:: Modules
 
 .. autosummary::

@@ -100,7 +100,12 @@ data-aria-dark="Switch to auto color mode">
     <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
       <i class="i-lucide close"></i>
     </button>
-    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#vd.backends.BACKEND_MODULES"><code class="docutils literal notranslate"><span class="pre">BACKEND_MODULES</span></code></a></li>
+<li><a class="reference internal" href="#vd.backends.load"><code class="docutils literal notranslate"><span class="pre">load()</span></code></a></li>
+<li><a class="reference internal" href="#vd.backends.load_all"><code class="docutils literal notranslate"><span class="pre">load_all()</span></code></a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
   <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
   <main class="sy-main w-full max-sm:max-w-full print:pt-6">
@@ -140,11 +145,68 @@ data-aria-dark="Switch to auto color mode">
           <section id="module-vd.backends">
 <span id="vd-backends"></span><h1>vd.backends<a class="headerlink" href="#module-vd.backends" title="Link to this heading">#</a></h1>
 <p>Backend adapters for the vector databases <code class="docutils literal notranslate"><span class="pre">vd</span></code> supports.</p>
-<p>Importing this package registers every adapter whose client library is
-installed. Each adapter lives in its own module and registers itself with the
-<a class="reference internal" href="vd.util.html#vd.util.register_backend" title="vd.util.register_backend"><code class="xref py py-func docutils literal notranslate"><span class="pre">register_backend()</span></code></a> decorator; modules whose third-party client
-is not installed fail to import and are skipped silently — that backend simply
-will not appear in <a class="reference internal" href="vd.html#vd.list_backends" title="vd.list_backends"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.list_backends()</span></code></a>.</p>
+<p>Adapters are registered <strong>lazily</strong>: <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">vd</span></code> imports only the always-available
+<code class="docutils literal notranslate"><span class="pre">memory</span></code> adapter, because importing every installed client SDK (chromadb, lancedb,
+…) costs seconds. An adapter module is imported the first time its backend is
+resolved by name (<a class="reference internal" href="vd.html#vd.connect" title="vd.connect"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.connect()</span></code></a>, <a class="reference internal" href="vd.util.html#vd.util.get_backend" title="vd.util.get_backend"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.util.get_backend()</span></code></a>,
+<a class="reference internal" href="vd.html#vd.connect_async" title="vd.connect_async"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.connect_async()</span></code></a>), or all at once by <a class="reference internal" href="#vd.backends.load_all" title="vd.backends.load_all"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_all()</span></code></a>, which
+<a class="reference internal" href="vd.html#vd.list_backends" title="vd.list_backends"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.list_backends()</span></code></a> and <a class="reference internal" href="vd.html#vd.list_async_backends" title="vd.list_async_backends"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.list_async_backends()</span></code></a> call. Each adapter lives
+in its own module and registers itself with the <a class="reference internal" href="vd.util.html#vd.util.register_backend" title="vd.util.register_backend"><code class="xref py py-func docutils literal notranslate"><span class="pre">register_backend()</span></code></a>
+decorator; a module whose third-party client is not installed fails to import and
+is skipped silently, so that backend does not appear in <a class="reference internal" href="vd.html#vd.list_backends" title="vd.list_backends"><code class="xref py py-func docutils literal notranslate"><span class="pre">vd.list_backends()</span></code></a>.</p>
+<p class="rubric">Module Attributes</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.backends.BACKEND_MODULES" title="vd.backends.BACKEND_MODULES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BACKEND_MODULES</span></code></a></p></td>
+<td><p>Every backend module vd ships; the module's name is the backend's name.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Functions</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vd.backends.load" title="vd.backends.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(name)</p></td>
+<td><p>Import the adapter module for backend <code class="docutils literal notranslate"><span class="pre">name</span></code>; whether it is now available.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vd.backends.load_all" title="vd.backends.load_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_all</span></code></a>()</p></td>
+<td><p>Import every adapter module whose client library is installed (the old import-time behaviour).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py data">
+<dt class="sig sig-object py" id="vd.backends.BACKEND_MODULES">
+<span class="sig-prename descclassname"><span class="pre">vd.backends.</span></span><span class="sig-name descname"><span class="pre">BACKEND_MODULES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('memory',</span> <span class="pre">'chroma',</span> <span class="pre">'faiss',</span> <span class="pre">'sqlite_vec',</span> <span class="pre">'duckdb',</span> <span class="pre">'lancedb',</span> <span class="pre">'qdrant',</span> <span class="pre">'pgvector',</span> <span class="pre">'pinecone',</span> <span class="pre">'weaviate',</span> <span class="pre">'milvus',</span> <span class="pre">'redis',</span> <span class="pre">'elasticsearch',</span> <span class="pre">'mongodb',</span> <span class="pre">'turbopuffer')</span></span><a class="headerlink" href="#vd.backends.BACKEND_MODULES" title="Link to this definition">#</a></dt>
+<dd><p>Every backend module vd ships; the module’s name is the backend’s name.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.backends.load">
+<span class="sig-prename descclassname"><span class="pre">vd.backends.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/backends.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.load" title="Link to this definition">#</a></dt>
+<dd><p>Import the adapter module for backend <code class="docutils literal notranslate"><span class="pre">name</span></code>; whether it is now available.</p>
+<p><code class="docutils literal notranslate"><span class="pre">False</span></code> for a name that is not a shipped adapter and for one whose third-party
+client is not installed (the module then fails to import and is skipped).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vd.backends.load_all">
+<span class="sig-prename descclassname"><span class="pre">vd.backends.</span></span><span class="sig-name descname"><span class="pre">load_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/backends.html#load_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.load_all" title="Link to this definition">#</a></dt>
+<dd><p>Import every adapter module whose client library is installed (the old import-time behaviour).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span></span></p>
+</dd>
+</dl>
+</dd></dl>
+
 <p class="rubric">Modules</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
@@ -197,7 +259,7 @@ will not appear in <a class="reference internal" href="vd.html#vd.list_backends"
     </div>
   </div>
 </footer>
-      <script src="../_static/documentation_options.js?v=eb697a1f"></script>
+      <script src="../_static/documentation_options.js?v=0373d9dd"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

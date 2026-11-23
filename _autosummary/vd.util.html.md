@@ -127,6 +127,9 @@ Egress: keep `(id, text, score)`.
 
 Return the names of all backends with a registered (importable) adapter.
 
+Imports every installed adapter first (seconds, with several SDKs installed):
+adapters are otherwise loaded only when a backend is resolved by name.
+
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
