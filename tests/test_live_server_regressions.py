@@ -6,6 +6,8 @@ Each test is skipped unless its server answers (start them with
 parametrized contract suites only hit by accident of test ordering.
 """
 
+import time
+
 import pytest
 
 import vd
@@ -35,7 +37,15 @@ def test_mongodb_search_after_drop_and_recreate_same_name():
                 client.delete_collection(name)
             col = client.create_collection(name, dimension=2)
             col["a"] = vd.Document(id="a", text="x", vector=[1.0, 0.0])
-            assert [h["id"] for h in col.search([1.0, 0.0], limit=1)] == ["a"]
+            # $vectorSearch is eventually consistent: a fresh write becomes
+            # searchable once mongot syncs, which a busy server can delay.
+            deadline, ids = time.monotonic() + 30, []
+            while time.monotonic() < deadline:
+                ids = [h["id"] for h in col.search([1.0, 0.0], limit=1)]
+                if ids:
+                    break
+                time.sleep(0.5)
+            assert ids == ["a"]
     finally:
         if name in list(client.list_collections()):
             client.delete_collection(name)

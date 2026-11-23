@@ -222,16 +222,7 @@ def _recorded_metric(
     except (OperationFailure, AttributeError):
         # no search-index support (a plain mongod, or pymongo < 4.5): nothing to read
         return None
-    for idx in indexes:
-        if idx.get("status") in _GONE_INDEX_STATUSES:
-            continue
-        definition = idx.get("latestDefinition") or idx.get("definition") or {}
-        for field in definition.get("fields", ()):
-            if field.get("type") == "vector" and field.get("path") == "embedding":
-                metric = _ATLAS_SIMILARITY_TO_METRIC.get(field.get("similarity"))
-                if metric:
-                    return metric
-    return None
+    return _metric_of_indexes(indexes)
 
 
 # ---------------------------------------------------------------------------
@@ -359,25 +350,9 @@ class MongoDBCollection(AbstractCollection):
 
     def _create_vector_index(self) -> None:
         """Submit the Atlas vector search index definition for this collection."""
-        from pymongo.operations import SearchIndexModel
-
-        similarity = _METRIC_TO_ATLAS_SIMILARITY.get(self.metric, "cosine")
         try:
             self._coll.create_search_index(
-                SearchIndexModel(
-                    definition={
-                        "fields": [
-                            {
-                                "type": "vector",
-                                "path": "embedding",
-                                "numDimensions": self.dimension,
-                                "similarity": similarity,
-                            }
-                        ]
-                    },
-                    name=self._vector_index,
-                    type="vectorSearch",
-                )
+                _vector_index_model(self.dimension, self.metric, self._vector_index)
             )
         except OperationFailure as exc:
             # A concurrent creator won the race; the wait loop takes over.
@@ -795,3 +770,347 @@ class MongoDBClient(AbstractClient):
     def close(self) -> None:
         """Close the underlying ``MongoClient`` and release its resources."""
         self._client.close()
+
+
+# ---------------------------------------------------------------------------
+# Native async — pymongo.AsyncMongoClient
+# ---------------------------------------------------------------------------
+
+import asyncio  # noqa: E402
+
+from vd.asynchronous import (  # noqa: E402
+    AsyncAbstractClient,
+    AsyncAbstractCollection,
+    register_async_backend,
+)
+
+
+def _vector_index_model(dimension: int, metric: str, name: str):
+    """The Atlas vector search index definition (shared by sync and async)."""
+    from pymongo.operations import SearchIndexModel
+
+    return SearchIndexModel(
+        definition={
+            "fields": [
+                {
+                    "type": "vector",
+                    "path": "embedding",
+                    "numDimensions": dimension,
+                    "similarity": _METRIC_TO_ATLAS_SIMILARITY.get(metric, "cosine"),
+                }
+            ]
+        },
+        name=name,
+        type="vectorSearch",
+    )
+
+
+def _metric_of_indexes(indexes: Iterable[dict]) -> Optional[str]:
+    """The vd metric recorded in a list of search-index descriptions, if any."""
+    for idx in indexes:
+        if idx.get("status") in _GONE_INDEX_STATUSES:
+            continue
+        definition = idx.get("latestDefinition") or idx.get("definition") or {}
+        for field in definition.get("fields", ()):
+            if field.get("type") == "vector" and field.get("path") == "embedding":
+                metric = _ATLAS_SIMILARITY_TO_METRIC.get(field.get("similarity"))
+                if metric:
+                    return metric
+    return None
+
+
+async def _search_indexes_async(coll, name: Optional[str] = None) -> list[dict]:
+    cursor = (
+        await coll.list_search_indexes(name)
+        if name
+        else await coll.list_search_indexes()
+    )
+    return [idx async for idx in cursor]
+
+
+class NativeAsyncMongoDBCollection(AsyncAbstractCollection):
+    """
+    A MongoDB collection driven by ``pymongo.AsyncMongoClient`` — non-blocking I/O.
+
+    Same document shape, Atlas vector index (created on first search, then awaited
+    until queryable), client-side filtering and scores as :class:`MongoDBCollection`.
+    """
+
+    supported_filter_operators = SUPPORTED_FILTER_OPERATORS - STRING_OPERATORS
+
+    def __init__(
+        self,
+        name: str,
+        async_collection,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        vector_index: str = _DEFAULT_VECTOR_INDEX,
+    ):
+        self.name = name
+        self._coll = async_collection
+        self._embedder = embedder
+        self.dimension = dimension
+        self.metric = metric
+        self._vector_index = vector_index
+        self._index_ready = False
+
+    @property
+    def native(self):
+        """The raw ``pymongo`` async collection (escape hatch)."""
+        return self._coll
+
+    async def _live_search_index_names(self) -> set:
+        return {
+            idx["name"]
+            for idx in await _search_indexes_async(self._coll)
+            if idx.get("status") not in _GONE_INDEX_STATUSES
+        }
+
+    async def _create_vector_index(self) -> None:
+        try:
+            await self._coll.create_search_index(
+                _vector_index_model(self.dimension, self.metric, self._vector_index)
+            )
+        except OperationFailure as exc:
+            if "already exists" not in str(exc).lower():
+                raise
+
+    async def _wait_until_queryable(
+        self, *, timeout: float = 120.0, poll_interval: float = 1.0
+    ) -> None:
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + timeout
+        while loop.time() < deadline:
+            listed = [
+                idx
+                for idx in await _search_indexes_async(self._coll, self._vector_index)
+                if idx.get("status") not in _GONE_INDEX_STATUSES
+            ]
+            if any(idx.get("queryable") for idx in listed):
+                return
+            if not listed and self.dimension is not None:
+                await self._create_vector_index()  # a dropped namesake's index vanished
+            await asyncio.sleep(poll_interval)
+        raise RuntimeError(
+            f"Atlas vector search index {self._vector_index!r} for collection "
+            f"{self.name!r} did not become queryable within {timeout:.0f}s."
+        )
+
+    async def _ensure_search_index(self) -> None:
+        if self._index_ready:
+            return
+        try:
+            existing = await self._live_search_index_names()
+        except OperationFailure as exc:
+            raise RuntimeError(
+                "This MongoDB deployment does not support Atlas Vector Search. "
+                "Connect to Atlas or a local 'mongodb-atlas-local' / AtlasCLI "
+                "deployment — a plain mongod cannot run $vectorSearch."
+            ) from exc
+        if self._vector_index not in existing:
+            if self.dimension is None:
+                raise RuntimeError(
+                    f"Cannot create the Atlas vector search index for collection "
+                    f"{self.name!r}: the vector dimension is unknown. Write a "
+                    f"document first, or pass dimension= to create_collection."
+                )
+            await self._create_vector_index()
+        await self._wait_until_queryable()
+        self._index_ready = True
+
+    async def _write_many(self, docs: list[Document]) -> None:
+        from pymongo import ReplaceOne
+
+        await self._coll.bulk_write(
+            [
+                ReplaceOne(
+                    {"_id": d.id},
+                    {
+                        "_id": d.id,
+                        "text": d.text,
+                        "embedding": d.vector,
+                        "metadata": d.metadata or {},
+                    },
+                    upsert=True,
+                )
+                for d in docs
+            ],
+            ordered=False,
+        )
+
+    async def _read(self, key: str) -> Document:
+        raw = await self._coll.find_one({"_id": key})
+        if raw is None:
+            raise KeyError(key)
+        return _raw_to_document(raw)
+
+    async def _drop(self, key: str) -> None:
+        if (await self._coll.delete_one({"_id": key})).deleted_count == 0:
+            raise KeyError(key)
+
+    async def _keys(self):
+        async for doc in self._coll.find({}, {"_id": 1}):
+            yield doc["_id"]
+
+    async def _count(self) -> int:
+        return await self._coll.count_documents({})
+
+    async def _query(
+        self,
+        vector: Vector,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        index = kwargs.get("index", self._vector_index)
+        if index == self._vector_index:
+            await self._ensure_search_index()
+        pipeline = _build_vector_search_pipeline(
+            vector, limit=overfetch_limit(limit, filter), index=index
+        )
+        if "num_candidates" in kwargs:
+            pipeline[0]["$vectorSearch"]["numCandidates"] = int(
+                kwargs["num_candidates"]
+            )
+        cursor = await self._coll.aggregate(pipeline)
+        results = [
+            {
+                "id": raw["_id"],
+                "text": raw.get("text", ""),
+                "score": raw.get("score", 0.0),
+                "metadata": raw.get("metadata", {}),
+            }
+            async for raw in cursor
+        ]
+        return list(apply_client_filter(results, filter, limit=limit))
+
+
+class NativeAsyncMongoDBClient(AsyncAbstractClient):
+    """
+    Native async MongoDB client — what ``await vd.connect_async("mongodb", ...)``
+    returns. Same arguments as :class:`MongoDBClient` (``uri`` or ``MONGODB_URI``,
+    ``database``, ``vector_index``). Construction does not connect.
+    """
+
+    backend_name = "mongodb"
+
+    def __init__(
+        self,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        uri: Optional[str] = None,
+        database: str = "vd",
+        vector_index: str = _DEFAULT_VECTOR_INDEX,
+        **config,
+    ):
+        from pymongo import AsyncMongoClient
+
+        super().__init__(embedder=embedder, **config)
+        resolved_uri = uri or os.environ.get("MONGODB_URI")
+        if not resolved_uri:
+            raise ValueError(
+                "No MongoDB URI supplied. Either pass uri='mongodb+srv://...' "
+                "or set the MONGODB_URI environment variable."
+            )
+        self._client = AsyncMongoClient(resolved_uri)
+        self._db = self._client[database]
+        self._vector_index = vector_index
+        self._database_name = database
+        self._metrics: dict[str, str] = {}
+
+    def _collection(self, name, *, dimension, metric) -> NativeAsyncMongoDBCollection:
+        return NativeAsyncMongoDBCollection(
+            name,
+            self._db[name],
+            embedder=self._embedder,
+            dimension=dimension,
+            metric=metric,
+            vector_index=self._vector_index,
+        )
+
+    async def _collection_names(self) -> list:
+        return [
+            n for n in await self._db.list_collection_names() if n != _META_COLLECTION
+        ]
+
+    async def create_collection(
+        self,
+        name: str,
+        *,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
+    ) -> NativeAsyncMongoDBCollection:
+        if name == _META_COLLECTION:
+            raise ValueError(f"{name!r} is reserved for vd's own bookkeeping.")
+        try:
+            await self._db.create_collection(name)
+        except CollectionInvalid as exc:
+            raise ValueError(
+                f"Collection {name!r} already exists in database {self._database_name!r}."
+            ) from exc
+        col = self._collection(name, dimension=dimension, metric=metric)
+        self._metrics[name] = metric
+        try:
+            await self._db[_META_COLLECTION].replace_one(
+                {"_id": name}, {"_id": name, "metric": metric}, upsert=True
+            )
+        except OperationFailure:
+            pass
+        if dimension is not None:
+            try:
+                await col._create_vector_index()
+            except OperationFailure:
+                pass  # no Atlas search here: the first search says so
+        return col
+
+    async def _metric_in_meta(self, name: str) -> Optional[str]:
+        try:
+            doc = await self._db[_META_COLLECTION].find_one({"_id": name}) or {}
+        except OperationFailure:
+            return None
+        metric = doc.get("metric")
+        return metric if metric in _METRIC_TO_ATLAS_SIMILARITY else None
+
+    async def get_collection(self, name: str) -> NativeAsyncMongoDBCollection:
+        if name not in await self._collection_names():
+            raise KeyError(
+                f"Collection {name!r} does not exist in database {self._database_name!r}."
+            )
+        try:
+            recorded = _metric_of_indexes(
+                await _search_indexes_async(self._db[name], self._vector_index)
+            )
+        except (OperationFailure, AttributeError):
+            recorded = None
+        metric = (
+            recorded
+            or await self._metric_in_meta(name)
+            or self._metrics.get(name, "cosine")
+        )
+        return self._collection(name, dimension=None, metric=metric)
+
+    async def delete_collection(self, name: str) -> None:
+        if name not in await self._collection_names():
+            raise KeyError(
+                f"Collection {name!r} does not exist in database {self._database_name!r}."
+            )
+        try:
+            await self._db[_META_COLLECTION].delete_one({"_id": name})
+        except OperationFailure:
+            pass
+        await self._db.drop_collection(name)
+        self._metrics.pop(name, None)
+
+    async def list_collections(self):
+        for name in await self._collection_names():
+            yield name
+
+    async def close(self) -> None:
+        await self._client.close()
+
+
+register_async_backend("mongodb")(NativeAsyncMongoDBClient)
