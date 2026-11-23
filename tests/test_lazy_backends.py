@@ -66,3 +66,62 @@ def test_connect_async_resolves_a_backend_by_name_in_a_fresh_process():
         "print(asyncio.run(go()))"
     )
     assert out
+
+
+def test_adapter_imports_are_serialised_across_threads(monkeypatch):
+    """Concurrent first use must not import SDKs in parallel (vd#62): that left numpy
+    half-initialised and the process broken."""
+    import importlib
+    import threading
+    import time
+
+    import vd.backends as backends
+
+    active, peak, guard = [0], [0], threading.Lock()
+
+    def slow_import(name):
+        with guard:
+            active[0] += 1
+            peak[0] = max(peak[0], active[0])
+        time.sleep(0.02)
+        with guard:
+            active[0] -= 1
+        raise ImportError(name)  # as if the SDK were missing: registers nothing
+
+    import vd.util
+
+    monkeypatch.setattr(vd.util, "_backends", {})  # nothing registered yet
+    monkeypatch.setattr(importlib, "import_module", slow_import)
+    names = [n for n in backends.BACKEND_MODULES if n != "memory"][:6]
+    threads = [threading.Thread(target=backends.load, args=(n,)) for n in names]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert peak[0] == 1
+
+
+def test_a_users_registration_survives_load_all():
+    """Registering a shipped backend's name before it is loaded keeps the user's
+    class: the adapter module must not replace it (vd#62)."""
+    out = _run(
+        "import vd, vd.util as u\n"
+        "from vd.backends import memory\n"
+        "@u.register_backend('faiss')\n"
+        "class Mine(memory.MemoryClient): pass\n"
+        "vd.list_backends()\n"
+        "print(u.get_backend('faiss').__name__)"
+    )
+    assert out == "Mine"
+
+
+def test_the_unknown_backend_error_lists_every_installed_adapter(monkeypatch):
+    """Not only the adapters loaded so far (vd#62)."""
+    import vd.backends as backends
+    import vd.util as u
+
+    calls = []
+    monkeypatch.setattr(backends, "load_all", lambda: calls.append(1))
+    with pytest.raises(ValueError, match="Unknown backend"):
+        u.get_backend("no_such_backend_xyz")
+    assert calls

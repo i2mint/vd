@@ -211,3 +211,17 @@ def test_export_empty_collection(tmp_path):
     assert export_to_jsonl(_new_collection(), path) == 0
     assert path.read_text() == ""
     assert import_from_jsonl(_new_collection(), path) == 0
+
+
+def test_directory_round_trip_keeps_ids_that_differ_only_in_case(tmp_path):
+    """macOS and Windows filesystems ignore case: 'Doc', 'doc' and '_Metadata' must
+    get files whose names differ case-insensitively too (vd#62)."""
+    c = _new_collection()
+    for i, doc_id in enumerate(["Doc", "doc", "_Metadata"]):
+        c[doc_id] = Document(id=doc_id, text=doc_id, vector=[float(i), 1.0])
+    assert export_to_directory(c, tmp_path / "d") == 3
+    names = [p.name.casefold() for p in (tmp_path / "d").glob("*.json")]
+    assert len(names) == len(set(names)) == 4  # three documents + _metadata.json
+    target = _new_collection()
+    import_from_directory(target, tmp_path / "d")
+    assert sorted(target) == ["Doc", "_Metadata", "doc"]
