@@ -149,58 +149,72 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="12"><span class="sd">is skipped silently, so that backend does not appear in :func:`vd.list_backends`.</span>
 </span><span data-line="13"><span class="sd">"""</span>
 </span><span data-line="14">
-</span><span data-line="15"><span class="c1">#: Every backend module vd ships; the module's name is the backend's name.</span>
-</span><span data-line="16"><span class="n">BACKEND_MODULES</span> <span class="o">=</span> <span class="p">(</span>
-</span><span data-line="17">    <span class="s2">"memory"</span><span class="p">,</span>  <span class="c1"># always available — no third-party dependency</span>
-</span><span data-line="18">    <span class="s2">"chroma"</span><span class="p">,</span>
-</span><span data-line="19">    <span class="s2">"faiss"</span><span class="p">,</span>
-</span><span data-line="20">    <span class="s2">"sqlite_vec"</span><span class="p">,</span>
-</span><span data-line="21">    <span class="s2">"duckdb"</span><span class="p">,</span>
-</span><span data-line="22">    <span class="s2">"lancedb"</span><span class="p">,</span>
-</span><span data-line="23">    <span class="s2">"qdrant"</span><span class="p">,</span>
-</span><span data-line="24">    <span class="s2">"pgvector"</span><span class="p">,</span>
-</span><span data-line="25">    <span class="s2">"pinecone"</span><span class="p">,</span>
-</span><span data-line="26">    <span class="s2">"weaviate"</span><span class="p">,</span>
-</span><span data-line="27">    <span class="s2">"milvus"</span><span class="p">,</span>
-</span><span data-line="28">    <span class="s2">"redis"</span><span class="p">,</span>
-</span><span data-line="29">    <span class="s2">"elasticsearch"</span><span class="p">,</span>
-</span><span data-line="30">    <span class="s2">"mongodb"</span><span class="p">,</span>
-</span><span data-line="31">    <span class="s2">"turbopuffer"</span><span class="p">,</span>
-</span><span data-line="32"><span class="p">)</span>
-</span><span data-line="33"><span class="c1">#: Kept for callers of the old name.</span>
-</span><span data-line="34"><span class="n">_BACKEND_MODULES</span> <span class="o">=</span> <span class="n">BACKEND_MODULES</span>
-</span><span data-line="35">
-</span><span data-line="36">
+</span><span data-line="15"><span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+</span><span data-line="16">
+</span><span data-line="17"><span class="c1">#: Every backend module vd ships; the module's name is the backend's name.</span>
+</span><span data-line="18"><span class="n">BACKEND_MODULES</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="19">    <span class="s2">"memory"</span><span class="p">,</span>  <span class="c1"># always available — no third-party dependency</span>
+</span><span data-line="20">    <span class="s2">"chroma"</span><span class="p">,</span>
+</span><span data-line="21">    <span class="s2">"faiss"</span><span class="p">,</span>
+</span><span data-line="22">    <span class="s2">"sqlite_vec"</span><span class="p">,</span>
+</span><span data-line="23">    <span class="s2">"duckdb"</span><span class="p">,</span>
+</span><span data-line="24">    <span class="s2">"lancedb"</span><span class="p">,</span>
+</span><span data-line="25">    <span class="s2">"qdrant"</span><span class="p">,</span>
+</span><span data-line="26">    <span class="s2">"pgvector"</span><span class="p">,</span>
+</span><span data-line="27">    <span class="s2">"pinecone"</span><span class="p">,</span>
+</span><span data-line="28">    <span class="s2">"weaviate"</span><span class="p">,</span>
+</span><span data-line="29">    <span class="s2">"milvus"</span><span class="p">,</span>
+</span><span data-line="30">    <span class="s2">"redis"</span><span class="p">,</span>
+</span><span data-line="31">    <span class="s2">"elasticsearch"</span><span class="p">,</span>
+</span><span data-line="32">    <span class="s2">"mongodb"</span><span class="p">,</span>
+</span><span data-line="33">    <span class="s2">"turbopuffer"</span><span class="p">,</span>
+</span><span data-line="34"><span class="p">)</span>
+</span><span data-line="35"><span class="c1">#: Kept for callers of the old name.</span>
+</span><span data-line="36"><span class="n">_BACKEND_MODULES</span> <span class="o">=</span> <span class="n">BACKEND_MODULES</span>
+</span><span data-line="37">
+</span><span data-line="38"><span class="c1">#: One adapter import at a time: client SDKs imported concurrently from several</span>
+</span><span data-line="39"><span class="c1">#: threads can leave a shared dependency (numpy) half-initialised for good (vd#62).</span>
+</span><span data-line="40"><span class="n">_LOAD_LOCK</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">RLock</span><span class="p">()</span>
+</span><span data-line="41">
+</span><span data-line="42">
 <div class="viewcode-block" id="load">
 <a class="viewcode-back" href="../../_autosummary/vd.backends.html#vd.backends.load">[docs]</a>
-</span><span data-line="37"><span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span data-line="38"><span class="w">    </span><span class="sd">"""Import the adapter module for backend ``name``; whether it is now available.</span>
-</span><span data-line="39">
-</span><span data-line="40"><span class="sd">    ``False`` for a name that is not a shipped adapter and for one whose third-party</span>
-</span><span data-line="41"><span class="sd">    client is not installed (the module then fails to import and is skipped).</span>
-</span><span data-line="42"><span class="sd">    """</span>
-</span><span data-line="43">    <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
-</span><span data-line="44">
-</span><span data-line="45">    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">BACKEND_MODULES</span><span class="p">:</span>
-</span><span data-line="46">        <span class="k">return</span> <span class="kc">False</span>
-</span><span data-line="47">    <span class="k">try</span><span class="p">:</span>
-</span><span data-line="48">        <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="sa">f</span><span class="s2">"vd.backends.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span data-line="49">    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-</span><span data-line="50">        <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># third-party client not installed — backend unavailable</span>
-</span><span data-line="51">    <span class="k">return</span> <span class="kc">True</span></div>
-
-</span><span data-line="52">
+</span><span data-line="43"><span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span data-line="44"><span class="w">    </span><span class="sd">"""Import the adapter module for backend ``name``; whether it is now available.</span>
+</span><span data-line="45">
+</span><span data-line="46"><span class="sd">    ``False`` for a name that is not a shipped adapter and for one whose third-party</span>
+</span><span data-line="47"><span class="sd">    client is not installed (the module then fails to import and is skipped). A</span>
+</span><span data-line="48"><span class="sd">    name someone already registered (``register_backend``) is left alone, so a</span>
+</span><span data-line="49"><span class="sd">    user's own adapter is never replaced by the shipped one (vd#62). Thread-safe:</span>
+</span><span data-line="50"><span class="sd">    imports are serialised.</span>
+</span><span data-line="51"><span class="sd">    """</span>
+</span><span data-line="52">    <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
 </span><span data-line="53">
+</span><span data-line="54">    <span class="kn">from</span><span class="w"> </span><span class="nn">vd.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">_backends</span>
+</span><span data-line="55">
+</span><span data-line="56">    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">BACKEND_MODULES</span><span class="p">:</span>
+</span><span data-line="57">        <span class="k">return</span> <span class="kc">False</span>
+</span><span data-line="58">    <span class="k">with</span> <span class="n">_LOAD_LOCK</span><span class="p">:</span>
+</span><span data-line="59">        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_backends</span><span class="p">:</span>
+</span><span data-line="60">            <span class="k">return</span> <span class="kc">True</span>
+</span><span data-line="61">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="62">            <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="sa">f</span><span class="s2">"vd.backends.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span data-line="63">        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+</span><span data-line="64">            <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># third-party client not installed — backend unavailable</span>
+</span><span data-line="65">    <span class="k">return</span> <span class="kc">True</span></div>
+
+</span><span data-line="66">
+</span><span data-line="67">
 <div class="viewcode-block" id="load_all">
 <a class="viewcode-back" href="../../_autosummary/vd.backends.html#vd.backends.load_all">[docs]</a>
-</span><span data-line="54"><span class="k">def</span><span class="w"> </span><span class="nf">load_all</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="55"><span class="w">    </span><span class="sd">"""Import every adapter module whose client library is installed (the old import-time behaviour)."""</span>
-</span><span data-line="56">    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">BACKEND_MODULES</span><span class="p">:</span>
-</span><span data-line="57">        <span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+</span><span data-line="68"><span class="k">def</span><span class="w"> </span><span class="nf">load_all</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="69"><span class="w">    </span><span class="sd">"""Import every adapter module whose client library is installed (the old import-time behaviour)."""</span>
+</span><span data-line="70">    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">BACKEND_MODULES</span><span class="p">:</span>
+</span><span data-line="71">        <span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
-</span><span data-line="58">
-</span><span data-line="59">
-</span><span data-line="60"><span class="n">load</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">)</span>  <span class="c1"># the core adapter: no third-party import, so it stays eager</span>
+</span><span data-line="72">
+</span><span data-line="73">
+</span><span data-line="74"><span class="n">load</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">)</span>  <span class="c1"># the core adapter: no third-party import, so it stays eager</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -228,7 +242,7 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="../../_static/documentation_options.js?v=0373d9dd"></script>
+      <script src="../../_static/documentation_options.js?v=a70b5dc4"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

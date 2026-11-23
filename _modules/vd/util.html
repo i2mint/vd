@@ -241,251 +241,254 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="99">            <span class="sa">f</span><span class="s2">"setup guidance."</span>
 </span><span data-line="100">        <span class="p">)</span>
 </span><span data-line="101">
-</span><span data-line="102">    <span class="n">registered</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_backends</span><span class="p">))</span> <span class="ow">or</span> <span class="s2">"none"</span>
-</span><span data-line="103">    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span data-line="104">        <span class="sa">f</span><span class="s2">"Unknown backend </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">. Registered backends: </span><span class="si">{</span><span class="n">registered</span><span class="si">}</span><span class="s2">. "</span>
-</span><span data-line="105">        <span class="sa">f</span><span class="s2">"Run  vd.print_backends_table()  to see every backend vd knows about."</span>
-</span><span data-line="106">    <span class="p">)</span></div>
+</span><span data-line="102">    <span class="kn">from</span><span class="w"> </span><span class="nn">vd.backends</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_all</span>
+</span><span data-line="103">
+</span><span data-line="104">    <span class="n">load_all</span><span class="p">()</span>  <span class="c1"># name every installed adapter, not only those loaded so far</span>
+</span><span data-line="105">    <span class="n">registered</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_backends</span><span class="p">))</span> <span class="ow">or</span> <span class="s2">"none"</span>
+</span><span data-line="106">    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span data-line="107">        <span class="sa">f</span><span class="s2">"Unknown backend </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">. Registered backends: </span><span class="si">{</span><span class="n">registered</span><span class="si">}</span><span class="s2">. "</span>
+</span><span data-line="108">        <span class="sa">f</span><span class="s2">"Run  vd.print_backends_table()  to see every backend vd knows about."</span>
+</span><span data-line="109">    <span class="p">)</span></div>
 
-</span><span data-line="107">
-</span><span data-line="108">
+</span><span data-line="110">
+</span><span data-line="111">
 <div class="viewcode-block" id="list_backends">
 <a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.list_backends">[docs]</a>
-</span><span data-line="109"><span class="k">def</span><span class="w"> </span><span class="nf">list_backends</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span data-line="110"><span class="w">    </span><span class="sd">"""Return the names of all backends with a registered (importable) adapter.</span>
-</span><span data-line="111">
-</span><span data-line="112"><span class="sd">    Imports every installed adapter first (seconds, with several SDKs installed):</span>
-</span><span data-line="113"><span class="sd">    adapters are otherwise loaded only when a backend is resolved by name.</span>
-</span><span data-line="114"><span class="sd">    """</span>
-</span><span data-line="115">    <span class="kn">from</span><span class="w"> </span><span class="nn">vd.backends</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_all</span>
-</span><span data-line="116">
-</span><span data-line="117">    <span class="n">load_all</span><span class="p">()</span>
-</span><span data-line="118">    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_backends</span><span class="p">)</span></div>
-
+</span><span data-line="112"><span class="k">def</span><span class="w"> </span><span class="nf">list_backends</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span data-line="113"><span class="w">    </span><span class="sd">"""Return the names of all backends with a registered (importable) adapter.</span>
+</span><span data-line="114">
+</span><span data-line="115"><span class="sd">    Imports every installed adapter first (seconds, with several SDKs installed):</span>
+</span><span data-line="116"><span class="sd">    adapters are otherwise loaded only when a backend is resolved by name.</span>
+</span><span data-line="117"><span class="sd">    """</span>
+</span><span data-line="118">    <span class="kn">from</span><span class="w"> </span><span class="nn">vd.backends</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_all</span>
 </span><span data-line="119">
-</span><span data-line="120">
-</span><span data-line="121"><span class="c1"># --------------------------------------------------------------------------- #</span>
-</span><span data-line="122"><span class="c1"># connect — the entry point</span>
-</span><span data-line="123"><span class="c1"># --------------------------------------------------------------------------- #</span>
-</span><span data-line="124">
-</span><span data-line="125">
+</span><span data-line="120">    <span class="n">load_all</span><span class="p">()</span>
+</span><span data-line="121">    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_backends</span><span class="p">)</span></div>
+
+</span><span data-line="122">
+</span><span data-line="123">
+</span><span data-line="124"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="125"><span class="c1"># connect — the entry point</span>
+</span><span data-line="126"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="127">
+</span><span data-line="128">
 <div class="viewcode-block" id="connect">
 <a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.connect">[docs]</a>
-</span><span data-line="126"><span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span>
-</span><span data-line="127">    <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span data-line="128">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="129">    <span class="n">embedder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="130">    <span class="o">**</span><span class="n">backend_kwargs</span><span class="p">,</span>
-</span><span data-line="131"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Client</span><span class="p">:</span>
-</span><span data-line="132"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="133"><span class="sd">    Connect to a vector database backend and return its :class:`~vd.base.Client`.</span>
-</span><span data-line="134">
-</span><span data-line="135"><span class="sd">    This is the single entry point of ``vd``. Switching vector databases is a</span>
-</span><span data-line="136"><span class="sd">    one-argument change here.</span>
+</span><span data-line="129"><span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span>
+</span><span data-line="130">    <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span data-line="131">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="132">    <span class="n">embedder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Vector</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="133">    <span class="o">**</span><span class="n">backend_kwargs</span><span class="p">,</span>
+</span><span data-line="134"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Client</span><span class="p">:</span>
+</span><span data-line="135"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="136"><span class="sd">    Connect to a vector database backend and return its :class:`~vd.base.Client`.</span>
 </span><span data-line="137">
-</span><span data-line="138"><span class="sd">    Parameters</span>
-</span><span data-line="139"><span class="sd">    ----------</span>
-</span><span data-line="140"><span class="sd">    backend : str</span>
-</span><span data-line="141"><span class="sd">        Backend name: ``"memory"``, ``"chroma"``, ``"qdrant"``, ``"faiss"``,</span>
-</span><span data-line="142"><span class="sd">        ``"lancedb"``, ``"sqlite_vec"``, ``"duckdb"``, ``"pgvector"``,</span>
-</span><span data-line="143"><span class="sd">        ``"pinecone"``, ... Run :func:`vd.list_backends` for what is installed.</span>
-</span><span data-line="144"><span class="sd">    embedder : callable, optional</span>
-</span><span data-line="145"><span class="sd">        A ``text -&gt; vector`` function. Supply it only if you want the</span>
-</span><span data-line="146"><span class="sd">        *convenience* of passing raw text to ``collection[key] = "text"`` and</span>
-</span><span data-line="147"><span class="sd">        ``collection.search("query text")``. ``vd`` never embeds on its own —</span>
-</span><span data-line="148"><span class="sd">        with no embedder, pass :class:`~vd.base.Document` objects with vectors</span>
-</span><span data-line="149"><span class="sd">        and pre-computed query vectors.</span>
-</span><span data-line="150"><span class="sd">    **backend_kwargs</span>
-</span><span data-line="151"><span class="sd">        Backend-specific connection options (``persist_directory``, ``url``,</span>
-</span><span data-line="152"><span class="sd">        ``api_key``, ``path``, ...). See each adapter's docstring.</span>
-</span><span data-line="153">
-</span><span data-line="154"><span class="sd">    Returns</span>
-</span><span data-line="155"><span class="sd">    -------</span>
-</span><span data-line="156"><span class="sd">    Client</span>
-</span><span data-line="157"><span class="sd">        A connected client — a ``Mapping`` of collection name to collection.</span>
-</span><span data-line="158">
-</span><span data-line="159"><span class="sd">    Examples</span>
-</span><span data-line="160"><span class="sd">    --------</span>
-</span><span data-line="161"><span class="sd">    &gt;&gt;&gt; client = connect('memory')                                  # doctest: +SKIP</span>
-</span><span data-line="162"><span class="sd">    &gt;&gt;&gt; client = connect('chroma', persist_directory='./db')        # doctest: +SKIP</span>
-</span><span data-line="163"><span class="sd">    &gt;&gt;&gt; client = connect('qdrant', url='http://localhost:6333')     # doctest: +SKIP</span>
-</span><span data-line="164"><span class="sd">    """</span>
-</span><span data-line="165">    <span class="n">client_class</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
-</span><span data-line="166">    <span class="k">return</span> <span class="n">client_class</span><span class="p">(</span><span class="n">embedder</span><span class="o">=</span><span class="n">embedder</span><span class="p">,</span> <span class="o">**</span><span class="n">backend_kwargs</span><span class="p">)</span></div>
+</span><span data-line="138"><span class="sd">    This is the single entry point of ``vd``. Switching vector databases is a</span>
+</span><span data-line="139"><span class="sd">    one-argument change here.</span>
+</span><span data-line="140">
+</span><span data-line="141"><span class="sd">    Parameters</span>
+</span><span data-line="142"><span class="sd">    ----------</span>
+</span><span data-line="143"><span class="sd">    backend : str</span>
+</span><span data-line="144"><span class="sd">        Backend name: ``"memory"``, ``"chroma"``, ``"qdrant"``, ``"faiss"``,</span>
+</span><span data-line="145"><span class="sd">        ``"lancedb"``, ``"sqlite_vec"``, ``"duckdb"``, ``"pgvector"``,</span>
+</span><span data-line="146"><span class="sd">        ``"pinecone"``, ... Run :func:`vd.list_backends` for what is installed.</span>
+</span><span data-line="147"><span class="sd">    embedder : callable, optional</span>
+</span><span data-line="148"><span class="sd">        A ``text -&gt; vector`` function. Supply it only if you want the</span>
+</span><span data-line="149"><span class="sd">        *convenience* of passing raw text to ``collection[key] = "text"`` and</span>
+</span><span data-line="150"><span class="sd">        ``collection.search("query text")``. ``vd`` never embeds on its own —</span>
+</span><span data-line="151"><span class="sd">        with no embedder, pass :class:`~vd.base.Document` objects with vectors</span>
+</span><span data-line="152"><span class="sd">        and pre-computed query vectors.</span>
+</span><span data-line="153"><span class="sd">    **backend_kwargs</span>
+</span><span data-line="154"><span class="sd">        Backend-specific connection options (``persist_directory``, ``url``,</span>
+</span><span data-line="155"><span class="sd">        ``api_key``, ``path``, ...). See each adapter's docstring.</span>
+</span><span data-line="156">
+</span><span data-line="157"><span class="sd">    Returns</span>
+</span><span data-line="158"><span class="sd">    -------</span>
+</span><span data-line="159"><span class="sd">    Client</span>
+</span><span data-line="160"><span class="sd">        A connected client — a ``Mapping`` of collection name to collection.</span>
+</span><span data-line="161">
+</span><span data-line="162"><span class="sd">    Examples</span>
+</span><span data-line="163"><span class="sd">    --------</span>
+</span><span data-line="164"><span class="sd">    &gt;&gt;&gt; client = connect('memory')                                  # doctest: +SKIP</span>
+</span><span data-line="165"><span class="sd">    &gt;&gt;&gt; client = connect('chroma', persist_directory='./db')        # doctest: +SKIP</span>
+</span><span data-line="166"><span class="sd">    &gt;&gt;&gt; client = connect('qdrant', url='http://localhost:6333')     # doctest: +SKIP</span>
+</span><span data-line="167"><span class="sd">    """</span>
+</span><span data-line="168">    <span class="n">client_class</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+</span><span data-line="169">    <span class="k">return</span> <span class="n">client_class</span><span class="p">(</span><span class="n">embedder</span><span class="o">=</span><span class="n">embedder</span><span class="p">,</span> <span class="o">**</span><span class="n">backend_kwargs</span><span class="p">)</span></div>
 
-</span><span data-line="167">
-</span><span data-line="168">
-</span><span data-line="169"><span class="c1"># --------------------------------------------------------------------------- #</span>
-</span><span data-line="170"><span class="c1"># Document-input normalization</span>
-</span><span data-line="171"><span class="c1"># --------------------------------------------------------------------------- #</span>
-</span><span data-line="172">
-</span><span data-line="173">
-</span><span data-line="174"><span class="k">def</span><span class="w"> </span><span class="nf">_generate_id</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"doc"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="175"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="176"><span class="sd">    Generate a unique, mostly-deterministic id for a document.</span>
-</span><span data-line="177">
-</span><span data-line="178"><span class="sd">    Examples</span>
-</span><span data-line="179"><span class="sd">    --------</span>
-</span><span data-line="180"><span class="sd">    &gt;&gt;&gt; _generate_id("Hello world").startswith('doc_')</span>
-</span><span data-line="181"><span class="sd">    True</span>
-</span><span data-line="182"><span class="sd">    """</span>
-</span><span data-line="183">    <span class="n">text_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="s2">"replace"</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
-</span><span data-line="184">    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">text_hash</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
-</span><span data-line="185">
-</span><span data-line="186">
+</span><span data-line="170">
+</span><span data-line="171">
+</span><span data-line="172"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="173"><span class="c1"># Document-input normalization</span>
+</span><span data-line="174"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="175">
+</span><span data-line="176">
+</span><span data-line="177"><span class="k">def</span><span class="w"> </span><span class="nf">_generate_id</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"doc"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="178"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="179"><span class="sd">    Generate a unique, mostly-deterministic id for a document.</span>
+</span><span data-line="180">
+</span><span data-line="181"><span class="sd">    Examples</span>
+</span><span data-line="182"><span class="sd">    --------</span>
+</span><span data-line="183"><span class="sd">    &gt;&gt;&gt; _generate_id("Hello world").startswith('doc_')</span>
+</span><span data-line="184"><span class="sd">    True</span>
+</span><span data-line="185"><span class="sd">    """</span>
+</span><span data-line="186">    <span class="n">text_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="s2">"replace"</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
+</span><span data-line="187">    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">text_hash</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+</span><span data-line="188">
+</span><span data-line="189">
 <div class="viewcode-block" id="normalize_document_input">
 <a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.normalize_document_input">[docs]</a>
-</span><span data-line="187"><span class="k">def</span><span class="w"> </span><span class="nf">normalize_document_input</span><span class="p">(</span>
-</span><span data-line="188">    <span class="n">doc_input</span><span class="p">:</span> <span class="n">DocumentInput</span><span class="p">,</span>
-</span><span data-line="189">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="190">    <span class="n">auto_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="191"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Document</span><span class="p">:</span>
-</span><span data-line="192"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="193"><span class="sd">    Normalize a flexible document input to a :class:`~vd.base.Document`.</span>
-</span><span data-line="194">
-</span><span data-line="195"><span class="sd">    Accepted shapes: a :class:`~vd.base.Document`; a ``str`` (just text); a</span>
-</span><span data-line="196"><span class="sd">    tuple ``(text, id)``, ``(text, metadata)``, or ``(text, id, metadata)``.</span>
+</span><span data-line="190"><span class="k">def</span><span class="w"> </span><span class="nf">normalize_document_input</span><span class="p">(</span>
+</span><span data-line="191">    <span class="n">doc_input</span><span class="p">:</span> <span class="n">DocumentInput</span><span class="p">,</span>
+</span><span data-line="192">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="193">    <span class="n">auto_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="194"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Document</span><span class="p">:</span>
+</span><span data-line="195"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="196"><span class="sd">    Normalize a flexible document input to a :class:`~vd.base.Document`.</span>
 </span><span data-line="197">
-</span><span data-line="198"><span class="sd">    Parameters</span>
-</span><span data-line="199"><span class="sd">    ----------</span>
-</span><span data-line="200"><span class="sd">    doc_input : DocumentInput</span>
-</span><span data-line="201"><span class="sd">        The input to normalize.</span>
-</span><span data-line="202"><span class="sd">    auto_id : bool</span>
-</span><span data-line="203"><span class="sd">        When the input carries no id, generate one (vs. leaving it empty).</span>
-</span><span data-line="204">
-</span><span data-line="205"><span class="sd">    Examples</span>
-</span><span data-line="206"><span class="sd">    --------</span>
-</span><span data-line="207"><span class="sd">    &gt;&gt;&gt; normalize_document_input(("Hello", "doc1")).id</span>
-</span><span data-line="208"><span class="sd">    'doc1'</span>
-</span><span data-line="209"><span class="sd">    &gt;&gt;&gt; normalize_document_input(("Hello", {"k": "v"})).metadata</span>
-</span><span data-line="210"><span class="sd">    {'k': 'v'}</span>
-</span><span data-line="211"><span class="sd">    &gt;&gt;&gt; normalize_document_input("Hello world").id.startswith('doc_')</span>
-</span><span data-line="212"><span class="sd">    True</span>
-</span><span data-line="213"><span class="sd">    """</span>
-</span><span data-line="214">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="n">Document</span><span class="p">):</span>
-</span><span data-line="215">        <span class="k">if</span> <span class="ow">not</span> <span class="n">doc_input</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="n">auto_id</span><span class="p">:</span>
-</span><span data-line="216">            <span class="n">doc_input</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">_generate_id</span><span class="p">(</span><span class="n">doc_input</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-</span><span data-line="217">        <span class="k">return</span> <span class="n">doc_input</span>
-</span><span data-line="218">
-</span><span data-line="219">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span data-line="220">        <span class="n">doc_id</span> <span class="o">=</span> <span class="n">_generate_id</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="k">if</span> <span class="n">auto_id</span> <span class="k">else</span> <span class="s2">""</span>
-</span><span data-line="221">        <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">doc_input</span><span class="p">)</span>
-</span><span data-line="222">
-</span><span data-line="223">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span data-line="224">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-</span><span data-line="225">            <span class="n">text</span><span class="p">,</span> <span class="n">second</span> <span class="o">=</span> <span class="n">doc_input</span>
-</span><span data-line="226">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">second</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span data-line="227">                <span class="n">doc_id</span> <span class="o">=</span> <span class="n">_generate_id</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">if</span> <span class="n">auto_id</span> <span class="k">else</span> <span class="s2">""</span>
-</span><span data-line="228">                <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">second</span><span class="p">)</span>
-</span><span data-line="229">            <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">second</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
-</span><span data-line="230">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-</span><span data-line="231">            <span class="n">text</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">doc_input</span>
-</span><span data-line="232">            <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{})</span>
-</span><span data-line="233">
-</span><span data-line="234">    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-</span><span data-line="235">        <span class="sa">f</span><span class="s2">"Cannot interpret </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> as a document input. "</span>
-</span><span data-line="236">        <span class="sa">f</span><span class="s2">"Use a str, a (text, id)/(text, metadata)/(text, id, metadata) tuple, "</span>
-</span><span data-line="237">        <span class="sa">f</span><span class="s2">"or a vd.Document."</span>
-</span><span data-line="238">    <span class="p">)</span></div>
+</span><span data-line="198"><span class="sd">    Accepted shapes: a :class:`~vd.base.Document`; a ``str`` (just text); a</span>
+</span><span data-line="199"><span class="sd">    tuple ``(text, id)``, ``(text, metadata)``, or ``(text, id, metadata)``.</span>
+</span><span data-line="200">
+</span><span data-line="201"><span class="sd">    Parameters</span>
+</span><span data-line="202"><span class="sd">    ----------</span>
+</span><span data-line="203"><span class="sd">    doc_input : DocumentInput</span>
+</span><span data-line="204"><span class="sd">        The input to normalize.</span>
+</span><span data-line="205"><span class="sd">    auto_id : bool</span>
+</span><span data-line="206"><span class="sd">        When the input carries no id, generate one (vs. leaving it empty).</span>
+</span><span data-line="207">
+</span><span data-line="208"><span class="sd">    Examples</span>
+</span><span data-line="209"><span class="sd">    --------</span>
+</span><span data-line="210"><span class="sd">    &gt;&gt;&gt; normalize_document_input(("Hello", "doc1")).id</span>
+</span><span data-line="211"><span class="sd">    'doc1'</span>
+</span><span data-line="212"><span class="sd">    &gt;&gt;&gt; normalize_document_input(("Hello", {"k": "v"})).metadata</span>
+</span><span data-line="213"><span class="sd">    {'k': 'v'}</span>
+</span><span data-line="214"><span class="sd">    &gt;&gt;&gt; normalize_document_input("Hello world").id.startswith('doc_')</span>
+</span><span data-line="215"><span class="sd">    True</span>
+</span><span data-line="216"><span class="sd">    """</span>
+</span><span data-line="217">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="n">Document</span><span class="p">):</span>
+</span><span data-line="218">        <span class="k">if</span> <span class="ow">not</span> <span class="n">doc_input</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="n">auto_id</span><span class="p">:</span>
+</span><span data-line="219">            <span class="n">doc_input</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">_generate_id</span><span class="p">(</span><span class="n">doc_input</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</span><span data-line="220">        <span class="k">return</span> <span class="n">doc_input</span>
+</span><span data-line="221">
+</span><span data-line="222">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span data-line="223">        <span class="n">doc_id</span> <span class="o">=</span> <span class="n">_generate_id</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="k">if</span> <span class="n">auto_id</span> <span class="k">else</span> <span class="s2">""</span>
+</span><span data-line="224">        <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">doc_input</span><span class="p">)</span>
+</span><span data-line="225">
+</span><span data-line="226">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">doc_input</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span data-line="227">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+</span><span data-line="228">            <span class="n">text</span><span class="p">,</span> <span class="n">second</span> <span class="o">=</span> <span class="n">doc_input</span>
+</span><span data-line="229">            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">second</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span data-line="230">                <span class="n">doc_id</span> <span class="o">=</span> <span class="n">_generate_id</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">if</span> <span class="n">auto_id</span> <span class="k">else</span> <span class="s2">""</span>
+</span><span data-line="231">                <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">second</span><span class="p">)</span>
+</span><span data-line="232">            <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">second</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+</span><span data-line="233">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+</span><span data-line="234">            <span class="n">text</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">doc_input</span>
+</span><span data-line="235">            <span class="k">return</span> <span class="n">Document</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{})</span>
+</span><span data-line="236">
+</span><span data-line="237">    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+</span><span data-line="238">        <span class="sa">f</span><span class="s2">"Cannot interpret </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">doc_input</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> as a document input. "</span>
+</span><span data-line="239">        <span class="sa">f</span><span class="s2">"Use a str, a (text, id)/(text, metadata)/(text, id, metadata) tuple, "</span>
+</span><span data-line="240">        <span class="sa">f</span><span class="s2">"or a vd.Document."</span>
+</span><span data-line="241">    <span class="p">)</span></div>
 
-</span><span data-line="239">
-</span><span data-line="240">
-</span><span data-line="241"><span class="c1"># --------------------------------------------------------------------------- #</span>
-</span><span data-line="242"><span class="c1"># Egress functions — transform a search result on the way out</span>
-</span><span data-line="243"><span class="c1"># --------------------------------------------------------------------------- #</span>
-</span><span data-line="244">
-</span><span data-line="245">
+</span><span data-line="242">
+</span><span data-line="243">
+</span><span data-line="244"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="245"><span class="c1"># Egress functions — transform a search result on the way out</span>
+</span><span data-line="246"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="247">
+</span><span data-line="248">
 <div class="viewcode-block" id="text_only">
 <a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.text_only">[docs]</a>
-</span><span data-line="246"><span class="k">def</span><span class="w"> </span><span class="nf">text_only</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="247"><span class="w">    </span><span class="sd">"""Egress: keep only the text. ``&gt;&gt;&gt; text_only({'text': 'hi'})`` -&gt; ``'hi'``."""</span>
-</span><span data-line="248">    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"text"</span><span class="p">]</span></div>
+</span><span data-line="249"><span class="k">def</span><span class="w"> </span><span class="nf">text_only</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="250"><span class="w">    </span><span class="sd">"""Egress: keep only the text. ``&gt;&gt;&gt; text_only({'text': 'hi'})`` -&gt; ``'hi'``."""</span>
+</span><span data-line="251">    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"text"</span><span class="p">]</span></div>
 
-</span><span data-line="249">
-</span><span data-line="250">
+</span><span data-line="252">
+</span><span data-line="253">
 <div class="viewcode-block" id="id_only">
 <a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.id_only">[docs]</a>
-</span><span data-line="251"><span class="k">def</span><span class="w"> </span><span class="nf">id_only</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="252"><span class="w">    </span><span class="sd">"""Egress: keep only the document id."""</span>
-</span><span data-line="253">    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span></div>
+</span><span data-line="254"><span class="k">def</span><span class="w"> </span><span class="nf">id_only</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="255"><span class="w">    </span><span class="sd">"""Egress: keep only the document id."""</span>
+</span><span data-line="256">    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span></div>
 
-</span><span data-line="254">
-</span><span data-line="255">
+</span><span data-line="257">
+</span><span data-line="258">
 <div class="viewcode-block" id="id_and_score">
 <a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.id_and_score">[docs]</a>
-</span><span data-line="256"><span class="k">def</span><span class="w"> </span><span class="nf">id_and_score</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-</span><span data-line="257"><span class="w">    </span><span class="sd">"""Egress: keep ``(id, score)``."""</span>
-</span><span data-line="258">    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span></div>
+</span><span data-line="259"><span class="k">def</span><span class="w"> </span><span class="nf">id_and_score</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+</span><span data-line="260"><span class="w">    </span><span class="sd">"""Egress: keep ``(id, score)``."""</span>
+</span><span data-line="261">    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span></div>
 
-</span><span data-line="259">
-</span><span data-line="260">
+</span><span data-line="262">
+</span><span data-line="263">
 <div class="viewcode-block" id="id_text_score">
 <a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.id_text_score">[docs]</a>
-</span><span data-line="261"><span class="k">def</span><span class="w"> </span><span class="nf">id_text_score</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-</span><span data-line="262"><span class="w">    </span><span class="sd">"""Egress: keep ``(id, text, score)``."""</span>
-</span><span data-line="263">    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"text"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span></div>
+</span><span data-line="264"><span class="k">def</span><span class="w"> </span><span class="nf">id_text_score</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+</span><span data-line="265"><span class="w">    </span><span class="sd">"""Egress: keep ``(id, text, score)``."""</span>
+</span><span data-line="266">    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"text"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span></div>
 
-</span><span data-line="264">
-</span><span data-line="265">
-</span><span data-line="266"><span class="c1"># --------------------------------------------------------------------------- #</span>
-</span><span data-line="267"><span class="c1"># Vector math</span>
-</span><span data-line="268"><span class="c1"># --------------------------------------------------------------------------- #</span>
-</span><span data-line="269">
-</span><span data-line="270">
+</span><span data-line="267">
+</span><span data-line="268">
+</span><span data-line="269"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="270"><span class="c1"># Vector math</span>
+</span><span data-line="271"><span class="c1"># --------------------------------------------------------------------------- #</span>
+</span><span data-line="272">
+</span><span data-line="273">
 <div class="viewcode-block" id="cosine_similarity">
 <a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.cosine_similarity">[docs]</a>
-</span><span data-line="271"><span class="k">def</span><span class="w"> </span><span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">vec1</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">vec2</span><span class="p">:</span> <span class="n">Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span data-line="272"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="273"><span class="sd">    Cosine similarity of two vectors (1.0 identical, 0.0 orthogonal).</span>
-</span><span data-line="274">
-</span><span data-line="275"><span class="sd">    Examples</span>
-</span><span data-line="276"><span class="sd">    --------</span>
-</span><span data-line="277"><span class="sd">    &gt;&gt;&gt; cosine_similarity([1.0, 0.0], [1.0, 0.0])</span>
-</span><span data-line="278"><span class="sd">    1.0</span>
-</span><span data-line="279"><span class="sd">    &gt;&gt;&gt; cosine_similarity([1.0, 0.0], [0.0, 1.0])</span>
-</span><span data-line="280"><span class="sd">    0.0</span>
-</span><span data-line="281"><span class="sd">    """</span>
-</span><span data-line="282">    <span class="n">dot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vec1</span><span class="p">,</span> <span class="n">vec2</span><span class="p">))</span>
-</span><span data-line="283">    <span class="n">mag1</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">vec1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
-</span><span data-line="284">    <span class="n">mag2</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">vec2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
-</span><span data-line="285">    <span class="k">if</span> <span class="n">mag1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">mag2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="286">        <span class="k">return</span> <span class="mf">0.0</span>
-</span><span data-line="287">    <span class="k">return</span> <span class="n">dot</span> <span class="o">/</span> <span class="p">(</span><span class="n">mag1</span> <span class="o">*</span> <span class="n">mag2</span><span class="p">)</span></div>
+</span><span data-line="274"><span class="k">def</span><span class="w"> </span><span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">vec1</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">vec2</span><span class="p">:</span> <span class="n">Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span data-line="275"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="276"><span class="sd">    Cosine similarity of two vectors (1.0 identical, 0.0 orthogonal).</span>
+</span><span data-line="277">
+</span><span data-line="278"><span class="sd">    Examples</span>
+</span><span data-line="279"><span class="sd">    --------</span>
+</span><span data-line="280"><span class="sd">    &gt;&gt;&gt; cosine_similarity([1.0, 0.0], [1.0, 0.0])</span>
+</span><span data-line="281"><span class="sd">    1.0</span>
+</span><span data-line="282"><span class="sd">    &gt;&gt;&gt; cosine_similarity([1.0, 0.0], [0.0, 1.0])</span>
+</span><span data-line="283"><span class="sd">    0.0</span>
+</span><span data-line="284"><span class="sd">    """</span>
+</span><span data-line="285">    <span class="n">dot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vec1</span><span class="p">,</span> <span class="n">vec2</span><span class="p">))</span>
+</span><span data-line="286">    <span class="n">mag1</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">vec1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+</span><span data-line="287">    <span class="n">mag2</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">vec2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+</span><span data-line="288">    <span class="k">if</span> <span class="n">mag1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">mag2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="289">        <span class="k">return</span> <span class="mf">0.0</span>
+</span><span data-line="290">    <span class="k">return</span> <span class="n">dot</span> <span class="o">/</span> <span class="p">(</span><span class="n">mag1</span> <span class="o">*</span> <span class="n">mag2</span><span class="p">)</span></div>
 
-</span><span data-line="288">
-</span><span data-line="289">
+</span><span data-line="291">
+</span><span data-line="292">
 <div class="viewcode-block" id="euclidean_distance">
 <a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.euclidean_distance">[docs]</a>
-</span><span data-line="290"><span class="k">def</span><span class="w"> </span><span class="nf">euclidean_distance</span><span class="p">(</span><span class="n">vec1</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">vec2</span><span class="p">:</span> <span class="n">Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span data-line="291"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="292"><span class="sd">    Euclidean (L2) distance between two vectors.</span>
-</span><span data-line="293">
-</span><span data-line="294"><span class="sd">    Examples</span>
-</span><span data-line="295"><span class="sd">    --------</span>
-</span><span data-line="296"><span class="sd">    &gt;&gt;&gt; euclidean_distance([1.0, 0.0], [1.0, 0.0])</span>
-</span><span data-line="297"><span class="sd">    0.0</span>
-</span><span data-line="298"><span class="sd">    """</span>
-</span><span data-line="299">    <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vec1</span><span class="p">,</span> <span class="n">vec2</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span></div>
+</span><span data-line="293"><span class="k">def</span><span class="w"> </span><span class="nf">euclidean_distance</span><span class="p">(</span><span class="n">vec1</span><span class="p">:</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">vec2</span><span class="p">:</span> <span class="n">Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span data-line="294"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="295"><span class="sd">    Euclidean (L2) distance between two vectors.</span>
+</span><span data-line="296">
+</span><span data-line="297"><span class="sd">    Examples</span>
+</span><span data-line="298"><span class="sd">    --------</span>
+</span><span data-line="299"><span class="sd">    &gt;&gt;&gt; euclidean_distance([1.0, 0.0], [1.0, 0.0])</span>
+</span><span data-line="300"><span class="sd">    0.0</span>
+</span><span data-line="301"><span class="sd">    """</span>
+</span><span data-line="302">    <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vec1</span><span class="p">,</span> <span class="n">vec2</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span></div>
 
-</span><span data-line="300">
-</span><span data-line="301">
+</span><span data-line="303">
+</span><span data-line="304">
 <div class="viewcode-block" id="mean_vector">
 <a class="viewcode-back" href="../../_autosummary/vd.util.html#vd.mean_vector">[docs]</a>
-</span><span data-line="302"><span class="k">def</span><span class="w"> </span><span class="nf">mean_vector</span><span class="p">(</span><span class="n">vectors</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Vector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Vector</span><span class="p">:</span>
-</span><span data-line="303"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="304"><span class="sd">    Component-wise mean of a non-empty iterable of equal-length vectors.</span>
-</span><span data-line="305">
-</span><span data-line="306"><span class="sd">    Examples</span>
-</span><span data-line="307"><span class="sd">    --------</span>
-</span><span data-line="308"><span class="sd">    &gt;&gt;&gt; mean_vector([[0.0, 2.0], [2.0, 4.0]])</span>
-</span><span data-line="309"><span class="sd">    [1.0, 3.0]</span>
-</span><span data-line="310"><span class="sd">    """</span>
-</span><span data-line="311">    <span class="n">vectors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">vectors</span><span class="p">)</span>
-</span><span data-line="312">    <span class="k">if</span> <span class="ow">not</span> <span class="n">vectors</span><span class="p">:</span>
-</span><span data-line="313">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"mean_vector requires at least one vector"</span><span class="p">)</span>
-</span><span data-line="314">    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vectors</span><span class="p">)</span>
-</span><span data-line="315">    <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vectors</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-</span><span data-line="316">    <span class="k">return</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vectors</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim</span><span class="p">)]</span></div>
+</span><span data-line="305"><span class="k">def</span><span class="w"> </span><span class="nf">mean_vector</span><span class="p">(</span><span class="n">vectors</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Vector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Vector</span><span class="p">:</span>
+</span><span data-line="306"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="307"><span class="sd">    Component-wise mean of a non-empty iterable of equal-length vectors.</span>
+</span><span data-line="308">
+</span><span data-line="309"><span class="sd">    Examples</span>
+</span><span data-line="310"><span class="sd">    --------</span>
+</span><span data-line="311"><span class="sd">    &gt;&gt;&gt; mean_vector([[0.0, 2.0], [2.0, 4.0]])</span>
+</span><span data-line="312"><span class="sd">    [1.0, 3.0]</span>
+</span><span data-line="313"><span class="sd">    """</span>
+</span><span data-line="314">    <span class="n">vectors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">vectors</span><span class="p">)</span>
+</span><span data-line="315">    <span class="k">if</span> <span class="ow">not</span> <span class="n">vectors</span><span class="p">:</span>
+</span><span data-line="316">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"mean_vector requires at least one vector"</span><span class="p">)</span>
+</span><span data-line="317">    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vectors</span><span class="p">)</span>
+</span><span data-line="318">    <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vectors</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span data-line="319">    <span class="k">return</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vectors</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim</span><span class="p">)]</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">
@@ -514,7 +517,7 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="../../_static/documentation_options.js?v=0373d9dd"></script>
+      <script src="../../_static/documentation_options.js?v=a70b5dc4"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

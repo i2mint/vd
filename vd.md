@@ -1,4 +1,4 @@
-> built 2026-11-23 09:40 UTC from 9939e94 (master) · vd 0.2.28. Details: build_info.json
+> built 2026-11-23 11:04 UTC from efa6fba (master) · vd 0.2.29. Details: build_info.json
 
 # index.html.md
 
@@ -1047,7 +1047,10 @@ Every backend module vd ships; the module’s name is the backend’s name.
 Import the adapter module for backend `name`; whether it is now available.
 
 `False` for a name that is not a shipped adapter and for one whose third-party
-client is not installed (the module then fails to import and is skipped).
+client is not installed (the module then fails to import and is skipped). A
+name someone already registered (`register_backend`) is left alone, so a
+user’s own adapter is never replaced by the shipped one (vd#62). Thread-safe:
+imports are serialised.
 
 * **Return type:**
   [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
@@ -6218,7 +6221,7 @@ Egress: keep only the text. `>>> text_only({'text': 'hi'})` -> `'hi'`.
 
 # About this build
 
-This documentation was built on **2026-11-23 09:40 UTC** from commit <a href="https://github.com/i2mint/vd/commit/9939e9411898f9108623949e134dd753c86894b2"><code>9939e94</code></a> on branch <code>master</code>, for **vd 0.2.28** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 11:04 UTC** from commit <a href="https://github.com/i2mint/vd/commit/efa6fba14837d0ce06d2a49988c512e7cd439a95"><code>efa6fba</code></a> on branch <code>master</code>, for **vd 0.2.29** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -6227,7 +6230,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                  |
 |---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/vd/commit/9939e9411898f9108623949e134dd753c86894b2"><code>9939e9411898f9108623949e134dd753c86894b2</code></a> |
+| Commit              | <a href="https://github.com/i2mint/vd/commit/efa6fba14837d0ce06d2a49988c512e7cd439a95"><code>efa6fba14837d0ce06d2a49988c512e7cd439a95</code></a> |
 | Branch              | <code>master</code>                                                                                                                              |
 | Tags at this commit | none                                                                                                                                             |
 | Working tree        | clean                                                                                                                                            |
@@ -6238,9 +6241,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/vd</code>                                                                     |
-| Run          | <a href="https://github.com/i2mint/vd/actions/runs/45148834127">45148834127</a>            |
+| Run          | <a href="https://github.com/i2mint/vd/actions/runs/45161488716">45161488716</a>            |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>9939e9411898f9108623949e134dd753c86894b2</code> (in the history of the built commit) |
+| Event commit | <code>efa6fba14837d0ce06d2a49988c512e7cd439a95</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -6265,13 +6268,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/vd/0.2.28/">0.2.28</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/vd/0.2.29/">0.2.29</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/vd && cd vd
-git checkout 9939e9411898f9108623949e134dd753c86894b2
+git checkout efa6fba14837d0ce06d2a49988c512e7cd439a95
 pip install "epythet==0.2.25"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

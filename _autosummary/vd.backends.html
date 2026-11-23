@@ -188,7 +188,10 @@ is skipped silently, so that backend does not appear in <a class="reference inte
 <span class="sig-prename descclassname"><span class="pre">vd.backends.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vd/backends.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vd.backends.load" title="Link to this definition">#</a></dt>
 <dd><p>Import the adapter module for backend <code class="docutils literal notranslate"><span class="pre">name</span></code>; whether it is now available.</p>
 <p><code class="docutils literal notranslate"><span class="pre">False</span></code> for a name that is not a shipped adapter and for one whose third-party
-client is not installed (the module then fails to import and is skipped).</p>
+client is not installed (the module then fails to import and is skipped). A
+name someone already registered (<code class="docutils literal notranslate"><span class="pre">register_backend</span></code>) is left alone, so a
+user’s own adapter is never replaced by the shipped one (vd#62). Thread-safe:
+imports are serialised.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
@@ -259,7 +262,7 @@ client is not installed (the module then fails to import and is skipped).</p>
     </div>
   </div>
 </footer>
-      <script src="../_static/documentation_options.js?v=0373d9dd"></script>
+      <script src="../_static/documentation_options.js?v=a70b5dc4"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

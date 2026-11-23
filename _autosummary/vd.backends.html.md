@@ -32,7 +32,10 @@ Every backend module vd ships; the module’s name is the backend’s name.
 Import the adapter module for backend `name`; whether it is now available.
 
 `False` for a name that is not a shipped adapter and for one whose third-party
-client is not installed (the module then fails to import and is skipped).
+client is not installed (the module then fails to import and is skipped). A
+name someone already registered (`register_backend`) is left alone, so a
+user’s own adapter is never replaced by the shipped one (vd#62). Thread-safe:
+imports are serialised.
 
 * **Return type:**
   [`bool`](https://docs.python.org/3/builtins/functions.html#bool)

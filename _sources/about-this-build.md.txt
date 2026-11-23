@@ -5,7 +5,7 @@ orphan: true
 
 # About this build
 
-This documentation was built on **2026-11-23 09:40 UTC** from commit <a href="https://github.com/i2mint/vd/commit/9939e9411898f9108623949e134dd753c86894b2"><code>9939e94</code></a> on branch <code>master</code>, for **vd 0.2.28** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 11:04 UTC** from commit <a href="https://github.com/i2mint/vd/commit/efa6fba14837d0ce06d2a49988c512e7cd439a95"><code>efa6fba</code></a> on branch <code>master</code>, for **vd 0.2.29** (from <code>pyproject.toml</code>).
 
 :::{note}
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -15,7 +15,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 | | |
 |---|---|
-| Commit | <a href="https://github.com/i2mint/vd/commit/9939e9411898f9108623949e134dd753c86894b2"><code>9939e9411898f9108623949e134dd753c86894b2</code></a> |
+| Commit | <a href="https://github.com/i2mint/vd/commit/efa6fba14837d0ce06d2a49988c512e7cd439a95"><code>efa6fba14837d0ce06d2a49988c512e7cd439a95</code></a> |
 | Branch | <code>master</code> |
 | Tags at this commit | none |
 | Working tree | clean |
@@ -26,9 +26,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 | | |
 |---|---|
 | Repository | <code>i2mint/vd</code> |
-| Run | <a href="https://github.com/i2mint/vd/actions/runs/45148834127">45148834127</a> |
+| Run | <a href="https://github.com/i2mint/vd/actions/runs/45161488716">45161488716</a> |
 | Ref | <code>refs/heads/master</code> |
-| Event commit | <code>9939e9411898f9108623949e134dd753c86894b2</code> (in the history of the built commit) |
+| Event commit | <code>efa6fba14837d0ce06d2a49988c512e7cd439a95</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -53,13 +53,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/vd/0.2.28/">0.2.28</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/vd/0.2.29/">0.2.29</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/vd && cd vd
-git checkout 9939e9411898f9108623949e134dd753c86894b2
+git checkout efa6fba14837d0ce06d2a49988c512e7cd439a95
 pip install "epythet==0.2.25"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
