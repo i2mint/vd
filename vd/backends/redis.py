@@ -346,23 +346,7 @@ class RedisCollection(AbstractCollection):
             # Index may exist structurally but contain no vectors yet.
             return []
 
-        results: list[SearchResult] = []
-        for doc in response.docs:
-            raw_score = float(getattr(doc, "vd_score", 1.0))
-            score = score_from_distance(raw_score, self.metric)
-            try:
-                metadata = json.loads(getattr(doc, "metadata", "{}") or "{}")
-            except (json.JSONDecodeError, TypeError):
-                metadata = {}
-            results.append(
-                {
-                    "id": getattr(doc, "vd_id", ""),
-                    "text": getattr(doc, "text", ""),
-                    "score": score,
-                    "metadata": metadata,
-                }
-            )
-
+        results = _docs_to_results(response.docs, self.metric)
         return apply_client_filter(results, filter, limit=limit)
 
     # ----- native hybrid via RediSearch BM25 + dense, fused client-side --- #
@@ -709,11 +693,17 @@ def _read_index_params(
     """
     if not _index_exists(r, index_name):
         return None, "cosine"
+    try:
+        return _index_params_from_info(r.ft(index_name).info())
+    except Exception:
+        return None, "cosine"
 
+
+def _index_params_from_info(info) -> tuple[Optional[int], str]:
+    """``(dimension, metric)`` from an ``FT.INFO`` response (sync or async client)."""
     _METRIC_REVERSE = {v: k for k, v in _DISTANCE_METRIC.items()}
 
     try:
-        info = r.ft(index_name).info()
         # Navigate the nested attribute structure to find the VectorField params.
         fields = info.get("attributes") if isinstance(info, dict) else None
         if fields is None:
@@ -752,3 +742,253 @@ def _read_index_params(
         pass
 
     return None, "cosine"
+
+
+# --------------------------------------------------------------------------- #
+# Native async — redis.asyncio
+# --------------------------------------------------------------------------- #
+
+import redis.asyncio as _aioredis  # noqa: E402
+
+from vd.asynchronous import (  # noqa: E402
+    AsyncAbstractClient,
+    AsyncAbstractCollection,
+    register_async_backend,
+)
+
+
+async def _index_exists_async(r, index_name: str) -> bool:
+    """Return True if the given RediSearch index exists (async)."""
+    try:
+        await r.ft(index_name).info()
+        return True
+    except Exception:
+        return False
+
+
+def _docs_to_results(docs, metric: str) -> list[SearchResult]:
+    """RediSearch KNN result docs -> vd result dicts (shared by sync and async)."""
+    results: list[SearchResult] = []
+    for doc in docs:
+        raw_score = float(getattr(doc, "vd_score", 1.0))
+        try:
+            metadata = json.loads(getattr(doc, "metadata", "{}") or "{}")
+        except (json.JSONDecodeError, TypeError):
+            metadata = {}
+        results.append(
+            {
+                "id": getattr(doc, "vd_id", ""),
+                "text": getattr(doc, "text", ""),
+                "score": score_from_distance(raw_score, metric),
+                "metadata": metadata,
+            }
+        )
+    return results
+
+
+class NativeAsyncRedisCollection(AsyncAbstractCollection):
+    """
+    A Redis collection driven by ``redis.asyncio`` — non-blocking I/O.
+
+    Same key layout, RediSearch index, client-side filtering and scores as
+    :class:`RedisCollection`, so data written by either is readable by both.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        client,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+    ):
+        self.name = name
+        self._redis = client
+        self._embedder = embedder
+        self.dimension = dimension
+        self.metric = metric
+        self._index_name = _index_name(name)
+        self._key_prefix = _key_prefix(name)
+
+    @property
+    def native(self):
+        """The raw ``redis.asyncio.Redis`` connection (escape hatch)."""
+        return self._redis
+
+    async def _ensure_index(self) -> None:
+        if await _index_exists_async(self._redis, self._index_name):
+            return
+        schema = [
+            TextField("text"),
+            TextField("metadata"),
+            VectorField(
+                "embedding",
+                "HNSW",
+                {
+                    "TYPE": "FLOAT32",
+                    "DIM": self.dimension,
+                    "DISTANCE_METRIC": _DISTANCE_METRIC.get(self.metric, "COSINE"),
+                },
+            ),
+        ]
+        definition = IndexDefinition(
+            prefix=[self._key_prefix], index_type=IndexType.HASH
+        )
+        await self._redis.ft(self._index_name).create_index(
+            schema, definition=definition
+        )
+
+    async def _write_many(self, docs: list[Document]) -> None:
+        await self._ensure_index()
+        async with self._redis.pipeline(transaction=False) as pipe:
+            for doc in docs:
+                pipe.hset(
+                    _doc_key(self.name, doc.id),
+                    mapping={
+                        "text": doc.text,
+                        "metadata": json.dumps(doc.metadata or {}),
+                        "embedding": _to_float32_bytes(doc.vector),
+                        "vd_id": doc.id,
+                    },
+                )
+            await pipe.execute()
+
+    async def _read(self, key: str) -> Document:
+        raw = await self._redis.hgetall(_doc_key(self.name, key))
+        if not raw:
+            raise KeyError(key)
+        return _raw_to_document(raw)
+
+    async def _drop(self, key: str) -> None:
+        full_key = _doc_key(self.name, key)
+        if not await self._redis.exists(full_key):
+            raise KeyError(key)
+        await self._redis.delete(full_key)
+
+    async def _keys(self):
+        prefix = self._key_prefix
+        async for k in self._redis.scan_iter(match=f"{prefix}*"):
+            yield _strip_prefix(k, prefix)
+
+    async def _count(self) -> int:
+        if await _index_exists_async(self._redis, self._index_name):
+            try:
+                info = await self._redis.ft(self._index_name).info()
+                if isinstance(info, dict):
+                    return int(info.get("num_docs", 0))
+                return int(dict(zip(info[::2], info[1::2])).get("num_docs", 0))
+            except Exception:
+                pass
+        return len(
+            [k async for k in self._redis.scan_iter(match=f"{self._key_prefix}*")]
+        )
+
+    async def _query(
+        self,
+        vector: Vector,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        if not await _index_exists_async(self._redis, self._index_name):
+            return []
+        fetch = overfetch_limit(limit, filter)
+        q = (
+            Query(f"*=>[KNN {fetch} @embedding $vec AS vd_score]")
+            .sort_by("vd_score")
+            .return_fields("text", "metadata", "vd_score", "vd_id")
+            .dialect(2)
+        )
+        try:
+            response = await self._redis.ft(self._index_name).search(
+                q, query_params={"vec": _to_float32_bytes(vector)}
+            )
+        except Exception:
+            return []
+        return list(
+            apply_client_filter(
+                _docs_to_results(response.docs, self.metric), filter, limit=limit
+            )
+        )
+
+
+class NativeAsyncRedisClient(AsyncAbstractClient):
+    """
+    Native async Redis client — what ``await vd.connect_async("redis", ...)`` returns.
+
+    Takes the same arguments as :class:`RedisClient` (``url`` or ``host``/``port``,
+    plus ``redis.asyncio.Redis`` keyword arguments). Construction does not connect.
+    """
+
+    backend_name = "redis"
+
+    def __init__(
+        self,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        url: Optional[str] = None,
+        host: str = "localhost",
+        port: int = 6379,
+        **config,
+    ):
+        super().__init__(embedder=embedder)
+        if url is not None:
+            self._client = _aioredis.Redis.from_url(url, **config)
+        else:
+            self._client = _aioredis.Redis(host=host, port=port, **config)
+
+    def _collection(self, name, *, dimension, metric) -> NativeAsyncRedisCollection:
+        return NativeAsyncRedisCollection(
+            name,
+            self._client,
+            embedder=self._embedder,
+            dimension=dimension,
+            metric=metric,
+        )
+
+    async def _collection_exists(self, name: str) -> bool:
+        return bool(await self._client.sismember(_COLLECTIONS_SET_KEY, name))
+
+    async def create_collection(
+        self,
+        name: str,
+        *,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
+    ) -> NativeAsyncRedisCollection:
+        if await self._collection_exists(name):
+            raise ValueError(f"Collection {name!r} already exists")
+        await self._client.sadd(_COLLECTIONS_SET_KEY, name)
+        return self._collection(name, dimension=dimension, metric=metric)
+
+    async def get_collection(self, name: str) -> NativeAsyncRedisCollection:
+        if not await self._collection_exists(name):
+            raise KeyError(f"Collection {name!r} does not exist")
+        dimension, metric = None, "cosine"
+        idx = _index_name(name)
+        if await _index_exists_async(self._client, idx):
+            info = await self._client.ft(idx).info()
+            dimension, metric = _index_params_from_info(info)
+        return self._collection(name, dimension=dimension, metric=metric)
+
+    async def delete_collection(self, name: str) -> None:
+        if not await self._collection_exists(name):
+            raise KeyError(f"Collection {name!r} does not exist")
+        idx = _index_name(name)
+        if await _index_exists_async(self._client, idx):
+            await self._client.ft(idx).dropindex(delete_documents=True)
+        await self._client.srem(_COLLECTIONS_SET_KEY, name)
+
+    async def list_collections(self):
+        members = await self._client.smembers(_COLLECTIONS_SET_KEY)
+        for m in sorted(m.decode() if isinstance(m, bytes) else m for m in members):
+            yield m
+
+    async def close(self) -> None:
+        await self._client.aclose()
+
+
+register_async_backend("redis")(NativeAsyncRedisClient)
