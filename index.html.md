@@ -142,7 +142,7 @@ print(asyncio.run(main()))
 # ['a']
 ```
 
-Every backend works through a thread-pool wrapper. Backends listed by `vd.list_async_backends()` can return a native async client that does real non-blocking I/O: currently `lancedb` (embedded, over `lancedb.connect_async`), `qdrant` when connected to a server with `url=`, `chroma` when connected to a server with `host=` (over `chromadb.AsyncHttpClient`), and `redis` (over `redis.asyncio`). Check `client.native_async`.
+Every backend works through a thread-pool wrapper. Backends listed by `vd.list_async_backends()` can return a native async client that does real non-blocking I/O: currently `lancedb` (embedded, over `lancedb.connect_async`), `qdrant` when connected to a server with `url=`, `chroma` when connected to a server with `host=` (over `chromadb.AsyncHttpClient`), `redis` (over `redis.asyncio`), and `mongodb` (over `pymongo.AsyncMongoClient`). Check `client.native_async`.
 
 ### Escape hatches
 

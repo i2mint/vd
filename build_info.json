@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
-  "built_at": "2026-11-23T23:05:48Z",
+  "built_at": "2026-11-23T23:14:07Z",
   "package": {
     "name": "vd",
-    "version": "0.2.31",
+    "version": "0.2.32",
     "display_name": "vd",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "a495072935e0c015d359281651467905e2be5339",
-    "short_commit": "a495072",
+    "commit": "324110bc9f9ed42d8a8d1aa146f2e602cfe94b28",
+    "short_commit": "324110b",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/vd",
-    "commit_url": "https://github.com/i2mint/vd/commit/a495072935e0c015d359281651467905e2be5339",
+    "commit_url": "https://github.com/i2mint/vd/commit/324110bc9f9ed42d8a8d1aa146f2e602cfe94b28",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/vd",
-    "sha": "a495072935e0c015d359281651467905e2be5339",
+    "sha": "324110bc9f9ed42d8a8d1aa146f2e602cfe94b28",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "45285505640",
-    "run_url": "https://github.com/i2mint/vd/actions/runs/45285505640",
+    "run_id": "45286697924",
+    "run_url": "https://github.com/i2mint/vd/actions/runs/45286697924",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -60,11 +60,11 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.2.31",
+    "latest": "0.2.32",
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/vd && cd vd\ngit checkout a495072935e0c015d359281651467905e2be5339\npip install \"epythet==0.2.25\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/vd && cd vd\ngit checkout 324110bc9f9ed42d8a8d1aa146f2e602cfe94b28\npip install \"epythet==0.2.25\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,
