@@ -382,7 +382,7 @@ class TimeIndexedCollection(MutableMapping):
         start, end
             Override the data range. Default: actual min/max ts in the index.
         reducer
-            Callable taking the iterable of in-window ``Document``s. Default
+            Callable taking the iterable of in-window ``Document`` objects. Default
             is :func:`count_docs`. See also :func:`mean_vector`.
         skip_empty
             If True, omit windows that contained zero documents.

@@ -223,7 +223,7 @@ def apply_env_overrides(config: dict) -> dict:
     """
     Apply environment variable overrides to configuration.
 
-    Looks for environment variables with the VD_ prefix:
+    Looks for environment variables with the ``VD_`` prefix:
     - VD_BACKEND: Override backend name
 
     Parameters
