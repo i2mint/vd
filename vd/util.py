@@ -99,6 +99,9 @@ def get_backend(name: str) -> type:
             f"setup guidance."
         )
 
+    from vd.backends import load_all
+
+    load_all()  # name every installed adapter, not only those loaded so far
     registered = ", ".join(sorted(_backends)) or "none"
     raise ValueError(
         f"Unknown backend {name!r}. Registered backends: {registered}. "

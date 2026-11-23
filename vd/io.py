@@ -299,11 +299,12 @@ def export_to_directory(
         safe_id = doc_id.replace("/", "_").replace("\\", "_")
         # Ids that sanitize alike (e.g. 'a/b' and 'a_b') must not share a file
         # (the real id is stored inside the file, so a suffix is harmless)
+        # compared case-insensitively: macOS and Windows filesystems ignore case
         file_stem, n = safe_id, 1
-        while file_stem in used_names:
+        while file_stem.casefold() in used_names:
             n += 1
             file_stem = f"{safe_id}__{n}"
-        used_names.add(file_stem)
+        used_names.add(file_stem.casefold())
         file_path = output_dir / f"{file_stem}.json"
 
         file_path.write_text(
