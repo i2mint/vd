@@ -90,8 +90,8 @@ dev = [
 test = ["pytest>=7.0", "pytest-cov>=4.0", "pytest-asyncio>=0.23", "hatchling"]
 # Server-free backend clients CI installs so their tests run instead of
 # skipping: qdrant (embedded :memory: + native async), lancedb (embedded, FTS
-# hybrid), and pgvector's client for its server-free unit test.
-ci-backends = ["qdrant-client", "lancedb", "pgvector", "psycopg[binary]"]
+# hybrid), pgvector's and redis's clients for their server-free unit tests.
+ci-backends = ["qdrant-client", "lancedb", "pgvector", "psycopg[binary]", "redis", "numpy"]
 docs = ["sphinx>=6.0", "sphinx-rtd-theme>=1.0"]
 
 [tool.hatch.build.targets.wheel]

@@ -131,6 +131,44 @@ def _index_exists(r: "redis.Redis", index_name: str) -> bool:
         return False
 
 
+def _index_spec(dimension: Optional[int], metric: str, key_prefix: str):
+    """
+    The ``(schema, definition)`` pair of a vd collection's RediSearch index.
+
+    Three fields over HASH keys under ``key_prefix``: ``text`` and ``metadata``
+    (TextFields; metadata is a JSON blob) and ``embedding`` (HNSW, FLOAT32, using
+    the collection's metric). Shared by the sync and async adapters, so data
+    written by either is readable by both.
+    """
+    schema = [
+        TextField("text"),
+        TextField("metadata"),
+        VectorField(
+            "embedding",
+            "HNSW",
+            {
+                "TYPE": "FLOAT32",
+                "DIM": dimension,
+                "DISTANCE_METRIC": _DISTANCE_METRIC.get(metric, "COSINE"),
+            },
+        ),
+    ]
+    definition = IndexDefinition(prefix=[key_prefix], index_type=IndexType.HASH)
+    return schema, definition
+
+
+def _raise_unless_index_exists(exc: Exception) -> None:
+    """
+    Re-raise an ``FT.CREATE`` error unless it says the index already exists.
+
+    Index creation is check-then-create, so two first writers to a fresh
+    collection (coroutines, threads or processes) can both see no index; the one
+    that loses the race gets ``Index already exists``, which is harmless.
+    """
+    if "already exists" not in str(exc).lower():
+        raise exc
+
+
 # --------------------------------------------------------------------------- #
 # Collection
 # --------------------------------------------------------------------------- #
@@ -194,30 +232,16 @@ class RedisCollection(AbstractCollection):
         for search — stored as a JSON blob), and ``embedding`` (VectorField,
         HNSW, FLOAT32, using the collection's metric).
 
-        Idempotent: does nothing if the index already exists.
+        Idempotent: does nothing if the index already exists, including when a
+        concurrent writer created it between the check and the creation.
         """
         if _index_exists(self._redis, self._index_name):
             return
-
-        distance_metric = _DISTANCE_METRIC.get(self.metric, "COSINE")
-        schema = [
-            TextField("text"),
-            TextField("metadata"),
-            VectorField(
-                "embedding",
-                "HNSW",
-                {
-                    "TYPE": "FLOAT32",
-                    "DIM": self.dimension,
-                    "DISTANCE_METRIC": distance_metric,
-                },
-            ),
-        ]
-        definition = IndexDefinition(
-            prefix=[self._key_prefix],
-            index_type=IndexType.HASH,
-        )
-        self._redis.ft(self._index_name).create_index(schema, definition=definition)
+        schema, definition = _index_spec(self.dimension, self.metric, self._key_prefix)
+        try:
+            self._redis.ft(self._index_name).create_index(schema, definition=definition)
+        except redis.exceptions.ResponseError as exc:
+            _raise_unless_index_exists(exc)
 
     # ----- raw primitives ------------------------------------------------- #
 
@@ -817,27 +841,16 @@ class NativeAsyncRedisCollection(AsyncAbstractCollection):
         return self._redis
 
     async def _ensure_index(self) -> None:
+        """Create the RediSearch index on first write; losing a creation race is fine."""
         if await _index_exists_async(self._redis, self._index_name):
             return
-        schema = [
-            TextField("text"),
-            TextField("metadata"),
-            VectorField(
-                "embedding",
-                "HNSW",
-                {
-                    "TYPE": "FLOAT32",
-                    "DIM": self.dimension,
-                    "DISTANCE_METRIC": _DISTANCE_METRIC.get(self.metric, "COSINE"),
-                },
-            ),
-        ]
-        definition = IndexDefinition(
-            prefix=[self._key_prefix], index_type=IndexType.HASH
-        )
-        await self._redis.ft(self._index_name).create_index(
-            schema, definition=definition
-        )
+        schema, definition = _index_spec(self.dimension, self.metric, self._key_prefix)
+        try:
+            await self._redis.ft(self._index_name).create_index(
+                schema, definition=definition
+            )
+        except redis.exceptions.ResponseError as exc:
+            _raise_unless_index_exists(exc)
 
     async def _write_many(self, docs: list[Document]) -> None:
         await self._ensure_index()
