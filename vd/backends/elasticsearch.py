@@ -127,14 +127,39 @@ def _recorded_metric(es: Any, name: str) -> Optional[str]:
     instead of assuming cosine (i2mint/vd#33). ``None`` when the mapping records
     none (an index made outside vd).
     """
+    return _metric_of_mapping(es.indices.get_mapping(index=name))
+
+
+def _metric_of_mapping(response: dict) -> Optional[str]:
+    """The vd metric recorded in a ``get_mapping`` response (sync or async client)."""
     # keyed by the concrete index, which differs from ``name`` for an alias
-    (entry,) = es.indices.get_mapping(index=name).values()
+    (entry,) = response.values()
     mapping = entry["mappings"]
     similarity = mapping.get("properties", {}).get("embedding", {}).get("similarity")
     if similarity in _VD_METRIC:
         return _VD_METRIC[similarity]
     recorded = mapping.get("_meta", {}).get(_META_METRIC_KEY)
     return recorded if recorded in _ES_SIMILARITY else None
+
+
+def _collection_mappings(dimension: Optional[int], metric: str) -> dict:
+    """The mappings a new collection's index is created with (sync and async).
+
+    The metric goes in ``_meta`` so it is readable before the ``dense_vector``
+    field exists; that field is mapped now only when the dimension is known.
+    """
+    mappings: dict[str, Any] = {
+        "_meta": {_META_METRIC_KEY: metric},
+        "properties": {
+            "text": {"type": "text"},
+            "metadata": {"type": "object", "enabled": False},
+        },
+    }
+    if dimension is not None:
+        mappings["properties"]["embedding"] = _build_mapping(dimension, metric)[
+            "properties"
+        ]["embedding"]
+    return mappings
 
 
 def _hit_to_result(hit: dict) -> SearchResult:
@@ -570,18 +595,10 @@ class ElasticsearchClient(AbstractClient):
         # Always create the index now (an empty collection must still be
         # listable). The dense_vector field needs the dimension, so it is only
         # mapped here when known — otherwise _ensure_index adds it on first write.
-        mappings: dict[str, Any] = {
-            "_meta": {_META_METRIC_KEY: metric},
-            "properties": {
-                "text": {"type": "text"},
-                "metadata": {"type": "object", "enabled": False},
-            },
+        create_kwargs: dict[str, Any] = {
+            "index": name,
+            "mappings": _collection_mappings(dimension, metric),
         }
-        if dimension is not None:
-            mappings["properties"]["embedding"] = _build_mapping(dimension, metric)[
-                "properties"
-            ]["embedding"]
-        create_kwargs: dict[str, Any] = {"index": name, "mappings": mappings}
         if index_config:
             create_kwargs["settings"] = index_config
         self._client.indices.create(**create_kwargs)
@@ -639,3 +656,227 @@ class ElasticsearchClient(AbstractClient):
     def close(self) -> None:
         """Close the underlying Elasticsearch transport."""
         self._client.close()
+
+
+# --------------------------------------------------------------------------- #
+# Native async — elasticsearch.AsyncElasticsearch
+# --------------------------------------------------------------------------- #
+
+from vd.asynchronous import (  # noqa: E402
+    AsyncAbstractClient,
+    AsyncAbstractCollection,
+    register_async_backend,
+)
+
+
+class NativeAsyncElasticsearchCollection(AsyncAbstractCollection):
+    """
+    An Elasticsearch index driven by ``AsyncElasticsearch`` — non-blocking I/O.
+
+    Same mapping, kNN query, client-side filtering and scores as
+    :class:`ElasticsearchCollection`, so either reads the other's data.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        es,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+    ):
+        self.name = name
+        self._es = es
+        self._embedder = embedder
+        self.dimension = dimension
+        self.metric = metric
+
+    @property
+    def native(self):
+        """The raw ``AsyncElasticsearch`` client (escape hatch)."""
+        return self._es
+
+    async def _exists(self) -> bool:
+        return bool(await self._es.indices.exists(index=self.name))
+
+    async def _ensure_index(self) -> None:
+        full_mapping = _build_mapping(self.dimension, self.metric)
+        if not await self._exists():
+            await self._es.indices.create(index=self.name, mappings=full_mapping)
+            return
+        mapping = await self._es.indices.get_mapping(index=self.name)
+        properties = mapping[self.name]["mappings"].get("properties", {})
+        if "embedding" not in properties:
+            await self._es.indices.put_mapping(
+                index=self.name,
+                properties={"embedding": full_mapping["properties"]["embedding"]},
+            )
+
+    async def _write_many(self, docs: list[Document]) -> None:
+        await self._ensure_index()
+        for doc in docs:
+            await self._es.index(
+                index=self.name,
+                id=doc.id,
+                document={
+                    "embedding": doc.vector,
+                    "text": doc.text,
+                    "metadata": doc.metadata or {},
+                },
+            )
+        await self._es.indices.refresh(index=self.name)
+
+    async def _read(self, key: str) -> Document:
+        if not await self._exists():
+            raise KeyError(key)
+        try:
+            hit = await self._es.get(index=self.name, id=key)
+        except NotFoundError:
+            raise KeyError(key)
+        source = hit["_source"]
+        return Document(
+            id=key,
+            text=source.get("text", ""),
+            vector=source.get("embedding"),
+            metadata=source.get("metadata") or {},
+        )
+
+    async def _drop(self, key: str) -> None:
+        if not await self._exists():
+            raise KeyError(key)
+        try:
+            await self._es.delete(index=self.name, id=key)
+        except NotFoundError:
+            raise KeyError(key)
+        await self._es.indices.refresh(index=self.name)
+
+    async def _keys(self):
+        if not await self._exists():
+            return
+        from elasticsearch.helpers import async_scan
+
+        async for hit in async_scan(
+            self._es,
+            index=self.name,
+            query={"query": {"match_all": {}}},
+            _source=False,
+            size=_KEYS_PAGE_SIZE,
+        ):
+            yield hit["_id"]
+
+    async def _count(self) -> int:
+        if not await self._exists():
+            return 0
+        return int((await self._es.count(index=self.name))["count"])
+
+    async def _query(
+        self,
+        vector: Vector,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        if not await self._exists():
+            return []
+        k = overfetch_limit(limit, filter)
+        response = await self._es.search(
+            index=self.name,
+            knn={
+                "field": "embedding",
+                "query_vector": vector,
+                "k": k,
+                "num_candidates": max(k * 2, _MIN_NUM_CANDIDATES),
+            },
+            **kwargs,
+        )
+        results = [_hit_to_result(h) for h in response["hits"]["hits"]]
+        return list(apply_client_filter(results, filter, limit=limit))
+
+
+class NativeAsyncElasticsearchClient(AsyncAbstractClient):
+    """
+    Native async Elasticsearch client — what ``await vd.connect_async(
+    "elasticsearch", ...)`` returns. Same arguments as :class:`ElasticsearchClient`
+    (``url`` or ``hosts``, ``api_key``). Needs ``aiohttp`` (the async transport).
+    """
+
+    backend_name = "elasticsearch"
+
+    def __init__(
+        self,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        url: str = _DEFAULT_URL,
+        hosts: Optional[list] = None,
+        api_key: Optional[Any] = None,
+        **config,
+    ):
+        from elasticsearch import AsyncElasticsearch
+
+        super().__init__(embedder=embedder, **config)
+        es_kwargs: dict[str, Any] = {}
+        if api_key is not None:
+            es_kwargs["api_key"] = api_key
+        self._client = AsyncElasticsearch(
+            hosts if hosts is not None else url, **es_kwargs
+        )
+
+    def _collection(self, name, *, dimension, metric):
+        return NativeAsyncElasticsearchCollection(
+            name,
+            self._client,
+            embedder=self._embedder,
+            dimension=dimension,
+            metric=metric,
+        )
+
+    async def _exists(self, name: str) -> bool:
+        return bool(await self._client.indices.exists(index=name))
+
+    async def create_collection(
+        self,
+        name: str,
+        *,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
+    ) -> NativeAsyncElasticsearchCollection:
+        if await self._exists(name):
+            raise ValueError(f"Collection {name!r} already exists")
+        create_kwargs: dict[str, Any] = {
+            "index": name,
+            "mappings": _collection_mappings(dimension, metric),
+        }
+        if index_config:
+            create_kwargs["settings"] = index_config
+        await self._client.indices.create(**create_kwargs)
+        return self._collection(name, dimension=dimension, metric=metric)
+
+    async def get_collection(self, name: str) -> NativeAsyncElasticsearchCollection:
+        if not await self._exists(name):
+            raise KeyError(f"Collection {name!r} does not exist")
+        mapping = await self._client.indices.get_mapping(index=name)
+        return self._collection(
+            name, dimension=None, metric=_metric_of_mapping(mapping) or "cosine"
+        )
+
+    async def delete_collection(self, name: str) -> None:
+        if not await self._exists(name):
+            raise KeyError(f"Collection {name!r} does not exist")
+        try:
+            await self._client.indices.delete(index=name)
+        except NotFoundError:
+            raise KeyError(f"Collection {name!r} does not exist")
+
+    async def list_collections(self):
+        all_indices = await self._client.indices.get(index="*")
+        for name in sorted(n for n in all_indices if not n.startswith(".")):
+            yield name
+
+    async def close(self) -> None:
+        await self._client.close()
+
+
+register_async_backend("elasticsearch")(NativeAsyncElasticsearchClient)

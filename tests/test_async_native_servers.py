@@ -28,6 +28,10 @@ DOCS = [
 ]
 
 
+#: Unit length: Elasticsearch's ``dot_product`` similarity rejects any other vector.
+QUERY = [0.8, 0.6]
+
+
 def _native_servers():
     import vd.backends  # noqa: F401 - registers what is installed
 
@@ -58,7 +62,7 @@ async def _settled(col, n, *, timeout=30.0):
     loop = asyncio.get_running_loop()
     deadline, got = loop.time() + timeout, []
     while loop.time() < deadline:
-        got = [r async for r in col.search([0.9, 0.1], limit=n)]
+        got = [r async for r in col.search(QUERY, limit=n)]
         if len(got) >= n:
             break
         await asyncio.sleep(0.5)
@@ -116,16 +120,14 @@ async def test_search_matches_the_sync_adapter(server, metric):
             await col.add_documents(DOCS)
             got = await _settled(col, len(DOCS))
             filtered = [
-                r async for r in col.search([0.9, 0.1], limit=3, filter={"tag": "pet"})
+                r async for r in col.search(QUERY, limit=3, filter={"tag": "pet"})
             ]
             reopened = await client.get_collection(name)
             assert reopened.metric == metric
             assert reopened.dimension in (None, 2)  # not every backend records it
             sync = vd.connect(backend, **kwargs).get_collection(name)
-            want = list(sync.search([0.9, 0.1], limit=3))
-            want_filtered = list(
-                sync.search([0.9, 0.1], limit=3, filter={"tag": "pet"})
-            )
+            want = list(sync.search(QUERY, limit=3))
+            want_filtered = list(sync.search(QUERY, limit=3, filter={"tag": "pet"}))
         finally:
             await client.delete_collection(name)
     assert [r["id"] for r in got] == [r["id"] for r in want]
