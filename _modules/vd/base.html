@@ -1247,33 +1247,42 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1025">        <span class="k">try</span><span class="p">:</span>
 </span><span data-line="1026">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 </span><span data-line="1027">        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-</span><span data-line="1028">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span>
-</span><span data-line="1029">                <span class="n">name</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="n">dimension</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="o">**</span><span class="n">index_config</span>
-</span><span data-line="1030">            <span class="p">)</span></div>
+</span><span data-line="1028">            <span class="k">pass</span>
+</span><span data-line="1029">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="1030">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span>
+</span><span data-line="1031">                <span class="n">name</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="n">dimension</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="o">**</span><span class="n">index_config</span>
+</span><span data-line="1032">            <span class="p">)</span>
+</span><span data-line="1033">        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">created_meanwhile</span><span class="p">:</span>
+</span><span data-line="1034">            <span class="c1"># Another caller created it between the two calls; anything else</span>
+</span><span data-line="1035">            <span class="c1"># (a bad argument) is re-raised.</span>
+</span><span data-line="1036">            <span class="k">try</span><span class="p">:</span>
+</span><span data-line="1037">                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="1038">            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+</span><span data-line="1039">                <span class="k">raise</span> <span class="n">created_meanwhile</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
 
-</span><span data-line="1031">
-</span><span data-line="1032">    <span class="nd">@property</span>
-</span><span data-line="1033">    <span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-</span><span data-line="1034"><span class="w">        </span><span class="sd">"""</span>
-</span><span data-line="1035"><span class="sd">        The raw backend client — a supported, documented escape hatch.</span>
-</span><span data-line="1036">
-</span><span data-line="1037"><span class="sd">        Drop to it for backend-specific operations the facade does not expose.</span>
-</span><span data-line="1038"><span class="sd">        Returns ``None`` for backends with no external client object (e.g. the</span>
-</span><span data-line="1039"><span class="sd">        in-memory backend).</span>
-</span><span data-line="1040"><span class="sd">        """</span>
-</span><span data-line="1041">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_client"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span data-line="1042">
+</span><span data-line="1040">
+</span><span data-line="1041">    <span class="nd">@property</span>
+</span><span data-line="1042">    <span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span data-line="1043"><span class="w">        </span><span class="sd">"""</span>
+</span><span data-line="1044"><span class="sd">        The raw backend client — a supported, documented escape hatch.</span>
+</span><span data-line="1045">
+</span><span data-line="1046"><span class="sd">        Drop to it for backend-specific operations the facade does not expose.</span>
+</span><span data-line="1047"><span class="sd">        Returns ``None`` for backends with no external client object (e.g. the</span>
+</span><span data-line="1048"><span class="sd">        in-memory backend).</span>
+</span><span data-line="1049"><span class="sd">        """</span>
+</span><span data-line="1050">        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_client"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span data-line="1051">
 <div class="viewcode-block" id="AbstractClient.close">
 <a class="viewcode-back" href="../../_autosummary/vd.base.html#vd.AbstractClient.close">[docs]</a>
-</span><span data-line="1043">    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="1044"><span class="w">        </span><span class="sd">"""Release backend resources. Default no-op; adapters override as needed."""</span></div>
+</span><span data-line="1052">    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="1053"><span class="w">        </span><span class="sd">"""Release backend resources. Default no-op; adapters override as needed."""</span></div>
 
-</span><span data-line="1045">
-</span><span data-line="1046">    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"AbstractClient"</span><span class="p">:</span>
-</span><span data-line="1047">        <span class="k">return</span> <span class="bp">self</span>
-</span><span data-line="1048">
-</span><span data-line="1049">    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="1050">        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</span><span data-line="1054">
+</span><span data-line="1055">    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"AbstractClient"</span><span class="p">:</span>
+</span><span data-line="1056">        <span class="k">return</span> <span class="bp">self</span>
+</span><span data-line="1057">
+</span><span data-line="1058">    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="1059">        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">
@@ -1302,7 +1311,7 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="../../_static/documentation_options.js?v=b85e2031"></script>
+      <script src="../../_static/documentation_options.js?v=1c26a428"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
