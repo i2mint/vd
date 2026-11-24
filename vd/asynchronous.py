@@ -515,9 +515,18 @@ class AsyncAbstractClient(metaclass=ABCMeta):
         try:
             return await self.get_collection(name)
         except KeyError:
+            pass
+        try:
             return await self.create_collection(
                 name, dimension=dimension, metric=metric, **index_config
             )
+        except ValueError as created_meanwhile:
+            # Another caller created it between the two calls; anything else
+            # (a bad argument) is re-raised.
+            try:
+                return await self.get_collection(name)
+            except KeyError:
+                raise created_meanwhile from None
 
     async def close(self) -> None:
         """Release backend resources (closes the raw client if it can)."""

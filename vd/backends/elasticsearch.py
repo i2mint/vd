@@ -193,6 +193,20 @@ def _index_exists(es: Elasticsearch, index: str) -> bool:
     return bool(es.indices.exists(index=index))
 
 
+def _already_exists(exc: BaseException) -> bool:
+    """Is *exc* Elasticsearch's "index already exists" refusal?
+
+    Checking for an index and then creating it is two calls, so a concurrent
+    creator can win in between; its refusal means the index is there.
+
+    >>> class E(Exception): error = "resource_already_exists_exception"
+    >>> _already_exists(E()), _already_exists(ValueError("x"))
+    (True, False)
+    """
+    marker = "resource_already_exists_exception"
+    return getattr(exc, "error", None) == marker or marker in str(exc)
+
+
 # --------------------------------------------------------------------------- #
 # Collection
 # --------------------------------------------------------------------------- #
@@ -260,8 +274,12 @@ class ElasticsearchCollection(AbstractCollection):
         if not _index_exists(self._es, self.name):
             # Index missing (collection created outside the adapter, or the
             # index was dropped) — create it whole.
-            self._es.indices.create(index=self.name, mappings=full_mapping)
-            return
+            try:
+                self._es.indices.create(index=self.name, mappings=full_mapping)
+                return
+            except Exception as e:  # a concurrent writer created it first
+                if not _already_exists(e):
+                    raise
         mapping = self._es.indices.get_mapping(index=self.name)
         properties = mapping[self.name]["mappings"].get("properties", {})
         if "embedding" not in properties:
@@ -601,7 +619,12 @@ class ElasticsearchClient(AbstractClient):
         }
         if index_config:
             create_kwargs["settings"] = index_config
-        self._client.indices.create(**create_kwargs)
+        try:
+            self._client.indices.create(**create_kwargs)
+        except Exception as e:  # created concurrently since the check above
+            if _already_exists(e):
+                raise ValueError(f"Collection {name!r} already exists") from e
+            raise
         return col
 
     def get_collection(self, name: str) -> ElasticsearchCollection:
@@ -703,8 +726,12 @@ class NativeAsyncElasticsearchCollection(AsyncAbstractCollection):
     async def _ensure_index(self) -> None:
         full_mapping = _build_mapping(self.dimension, self.metric)
         if not await self._exists():
-            await self._es.indices.create(index=self.name, mappings=full_mapping)
-            return
+            try:
+                await self._es.indices.create(index=self.name, mappings=full_mapping)
+                return
+            except Exception as e:  # a concurrent writer created it first
+                if not _already_exists(e):
+                    raise
         mapping = await self._es.indices.get_mapping(index=self.name)
         properties = mapping[self.name]["mappings"].get("properties", {})
         if "embedding" not in properties:
@@ -851,7 +878,12 @@ class NativeAsyncElasticsearchClient(AsyncAbstractClient):
         }
         if index_config:
             create_kwargs["settings"] = index_config
-        await self._client.indices.create(**create_kwargs)
+        try:
+            await self._client.indices.create(**create_kwargs)
+        except Exception as e:  # created concurrently since the check above
+            if _already_exists(e):
+                raise ValueError(f"Collection {name!r} already exists") from e
+            raise
         return self._collection(name, dimension=dimension, metric=metric)
 
     async def get_collection(self, name: str) -> NativeAsyncElasticsearchCollection:
