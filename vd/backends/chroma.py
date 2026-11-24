@@ -11,6 +11,7 @@ Requires: ``pip install chromadb``
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any, Callable, Iterable, Iterator, Optional
 
 try:
@@ -470,7 +471,37 @@ class NativeAsyncChromaClient(AsyncAbstractClient):
             yield getattr(c, "name", c)
 
     async def close(self) -> None:
-        """Nothing to release: the async HTTP client holds no open connection pool."""
+        """
+        Release the HTTP connection pool chromadb keeps for the current event loop.
+
+        chromadb's async HTTP client pools one ``httpx.AsyncClient`` per event loop
+        and only closes it when the chromadb client itself is used as an async
+        context manager. Without this, every ``asyncio.run`` that connects leaves a
+        client and its open socket behind. A later request on the same loop simply
+        opens a fresh pool.
+        """
+        await _release_async_http_pool(self._client)
+
+
+async def _release_async_http_pool(client) -> None:
+    """
+    Close the ``httpx.AsyncClient`` chromadb pooled for the running event loop.
+
+    chromadb (``AsyncFastAPI``) keeps these in a class-level dict keyed by the
+    loop's hash and offers no public per-loop cleanup: its ``__aexit__`` closes the
+    clients of *every* loop, including ones bound to other, possibly closed, loops.
+    So only the current loop's entry is popped and closed here, and the lookup is
+    defensive: if a chromadb release changes these internals, ``close()`` becomes a
+    no-op rather than an error.
+    """
+    server = getattr(client, "_server", None)
+    pools = getattr(server, "_clients", None)
+    if not isinstance(pools, dict):
+        return
+    http_client = pools.pop(hash(asyncio.get_running_loop()), None)
+    aclose = getattr(http_client, "aclose", None)
+    if aclose is not None:
+        await aclose()
 
 
 async def _connect_async_chroma(**kwargs) -> Any:
@@ -482,8 +513,6 @@ async def _connect_async_chroma(**kwargs) -> Any:
     in-process, so they get the ``asyncio.to_thread`` wrapper around the sync
     adapter.
     """
-    import asyncio
-
     if kwargs.get("host") is not None:
         host, port = kwargs.pop("host"), kwargs.pop("port", 8000)
         embedder = kwargs.pop("embedder", None)

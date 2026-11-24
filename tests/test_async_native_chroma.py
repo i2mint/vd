@@ -130,3 +130,53 @@ async def test_search_matches_the_sync_adapter(chroma_server, metric):
     assert [r["id"] for r in got] == [r["id"] for r in want]
     assert [r["score"] for r in got] == pytest.approx([r["score"] for r in want])
     assert [r["id"] for r in filtered] == [r["id"] for r in want_filtered]
+
+
+# --------------------------------------------------------------------------- #
+# close() releases chromadb's per-event-loop HTTP pool (#70)
+# --------------------------------------------------------------------------- #
+
+
+async def test_close_releases_the_http_pool_of_the_loop(chroma_server):
+    import asyncio
+
+    from chromadb.api.async_fastapi import AsyncFastAPI
+
+    key = hash(asyncio.get_running_loop())
+    async with await vd.connect_async("chroma", **chroma_server) as client:
+        col = await client.create_collection("pool")
+        await col.count()
+        pooled = AsyncFastAPI._clients[key]
+        await client.delete_collection("pool")
+    assert key not in AsyncFastAPI._clients
+    assert pooled.is_closed
+
+
+class _FakeHttpClient:
+    def __init__(self):
+        self.closed = False
+
+    async def aclose(self):
+        self.closed = True
+
+
+async def test_close_only_touches_the_current_loop_and_tolerates_other_internals():
+    import asyncio
+    from types import SimpleNamespace
+
+    from vd.backends.chroma import NativeAsyncChromaClient
+
+    mine, other_loops = _FakeHttpClient(), _FakeHttpClient()
+    pools = {hash(asyncio.get_running_loop()): mine, -1: other_loops}
+    client = NativeAsyncChromaClient(
+        SimpleNamespace(_server=SimpleNamespace(_clients=pools))
+    )
+    await client.close()
+    assert mine.closed and not other_loops.closed
+    assert list(pools) == [-1]
+    await client.close()  # idempotent
+    # A chromadb whose internals differ: close() is a no-op, not an error.
+    await NativeAsyncChromaClient(SimpleNamespace()).close()
+    await NativeAsyncChromaClient(
+        SimpleNamespace(_server=SimpleNamespace(_clients=None))
+    ).close()
