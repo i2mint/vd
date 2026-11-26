@@ -51,7 +51,7 @@ backends.
   (`AsyncAbstractClient` / `AsyncAbstractCollection`) plus a registry
   (`register_async_backend`, `list_async_backends`). Native today: `lancedb`
   (embedded, `lancedb.connect_async`) and `qdrant` with `url=` (embedded Qdrant's async client blocks the loop, so its factory
-  returns the wrapper there).
+  returns the wrapper there), plus `chroma`, `redis`, `mongodb`, `elasticsearch`, `weaviate` and `pinecone` (server backends, covered by `tests/test_async_native_servers.py`).
   The I/O-free embed / dimension / query policy is shared with the sync base
   through `base._CollectionPolicy`.
 - Hybrid: `vd.hybrid_search` works everywhere (client-side BM25 + RRF

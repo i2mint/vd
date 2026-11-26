@@ -862,3 +862,312 @@ class PineconeClient(AbstractClient):
         """
         names = self._existing_index_names() | set(self._pending)
         return iter(sorted(names))
+
+
+# --------------------------------------------------------------------------- #
+# Native async — pinecone.PineconeAsyncio
+# --------------------------------------------------------------------------- #
+
+try:  # PineconeAsyncio needs pinecone >= 6; the sync backend works without it
+    from pinecone import PineconeAsyncio  # noqa: E402
+except ImportError:  # pragma: no cover
+    PineconeAsyncio = None
+
+from vd.asynchronous import (  # noqa: E402
+    AsyncAbstractClient,
+    AsyncAbstractCollection,
+    register_async_backend,
+)
+
+
+def _is_already_exists(exc: Exception) -> bool:
+    """True for Pinecone's 409 / "already exists" error on index creation."""
+    return getattr(exc, "status", None) == 409 or "already exists" in str(exc).lower()
+
+
+class NativeAsyncPineconeCollection(AsyncAbstractCollection):
+    """
+    A Pinecone index driven by ``PineconeAsyncio`` — non-blocking I/O.
+
+    Same index naming, metadata packing, filter dialect and scores as
+    :class:`PineconeCollection`, so an index written by either is readable by both.
+    ``handles`` is the owning client's cache of open ``IndexAsyncio`` objects
+    (closed by :meth:`NativeAsyncPineconeClient.close`).
+    """
+
+    supported_filter_operators = PINECONE_FILTER_OPERATORS
+
+    def __init__(
+        self,
+        name: str,
+        pc: Any,
+        handles: dict,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        cloud: str = "aws",
+        region: str = "us-east-1",
+        plain_http: bool = False,
+    ):
+        self.name = name
+        self._index_name = _index_name(name)
+        self._pc = pc
+        self._handles = handles
+        self._plain_http = plain_http
+        self._embedder = embedder
+        self.dimension = dimension
+        self.metric = metric
+        self._cloud = cloud
+        self._region = region
+
+    @property
+    def native(self):
+        """The raw ``IndexAsyncio`` once opened by a first operation, else ``None``."""
+        return self._handles.get(self._index_name)
+
+    async def _get_index(self):
+        """The ``IndexAsyncio`` handle, resolved once per index."""
+        if self._index_name not in self._handles:
+            host = (await self._pc.describe_index(self._index_name)).host
+            if self._plain_http:  # Pinecone Local: plain HTTP behind an https host
+                host = "http://" + host.split("://", 1)[-1]
+            self._handles[self._index_name] = self._pc.IndexAsyncio(host=host)
+        return self._handles[self._index_name]
+
+    async def _ensure_index(self) -> None:
+        """Create the serverless index on first write if it does not yet exist."""
+        if self.dimension is None:
+            raise RuntimeError(
+                f"Cannot create Pinecone index {self.name!r}: vector dimension "
+                f"is unknown. Write a Document with a vector first, or pass "
+                f"dimension= to create_collection."
+            )
+        if not await self._pc.has_index(self._index_name):
+            try:
+                await self._pc.create_index(
+                    name=self._index_name,
+                    dimension=self.dimension,
+                    metric=_pinecone_metric(self.metric),
+                    spec=ServerlessSpec(cloud=self._cloud, region=self._region),
+                )
+            except Exception as exc:  # another writer created it first: fine
+                if not _is_already_exists(exc):
+                    raise
+
+    async def _write_many(self, docs: list[Document]) -> None:
+        await self._ensure_index()
+        await (await self._get_index()).upsert(
+            vectors=[
+                {
+                    "id": d.id,
+                    "values": d.vector,
+                    "metadata": _pack_metadata(d.text, d.metadata or {}),
+                }
+                for d in docs
+            ]
+        )
+
+    async def _fetch_one(self, key: str):
+        try:
+            result = await (await self._get_index()).fetch(ids=[key])
+        except Exception as exc:  # no index yet: nothing written
+            raise KeyError(key) from exc
+        vectors = getattr(result, "vectors", None) or {}
+        if key not in vectors:
+            raise KeyError(key)
+        return vectors[key]
+
+    async def _read(self, key: str) -> Document:
+        vec_obj = await self._fetch_one(key)
+        text, user_meta = _unpack_metadata(getattr(vec_obj, "metadata", None) or {})
+        values = getattr(vec_obj, "values", None)
+        return Document(
+            id=key,
+            text=text,
+            vector=list(values) if values is not None else None,
+            metadata=user_meta,
+        )
+
+    async def _drop(self, key: str) -> None:
+        await self._fetch_one(key)  # Pinecone's delete is a no-op on a missing id
+        await (await self._get_index()).delete(ids=[key])
+
+    async def _keys(self):
+        try:
+            index = await self._get_index()
+        except Exception:
+            return
+        async for page in index.list():
+            for key in _ids_from_list_page(page):
+                yield key
+
+    async def _count(self) -> int:
+        try:
+            stats = await (await self._get_index()).describe_index_stats()
+        except Exception:
+            return 0
+        return int(getattr(stats, "total_vector_count", 0) or 0)
+
+    async def _query(
+        self,
+        vector: Vector,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        try:
+            index = await self._get_index()
+        except Exception:
+            return []
+        response = await index.query(
+            vector=vector,
+            top_k=limit,
+            filter=_to_pinecone_filter(filter),
+            include_metadata=True,
+            **kwargs,
+        )
+        results: list[SearchResult] = []
+        for match in getattr(response, "matches", []):
+            text, user_meta = _unpack_metadata(getattr(match, "metadata", None) or {})
+            results.append(
+                {
+                    "id": match.id,
+                    "text": text,
+                    "score": float(match.score),
+                    "metadata": user_meta,
+                }
+            )
+        return results
+
+
+class NativeAsyncPineconeClient(AsyncAbstractClient):
+    """
+    Native async Pinecone client — what ``await vd.connect_async("pinecone", ...)`` returns.
+
+    Takes the same arguments as :class:`PineconeClient` (``api_key``, ``cloud``,
+    ``region``, ``host`` for Pinecone Local). Construction does not connect.
+    """
+
+    backend_name = "pinecone"
+
+    def __init__(
+        self,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        api_key: Optional[str] = None,
+        cloud: str = "aws",
+        region: str = "us-east-1",
+        host: Optional[str] = None,
+        **config,
+    ):
+        super().__init__(embedder=embedder, **config)
+        resolved_key = api_key or os.environ.get("PINECONE_API_KEY")
+        if not resolved_key:
+            raise ValueError(
+                "A Pinecone API key is required. Pass api_key= or set the "
+                "PINECONE_API_KEY environment variable. Get a key at "
+                "https://app.pinecone.io."
+            )
+        self._client = (
+            PineconeAsyncio(api_key=resolved_key, host=host)
+            if host
+            else PineconeAsyncio(api_key=resolved_key)
+        )
+        self._cloud = cloud
+        self._region = region
+        self._plain_http = bool(host) and host.startswith("http://")
+        self._pending: dict[str, str] = {}
+        self._handles: dict[str, Any] = {}
+
+    async def _existing_index_names(self) -> set[str]:
+        return {_collection_name(i.name) for i in await self._client.list_indexes()}
+
+    def _collection(self, name, *, dimension, metric) -> NativeAsyncPineconeCollection:
+        return NativeAsyncPineconeCollection(
+            name,
+            self._client,
+            self._handles,
+            embedder=self._embedder,
+            dimension=dimension,
+            metric=metric,
+            cloud=self._cloud,
+            region=self._region,
+            plain_http=self._plain_http,
+        )
+
+    async def create_collection(
+        self,
+        name: str,
+        *,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
+    ) -> NativeAsyncPineconeCollection:
+        _index_name(name)  # validate before touching the account
+        if name in await self._existing_index_names() or name in self._pending:
+            raise ValueError(
+                f"Collection {name!r} already exists in this Pinecone account."
+            )
+        collection = self._collection(name, dimension=dimension, metric=metric)
+        if dimension is not None:
+            try:
+                await collection._pc.create_index(
+                    name=collection._index_name,
+                    dimension=dimension,
+                    metric=_pinecone_metric(metric),
+                    spec=ServerlessSpec(cloud=self._cloud, region=self._region),
+                )
+            except Exception as exc:  # lost a creation race
+                if not _is_already_exists(exc):
+                    raise
+                raise ValueError(
+                    f"Collection {name!r} already exists in this Pinecone account."
+                ) from exc
+        else:
+            self._pending[name] = metric
+        return collection
+
+    async def get_collection(self, name: str) -> NativeAsyncPineconeCollection:
+        indexes = {_collection_name(i.name): i for i in await self._client.list_indexes()}
+        if name not in indexes and name in self._pending:
+            return self._collection(name, dimension=None, metric=self._pending[name])
+        if name not in indexes:
+            raise KeyError(
+                f"Collection {name!r} does not exist (vd lists a Pinecone index "
+                f"named 'a--b' as collection 'a_b'). "
+                f"Existing collections: {sorted(indexes)}"
+            )
+        info = indexes[name]
+        reverse_metric = {v: k for k, v in _METRIC_MAP.items()}
+        return self._collection(
+            name,
+            dimension=getattr(info, "dimension", None),
+            metric=reverse_metric.get(getattr(info, "metric", "cosine"), "cosine"),
+        )
+
+    async def delete_collection(self, name: str) -> None:
+        exists = name in await self._existing_index_names()
+        if not exists and name not in self._pending:
+            raise KeyError(f"Collection {name!r} does not exist and cannot be deleted.")
+        if exists:
+            handle = self._handles.pop(_index_name(name), None)
+            if handle is not None:
+                await handle.close()
+            await self._client.delete_index(_index_name(name))
+        self._pending.pop(name, None)
+
+    async def list_collections(self):
+        for name in sorted(await self._existing_index_names() | set(self._pending)):
+            yield name
+
+    async def close(self) -> None:
+        for handle in self._handles.values():
+            await handle.close()
+        self._handles.clear()
+        await self._client.close()
+
+
+if PineconeAsyncio is not None:
+    register_async_backend("pinecone")(NativeAsyncPineconeClient)
