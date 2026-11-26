@@ -1130,7 +1130,9 @@ class NativeAsyncPineconeClient(AsyncAbstractClient):
         return collection
 
     async def get_collection(self, name: str) -> NativeAsyncPineconeCollection:
-        indexes = {_collection_name(i.name): i for i in await self._client.list_indexes()}
+        indexes = {
+            _collection_name(i.name): i for i in await self._client.list_indexes()
+        }
         if name not in indexes and name in self._pending:
             return self._collection(name, dimension=None, metric=self._pending[name])
         if name not in indexes:

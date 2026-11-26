@@ -755,7 +755,9 @@ from vd.asynchronous import (  # noqa: E402
 )
 
 
-async def _recorded_metric_async(weaviate_client: Any, class_name: str) -> Optional[str]:
+async def _recorded_metric_async(
+    weaviate_client: Any, class_name: str
+) -> Optional[str]:
     """Async twin of :func:`_recorded_metric` (``config.get()`` is a coroutine)."""
     handle = weaviate_client.collections.get(class_name)
     config = await handle.config.get()
