@@ -741,3 +741,242 @@ class WeaviateClient(AbstractClient):
     def close(self) -> None:
         """Close the underlying Weaviate client connection (required in v4)."""
         self._client.close()
+
+
+# --------------------------------------------------------------------------- #
+# Native async — weaviate.WeaviateAsyncClient
+# --------------------------------------------------------------------------- #
+
+from vd.asynchronous import (  # noqa: E402
+    AsyncAbstractClient,
+    AsyncAbstractCollection,
+    register_async_backend,
+)
+
+
+async def _recorded_metric_async(weaviate_client: Any, class_name: str) -> Optional[str]:
+    """Async twin of :func:`_recorded_metric` (``config.get()`` is a coroutine)."""
+    handle = weaviate_client.collections.get(class_name)
+    config = await handle.config.get()
+    for vector in (getattr(config, "vector_config", None) or {}).values():
+        distance = getattr(
+            getattr(vector, "vector_index_config", None), "distance_metric", None
+        )
+        distance = getattr(distance, "value", distance)
+        if distance in _DISTANCE_TO_METRIC:
+            return _DISTANCE_TO_METRIC[distance]
+    distance = getattr(
+        getattr(config, "vector_index_config", None), "distance_metric", None
+    )
+    distance = getattr(distance, "value", distance)
+    return _DISTANCE_TO_METRIC.get(distance)
+
+
+def _object_props(doc: Document) -> dict:
+    return {
+        _TEXT_PROP: doc.text,
+        _VD_ID_PROP: doc.id,
+        _META_PROP: json.dumps(doc.metadata or {}),
+    }
+
+
+class NativeAsyncWeaviateCollection(AsyncAbstractCollection):
+    """
+    A Weaviate collection driven by ``WeaviateAsyncClient`` — non-blocking I/O.
+
+    Same class layout, JSON metadata property, client-side filtering and scores as
+    :class:`WeaviateCollection`, so data written by either is readable by both.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        weaviate_client: Any,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+    ):
+        self.name = name
+        self._weaviate_client = weaviate_client
+        self._embedder = embedder
+        self.dimension = dimension
+        self.metric = metric
+        self._class_name = _weaviate_class_name(name)
+
+    @property
+    def native(self) -> Any:
+        """The raw async Weaviate collection handle (escape hatch)."""
+        return self._weaviate_client.collections.get(self._class_name)
+
+    async def _write_many(self, docs: list[Document]) -> None:
+        """Upsert: bulk insert, then replace the objects that already existed."""
+        from weaviate.classes.data import DataObject
+
+        wcol = self.native
+        result = await wcol.data.insert_many(
+            [
+                DataObject(
+                    properties=_object_props(d),
+                    vector=d.vector,
+                    uuid=_object_uuid(d.id),
+                )
+                for d in docs
+            ]
+        )
+        for index in sorted(getattr(result, "errors", None) or {}):
+            doc = docs[index]
+            await wcol.data.replace(
+                properties=_object_props(doc),
+                vector=doc.vector,
+                uuid=_object_uuid(doc.id),
+            )
+
+    async def _read(self, key: str) -> Document:
+        obj = await self.native.query.fetch_object_by_id(
+            _object_uuid(key), include_vector=True
+        )
+        if obj is None:
+            raise KeyError(key)
+        return _doc_from_object(obj)
+
+    async def _drop(self, key: str) -> None:
+        wcol = self.native
+        obj_uuid = _object_uuid(key)
+        if await wcol.query.fetch_object_by_id(obj_uuid) is None:
+            raise KeyError(key)
+        await wcol.data.delete_by_id(obj_uuid)
+
+    async def _keys(self):
+        async for obj in self.native.iterator(include_vector=False):
+            props = obj.properties or {}
+            yield props.get(_VD_ID_PROP, str(obj.uuid))
+
+    async def _count(self) -> int:
+        result = await self.native.aggregate.over_all(total_count=True)
+        return result.total_count or 0
+
+    async def _query(
+        self,
+        vector: Vector,
+        *,
+        limit: int,
+        filter: Optional[Filter],
+        **kwargs,
+    ) -> list[SearchResult]:
+        from weaviate.classes.query import MetadataQuery
+
+        response = await self.native.query.near_vector(
+            near_vector=vector,
+            limit=overfetch_limit(limit, filter),
+            return_metadata=MetadataQuery(distance=True),
+            include_vector=False,
+            **kwargs,
+        )
+        raw = [_result_from_object(o, metric=self.metric) for o in response.objects]
+        return list(apply_client_filter(raw, filter, limit=limit))
+
+
+class NativeAsyncWeaviateClient(AsyncAbstractClient):
+    """
+    Native async Weaviate client — what ``await vd.connect_async("weaviate", ...)`` returns.
+
+    Takes the same arguments as :class:`WeaviateClient` (``url`` + ``api_key`` for
+    Weaviate Cloud, or ``host``/``port``/``grpc_port`` for a self-hosted server).
+    Construction does not connect; the first operation does.
+    """
+
+    backend_name = "weaviate"
+
+    def __init__(
+        self,
+        *,
+        embedder: Optional[Callable[[str], Vector]] = None,
+        url: Optional[str] = None,
+        api_key: Optional[str] = None,
+        host: Optional[str] = None,
+        port: int = 8080,
+        grpc_port: int = 50051,
+        **config,
+    ):
+        super().__init__(embedder=embedder, **config)
+        if url is not None and api_key is not None:
+            self._client = weaviate.use_async_with_weaviate_cloud(
+                cluster_url=url,
+                auth_credentials=weaviate.classes.init.Auth.api_key(api_key),
+            )
+        elif host is not None:
+            self._client = weaviate.use_async_with_local(
+                host=host, port=port, grpc_port=grpc_port
+            )
+        else:
+            self._client = weaviate.use_async_with_local()
+
+    async def _connected(self) -> Any:
+        """The underlying client, connecting on first use (``connect`` is idempotent)."""
+        await self._client.connect()
+        return self._client
+
+    def _collection(self, name, *, dimension, metric) -> NativeAsyncWeaviateCollection:
+        return NativeAsyncWeaviateCollection(
+            name,
+            self._client,
+            embedder=self._embedder,
+            dimension=dimension,
+            metric=metric,
+        )
+
+    async def _class_exists(self, class_name: str) -> bool:
+        return bool(await (await self._connected()).collections.exists(class_name))
+
+    async def create_collection(
+        self,
+        name: str,
+        *,
+        dimension: Optional[int] = None,
+        metric: str = "cosine",
+        **index_config,
+    ) -> NativeAsyncWeaviateCollection:
+        client = await self._connected()
+        class_name = _weaviate_class_name(name)
+        if await self._class_exists(class_name):
+            raise ValueError(f"Collection {name!r} already exists")
+        index = Configure.VectorIndex.hnsw(
+            distance_metric=VectorDistances(_METRIC_TO_DISTANCE.get(metric, "cosine"))
+        )
+        await client.collections.create(
+            name=class_name,
+            vector_config=Configure.Vectors.self_provided(vector_index_config=index),
+            properties=[
+                Property(name=_TEXT_PROP, data_type=DataType.TEXT),
+                Property(name=_VD_ID_PROP, data_type=DataType.TEXT),
+                Property(name=_META_PROP, data_type=DataType.TEXT),
+            ],
+        )
+        return self._collection(name, dimension=dimension, metric=metric)
+
+    async def get_collection(self, name: str) -> NativeAsyncWeaviateCollection:
+        class_name = _weaviate_class_name(name)
+        if not await self._class_exists(class_name):
+            raise KeyError(f"Collection {name!r} does not exist")
+        metric = await _recorded_metric_async(self._client, class_name) or "cosine"
+        return self._collection(name, dimension=None, metric=metric)
+
+    async def delete_collection(self, name: str) -> None:
+        class_name = _weaviate_class_name(name)
+        if not await self._class_exists(class_name):
+            raise KeyError(f"Collection {name!r} does not exist")
+        await self._client.collections.delete(class_name)
+
+    async def list_collections(self):
+        client = await self._connected()
+        for class_name in await client.collections.list_all(simple=True):
+            # Server classes are capitalised; vd names round-trip by lowercasing
+            # the first letter, as the sync client does for classes it did not make.
+            yield class_name[0].lower() + class_name[1:]
+
+    async def close(self) -> None:
+        await self._client.close()
+
+
+register_async_backend("weaviate")(NativeAsyncWeaviateClient)

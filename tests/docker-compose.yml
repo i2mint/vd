@@ -59,7 +59,7 @@ services:
       retries: 30
 
   weaviate:
-    image: ${DOCKERHUB_MIRROR:-docker.io}/semitechnologies/weaviate:1.28.4
+    image: ${DOCKERHUB_MIRROR:-docker.io}/semitechnologies/weaviate:1.32.4
     command: ["--host", "0.0.0.0", "--port", "8080", "--scheme", "http"]
     environment:
       AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
