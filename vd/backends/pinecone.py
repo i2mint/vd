@@ -868,13 +868,21 @@ class PineconeClient(AbstractClient):
 # Native async — pinecone.PineconeAsyncio
 # --------------------------------------------------------------------------- #
 
-from pinecone import PineconeAsyncio  # noqa: E402
+try:  # PineconeAsyncio needs pinecone >= 6; the sync backend works without it
+    from pinecone import PineconeAsyncio  # noqa: E402
+except ImportError:  # pragma: no cover
+    PineconeAsyncio = None
 
 from vd.asynchronous import (  # noqa: E402
     AsyncAbstractClient,
     AsyncAbstractCollection,
     register_async_backend,
 )
+
+
+def _is_already_exists(exc: Exception) -> bool:
+    """True for Pinecone's 409 / "already exists" error on index creation."""
+    return getattr(exc, "status", None) == 409 or "already exists" in str(exc).lower()
 
 
 class NativeAsyncPineconeCollection(AsyncAbstractCollection):
@@ -936,12 +944,16 @@ class NativeAsyncPineconeCollection(AsyncAbstractCollection):
                 f"dimension= to create_collection."
             )
         if not await self._pc.has_index(self._index_name):
-            await self._pc.create_index(
-                name=self._index_name,
-                dimension=self.dimension,
-                metric=_pinecone_metric(self.metric),
-                spec=ServerlessSpec(cloud=self._cloud, region=self._region),
-            )
+            try:
+                await self._pc.create_index(
+                    name=self._index_name,
+                    dimension=self.dimension,
+                    metric=_pinecone_metric(self.metric),
+                    spec=ServerlessSpec(cloud=self._cloud, region=self._region),
+                )
+            except Exception as exc:  # another writer created it first: fine
+                if not _is_already_exists(exc):
+                    raise
 
     async def _write_many(self, docs: list[Document]) -> None:
         await self._ensure_index()
@@ -1100,7 +1112,19 @@ class NativeAsyncPineconeClient(AsyncAbstractClient):
             )
         collection = self._collection(name, dimension=dimension, metric=metric)
         if dimension is not None:
-            await collection._ensure_index()
+            try:
+                await collection._pc.create_index(
+                    name=collection._index_name,
+                    dimension=dimension,
+                    metric=_pinecone_metric(metric),
+                    spec=ServerlessSpec(cloud=self._cloud, region=self._region),
+                )
+            except Exception as exc:  # lost a creation race
+                if not _is_already_exists(exc):
+                    raise
+                raise ValueError(
+                    f"Collection {name!r} already exists in this Pinecone account."
+                ) from exc
         else:
             self._pending[name] = metric
         return collection
@@ -1145,4 +1169,5 @@ class NativeAsyncPineconeClient(AsyncAbstractClient):
         await self._client.close()
 
 
-register_async_backend("pinecone")(NativeAsyncPineconeClient)
+if PineconeAsyncio is not None:
+    register_async_backend("pinecone")(NativeAsyncPineconeClient)

@@ -41,6 +41,7 @@ Requires: ``pip install -U weaviate-client``
 
 from __future__ import annotations
 
+import asyncio
 import json
 import uuid
 from typing import Any, Callable, Iterable, Iterator, Optional
@@ -810,7 +811,7 @@ class NativeAsyncWeaviateCollection(AsyncAbstractCollection):
         return self._weaviate_client.collections.get(self._class_name)
 
     async def _write_many(self, docs: list[Document]) -> None:
-        """Upsert: bulk insert, then replace the objects that already existed."""
+        """Upsert: bulk insert (replaces same-UUID objects), then retry per-object errors."""
         from weaviate.classes.data import DataObject
 
         wcol = self.native
@@ -911,10 +912,13 @@ class NativeAsyncWeaviateClient(AsyncAbstractClient):
             )
         else:
             self._client = weaviate.use_async_with_local()
+        self._connect_lock = asyncio.Lock()
 
     async def _connected(self) -> Any:
         """The underlying client, connecting on first use (``connect`` is idempotent)."""
-        await self._client.connect()
+        async with self._connect_lock:
+            if not self._client.is_connected():
+                await self._client.connect()
         return self._client
 
     def _collection(self, name, *, dimension, metric) -> NativeAsyncWeaviateCollection:
@@ -944,15 +948,22 @@ class NativeAsyncWeaviateClient(AsyncAbstractClient):
         index = Configure.VectorIndex.hnsw(
             distance_metric=VectorDistances(_METRIC_TO_DISTANCE.get(metric, "cosine"))
         )
-        await client.collections.create(
-            name=class_name,
-            vector_config=Configure.Vectors.self_provided(vector_index_config=index),
-            properties=[
-                Property(name=_TEXT_PROP, data_type=DataType.TEXT),
-                Property(name=_VD_ID_PROP, data_type=DataType.TEXT),
-                Property(name=_META_PROP, data_type=DataType.TEXT),
-            ],
-        )
+        try:
+            await client.collections.create(
+                name=class_name,
+                vector_config=Configure.Vectors.self_provided(
+                    vector_index_config=index
+                ),
+                properties=[
+                    Property(name=_TEXT_PROP, data_type=DataType.TEXT),
+                    Property(name=_VD_ID_PROP, data_type=DataType.TEXT),
+                    Property(name=_META_PROP, data_type=DataType.TEXT),
+                ],
+            )
+        except Exception as exc:  # lost a creation race: same contract as above
+            if "already exists" not in str(exc).lower():
+                raise
+            raise ValueError(f"Collection {name!r} already exists") from exc
         return self._collection(name, dimension=dimension, metric=metric)
 
     async def get_collection(self, name: str) -> NativeAsyncWeaviateCollection:
